@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -11,16 +11,16 @@ import Governikus.Type
 SmartDeleteBaseView {
 	id: root
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	buttonText: qsTr("Reset Smart-eID")
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	deleteDescriptionText: qsTr("You are about to reset your Smart-eID data. This can also be used for troubleshooting as well.")
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	popupButtonText: qsTr("Reset")
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	popupText: qsTr("Are you sure you want to reset the Smart-eID?")
 	popupTitle: title
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Reset the Smart-eID")
 
 	onClose: {
@@ -31,10 +31,10 @@ SmartDeleteBaseView {
 		root.setLockedAndHidden();
 		root.pushProgressView({
 			title: root.title,
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Resetting Smart-eID"),
 			progressBarVisible: true,
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			progressText: qsTr("Resetting Smart-eID")
 		});
 		if (connectivityManager.checkConnectivity()) {
@@ -59,7 +59,7 @@ SmartDeleteBaseView {
 			root.pushResultView({
 				success: SmartModel.errorString === "",
 				title: root.title,
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				text: SmartModel.errorString === "" ? qsTr("You have successfully reset your Smart-eID.") : SmartModel.errorString
 			});
 		}

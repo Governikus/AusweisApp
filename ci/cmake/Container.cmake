@@ -37,6 +37,7 @@ endif()
 
 if(DEFINED ENV{GITLAB_CI})
 	find_program(CMD buildah REQUIRED)
+	find_program(PODMAN podman REQUIRED)
 else()
 	find_program(CMD docker REQUIRED)
 endif()
@@ -65,7 +66,10 @@ if(DEFINED ENV{GITLAB_CI})
 	step(${CMD} from --name ${TAG} ${IMAGE})
 	step(${CMD} run ${TAG} AusweisApp --help)
 	step(${CMD} rm ${TAG})
-	step(${CMD} push ${IMAGE} docker-archive:${T_BUILD_DIR}/AusweisApp-${FILE_TAG}.tar)
+	if(NOT VNC)
+		step(${PODMAN} run --rm ${IMAGE} --help)
+	endif()
+	step(${CMD} push ${IMAGE} docker-archive:${T_BUILD_DIR}/AusweisApp-${FILE_TAG}-Container-${TARGET}.tar)
 else()
 	step(${CMD} build
 		--pull
@@ -75,7 +79,7 @@ else()
 		${CMAKE_SOURCE_DIR}
 	)
 	step(${CMD} run --rm ${IMAGE} AusweisApp --help)
-	step(${CMD} save -o ${T_BUILD_DIR}/AusweisApp-${FILE_TAG}.tar ${IMAGE})
+	step(${CMD} save -o ${T_BUILD_DIR}/AusweisApp-${FILE_TAG}-Container-${TARGET}.tar ${IMAGE})
 endif()
 
 step(${CMD} inspect ${IMAGE})

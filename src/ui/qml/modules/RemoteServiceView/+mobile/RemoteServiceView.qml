@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -26,7 +26,7 @@ FlickableSectionPage {
 	enableTileStyle: false
 	spacing: Style.dimens.pane_spacing
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Card reader")
 
 	navigationAction: NavigationAction {
@@ -73,21 +73,21 @@ FlickableSectionPage {
 		visible: root.nfcState !== ApplicationModel.NfcState.UNAVAILABLE
 
 		Heading {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: !ApplicationModel.wifiEnabled ? qsTr("WiFi not active") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			RemoteServiceModel.canEnableNfc ? qsTr("NFC not active") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			!RemoteServiceModel.runnable ? qsTr("NFC is not available") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			RemoteServiceModel.connectedToPairedDevice ? qsTr("Card access in progress") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			RemoteServiceModel.isPairing ? qsTr("Waiting for pairing") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			RemoteServiceModel.running ? qsTr("Card reader ready") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			root.runnableNoPairedDevice ? qsTr("No device paired") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			RemoteServiceModel.runnable && knownDeviceList.count > 0 && root.notRunningNoPairingMode ? qsTr("Card reader not active") : ""
 			visible: text !== ""
 		}
@@ -115,7 +115,7 @@ FlickableSectionPage {
 					when: root.runnableNoPairedDevice
 
 					PropertyChanges {
-						//: LABEL ANDROID IOS
+						//: MOBILE
 						subline.text: qsTr("Use this smartphone as a card reader for a paired device")
 					}
 				},
@@ -123,7 +123,7 @@ FlickableSectionPage {
 					when: RemoteServiceModel.runnable && knownDeviceList.count > 0 && root.notRunningNoPairingMode
 
 					PropertyChanges {
-						//: LABEL ANDROID IOS
+						//: MOBILE
 						subline.text: qsTr("Activate the card reader")
 					}
 				},
@@ -131,7 +131,7 @@ FlickableSectionPage {
 					when: RemoteServiceModel.running && !RemoteServiceModel.isPairing
 
 					PropertyChanges {
-						//: LABEL ANDROID IOS
+						//: MOBILE
 						subline.text: qsTr("Paired devices may use this Smartphone as a card reader now.")
 					}
 				},
@@ -139,7 +139,7 @@ FlickableSectionPage {
 					when: root.runningInPairingMode
 
 					PropertyChanges {
-						//: LABEL ANDROID IOS
+						//: MOBILE
 						subline.text: qsTr("Enter the pairing code")
 					}
 				}
@@ -149,10 +149,10 @@ FlickableSectionPage {
 			id: infoText
 
 			readonly property string currentPin: RemoteServiceModel.psk
-			//: INFO ANDROID IOS %1 is replaced with the pairing code, %2 with the name "AusweisApp"
+			//: MOBILE %1 is replaced with the pairing code, %2 with the name "AusweisApp"
 			readonly property string enterCodeString: qsTr("Enter the pairing code \"%1\" in the %2 on your other device. Both devices have to be on the same network (e.g. WiFi).")
 
-			//: INFO ANDROID IOS
+			//: MOBILE
 			text: qsTr("You can use this Smartphone as a card reader for the %1 on other devices e.g. a laptop.\n\nTo do this you first have to pair that device with this smartphone.").arg(Qt.application.name)
 
 			states: [
@@ -174,7 +174,7 @@ FlickableSectionPage {
 					when: !RemoteServiceModel.running && knownDeviceList.count > 0
 
 					PropertyChanges {
-						//: INFO ANDROID IOS
+						//: MOBILE
 						infoText.text: qsTr("This allows the paired devices to use this smartphone as a card reader.")
 					}
 				},
@@ -191,9 +191,9 @@ FlickableSectionPage {
 
 					PropertyChanges {
 						infoText.text: "%1\n%2".arg(
-						//: INFO ANDROID IOS
+						//: MOBILE
 						qsTr("To do this, start a process on a paired device.")).arg(
-						//: INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.
+						//: MOBILE The remote service is active. Hint that both devices need to be connected to the same network.
 						qsTr("Both devices have to be on the same network (e.g. WiFi)."))
 					}
 				}
@@ -207,7 +207,7 @@ FlickableSectionPage {
 		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Pairing code:")
 		textStyle: Style.text.headline
 		visible: pairingCode.visible
@@ -236,7 +236,7 @@ FlickableSectionPage {
 				when: !ApplicationModel.wifiEnabled
 
 				PropertyChanges {
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					pairConnectButton.text: qsTr("Enable WiFi")
 
 					pairConnectButton.onClicked: ApplicationModel.enableWifi()
@@ -246,7 +246,7 @@ FlickableSectionPage {
 				when: RemoteServiceModel.canEnableNfc
 
 				PropertyChanges {
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					pairConnectButton.text: qsTr("Enable NFC")
 
 					pairConnectButton.onClicked: ApplicationModel.showSettings(ApplicationModel.Settings.NFC)
@@ -256,7 +256,7 @@ FlickableSectionPage {
 				when: RemoteServiceModel.runnable && knownDeviceList.count > 0 && root.notRunningNoPairingMode
 
 				PropertyChanges {
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					pairConnectButton.text: qsTr("Activate card reader")
 
 					pairConnectButton.onClicked: RemoteServiceModel.setRunning(true)
@@ -266,7 +266,7 @@ FlickableSectionPage {
 				when: root.runnableNoPairedDevice
 
 				PropertyChanges {
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					pairConnectButton.text: qsTr("Pair device")
 
 					pairConnectButton.onClicked: RemoteServiceModel.setRunning(true, true)
@@ -276,7 +276,7 @@ FlickableSectionPage {
 				when: RemoteServiceModel.isPairing
 
 				PropertyChanges {
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					pairConnectButton.text: qsTr("Cancel pairing")
 					pairConnectButton.visible: true
 
@@ -287,7 +287,7 @@ FlickableSectionPage {
 				when: RemoteServiceModel.running
 
 				PropertyChanges {
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					pairConnectButton.text: qsTr("Stop card reader")
 
 					pairConnectButton.onClicked: RemoteServiceModel.setRunning(false, false)
@@ -301,7 +301,7 @@ FlickableSectionPage {
 		id: paringCodeLink
 
 		Layout.alignment: Qt.AlignCenter
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Where do I enter the pairing code?")
 		visible: false
 
@@ -346,7 +346,7 @@ FlickableSectionPage {
 
 		containerPadding: Style.dimens.pane_padding
 		containerSpacing: Style.dimens.text_spacing
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Paired Devices")
 		visible: RemoteServiceModel.runnable && knownDeviceList.count > 0 && !progressText.visible
 
@@ -358,7 +358,7 @@ FlickableSectionPage {
 			delegate: DevicesListDelegate {
 				Layout.fillWidth: true
 				linkQualityVisible: false
-				titleColor: Style.color.textNormal.basic
+				titleColor: Style.color.textNormal.basic_unchecked
 			}
 		}
 		GSeparator {
@@ -368,12 +368,12 @@ FlickableSectionPage {
 		GLink {
 			id: addPairingLink
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			Accessible.name: qsTr("Start pairing of a new device")
 			Layout.alignment: Qt.AlignLeft
 			horizontalPadding: 0
 			icon.source: "qrc:///images/material_add.svg"
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Pair new device")
 			tintIcon: true
 			verticalPadding: 0
@@ -391,7 +391,7 @@ FlickableSectionPage {
 		visible: RemoteServiceModel.requiresLocalNetworkPermission
 	}
 	GProgressBar {
-		//: LABEL ANDROID IOS Name of an progress indicator during the pairing process read by screen readers
+		//: MOBILE Name of an progress indicator during the pairing process read by screen readers
 		Accessible.name: qsTr("Pairing progress")
 		Layout.fillWidth: true
 		value: RemoteServiceModel.percentage

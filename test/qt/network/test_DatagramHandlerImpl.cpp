@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
@@ -173,18 +173,15 @@ class test_DatagramHandlerImpl
 		void sendDatagram_data()
 		{
 			QTest::addColumn<bool>("broadcast");
-			QTest::addColumn<bool>("duplicate");
 
-			QTest::newRow("WithBroadcast - Unique") << true << false;
-			QTest::newRow("WithBroadcast - Duplicate") << true << true;
-			QTest::newRow("WithoutBroadcast") << false << false;
+			QTest::newRow("WithBroadcast - Unique") << true;
+			QTest::newRow("WithoutBroadcast") << false;
 		}
 
 
 		void sendDatagram()
 		{
 			QFETCH(bool, broadcast);
-			QFETCH(bool, duplicate);
 
 			QUdpSocket receiver;
 			receiver.setProxy(QNetworkProxy::NoProxy);
@@ -205,10 +202,6 @@ class test_DatagramHandlerImpl
 				QSKIP("FreeBSD does not like that");
 #endif
 				auto entries = datagramHandlerImpl->getAllBroadcastEntries();
-				if (duplicate)
-				{
-					entries << entries.last();
-				}
 				datagramHandlerImpl->sendToAddressEntries(doc.toJson(QJsonDocument::Compact), entries, receiver.localPort());
 			}
 			else
@@ -219,12 +212,8 @@ class test_DatagramHandlerImpl
 			QTRY_COMPARE(spyReceiver.count(), 1); // clazy:exclude=qstring-allocations
 			if (broadcast)
 			{
-				QVERIFY(logSpy.count() >= (duplicate ? 4 : 2));
+				QVERIFY(logSpy.count() >= 2);
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Broadcast Addresses changed...")));
-				if (duplicate)
-				{
-					QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Skipping duplicate broadcasting to")));
-				}
 			}
 			else
 			{

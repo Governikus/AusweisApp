@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -22,7 +22,7 @@ EnterPasswordView {
 
 	passwordType: NumberModel.PasswordType.REMOTE_PIN
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("Pairing")
 
 	titleBarSettings: TitleBarSettings {
@@ -37,8 +37,8 @@ EnterPasswordView {
 		id: progressView
 
 		ProgressView {
-			//: LABEL DESKTOP
-			headline: qsTr("Pairing the device ...")
+			//: DESKTOP
+			headline: qsTr("Pairing the device...")
 			progress: root.progress
 			title: root.title
 

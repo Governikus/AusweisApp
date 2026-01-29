@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -15,11 +15,11 @@ BaseOnboardingView {
 
 	signal skipOnboarding
 
-	//: LABEL ALL_PLATFORMS Headline
+	//: ALL_PLATFORMS Headline
 	title: qsTr("Setup")
 
 	Heading {
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("Set up the eID function")
 		wrapMode: Text.WordWrap
 	}
@@ -30,26 +30,26 @@ BaseOnboardingView {
 	}
 	Subheading {
 		Layout.topMargin: Style.dimens.pane_spacing
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("What can I do with it?")
 	}
 	GText {
 		readonly property string technologyString: Style.is_layout_desktop ?
-		//: LABEL DESKTOP The text between %1 and %2 will be emphasized.
+		//: DESKTOP The text between %1 and %2 will be emphasized.
 		qsTr("All you need is your %1ID card%2, %1PIN%2 and a %1NFC-enabled smartphone%2 or an %1USB card reader%2.").arg("<b>").arg("</b>") :
-		//: LABEL ANDROID IOS The text between %1 and %2 will be emphasized.
+		//: MOBILE The text between %1 and %2 will be emphasized.
 		qsTr("All you need is your %1ID card%2, %1PIN%2 and a %1NFC-enabled smartphone%2.").arg("<b>").arg("</b>")
 
 		Layout.topMargin: Style.dimens.text_spacing
-		//: LABEL ALL_PLATFORMS The text between %1 and %2 will be emphasized.
+		//: ALL_PLATFORMS The text between %1 and %2 will be emphasized.
 		text: qsTr("It allows you to identify yourself %1securely%2 on the internet. You can easily take care of %1administrative or business matters%2 online.").arg("<b>").arg("</b>") + " " + technologyString
 	}
 	GInformativeButton {
 		Layout.fillWidth: true
 		Layout.topMargin: Style.dimens.pane_spacing
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		description: qsTr("I use the eID function for the 1st time")
-		//: LABEL ALL_PLATFORMS %1 will be replaced with the name of the application
+		//: ALL_PLATFORMS %1 will be replaced with the name of the application
 		text: qsTr("Set up %1").arg(Qt.application.name)
 
 		onClicked: root.continueOnboarding()
@@ -57,10 +57,10 @@ BaseOnboardingView {
 	GInformativeButton {
 		Layout.fillWidth: true
 		Layout.topMargin: Style.dimens.pane_spacing
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		description: qsTr("I already used the eID function before")
 		isPane: true
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("Skip setup")
 
 		onClicked: root.push(skipConfirmation)

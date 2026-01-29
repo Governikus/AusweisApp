@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -22,13 +22,13 @@ ColumnLayout {
 		GMenuItem {
 			Layout.fillWidth: true
 			buttonIconSource: "qrc:///images/open_website.svg"
-			//: LABEL DESKTOP
+			//: DESKTOP
 			buttonText: qsTr("Open website")
 			buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
 			iconSource: "qrc:/images/desktop/privacy_icon.svg"
 			linkToOpen: buttonTooltip
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			title: qsTr("Privacy statement")
 		}
 		GSeparator {
@@ -37,13 +37,13 @@ ColumnLayout {
 		GMenuItem {
 			Layout.fillWidth: true
 			buttonIconSource: "qrc:///images/open_website.svg"
-			//: LABEL DESKTOP
+			//: DESKTOP
 			buttonText: qsTr("Open website")
 			buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/a11y".arg(SettingsModel.language)
 			iconSource: "qrc:/images/desktop/a11y_icon.svg"
 			linkToOpen: buttonTooltip
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			title: qsTr("Accessibility statement")
 		}
 	}
@@ -90,9 +90,9 @@ ColumnLayout {
 				if (counter === 10) {
 					SettingsModel.developerOptions = !SettingsModel.developerOptions;
 					ApplicationModel.showFeedback((SettingsModel.developerOptions ?
-						//: LABEL DESKTOP
+						//: DESKTOP
 						qsTr("Developer options activated.") :
-						//: LABEL DESKTOP
+						//: DESKTOP
 						qsTr("Developer options deactivated.")));
 					counter = 0;
 				}

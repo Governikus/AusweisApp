@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -10,7 +10,7 @@ GButton {
 	icon.source: "qrc:///images/material_arrow_right.svg"
 	layoutDirection: Qt.RightToLeft
 
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	text: qsTr("Continue")
 	tintIcon: true
 	visible: text !== ""

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -24,13 +24,13 @@ TitleBarAction {
 	text: {
 		switch (root.navAction) {
 		case NavigationAction.Action.Close:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Close");
 		case NavigationAction.Action.Cancel:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Cancel");
 		case NavigationAction.Action.Back:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Back");
 		default:
 			return "";

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -20,15 +20,15 @@ TextField {
 	ToolTip.visible: text.length === maximumLength && focus
 	color: textStyle.textColor
 	font.pixelSize: textStyle.textSize
-	placeholderTextColor: Style.color.textNormal.basic
+	placeholderTextColor: Style.color.textNormal.basic_unchecked
 	selectByMouse: true
-	selectedTextColor: Style.color.textNormal.basic
-	selectionColor: Style.color.control.background.basic
+	selectedTextColor: Style.color.textNormal.basic_unchecked
+	selectionColor: Style.color.control.background.basic_unchecked
 
 	background: Rectangle {
 		border.color: Style.color.border
 		border.width: Style.dimens.border_width
-		color: Style.color.pane.background.basic
+		color: Style.color.pane.background.basic_unchecked
 		radius: Style.dimens.control_radius
 	}
 

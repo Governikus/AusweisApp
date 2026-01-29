@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -7,8 +7,11 @@
 
 #include "CardConnectionWorker.h"
 #include "MockReader.h"
+#include "TestHookThread.h"
 
 #include <QByteArrayList>
+#include <QSharedPointer>
+
 
 namespace governikus
 {
@@ -19,16 +22,17 @@ class MockCardConnectionWorker
 	Q_OBJECT
 
 	private:
-		QPointer<Reader> mReader;
 		QList<CommandApdu> mCommands;
 		QList<CardReturnCode> mResponseCodes;
 		QByteArrayList mResponseData;
 		QList<CardReturnCode> mPaceCodes;
 
 		ResponseApduResult getMockedResponse();
+		explicit MockCardConnectionWorker(Reader* pReader);
 
 	public:
-		explicit MockCardConnectionWorker(Reader* pReader = new MockReader());
+		static QSharedPointer<MockCardConnectionWorker> create(Reader* pReader = new MockReader());
+		static QSharedPointer<MockCardConnectionWorker> create(TestHookThread* pThread, Reader* pReader = new MockReader());
 		~MockCardConnectionWorker() override;
 
 		const QList<CommandApdu>& getCommands() const;

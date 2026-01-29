@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthModel.h"
@@ -140,7 +140,7 @@ class test_AuthModel
 			QCOMPARE(model->getErrorHeader(), QString());
 
 			context->setTcTokenUrl(QUrl("https://www.governikus.de/tcToken"_L1));
-			QCOMPARE(model->getErrorHeader(), QStringLiteral("https://www.governikus.de"));
+			QCOMPARE(model->getErrorHeader(), QStringLiteral("Provider: https://www.governikus.de"));
 
 			context->setStatus(GlobalStatus::Code::Workflow_Card_Removed);
 			QCOMPARE(model->getErrorHeader(), tr("Connection to ID card lost"));
@@ -192,11 +192,12 @@ class test_AuthModel
 			QTest::addColumn<QSharedPointer<AuthContext>>("context");
 			QTest::addColumn<GlobalStatus::Code>("statusCode");
 			QTest::addColumn<QString>("buttonIcon");
+			QTest::addColumn<QUrl>("refreshUrl");
 
-			QTest::addRow("No context") << QSharedPointer<AuthContext>(nullptr) << GlobalStatus::Code::No_Error << "";
-			QTest::addRow("Any error") << QSharedPointer<AuthContext>::create() << GlobalStatus::Code::Card_Communication_Error << "";
-			QTest::addRow("No error") << QSharedPointer<AuthContext>::create() << GlobalStatus::Code::No_Error << "";
-			QTest::addRow("Browser_Transmission_Error") << QSharedPointer<AuthContext>::create() << GlobalStatus::Code::Workflow_Browser_Transmission_Error << "qrc:///images/open_website.svg";
+			QTest::addRow("No context") << QSharedPointer<AuthContext>(nullptr) << GlobalStatus::Code::No_Error << "" << QUrl(QStringLiteral("not_empty"));
+			QTest::addRow("Any error") << QSharedPointer<AuthContext>::create() << GlobalStatus::Code::Card_Communication_Error << "" << QUrl();
+			QTest::addRow("No error") << QSharedPointer<AuthContext>::create() << GlobalStatus::Code::No_Error << "" << QUrl(QStringLiteral("not_empty"));
+			QTest::addRow("Browser_Transmission_Error") << QSharedPointer<AuthContext>::create() << GlobalStatus::Code::Workflow_Browser_Transmission_Error << "qrc:///images/open_website.svg" << QUrl(QStringLiteral("not_empty"));
 		}
 
 
@@ -205,11 +206,13 @@ class test_AuthModel
 			QFETCH(QSharedPointer<AuthContext>, context);
 			QFETCH(GlobalStatus::Code, statusCode);
 			QFETCH(QString, buttonIcon);
+			QFETCH(QUrl, refreshUrl);
 
 			auto* const model = Env::getSingleton<AuthModel>();
 			if (context)
 			{
 				context->setStatus(GlobalStatus(statusCode));
+				context->setRefreshUrl(refreshUrl);
 			}
 			model->resetAuthContext(context);
 
@@ -221,10 +224,12 @@ class test_AuthModel
 		{
 			QTest::addColumn<QSharedPointer<AuthContext>>("context");
 			QTest::addColumn<QString>("buttonText");
+			QTest::addColumn<QUrl>("refreshUrl");
 
-			QTest::addRow("No context") << QSharedPointer<AuthContext>(nullptr) << "";
-			QTest::addRow("Auth") << QSharedPointer<AuthContext>(new AuthContext()) << "Return to provider";
-			QTest::addRow("SelfAuth") << QSharedPointer<AuthContext>(new SelfAuthContext()) << "Back to start page";
+			QTest::addRow("No context") << QSharedPointer<AuthContext>(nullptr) << "" << QUrl();
+			QTest::addRow("Auth no refresh Url") << QSharedPointer<AuthContext>(new AuthContext()) << "Back to start page" << QUrl();
+			QTest::addRow("Auth with refresh Url") << QSharedPointer<AuthContext>(new AuthContext()) << "Back to provider" << QUrl(QStringLiteral("not_empty"));
+			QTest::addRow("SelfAuth") << QSharedPointer<AuthContext>(new SelfAuthContext()) << "Back to start page" << QUrl();
 		}
 
 
@@ -232,6 +237,12 @@ class test_AuthModel
 		{
 			QFETCH(QSharedPointer<AuthContext>, context);
 			QFETCH(QString, buttonText);
+			QFETCH(QUrl, refreshUrl);
+
+			if (context)
+			{
+				context->setRefreshUrl(refreshUrl);
+			}
 
 			auto* const model = Env::getSingleton<AuthModel>();
 			model->resetAuthContext(context);

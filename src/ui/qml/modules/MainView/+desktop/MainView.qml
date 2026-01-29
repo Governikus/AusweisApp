@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -32,7 +32,7 @@ SectionPage {
 		Tile {
 			icon.source: "qrc:/images/lock.svg"
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Change PIN")
 
 			onClicked: root.requestUiModule(UiModule.PINMANAGEMENT)
@@ -40,7 +40,7 @@ SectionPage {
 		Tile {
 			icon.source: "qrc:/images/mydata_tile.svg"
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("See my<br>personal data")
 
 			onClicked: root.requestUiModule(UiModule.SELF_AUTHENTICATION)
@@ -48,7 +48,7 @@ SectionPage {
 		Tile {
 			icon.source: "qrc:/images/desktop/settings.svg"
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Settings")
 
 			onClicked: root.requestUiModule(UiModule.SETTINGS)
@@ -56,7 +56,7 @@ SectionPage {
 		Tile {
 			icon.source: "qrc:/images/desktop/help.svg"
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Help")
 
 			onClicked: root.requestUiModule(UiModule.HELP)

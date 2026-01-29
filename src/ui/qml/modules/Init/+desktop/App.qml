@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -96,11 +96,11 @@ ApplicationWindow {
 		property var dominationPopup: null
 		readonly property string hideToTrayText: {
 			if (Qt.platform.os === "osx") {
-				//: INFO DESKTOP Content of the popup that is shown when the AA is closed and the close/minimize info was not disabled. macOS specific if autostart is enabled.
+				//: DESKTOP Content of the popup that is shown when the AA is closed and the close/minimize info was not disabled. macOS specific if autostart is enabled.
 				return qsTr("The program remains available via the icon in the menu bar. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name);
 			}
 
-			//: INFO DESKTOP Content of the popup that is shown when the AA is closed and the close/minimize info was not disabled.
+			//: DESKTOP Content of the popup that is shown when the AA is closed and the close/minimize info was not disabled.
 			return qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name);
 		}
 		property int lastVisibility: ApplicationWindow.Windowed
@@ -291,10 +291,10 @@ ApplicationWindow {
 	Connections {
 		function onFireAppUpdateDataChanged(pAfterManualRequest) {
 			if (!SettingsModel.appUpdateData.valid) {
-				//: INFO DESKTOP Message that the update data is invalid and can't be used.
+				//: DESKTOP Message that the update data is invalid and can't be used.
 				ApplicationModel.showFeedback(qsTr("Failed to retrieve update information."));
 			} else if (SettingsModel.appUpdateData.updateAvailable) {
-				//: INFO DESKTOP An update was found which matches the current platform, the new version number is shown in the message.
+				//: DESKTOP An update was found which matches the current platform, the new version number is shown in the message.
 				ApplicationModel.showFeedback(qsTr("An update is available (version %1).").arg(SettingsModel.appUpdateData.version));
 			}
 		}

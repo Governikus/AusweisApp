@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -13,7 +13,7 @@ import Governikus.View
 Item {
 	id: root
 
-	//: LABEL DESKTOP %1 is the current selected Page of %2 Pages
+	//: DESKTOP %1 is the current selected Page of %2 Pages
 	readonly property string a11yPageIndicator: qsTr("%1 of %2").arg(index + 1).arg(ListView.view.count)
 	property int highlightedIndex: -1
 	required property int index
@@ -36,9 +36,9 @@ Item {
 		}
 
 		let a11yRole = index === ListView.view.currentIndex ?
-		//: LABEL DESKTOP
+		//: DESKTOP
 		qsTr("Tab selected") :
-		//: LABEL DESKTOP
+		//: DESKTOP
 		qsTr("Tab");
 
 		return sectionName.text + ", " + a11yRole + ", " + a11yPageIndicator;
@@ -61,7 +61,7 @@ Item {
 	}
 	RoundedRectangle {
 		anchors.fill: parent
-		borderColor: colors.paneBorder
+		border.color: colors.paneBorder
 		bottomLeftCorner: root.isLastItem
 		bottomRightCorner: root.isLastItem
 		color: colors.paneBackground

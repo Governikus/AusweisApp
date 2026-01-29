@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetSelfAuthenticationData.h"
@@ -30,7 +30,7 @@ void StateGetSelfAuthenticationData::setProgress() const
 {
 	const auto& context = getContext();
 	Q_ASSERT(context);
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	context->setProgress(100, tr("Getting results from server"));
 }
 

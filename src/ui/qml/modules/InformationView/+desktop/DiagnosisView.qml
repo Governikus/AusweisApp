@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -15,7 +15,7 @@ import Governikus.Type
 SectionPage {
 	id: root
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("System data")
 
 	titleBarSettings: TitleBarSettings {
@@ -82,13 +82,13 @@ SectionPage {
 			Accessible.description: qsTr("Save system data to textfile")
 			anchors.fill: parent
 			anchors.rightMargin: Style.dimens.groupbox_spacing
-			//: LABEL DESKTOP
+			//: DESKTOP
 			disabledTooltipText: qsTr("Diagnosis is still running")
 			enableButton: !diagnosisModel.running || !timeout.running
-			//: LABEL DESKTOP
+			//: DESKTOP
 			enabledTooltipText: diagnosisModel.running ? qsTr("Diagnosis may be incomplete") : ""
 			icon.source: "qrc:///images/desktop/save_icon.svg"
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Save to file")
 			tintIcon: true
 
@@ -101,10 +101,10 @@ SectionPage {
 				id: fileDialog
 
 				defaultSuffix: "txt"
-				//: LABEL DESKTOP
+				//: DESKTOP
 				nameFilters: qsTr("Textfiles (*.txt)")
 
-				//: LABEL DESKTOP
+				//: DESKTOP
 				title: qsTr("Save system data")
 
 				onAccepted: diagnosisModel.saveToFile(selectedFile)

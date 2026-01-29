@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -23,12 +23,12 @@ ColumnLayout {
 
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		description: qsTr("Set by yourself or received by the PIN Reset Service")
 		icon.source: "qrc:///images/icon_six_digit_pin.svg"
 		isPane: true
 
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("6-digit PIN")
 
 		onClicked: root.sixDigitPin()
@@ -38,12 +38,12 @@ ColumnLayout {
 
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		description: qsTr("Received by letter while ordering your ID card")
 		icon.source: "qrc:///images/icon_five_digit_pin.svg"
 		isPane: true
 
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("5-digit Transport PIN")
 
 		onClicked: root.fiveDigitPin()
@@ -53,12 +53,12 @@ ColumnLayout {
 
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		description: qsTr("Lost, forgotten, or never received it")
 		icon.source: "qrc:///images/material_block.svg"
 		isPane: true
 
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("No PIN")
 
 		onClicked: root.noPinAvailable()

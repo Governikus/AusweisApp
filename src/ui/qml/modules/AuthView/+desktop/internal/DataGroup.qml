@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -34,7 +34,7 @@ ColumnLayout {
 	GText {
 		id: dataTitle
 
-		color: root.writeAccess ? Style.color.textNormal.basic : textStyle.textColor
+		color: root.writeAccess ? Style.color.textNormal.basic_unchecked : textStyle.textColor
 		textStyle: Style.text.headline
 
 		onFocusChanged: if (focus)
@@ -78,7 +78,7 @@ ColumnLayout {
 					font.pixelSize: Style.dimens.text
 				}
 				GText {
-					//: LABEL DESKTOP
+					//: DESKTOP
 					Accessible.name: qsTr("%1, required right, element %2 of %3").arg(text).arg(delegateItem.index + 1).arg(repeater.count)
 					anchors.fill: parent
 					focusFrameVisible: false
@@ -100,7 +100,7 @@ ColumnLayout {
 					}
 				}
 				GCheckBox {
-					//: LABEL DESKTOP
+					//: DESKTOP
 					Accessible.name: qsTr("%1, optional right, element %2 of %3").arg(text).arg(delegateItem.index + 1).arg(repeater.count)
 					anchors.fill: parent
 					checked: delegateItem.selected

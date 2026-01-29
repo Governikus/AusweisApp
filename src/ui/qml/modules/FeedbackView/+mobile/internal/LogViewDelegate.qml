@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -49,7 +49,7 @@ Rectangle {
 			topMargin: anchors.bottomMargin
 		}
 		LogText {
-			color: Style.color.textSubline.basic
+			color: Style.color.textSubline.basic_unchecked
 			maximumLineCount: 8
 			text: root.origin
 		}
@@ -66,7 +66,7 @@ Rectangle {
 
 		onPressAndHold: {
 			ApplicationModel.setClipboardText(root.modelData);
-			//: INFO ANDROID IOS Toast message used to confirm the copy of a log entry.
+			//: MOBILE Toast message used to confirm the copy of a log entry.
 			ApplicationModel.showFeedback(qsTr("The log entry was copied to the clipboard."));
 		}
 	}

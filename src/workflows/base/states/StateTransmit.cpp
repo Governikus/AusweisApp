@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -55,7 +55,7 @@ void StateTransmit::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 
 void StateTransmit::onEntry(QEvent* pEvent)
 {
-	//: INFO ALL_PLATFORMS Status message after the PIN was entered, communication between eID server and card is running.
+	//: ALL_PLATFORMS Status message after the PIN was entered, communication between eID server and card is running.
 	getContext()->setProgress(60, tr("Reading data"));
 	AbstractState::onEntry(pEvent);
 }

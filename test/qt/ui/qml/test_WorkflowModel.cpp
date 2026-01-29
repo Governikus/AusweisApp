@@ -1,22 +1,29 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
 
-#include "Env.h"
-#include "MockCardConnectionWorker.h"
-#include "MockReaderManagerPlugin.h"
+#include "AppSettings.h"
+#include "ApplicationModel.h"
+#include "ProviderConfiguration.h"
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
+#include "SmartModel.h"
+
+#include "MockCardConnectionWorker.h"
+#include "MockReaderManagerPlugin.h"
+#include "TestHookThread.h"
 #include "TestWorkflowContext.h"
 
 #include <QDebug>
 #include <QFile>
+#include <QPointer>
 #include <QtTest>
 
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -34,6 +41,10 @@ class test_WorkflowModel
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+
+			Env::getSingleton<AppSettings>(); // just init in MainThread because of QObject
+			Env::getSingleton<ApplicationModel>(); // just init in MainThread because of QObject
+			Env::getSingleton<SmartModel>(); // just init in MainThread because of QObject
 
 			ResourceLoader::getInstance().init();
 		}
@@ -89,28 +100,25 @@ class test_WorkflowModel
 
 		void test_IsBasicReader()
 		{
-			QThread connectionThread;
-			connectionThread.start();
+			TestHookThread connectionThread;
 
-			WorkflowModel model;
-			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+			{
+				WorkflowModel model;
+				QVERIFY(model.isBasicReader());
 
-			QVERIFY(model.isBasicReader());
+				QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+				model.resetWorkflowContext(context);
+				QVERIFY(model.isBasicReader());
 
-			model.mContext = context;
-			QVERIFY(model.isBasicReader());
+				QPointer<MockReader> reader = new MockReader();
+				reader->setInfoBasicReader(false);
+				const auto& worker = MockCardConnectionWorker::create(&connectionThread, reader);
+				context->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+				QVERIFY(!model.isBasicReader());
 
-			MockReader reader;
-			reader.setInfoBasicReader(false);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
-			worker->moveToThread(&connectionThread);
-			QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			context->setCardConnection(connection);
-			model.mContext = context;
-			QVERIFY(!model.isBasicReader());
-
-			connectionThread.quit();
-			connectionThread.wait();
+				model.resetWorkflowContext();
+				context.reset();
+			}
 		}
 
 
@@ -230,6 +238,82 @@ class test_WorkflowModel
 			model->resetWorkflowContext(context);
 
 			QCOMPARE(model->getStatusCodeDisplayString(), result);
+		}
+
+
+		void test_getStatusHint_data()
+		{
+			QTest::addColumn<bool>("prs");
+			QTest::addColumn<GlobalStatus::Code>("statusCode");
+			QTest::addColumn<QString>("box");
+			QTest::addColumn<QString>("title");
+			QTest::addColumn<QString>("text");
+			QTest::addColumn<QString>("action");
+
+			QTest::addRow("no_prs_No_error") << false << GlobalStatus::Code::No_Error << QString() << QString() << QString() << QString();
+			QTest::addRow("no_prs_Card_Puk_Blocked") << false << GlobalStatus::Code::Card_Puk_Blocked
+													 << "My PUK is used up. How do I set a new PIN?"
+													 << "At your competent authority" << "You may turn to the competent authority and reset the ID card PIN there."
+													 << "Find competent authority";
+			QTest::addRow("no_prs_Card_Pin_Deactivated") << false << GlobalStatus::Code::Card_Pin_Deactivated
+														 << "How do I activate the eID function?"
+														 << "At your competent authority"
+														 << "You may turn to your competent authority to activate the eID function."
+														 << "Find competent authority";
+			QTest::addRow("no_prs_Card_ValidityVerificationFailed") << false << GlobalStatus::Code::Card_ValidityVerificationFailed
+																	<< QString()
+																	<< QString()
+																	<< "Contact your local citizens' office (Bürgeramt) to apply for a new ID card or to unblock the ID card."
+																	<< QString();
+
+			QTest::addRow("prs_No_error") << true << GlobalStatus::Code::No_Error << QString() << QString() << QString() << QString();
+			QTest::addRow("prs_Card_Puk_Blocked") << true << GlobalStatus::Code::Card_Puk_Blocked
+												  << "My PUK is used up. How do I set a new PIN?"
+												  << "Online via PIN Reset Service"
+												  << "You may request a PIN Reset Letter with a new PIN and it's according activation code on the following website."
+												  << "Request PIN Reset Letter";
+			QTest::addRow("prs_Card_Pin_Deactivated") << true << GlobalStatus::Code::Card_Pin_Deactivated
+													  << "How do I activate the eID function?"
+													  << "Online via PIN Reset Service"
+													  << "You may request a PIN Reset Letter with a new PIN and it's according activation code on the following website to activate the eID function."
+													  << "Request PIN Reset Letter";
+			QTest::addRow("prs_Card_ValidityVerificationFailed") << true << GlobalStatus::Code::Card_ValidityVerificationFailed
+																 << QString()
+																 << QString()
+																 << "Contact your local citizens' office (Bürgeramt) to apply for a new ID card or to unblock the ID card."
+																 << QString();
+		}
+
+
+		void test_getStatusHint()
+		{
+			QFETCH(bool, prs);
+			QFETCH(GlobalStatus::Code, statusCode);
+			QFETCH(QString, box);
+			QFETCH(QString, title);
+			QFETCH(QString, text);
+			QFETCH(QString, action);
+
+			WorkflowModel model;
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+			model.resetWorkflowContext(context);
+			QCOMPARE(model.getStatusHintTitle(), QString());
+
+			auto* config = Env::getSingleton<ProviderConfiguration>();
+			if (prs)
+			{
+				config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
+			}
+			else
+			{
+				config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
+			}
+			context->setStatus(statusCode);
+
+			QCOMPARE(model.getStatusHintBoxesTitle(), box);
+			QCOMPARE(model.getStatusHintTitle(), title);
+			QCOMPARE(model.getStatusHintText(), text);
+			QCOMPARE(model.getStatusHintActionText(), action);
 		}
 
 

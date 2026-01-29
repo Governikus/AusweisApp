@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 2.4.1
+^^^^^^^^^^^^^
+* The Container-SDK now only contains necessary libraries instead of a complete distribution package manager.
+
+
 Version 2.4.0
 ^^^^^^^^^^^^^
 * Updated Android NDK to r28c (28.2.13676358).

@@ -1,37 +1,38 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "CVCertificate.h"
 #include "CVCertificateChain.h"
-#include "ChainBuilder.h"
 #include "pinpad/EstablishPaceChannelOutput.h"
 
+class test_CVCertificateChainBuilder;
 
 namespace governikus
 {
 
 class CVCertificateChainBuilder
-	: private ChainBuilder<QSharedPointer<const CVCertificate>>
 {
+	friend class ::test_CVCertificateChainBuilder;
+
 	private:
-		bool mProductive;
+		QList<QList<QSharedPointer<const CVCertificate>>> mChains;
 
-		static bool isChild(const QSharedPointer<const CVCertificate>& pChild, const QSharedPointer<const CVCertificate>& pParent);
-
-		void removeInvalidChains();
+		void buildChains(
+			const QMultiMap<QByteArray, QSharedPointer<const CVCertificate>>& pPool,
+			const QList<QSharedPointer<const CVCertificate>>& pChain);
 
 		[[nodiscard]] CVCertificateChain getChainForCertificationAuthority(const QByteArray& pCar) const;
 
 	public:
-		explicit CVCertificateChainBuilder(bool pProductive = true);
+		explicit CVCertificateChainBuilder();
 
 		/*!
 		 * Creates a new instance. All chains are build using the CVCs passed in as parameter.
 		 */
-		explicit CVCertificateChainBuilder(const QList<QSharedPointer<const CVCertificate>>& pCvcPool, bool pProductive);
+		explicit CVCertificateChainBuilder(const QList<QSharedPointer<const CVCertificate>>& pCvcPool);
 
 
 		/*!

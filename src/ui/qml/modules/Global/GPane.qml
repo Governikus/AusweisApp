@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -13,7 +13,7 @@ GPaneBackground {
 
 	property int contentPadding: Style.dimens.pane_padding
 	property alias contentSpacing: paneContent.spacing
-	default property alias data: paneContent.data
+	default property alias paneData: paneContent.data
 	property alias spacing: containerCol.spacing
 	property alias title: titleText.text
 	property int titleMargins: Style.dimens.pane_padding

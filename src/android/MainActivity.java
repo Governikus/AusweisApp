@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -7,6 +7,8 @@ package com.governikus.ausweisapp2;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.ActivityNotFoundException;
@@ -23,7 +25,6 @@ import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
@@ -32,24 +33,31 @@ import android.view.accessibility.AccessibilityManager;
 import org.qtproject.qt.android.QtNative;
 import org.qtproject.qt.android.bindings.QtActivity;
 
-import androidx.core.view.ViewCompat;
-
 
 public class MainActivity extends QtActivity
 {
 	private static Intent cIntent;
 
-	private final MarginLayoutParams windowInsets = new MarginLayoutParams(0, 0);
 
 	private NfcReaderMode mNfcReaderMode;
 	private boolean mIsResumed;
+	private boolean mScreenRecordingRunning;
 
 	private boolean mIsScreenReaderRunning;
 
+	private final Consumer<Integer> mScreenRecordingCallback = state -> {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) // API 35, Android 15
+		{
+			mScreenRecordingRunning = state == WindowManager.SCREEN_RECORDING_STATE_VISIBLE;
+			notifyScreenRecordingChanged();
+		}
+	};
+
 	// Native methods provided by UiPluginQml
-	public static native void notifySafeAreaMarginsChanged();
 	public static native void notifyConfigurationChanged();
+	// Native methods provided by ApplicationModel
 	public static native void notifyScreenReaderRunningChanged();
+	public static native void notifyScreenRecordingChanged();
 
 	private class NfcReaderMode
 	{
@@ -144,7 +152,7 @@ public class MainActivity extends QtActivity
 	{
 		if (pIntent != null && "org.chromium.arc.intent.action.VIEW".equals(pIntent.getAction()))
 		{
-			LogHandler.getLogger().info("Convert Intent action " + pIntent.getAction() + " to " + Intent.ACTION_VIEW);
+			LogHandler.getLogger().log(Level.INFO, () -> "Convert Intent action " + pIntent.getAction() + " to " + Intent.ACTION_VIEW);
 			pIntent.setAction(Intent.ACTION_VIEW);
 		}
 	}
@@ -156,7 +164,7 @@ public class MainActivity extends QtActivity
 		setTheme(R.style.AppTheme);
 
 		convertChromeOsIntent(getIntent());
-		LogHandler.getLogger().info("onCreate: " + getIntent());
+		LogHandler.getLogger().log(Level.INFO, () -> "onCreate: " + getIntent());
 		super.onCreate(savedInstanceState);
 
 		cIntent = getIntent();
@@ -166,17 +174,6 @@ public class MainActivity extends QtActivity
 		// Handle systemWindowInsets
 		Window window = getWindow();
 		View rootView = window.getDecorView().findViewById(android.R.id.content);
-		ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) ->
-				{
-					windowInsets.topMargin = insets.getSystemWindowInsetTop();
-					windowInsets.leftMargin = insets.getSystemWindowInsetLeft();
-					windowInsets.rightMargin = insets.getSystemWindowInsetRight();
-					windowInsets.bottomMargin = insets.getSystemWindowInsetBottom();
-
-					notifySafeAreaMarginsChanged();
-
-					return insets;
-				});
 
 		// Make statusbar and navigation bar transparent
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) // API 29, Android 10
@@ -225,12 +222,36 @@ public class MainActivity extends QtActivity
 		convertChromeOsIntent(newIntent);
 		cIntent = newIntent;
 		setIntent(newIntent);
-		LogHandler.getLogger().info("onNewIntent: " + newIntent);
+		LogHandler.getLogger().log(Level.INFO, () -> "onNewIntent: " + newIntent);
 		super.onNewIntent(newIntent);
 	}
 
 
 	private native void setReaderModeNative(boolean pEnabled);
+
+	@Override
+	protected void onStart()
+	{
+		super.onStart();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) // API 35, Android 15
+		{
+			WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+			int initialState = windowManager.addScreenRecordingCallback(getMainExecutor(), mScreenRecordingCallback);
+			mScreenRecordingCallback.accept(initialState);
+		}
+	}
+
+
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) // API 35, Android 15
+		{
+			WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+			windowManager.removeScreenRecordingCallback(mScreenRecordingCallback);
+		}
+	}
 
 
 	@Override
@@ -256,7 +277,7 @@ public class MainActivity extends QtActivity
 	@Override
 	protected void onDestroy()
 	{
-		LogHandler.getLogger().info("onDestroy");
+		LogHandler.getLogger().log(Level.INFO, () -> "onDestroy");
 		super.onDestroy();
 	}
 
@@ -288,7 +309,7 @@ public class MainActivity extends QtActivity
 
 	public void keepScreenOn(boolean pActivate)
 	{
-		LogHandler.getLogger().info("Keep screen on: " + pActivate);
+		LogHandler.getLogger().log(Level.INFO, () -> "Keep screen on: " + pActivate);
 		if (pActivate)
 		{
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -300,15 +321,29 @@ public class MainActivity extends QtActivity
 	}
 
 
+	public void preventScreenshot(boolean pPrevent)
+	{
+		LogHandler.getLogger().log(Level.INFO, () -> "Prevent screenshot: " + pPrevent);
+		if (pPrevent)
+		{
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+		}
+		else
+		{
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+		}
+	}
+
+
 	public boolean isScreenReaderRunning()
 	{
 		return mIsScreenReaderRunning;
 	}
 
 
-	public MarginLayoutParams getWindowInsets()
+	public boolean isScreenRecordingRunning()
 	{
-		return windowInsets;
+		return mScreenRecordingRunning;
 	}
 
 
@@ -321,11 +356,11 @@ public class MainActivity extends QtActivity
 		try
 		{
 			startActivity(intent);
-			LogHandler.getLogger().info("Started Intent in browser with id " + pReferrer);
+			LogHandler.getLogger().log(Level.INFO, () -> "Started Intent in browser with id " + pReferrer);
 		}
 		catch (ActivityNotFoundException e)
 		{
-			LogHandler.getLogger().warning("Couldn't open URL in browser with id " + pReferrer);
+			LogHandler.getLogger().log(Level.WARNING, () -> "Couldn't open URL in browser with id " + pReferrer);
 			return false;
 		}
 		return true;
@@ -381,6 +416,12 @@ public class MainActivity extends QtActivity
 			mIsScreenReaderRunning = isRunning;
 			notifyScreenReaderRunningChanged();
 		}
+	}
+
+
+	public void resetStoredIntent()
+	{
+		cIntent = null;
 	}
 
 

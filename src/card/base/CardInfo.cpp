@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardInfo.h"
@@ -50,19 +50,19 @@ QString CardInfo::getCardTypeString() const
 	switch (mCardType)
 	{
 		case CardType::NONE:
-			//: ERROR ALL_PLATFORMS No card is present/inserted. The text is only used in DiagnosisView.
+			//: ALL_PLATFORMS No card is present/inserted. The text is only used in DiagnosisView.
 			return tr("not inserted", "Karte");
 
 		case CardType::UNKNOWN:
-			//: ERROR ALL_PLATFORMS An unknown card is present/inserted. The text is only used in DiagnosisView.
+			//: ALL_PLATFORMS An unknown card is present/inserted. The text is only used in DiagnosisView.
 			return tr("unknown type", "Karte");
 
 		case CardType::EID_CARD:
-			//: ERROR ALL_PLATFORMS An ID card is present/inserted. The text is only used in DiagnosisView.
+			//: ALL_PLATFORMS An ID card is present/inserted. The text is only used in DiagnosisView.
 			return tr("ID card (PA/eAT/eID)");
 
 		case CardType::SMART_EID:
-			//: ERROR ALL_PLATFORMS A Smart-ID is present/inserted. The text is only used in DiagnosisView.
+			//: ALL_PLATFORMS A Smart-ID is present/inserted. The text is only used in DiagnosisView.
 			return tr("Smart-eID");
 	}
 

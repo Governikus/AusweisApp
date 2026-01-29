@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -14,32 +14,32 @@ TestCase {
 	function test_agree_button() {
 		let testObject = createTestObject();
 		verify(testObject, "Object loaded");
-		testObject.agreeButtonText = "Agree";
-		verify(testObject.agreeButton.visible, "Agree Button visible");
-		verify(!testObject.disagreeButton.visible, "Disagree Button invisible");
+		testObject.primaryButton.text = "Agree";
+		verify(testObject.primaryButton.visible, "Agree Button visible");
+		verify(!testObject.secondaryButton.visible, "Disagree Button invisible");
 	}
 	function test_combination_buttons() {
 		let testObject = createTestObject();
 		verify(testObject, "Object loaded");
-		testObject.agreeButtonText = "Agree";
-		verify(testObject.agreeButton.visible, "Agree Button visible");
-		verify(!testObject.disagreeButton.visible, "Disagree Button invisible");
-		testObject.disagreeButtonText = "Disagree";
-		verify(testObject.agreeButton.visible, "Agree Button visible");
-		verify(testObject.disagreeButton.visible, "Disagree Button visible");
+		testObject.primaryButton.text = "Agree";
+		verify(testObject.primaryButton.visible, "Agree Button visible");
+		verify(!testObject.secondaryButton.visible, "Disagree Button invisible");
+		testObject.secondaryButton.text = "Disagree";
+		verify(testObject.primaryButton.visible, "Agree Button visible");
+		verify(testObject.secondaryButton.visible, "Disagree Button visible");
 	}
 	function test_default_buttons() {
 		let testObject = createTestObject();
 		verify(testObject, "Object loaded");
-		verify(!testObject.agreeButton.visible, "Agree Button invisible");
-		verify(!testObject.disagreeButton.visible, "Disagree Button invisible");
+		verify(!testObject.primaryButton.visible, "Agree Button invisible");
+		verify(!testObject.secondaryButton.visible, "Disagree Button invisible");
 	}
 	function test_disagree_button() {
 		let testObject = createTestObject();
 		verify(testObject, "Object loaded");
-		testObject.disagreeButtonText = "Disagree";
-		verify(!testObject.agreeButton.visible, "Agree Button invisible");
-		verify(testObject.disagreeButton.visible, "Disagree Button visible");
+		testObject.secondaryButton.text = "Disagree";
+		verify(!testObject.primaryButton.visible, "Agree Button invisible");
+		verify(testObject.secondaryButton.visible, "Disagree Button visible");
 	}
 	function test_load() {
 		let testObject = createTestObject();

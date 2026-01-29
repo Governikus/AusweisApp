@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -18,9 +18,9 @@ FlickableSectionPage {
 
 	smartEidUsed: true
 	title: smartMainView.visible ?
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	qsTr("Smart-eID") :
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	qsTr("Check Smart-eID")
 
 	navigationAction: NavigationAction {
@@ -60,7 +60,6 @@ FlickableSectionPage {
 		ChangePinView {
 			autoInsertCard: true
 			hidePinTypeSelection: true
-			hideTechnologySwitch: true
 			initialPlugin: ReaderManagerPluginType.SMART
 
 			Component.onCompleted: ChangePinModel.startWorkflow(false, false)
@@ -72,7 +71,6 @@ FlickableSectionPage {
 
 		SelfAuthenticationView {
 			autoInsertCard: true
-			hideTechnologySwitch: true
 			initialPlugin: ReaderManagerPluginType.SMART
 
 			onBack: root.pop()

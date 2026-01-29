@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQml
@@ -20,20 +20,20 @@ MouseArea {
 		case 8:
 		case 9:
 			if (Style.is_layout_desktop) {
-				//: INFO DESKTOP Used in notifications when the user taps the icon
+				//: DESKTOP Used in notifications when the user taps the icon
 				ApplicationModel.showFeedback(qsTr("%1 more clicks to toggle the environment (prod/test) for integrated functions.").arg(10 - d.counter), true);
 			} else {
-				//: INFO ANDROID IOS Used in notifications when the user taps the icon
+				//: MOBILE Used in notifications when the user taps the icon
 				ApplicationModel.showFeedback(qsTr("%1 more taps to toggle the environment (prod/test) for integrated functions.").arg(10 - d.counter), true);
 			}
 			break;
 		case 10:
 			SettingsModel.useSelfauthenticationTestUri = !SettingsModel.useSelfauthenticationTestUri;
 			if (SettingsModel.useSelfauthenticationTestUri) {
-				//: INFO ALL_PLATFORMS Used in notifications when the user taps the icon
+				//: ALL_PLATFORMS Used in notifications when the user taps the icon
 				ApplicationModel.showFeedback(qsTr("Testmode for the integrated functions activated."), true);
 			} else {
-				//: INFO ALL_PLATFORMS Used in notifications when the user taps the icon
+				//: ALL_PLATFORMS Used in notifications when the user taps the icon
 				ApplicationModel.showFeedback(qsTr("Testmode for the integrated functions deactivated."), true);
 			}
 			d.counter = 0;

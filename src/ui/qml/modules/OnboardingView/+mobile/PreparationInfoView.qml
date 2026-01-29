@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -25,63 +25,61 @@ BaseOnboardingView {
 
 	Heading {
 		Layout.bottomMargin: Style.dimens.pane_spacing
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("What is required to use %1?").arg(Qt.application.name)
 	}
 	Subheading {
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: "1. " + qsTr("Your ID card")
 	}
 	GText {
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("The following documents are allowed:")
 	}
 	GText {
 		readonly property string listelement: "<li><b>%1</b></li>"
 
 		Layout.bottomMargin: Style.dimens.text_spacing
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: "<ul>" + listelement.arg(qsTr("german ID card")) +
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		listelement.arg(qsTr("electronic residence permit")) +
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		listelement.arg(qsTr("eID card for EU citizens")) + "</ul>"
 	}
 	Subheading {
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: "2. " + qsTr("A NFC-enabled smartphone")
 	}
 	GText {
 		Layout.bottomMargin: Style.dimens.pane_spacing
 
-		//: LABEL ANDROID IOS  %1 + %2 = Bold Tags
+		//: MOBILE  %1 + %2 = Bold Tags
 		text: qsTr("The chip in your ID card is read using %1NFC%2. To do this, simply place the ID card on the %1back of the smartphone%2.").arg("<b>").arg("</b>")
 	}
 	Subheading {
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: "3. " + qsTr("Your PIN")
 	}
 	GText {
-		//: LABEL ANDROID IOS  %1 + %2 = Bold Tags, %3 = AusweisApp
+		//: MOBILE  %1 + %2 = Bold Tags, %3 = AusweisApp
 		text: qsTr("You have received a one-time PIN, the %1Transport PIN%2, as a letter from your competent authority. You can replace this with a%1 6-digit card PIN%2 in the %3 or at the Citizens' Registration Office. If you do not have a PIN or do not remember your card PIN, tap here:").arg("<b>").arg("</b>").arg(Qt.application.name)
 	}
 	MoreInformationLink {
-		Layout.bottomMargin: Style.dimens.pane_spacing * 2
-		//: LABEL ANDROID IOS
+		Layout.bottomMargin: Style.dimens.pane_spacing
+		//: MOBILE
 		text: qsTr("I can't recall my PIN")
 
-		onClicked: root.push(multiInfoView)
+		onClicked: root.push(multiInfoViewNoPin)
 	}
 	GContinueButton {
 		onClicked: root.continueOnboarding()
 	}
 	Component {
-		id: multiInfoView
+		id: multiInfoViewNoPin
 
 		MultiInfoView {
-			id: infoView
-
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			continueButtonText: qsTr("Abort setup")
 			progress: root.progress
 

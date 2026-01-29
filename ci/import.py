@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
+import argparse
+import glob
+import os
+import sys
+from pathlib import Path
+
 import hglib
 from hglib.util import b
-
-import argparse
-import os
-import glob
-import sys
-
-from pathlib import Path
 
 
 class CommandLineParser(argparse.ArgumentParser):
@@ -96,7 +95,7 @@ class PatchProcessor:
         with open(self.applied, 'w') as f:
             for patch in self.patch_series:
                 pending = patch not in self.applied_patches
-                print('Apply patch: {} (pending: {})'.format(patch, pending))
+                print(f'Apply patch: {patch} (pending: {pending})')
                 client.import_(
                     [patch.encode('utf-8')],
                     user='CI',
@@ -108,7 +107,7 @@ class PatchProcessor:
                 f.write(patch)
                 f.write('\n')
                 if pending:
-                    print('Pending patch: {}'.format(patch))
+                    print(f'Pending patch: {patch}')
                     break
 
 
@@ -117,7 +116,7 @@ def main():
 
     patch = b(parser.patch)
     if not os.path.isfile(patch):
-        print('Patch file "{}" does not exists'.format(patch))
+        print(f'Patch file "{patch}" does not exists')
         return -1
 
     if 'CI' not in os.environ:
@@ -143,7 +142,7 @@ def main():
         return 0
 
     revs = len(client.log(revrange='secret() or draft()'))
-    print('Found secret/draft changesets: {}'.format(revs))
+    print(f'Found secret/draft changesets: {revs}')
 
     if revs > 0:
         print('Strip secret and draft changesets...')
@@ -165,9 +164,9 @@ def main():
         return 0
 
     if not processor.isSplit():
-        print('Split patch: {}'.format(patch))
+        print(f'Split patch: {patch}')
         processor.split()
-        print('Wrote {} patch(es)'.format(len(processor.patch_series)))
+        print(f'Wrote {len(processor.patch_series)} patch(es)')
 
     processor.apply(client, parser.split)
     return 0

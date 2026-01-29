@@ -11,10 +11,7 @@
 	<string>de_DE</string>
 	<key>CFBundleLocalizations</key>
 	<array>
-		<string>en</string>
-		<string>de</string>
-		<string>uk</string>
-		<string>ru</string>
+		@XML_LANGUAGES@
 	</array>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>

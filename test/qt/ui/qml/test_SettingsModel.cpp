@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -308,6 +308,32 @@ class test_SettingsModel
 			settings->onNfcStateChanged(nfcState);
 			QCOMPARE(settings->getPreferredTechnology(), finalPreferredTechnology);
 			QCOMPARE(spy.count(), 1);
+		}
+
+
+		void testScreenPrivacy()
+		{
+			const auto* model = Env::getSingleton<SettingsModel>();
+			QSignalSpy spy(model, &SettingsModel::fireScreenPrivacyChanged);
+
+			QCOMPARE(spy.count(), 0);
+			QCOMPARE(model->isScreenPrivacy(), true);
+
+			model->setScreenPrivacy(false);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(model->isScreenPrivacy(), false);
+
+			model->setScreenPrivacy(false);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(model->isScreenPrivacy(), false);
+
+			model->setScreenPrivacy(true);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(model->isScreenPrivacy(), true);
+
+			model->setScreenPrivacy(true);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(model->isScreenPrivacy(), true);
 		}
 
 

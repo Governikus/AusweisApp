@@ -1,0 +1,48 @@
+From 8d9129f46a54fc9e2066b473086b51fa37d7641f Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Sat, 3 Jan 2026 11:10:44 +0100
+Subject: Make finding optional components quiet
+
+* Gui and QML are conditions of the features in configure.cmake.
+* QuickTest is only required by tests/auto/qmltests.
+  Add check for QuickTest for this folder.
+
+Pick-to: 6.11
+Change-Id: I392468bc9a9002f0da6622ea49d1a0e9b942439e
+Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
+(cherry picked from commit e36c734c07a8c69d0cee48989e4b9c10e9901b21)
+---
+ CMakeLists.txt            | 2 +-
+ tests/auto/CMakeLists.txt | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git x/qtscxml/CMakeLists.txt y/qtscxml/CMakeLists.txt
+index 8944a9908720b290a4cb36bc0c35df3b29a1eec6..468b98fcb513e162ced4b5e8fc88778833cfc548 100644
+--- x/qtscxml/CMakeLists.txt
++++ y/qtscxml/CMakeLists.txt
+@@ -12,7 +12,7 @@ project(QtScxml
+ )
+ 
+ find_package(Qt6 ${PROJECT_VERSION} CONFIG REQUIRED COMPONENTS BuildInternals Core)
+-find_package(Qt6 ${PROJECT_VERSION} CONFIG OPTIONAL_COMPONENTS Gui Qml QuickTest)
++find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Gui Qml QuickTest)
+ find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Widgets Network)
+ qt_internal_project_setup()
+ 
+diff --git x/qtscxml/tests/auto/CMakeLists.txt y/qtscxml/tests/auto/CMakeLists.txt
+index 7709322f4a91d19babba45e06428d731213492c9..c25c9c17944b8ebd1683cf863328c00fc1e8e959 100644
+--- x/qtscxml/tests/auto/CMakeLists.txt
++++ y/qtscxml/tests/auto/CMakeLists.txt
+@@ -15,9 +15,10 @@ if(TARGET Qt::Gui AND TARGET Qt::Qml)
+             add_subdirectory(cmake)
+         endif()
+     endif()
+-    # More checks inside
+     add_subdirectory(qml)
+-    add_subdirectory(qmltest)
++    if(TARGET Qt::QuickTest)
++        add_subdirectory(qmltest)
++    endif()
+ endif()
+ if(NOT UIKIT AND TARGET Qt::StateMachine)
+     add_subdirectory(qstatemachine)

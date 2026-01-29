@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -21,7 +21,7 @@ SectionPage {
 
 	signal requestUiModule(var pUiModule)
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("Help")
 
 	titleBarSettings: TitleBarSettings {
@@ -40,15 +40,15 @@ SectionPage {
 		anchors.fill: parent
 		contentRightMargin: currentContentItem instanceof LicenseInformation || currentContentItem instanceof ReleaseNotes ? 0 : Style.dimens.pane_padding
 		sectionsModel: [
-			//: LABEL DESKTOP
+			//: DESKTOP
 			qsTr("General"),
-			//: LABEL DESKTOP
+			//: DESKTOP
 			qsTr("Data and logs"),
-			//: LABEL DESKTOP
+			//: DESKTOP
 			qsTr("Information"),
-			//: LABEL DESKTOP
+			//: DESKTOP
 			qsTr("Software license"),
-			//: LABEL DESKTOP
+			//: DESKTOP
 			qsTr("Release notes")]
 
 		contentObjectModel: ObjectModel {

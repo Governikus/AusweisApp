@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CertificateDescriptionModel.h"
@@ -65,28 +65,28 @@ void CertificateDescriptionModel::initModelData(const QSharedPointer<const Certi
 	const QString termsOfUsage = pCertDescription->getTermsOfUsage().remove(QLatin1Char('\r')).replace(QLatin1Char('\t'), QLatin1Char(' '));
 	const bool showDetailedProviderInfo = !(serviceProviderAddress.isEmpty() || purpose.isEmpty() || dataSecurityOfficer.isEmpty());
 
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	mData += std::make_pair(tr("Provider"), getSubjectName() + QLatin1Char('\n') + getSubjectUrl());
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	mData += std::make_pair(tr("Certificate issuer"), pCertDescription->getIssuerName() + QLatin1Char('\n') + pCertDescription->getIssuerUrl());
 	if (showDetailedProviderInfo)
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		mData += std::make_pair(tr("Name, address and mail address of the provider"), serviceProviderAddress);
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		mData += std::make_pair(tr("Purpose"), purpose);
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		mData += std::make_pair(tr("Indication of the bodies responsible for the provider, "
 								   "that verify the compliance with data security regulations"), dataSecurityOfficer);
 	}
 	else if (!termsOfUsage.isEmpty())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		mData += std::make_pair(tr("Provider Information"), termsOfUsage);
 	}
 	if (!getValidity().isEmpty())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		mData += std::make_pair(tr("Validity"), getValidity());
 	}
 }

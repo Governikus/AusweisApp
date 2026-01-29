@@ -1,12 +1,11 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateRedirectBrowser.h"
 
 #include "states/StateBuilder.h"
 
-#include <QThread>
 #include <QtCore>
 #include <QtTest>
 

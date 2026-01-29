@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -21,7 +21,7 @@ ColumnLayout {
 	signal startDownload
 
 	GText {
-		//: LABEL DESKTOP %1 is replaced with the version number of the software update.
+		//: DESKTOP %1 is replaced with the version number of the software update.
 		text: qsTr("The update (version %1) is being performed...").arg(root.version)
 		visible: root.downloadInProgress
 	}
@@ -31,7 +31,7 @@ ColumnLayout {
 		readonly property string localeDownloadedKB: root.downloadProgressKB.toLocaleString(Qt.locale(SettingsModel.language), "f", 0)
 		readonly property string localeTotalKB: root.downloadTotalKB.toLocaleString(Qt.locale(SettingsModel.language), "f", 0)
 
-		//: LABEL DESKTOP Name of an progress indicator during a download read by screen readers
+		//: DESKTOP Name of an progress indicator during a download read by screen readers
 		Accessible.name: qsTr("Download progress")
 		Layout.fillWidth: true
 		text: "%1 %".arg(Math.floor(bar.value))
@@ -40,7 +40,7 @@ ColumnLayout {
 	}
 	GButton {
 		enabledTooltipText: SettingsModel.appUpdateData.url
-		//: LABEL DESKTOP Start to download the update and execute it on Windows
+		//: DESKTOP Start to download the update and execute it on Windows
 		text: qsTr("Start update")
 		visible: !root.downloadInProgress
 
@@ -52,7 +52,7 @@ ColumnLayout {
 		colorStyle: Style.color.linkTitle
 		font.underline: true
 		horizontalPadding: 0
-		//: LABEL DESKTOP Cancel the download of the update on Windows
+		//: DESKTOP Cancel the download of the update on Windows
 		text: qsTr("Cancel update")
 		visible: root.downloadInProgress
 

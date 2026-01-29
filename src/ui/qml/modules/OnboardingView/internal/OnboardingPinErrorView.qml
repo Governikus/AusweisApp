@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -19,22 +19,42 @@ DecisionView {
 	signal pukBlocked
 	signal tryAgain
 
-	//: LABEL ALL_PLATFORMS
-	agreeButtonText: ChangePinModel.pukInoperative ? "" : qsTr("Try again")
 	descriptionTextsModel: [ChangePinModel.resultString]
-	disagreeButtonHighlighted: ChangePinModel.pukInoperative
+	primaryButton.text: {
+		return ChangePinModel.pukInoperative ?
+		//: ALL_PLATFORMS
+		qsTr("Abort setup") :
+		//: ALL_PLATFORMS
+		qsTr("Try again");
+	}
+	//: ALL_PLATFORMS
+	secondaryButton.text: ChangePinModel.pukInoperative ? "" : qsTr("Abort setup")
 
-	//: LABEL ALL_PLATFORMS
-	disagreeButtonText: qsTr("Abort setup")
+	customContentSourceComponent: ColumnLayout {
+		spacing: Style.dimens.pane_spacing
 
-	customContentSourceComponent: Hint {
-		Layout.fillWidth: true
-		buttonText: ChangePinModel.statusHintActionText
-		text: ChangePinModel.statusHintText
-		title: ChangePinModel.statusHintTitle
-		visible: text !== ""
+		GText {
+			text: ChangePinModel.statusHintBoxesTitle
+			textStyle: Style.text.subline
+			visible: text !== ""
+		}
+		Hint {
+			Layout.fillWidth: true
+			buttonText: ChangePinModel.statusHintActionText
+			text: ChangePinModel.statusHintText
+			title: ChangePinModel.statusHintTitle
+			visible: text !== ""
 
-		onClicked: ChangePinModel.invokeStatusHintAction()
+			onClicked: ChangePinModel.invokeStatusHintAction()
+		}
+		Hint {
+			Layout.fillWidth: true
+			buttonText: PinResetInformationModel.resetPinAtAuthorityActionText
+			linkToOpen: PinResetInformationModel.administrativeSearchUrl
+			text: Utils.getSecondPRSHintText(ChangePinModel.statusCode)
+			title: PinResetInformationModel.resetPinAtAuthorityHintTitle
+			visible: text !== ""
+		}
 	}
 	iconSourceComponent: Column {
 		TintableIcon {
@@ -54,6 +74,6 @@ DecisionView {
 		}
 	}
 
-	onAgreeClicked: root.tryAgain()
-	onDisagreeClicked: ChangePinModel.pukInoperative ? root.pukBlocked() : root.abort()
+	onPrimaryButtonClicked: ChangePinModel.pukInoperative ? root.pukBlocked() : root.tryAgain()
+	onSecondaryButtonClicked: root.abort()
 }

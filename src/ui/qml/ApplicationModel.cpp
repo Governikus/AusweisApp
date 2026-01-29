@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -328,7 +328,24 @@ void ApplicationModel::keepScreenOn(bool pActive) const
 }
 
 
+bool ApplicationModel::isScreenRecording() const
+{
+	return false;
+}
+
+
 #endif
+
+
+#if !defined(Q_OS_ANDROID)
+void ApplicationModel::preventScreenshot(bool pPrevent) const
+{
+	Q_UNUSED(pPrevent)
+}
+
+
+#endif
+
 
 QStringList ApplicationModel::getLicenseText() const
 {

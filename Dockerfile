@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION=3.22
+ARG ALPINE_VERSION=3.23
 
 FROM alpine:$ALPINE_VERSION AS builder
 # Install development stuff
@@ -43,25 +43,30 @@ RUN strip /app/bin/AusweisApp && \
     find /app/ -type f -name "*.so*" -exec strip {} + && \
     find /app/ -type d -empty -delete
 
+# Build clean file system
+RUN mkdir /chroot && \
+    cp -r --parents /etc/apk /chroot && \
+    cp -r --parents /app/lib /chroot && \
+    cp -r --parents /app/share /chroot && \
+    cp --parents /app/plugins/tls/libqopensslbackend.so /chroot && \
+    cp --parents /app/bin/AusweisApp /chroot && \
+    install -d -m 777 /chroot/tmp && \
+    apk --no-cache --root /chroot --initdb add \
+        busybox-static alpine-baselayout-data libstdc++ pcsc-lite-libs eudev-libs && \
+    mkdir -p /chroot/home/ausweisapp/.config && \
+    mkdir -p /chroot/usr/local/bin && \
+    mkdir -p /chroot/usr/local/share && \
+    ln -s /app/bin/AusweisApp /chroot/usr/local/bin && \
+    ln -s /app/share/* /chroot/usr/local/share && \
+    chroot /chroot busybox.static adduser ausweisapp -D && \
+    chroot /chroot busybox.static chown ausweisapp: /home/ausweisapp/.config && \
+    chroot /chroot busybox.static rm -rf /etc/apk /lib/apk /var /bin
 
-
-FROM alpine:$ALPINE_VERSION
-# Copy to image
-COPY --from=builder /app/plugins /app/plugins
-COPY --from=builder /app/lib /app/lib
-COPY --from=builder /app/share /app/share
-COPY --from=builder /app/bin/AusweisApp /app/bin/AusweisApp
-
-RUN apk --no-cache upgrade -a && \
-    apk --no-cache add tini libstdc++ pcsc-lite-libs eudev-libs doas && \
-    echo 'permit nopass :wheel' > /etc/doas.d/wheel.conf && \
-    adduser ausweisapp -G wheel -s /bin/sh -D && \
-    mkdir -p /home/ausweisapp/.config && chown ausweisapp: /home/ausweisapp/.config && \
-    ln -s /app/bin/* /usr/local/bin && \
-    ln -s /app/share/* /usr/local/share
+FROM scratch
+COPY --from=builder /chroot/ /
 
 USER ausweisapp
 VOLUME ["/home/ausweisapp/.config"]
-ENTRYPOINT ["/sbin/tini", "--"]
+ENTRYPOINT ["/usr/local/bin/AusweisApp"]
 EXPOSE 24727
-CMD ["AusweisApp", "--address", "0.0.0.0", "--no-logfile"]
+CMD ["--address", "0.0.0.0", "--no-logfile"]

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -21,7 +21,7 @@ OnboardingStartView {
 
 	readonly property var readerPlugin: ApplicationModel.nfcState === ApplicationModel.NfcState.UNAVAILABLE ? ReaderManagerPluginType.REMOTE_IFD : ReaderManagerPluginType.NFC
 
-	onContinueOnboarding: ApplicationModel.nfcState === ApplicationModel.NfcState.UNAVAILABLE ? push(preparationInfoView) : push(primaryDeviceDecision)
+	onContinueOnboarding: ApplicationModel.nfcState === ApplicationModel.NfcState.UNAVAILABLE ? push(preparationInfoView) : push(primaryDeviceDecisionView)
 	onSkipOnboarding: exitOnboarding()
 
 	ProgressTracker {
@@ -31,7 +31,7 @@ OnboardingStartView {
 		stages: 2
 	}
 	Component {
-		id: primaryDeviceDecision
+		id: primaryDeviceDecisionView
 
 		PrimaryDeviceDecisionView {
 			title: root.title
@@ -65,15 +65,15 @@ OnboardingStartView {
 			}
 
 			onAbortWithUnknownPin: root.push(onboardingFailedView)
-			onContinueOnboarding: root.push(setupInfoView)
+			onContinueOnboarding: root.push(multiInfoViewOnboardingSetupMobile)
 			onLeaveView: root.pop()
 		}
 	}
 	Component {
-		id: setupInfoView
+		id: multiInfoViewOnboardingSetupMobile
 
 		MultiInfoView {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			continueButtonText: qsTr("Continue")
 			title: root.title
 
@@ -97,7 +97,7 @@ OnboardingStartView {
 					root.push(noNfcSuggestion);
 				} else {
 					SettingsModel.preferredTechnology = ReaderManagerPluginType.NFC;
-					root.push(checkIDCard);
+					root.push(checkIDCardWorkflow);
 				}
 			}
 			onLeaveView: root.pop()
@@ -149,7 +149,7 @@ OnboardingStartView {
 		}
 	}
 	Component {
-		id: checkIDCard
+		id: checkIDCardWorkflow
 
 		CheckIDCardWorkflow {
 			readerType: SettingsModel.preferredTechnology
@@ -168,12 +168,12 @@ OnboardingStartView {
 				steps: 6
 			}
 
-			onCheckSuccess: root.push(confirmIDCardChecked)
+			onCheckSuccess: root.push(onboardingConfirmStageView)
 			onLeaveView: root.pop()
 			onPinDeactivated: root.push(onboardingFailedView)
 			onRestartCheck: {
 				root.pop();
-				root.push(checkIDCard, {
+				root.push(checkIDCardWorkflow, {
 					readerType: SettingsModel.preferredTechnology
 				});
 			}
@@ -195,7 +195,7 @@ OnboardingStartView {
 
 			onContinueOnboarding: {
 				root.pop();
-				root.push(confirmIDCardChecked);
+				root.push(onboardingConfirmStageView);
 			}
 			onLeaveView: {
 				let itemToPop = root.find(pItem => pItem instanceof CheckIDCardNoNfcSuggestion);
@@ -207,7 +207,7 @@ OnboardingStartView {
 		}
 	}
 	Component {
-		id: confirmIDCardChecked
+		id: onboardingConfirmStageView
 
 		OnboardingConfirmStageView {
 			stage: OnboardingConfirmationViewData.Stage.CHECK_ID_CARD_SAC
@@ -243,7 +243,6 @@ OnboardingStartView {
 			property bool pukBlocked: false
 
 			activateUI: false
-			hideTechnologySwitch: true
 			initialPlugin: root.readerPlugin
 			navigationActionType: NavigationAction.Action.Back
 			onlyCheckPin: true
@@ -321,7 +320,7 @@ OnboardingStartView {
 			onClose: root.pop()
 			onWorkflowFinished: pSuccess => {
 				if (pSuccess) {
-					root.push(startSelfAuth);
+					root.push(selfAuthStartView);
 					return;
 				}
 				if (changePinViewInstance.abortOnboarding) {
@@ -348,11 +347,11 @@ OnboardingStartView {
 		}
 	}
 	Component {
-		id: startSelfAuth
+		id: selfAuthStartView
 
 		SelfAuthStartView {
-			//: LABEL ANDROID IOS
-			disagreeButtonText: qsTr("Skip this step")
+			//: MOBILE
+			secondaryButton.text: qsTr("Skip this step")
 			title: root.title
 
 			navigationAction: NavigationAction {
@@ -360,7 +359,7 @@ OnboardingStartView {
 				enabled: false
 			}
 
-			onDisagreeClicked: root.push(completionView)
+			onSecondaryButtonClicked: root.push(onboardingCompletionView)
 			onStartSelfAuth: {
 				SelfAuthModel.startWorkflow(false);
 				root.push(authView);
@@ -373,7 +372,6 @@ OnboardingStartView {
 		AuthView {
 			property bool backRequested: false
 
-			hideTechnologySwitch: true
 			initialPlugin: root.readerPlugin
 			startedByOnboarding: true
 
@@ -381,13 +379,13 @@ OnboardingStartView {
 			onWorkflowFinished: pWorkflowSuccess => {
 				root.pop();
 				if (pWorkflowSuccess && !backRequested) {
-					root.push(completionView);
+					root.push(onboardingCompletionView);
 				}
 			}
 		}
 	}
 	Component {
-		id: completionView
+		id: onboardingCompletionView
 
 		OnboardingCompletionView {
 			title: root.title
@@ -398,7 +396,7 @@ OnboardingStartView {
 				onClicked: root.pop()
 			}
 
-			onAgreeClicked: root.exitOnboarding()
+			onPrimaryButtonClicked: root.exitOnboarding()
 		}
 	}
 }

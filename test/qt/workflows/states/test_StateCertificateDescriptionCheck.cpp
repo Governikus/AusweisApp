@@ -1,11 +1,10 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCertificateDescriptionCheck.h"
 
 #include "asn1/ASN1Util.h"
-#include "asn1/CVCertificate.h"
 #include "context/AuthContext.h"
 #include "states/StateBuilder.h"
 
@@ -13,9 +12,9 @@
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
-#include <QThread>
 #include <QtCore>
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;

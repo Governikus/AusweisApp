@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,6 +16,7 @@
 
 
 class test_PinResetInformationModel;
+class test_WorkflowModel;
 
 
 namespace governikus
@@ -27,6 +28,7 @@ class ProviderConfiguration
 	Q_OBJECT
 	friend class Env;
 	friend class ::test_PinResetInformationModel;
+	friend class ::test_WorkflowModel;
 
 	private:
 		const QSharedPointer<UpdatableFile> mUpdatableFile;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -60,26 +60,36 @@ using CVCertificate = struct cvcertificate_st
 
 	[[nodiscard]] bool isValidOn(const QDateTime& pValidationDate) const;
 	[[nodiscard]] bool isIssuedBy(const cvcertificate_st& pIssuer) const;
+
+	bool operator==(const cvcertificate_st& pOther) const;
+	bool operator!=(const cvcertificate_st& pOther) const;
 };
+
+
+inline auto qHash(const CVCertificate& pCvc, size_t pSeed)
+{
+	return qHash(pCvc.getRawBody() + pCvc.getRawSignature(), pSeed);
+}
 
 
 DECLARE_ASN1_FUNCTIONS(CVCertificate)
 DECLARE_ASN1_OBJECT(CVCertificate)
 
 
-inline bool operator==(const CVCertificate& pLeft, const CVCertificate& pRight)
-{
-	return pLeft.getRawBody() == pRight.getRawBody() && pLeft.getRawSignature() == pRight.getRawSignature();
-}
-
-
-inline bool operator!=(const CVCertificate& pLeft, const CVCertificate& pRight)
-{
-	return !(pLeft == pRight);
-}
-
-
 } // namespace governikus
+
+
+inline auto qHash(const QSharedPointer<const governikus::CVCertificate>& pCvc, size_t pSeed)
+{
+	return qHash(*pCvc, pSeed);
+}
+
+
+inline bool operator==(const QSharedPointer<const governikus::CVCertificate>& pLeft, const QSharedPointer<const governikus::CVCertificate>& pRight)
+{
+	return *pLeft == *pRight;
+}
+
 
 QDebug operator<<(QDebug pDbg, const governikus::CVCertificate& pCvc);
 QDebug operator<<(QDebug pDbg, const QSharedPointer<const governikus::CVCertificate>& pCvc);

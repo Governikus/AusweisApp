@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteIfdReaderManagerPlugin.h"
@@ -10,6 +10,7 @@
 #include "PortFile.h"
 #include "Reader.h"
 #include "RemoteIfdClient.h"
+#include "TestHookThread.h"
 #include "VolatileSettings.h"
 #include "messages/IfdConnect.h"
 #include "messages/IfdConnect.h"
@@ -140,7 +141,7 @@ class test_RemoteIfdReaderManagerPlugin
 	Q_OBJECT
 
 	private:
-		QThread mNetworkThread;
+		QScopedPointer<TestHookThread> mNetworkThread;
 		QSharedPointer<MockIfdClient> mIfdClient;
 		QSharedPointer<RemoteIfdReaderManagerPlugin> mPlugin;
 		QSharedPointer<MockIfdDispatcher> mDispatcher1;
@@ -156,24 +157,25 @@ class test_RemoteIfdReaderManagerPlugin
 		void initTestCase()
 		{
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
+			Env::getSingleton<AppSettings>(); // just init in MainThread because of QObject
+			QSslCertificate cert; // init QTlsBackendOpenSSL
 		}
 
 
 		void init()
 		{
-			mNetworkThread.setObjectName(QStringLiteral("NetworkThread"));
-			mNetworkThread.start();
+			mNetworkThread.reset(new TestHookThread(QStringLiteral("NetworkThread")));
 
 			mIfdClient.reset(new MockIfdClient());
 			Env::set(RemoteIfdClient::staticMetaObject, mIfdClient.data());
 
-			mDispatcher1.reset(new MockIfdDispatcher());
+			mDispatcher1.reset(new MockIfdDispatcher(), &MockIfdDispatcher::deleteLater);
 			mDispatcher1->setPairingConnection(false);
-			mDispatcher1->moveToThread(&mNetworkThread);
+			mDispatcher1->moveToThread(mNetworkThread->getThread());
 
-			mDispatcher2.reset(new MockIfdDispatcher());
+			mDispatcher2.reset(new MockIfdDispatcher(), &MockIfdDispatcher::deleteLater);
 			mDispatcher2->setPairingConnection(true);
-			mDispatcher2->moveToThread(&mNetworkThread);
+			mDispatcher2->moveToThread(mNetworkThread->getThread());
 
 			mPlugin.reset(new RemoteIfdReaderManagerPlugin());
 			mPlugin->init();
@@ -182,13 +184,20 @@ class test_RemoteIfdReaderManagerPlugin
 
 		void cleanup()
 		{
-			mIfdClient.reset();
-			mDispatcher1.reset();
-			mDispatcher2.reset();
 			mPlugin.reset();
+			{
+				QSignalSpy spy(mDispatcher1.data(), &MockIfdDispatcher::destroyed);
+				mDispatcher1.reset();
+				QTRY_COMPARE(spy.size(), 1);
+			}
+			{
+				QSignalSpy spy(mDispatcher2.data(), &MockIfdDispatcher::destroyed);
+				mDispatcher2.reset();
+				QTRY_COMPARE(spy.size(), 1);
+			}
+			mIfdClient.reset();
 
-			mNetworkThread.quit();
-			mNetworkThread.wait();
+			mNetworkThread.reset();
 		}
 
 

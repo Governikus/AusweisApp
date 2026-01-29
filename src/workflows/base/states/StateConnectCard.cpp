@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateConnectCard.h"
@@ -69,7 +69,7 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 
 	if (context->eidTypeMismatch())
 	{
-		//: INFO IOS
+		//: IOS
 		context->getCardConnection()->setErrorMessage(tr("The used ID card type is not accepted by the server."));
 		return;
 	}

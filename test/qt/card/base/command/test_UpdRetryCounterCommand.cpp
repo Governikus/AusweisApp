@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/UpdateRetryCounterCommand.h"
 
 #include "MockCardConnectionWorker.h"
 
+#include <QPointer>
 #include <QtCore>
 #include <QtTest>
 
@@ -22,8 +23,9 @@ class test_UpdateRetryCounterCommand
 	private Q_SLOTS:
 		void test_InternalExecuteNoCard()
 		{
-			MockReader reader("name"_L1);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			QPointer<MockReader> reader = new MockReader("name"_L1);
+
+			const auto& worker = MockCardConnectionWorker::create(reader);
 			UpdateRetryCounterCommand command(worker, QStringLiteral("slotname"));
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::CARD_NOT_FOUND);
@@ -32,11 +34,11 @@ class test_UpdateRetryCounterCommand
 
 		void test_InternalExecuteWithCard()
 		{
-			MockReader reader("reader"_L1);
+			QPointer<MockReader> reader = new MockReader("reader"_L1);
 			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 1, true, true);
-			reader.setInfoCardInfo(info);
+			reader->setInfoCardInfo(info);
 
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			const auto& worker = MockCardConnectionWorker::create(reader);
 			UpdateRetryCounterCommand command(worker, QStringLiteral("slotname"));
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
@@ -45,8 +47,8 @@ class test_UpdateRetryCounterCommand
 
 		void test_SlotHandle()
 		{
-			MockReader reader("name"_L1);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			QPointer<MockReader> reader = new MockReader("name"_L1);
+			const auto& worker = MockCardConnectionWorker::create(reader);
 			const QString name = QStringLiteral("slotname");
 			UpdateRetryCounterCommand command(worker, name);
 			QCOMPARE(command.getSlotHandle(), name);

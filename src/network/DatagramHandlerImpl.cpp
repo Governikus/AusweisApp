@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
@@ -251,7 +251,7 @@ bool DatagramHandlerImpl::sendToAddress(const QByteArray& pData, const QHostAddr
 
 void DatagramHandlerImpl::sendToAddressEntries(const QByteArray& pData, const QList<QNetworkAddressEntry>& pEntries, quint16 pPort)
 {
-	// Check if something changed because We don't want
+	// Check if something changed because we don't want
 	// to log all interfaces for any broadcast here.
 	if (mAllEntries != pEntries)
 	{
@@ -275,7 +275,6 @@ void DatagramHandlerImpl::sendToAddressEntries(const QByteArray& pData, const QL
 		const auto& address = getBroadcastAddress(broadcastEntry);
 		if (alreadySent.contains(address))
 		{
-			qCDebug(network) << "Skipping duplicate broadcasting to" << address;
 			continue;
 		}
 

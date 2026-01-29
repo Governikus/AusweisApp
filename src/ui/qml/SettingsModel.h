@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -69,6 +69,7 @@ class SettingsModel
 	Q_PROPERTY(bool useCustomProxy READ isUseCustomProxy WRITE setUseCustomProxy NOTIFY fireUseCustomProxyChanged)
 	Q_PROPERTY(bool useSystemFont READ isUseSystemFont WRITE setUseSystemFont NOTIFY fireUseSystemFontChanged)
 	Q_PROPERTY(bool useAnimations READ isUseAnimations WRITE setUseAnimations NOTIFY fireUseAnimationsChanged)
+	Q_PROPERTY(bool screenPrivacy READ isScreenPrivacy WRITE setScreenPrivacy NOTIFY fireScreenPrivacyChanged)
 	Q_PROPERTY(ModeOption userDarkMode READ getDarkMode WRITE setDarkMode NOTIFY fireDarkModeChanged)
 	Q_PROPERTY(governikus::EnumReaderManagerPluginType::ReaderManagerPluginType preferredTechnology READ getPreferredTechnology WRITE setPreferredTechnology NOTIFY firePreferredTechnologyChanged)
 
@@ -184,6 +185,9 @@ class SettingsModel
 		bool isUseAnimations() const;
 		void setUseAnimations(bool pUseAnimations) const;
 
+		[[nodiscard]] bool isScreenPrivacy() const;
+		void setScreenPrivacy(bool pEnable) const;
+
 		[[nodiscard]] ModeOption getDarkMode() const;
 		void setDarkMode(ModeOption pMode) const;
 
@@ -234,6 +238,7 @@ class SettingsModel
 		void fireDarkModeChanged();
 		void fireTrayIconEnabledChanged();
 		void firePreferredTechnologyChanged();
+		void fireScreenPrivacyChanged();
 
 };
 

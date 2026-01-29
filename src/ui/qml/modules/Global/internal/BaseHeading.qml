@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -9,7 +9,7 @@ GText {
 		if (Qt.platform.os !== "windows") {
 			return text;
 		}
-		//: LABEL WINDOWS Screenreader announcement, that the current item is a heading.
+		//: WINDOWS Screenreader announcement, that the current item is a heading.
 		return text + " , " + qsTr("Heading");
 	}
 	Accessible.role: Accessible.Heading

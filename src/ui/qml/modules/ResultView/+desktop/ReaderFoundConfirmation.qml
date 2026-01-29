@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -26,14 +26,14 @@ ResultView {
 		return AnimationLoader.Type.WAIT_FOR_SAC;
 	}
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	buttonText: qsTr("Continue")
 	text: switch (type) {
 	case ReaderFoundConfirmation.ReaderType.PCSC:
-		//: LABEL DESKTOP
+		//: DESKTOP
 		return qsTr("Found new USB card reader that is suitable for the ID card. The workflow may now be continued.");
 	case ReaderFoundConfirmation.ReaderType.REMOTE:
-		//: LABEL DESKTOP
+		//: DESKTOP
 		return qsTr("Found new smartphone as card reader that is suitable for the ID card. The workflow may now be continued.");
 	}
 	title: root.title

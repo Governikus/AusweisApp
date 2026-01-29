@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
@@ -58,7 +58,7 @@ void LogModel::mailLogFile(const QString& pEmail, const QString& pSubject, const
 	const auto& jEmail = QJniObject::fromString(pEmail);
 	const auto& jSubject = QJniObject::fromString(pSubject);
 	const auto& jMsg = QJniObject::fromString(pMsg);
-	//: LABEL ANDROID
+	//: ANDROID
 	const auto& jChooserTitle = QJniObject::fromString(tr("Send application log per email..."));
 	const auto& jPublicLogFile = QJniObject::fromString(publicLogFile);
 
@@ -72,11 +72,9 @@ void LogModel::mailLogFile(const QString& pEmail, const QString& pSubject, const
 			jMsg.object<jstring>(),
 			jPublicLogFile.object<jstring>(),
 			jChooserTitle.object<jstring>());
-	if (env->ExceptionCheck())
+	if (env.checkAndClearExceptions())
 	{
 		qCCritical(qml) << "Exception calling ShareUtil.mailLog()";
-		env->ExceptionDescribe();
-		env->ExceptionClear();
 	}
 }
 
@@ -98,7 +96,7 @@ void LogModel::shareLogFile(const QPoint /*popupPosition*/) const
 		return;
 	}
 
-	//: LABEL ANDROID
+	//: ANDROID
 	const auto& jChooserTitle = QJniObject::fromString(tr("Share application log..."));
 	const auto& jPublicLogFile = QJniObject::fromString(publicLogFile);
 
@@ -109,10 +107,8 @@ void LogModel::shareLogFile(const QPoint /*popupPosition*/) const
 			javaActivity.object<jobject>(),
 			jPublicLogFile.object<jstring>(),
 			jChooserTitle.object<jstring>());
-	if (env->ExceptionCheck())
+	if (env.checkAndClearExceptions())
 	{
 		qCCritical(qml) << "Exception calling ShareUtil.shareLog()";
-		env->ExceptionDescribe();
-		env->ExceptionClear();
 	}
 }

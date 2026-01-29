@@ -1,2 +1,4 @@
 add_subdirectory(http_parser)
-add_subdirectory(smart)
+if(USE_SMARTEID)
+	add_subdirectory(smart)
+endif()

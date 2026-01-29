@@ -1,17 +1,19 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateDidAuthenticateEac1.h"
 
 #include "MockCardConnectionWorker.h"
 #include "TestAuthContext.h"
-#include "TestFileHelper.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class MockEstablishPaceChannelCommand
 	: public DidAuthenticateEAC1Command
@@ -55,32 +57,30 @@ class test_StateDidAuthenticateEac1
 
 		void test_RunStateDidAuthenticateEac1()
 		{
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread workerThread;
 
 			{
-				const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-				worker->moveToThread(&workerThread);
-				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+				auto worker = MockCardConnectionWorker::create(&workerThread);
 				const QSharedPointer<DIDAuthenticateEAC1> eac1(new DIDAuthenticateEAC1());
 				const EstablishPaceChannelOutput output;
-				mAuthContext->setCardConnection(connection);
+				mAuthContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 				mAuthContext->setDidAuthenticateEac1(eac1);
 				mAuthContext->setPaceOutputData(output);
 
 				StateDidAuthenticateEac1 state(mAuthContext);
+				QSignalSpy spyAbort(&state, &StateDidAuthenticateEac1::fireAbort);
 				state.run();
 				QCOMPARE(state.mConnections.size(), 1);
-			}
+				QTRY_COMPARE(spyAbort.size(), 1);
 
-			workerThread.quit();
-			workerThread.wait();
+				mAuthContext->resetCardConnection();
+			}
 		}
 
 
 		void test_OnCardCommandDone()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			QSharedPointer<MockEstablishPaceChannelCommand> command(new MockEstablishPaceChannelCommand(worker));
 			StateDidAuthenticateEac1 state(mAuthContext);
 

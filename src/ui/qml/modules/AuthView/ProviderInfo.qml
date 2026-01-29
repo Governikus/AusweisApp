@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -14,7 +14,7 @@ GAbstractButton {
 
 	required property string name
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	Accessible.description: Style.is_layout_desktop ? qsTr("Show more information about the service provider") : link.text
 	Accessible.name: labelText.label + ". " + labelText.text
 	Accessible.role: Accessible.Button
@@ -50,13 +50,13 @@ GAbstractButton {
 				Layout.fillWidth: true
 				bodyElide: Text.ElideRight
 				label: Style.is_layout_desktop ?
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("You are about to identify yourself towards the following provider:") :
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				qsTr("Provider")
 				maximumBodyLineCount: 1
 
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				text: root.name !== "" ? root.name : qsTr("See details under \"more...\"")
 			}
 			GText {
@@ -64,9 +64,9 @@ GAbstractButton {
 
 				Accessible.ignored: true
 				text: Style.is_layout_desktop ?
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("Details about the provider") :
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				qsTr("Tap for more details")
 				textStyle: Style.text.link
 			}

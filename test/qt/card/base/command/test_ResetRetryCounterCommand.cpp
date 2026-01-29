@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/ResetRetryCounterCommand.h"
@@ -35,7 +35,7 @@ class test_ResetRetryCounterCommand
 			QFETCH(SW1, sw1);
 			QFETCH(CardReturnCode, returnCode);
 
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			QByteArray buffer;
 			buffer += static_cast<char>(sw1);
 			buffer += static_cast<char>(0x00); // SW2 - Does not matter for this test

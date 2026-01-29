@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateStartIfdService.h"
@@ -7,7 +7,6 @@
 #include "ServerMessageHandlerImpl.h"
 #include "states/StateBuilder.h"
 
-#include "MockCardConnectionWorker.h"
 #include "MockDataChannel.h"
 #include "MockIfdServer.h"
 
@@ -15,6 +14,7 @@
 
 
 using namespace governikus;
+
 
 class test_StateStartIfdService
 	: public QObject

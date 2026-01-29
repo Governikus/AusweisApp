@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -34,7 +34,7 @@ Item {
 
 		GPane {
 			Accessible.ignored: root.Accessible.ignored
-			//: LABEL DESKTOP
+			//: DESKTOP
 			title: qsTr("Paired devices")
 			visible: availablePairedDevices.count > 0
 			width: parent.width
@@ -58,7 +58,7 @@ Item {
 		}
 		GPane {
 			Accessible.ignored: root.Accessible.ignored
-			//: LABEL DESKTOP
+			//: DESKTOP
 			title: qsTr("Last connected")
 			visible: unavailablePairedDevices.count > 0
 			width: parent.width
@@ -83,7 +83,7 @@ Item {
 		GPane {
 			Accessible.ignored: root.Accessible.ignored
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			title: qsTr("Add pairing")
 			width: parent.width
 

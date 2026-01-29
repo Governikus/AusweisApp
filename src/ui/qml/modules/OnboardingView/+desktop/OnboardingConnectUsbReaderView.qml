@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -31,11 +31,11 @@ BaseOnboardingView {
 	Heading {
 		Layout.bottomMargin: Style.dimens.pane_spacing
 		Layout.topMargin: -root.spacing
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("Set up card reader")
 	}
 	Subheading {
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("Connect an USB card reader")
 	}
 	GText {

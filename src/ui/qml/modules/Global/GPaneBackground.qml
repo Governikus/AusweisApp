@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -13,9 +13,9 @@ Rectangle {
 	property bool drawShadow: true
 	property real shadowScale: 1.025
 
-	border.color: Style.color.pane.border.basic
+	border.color: Style.color.pane.border.basic_unchecked
 	border.width: Style.dimens.border_width
-	color: Style.color.pane.background.basic
+	color: Style.color.pane.background.basic_unchecked
 	radius: Style.dimens.pane_radius
 
 	layer {

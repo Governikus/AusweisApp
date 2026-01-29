@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateDidAuthenticateEac2.h"
@@ -88,7 +88,7 @@ void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand>
 
 void StateDidAuthenticateEac2::onEntry(QEvent* pEvent)
 {
-	//: INFO ALL_PLATFORMS Status message after the PIN was entered, Card Authentication.
+	//: ALL_PLATFORMS Status message after the PIN was entered, Card Authentication.
 	getContext()->setProgress(40, tr("eID is being verified"));
 	AbstractState::onEntry(pEvent);
 }

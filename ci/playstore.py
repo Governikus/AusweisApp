@@ -25,6 +25,15 @@ class CommandLineParser(argparse.ArgumentParser):
             '--upload', nargs='+', help='List of files (APK, AAB) to upload'
         )
         self.add_argument(
+            '--symbols',
+            nargs='*',
+            help=(
+                'List of debug symbols file to upload. '
+                'The filename has to match the corresponding apk file '
+                'like "<apk-name>.apk.native-debug-symbols.zip"'
+            ),
+        )
+        self.add_argument(
             '-v', '--verbose', help='Verbose output', action='store_true'
         )
 
@@ -76,6 +85,27 @@ def UploadFiles(parser, service, edit_id):
         ).execute()
         versionCodes.append(response['versionCode'])
         print(f'Version code {response["versionCode"]} has been uploaded')
+
+        if not parser.symbols:
+            continue
+
+        for debugFile in parser.symbols:
+            if debugFile == (f'{uploadFile}.native-debug-symbols.zip'):
+                debugTarget = service.edits().deobfuscationfiles()
+                debugMedia = MediaFileUpload(
+                    debugFile, mimetype='application/octet-stream'
+                )
+                debugTarget.upload(
+                    editId=edit_id,
+                    packageName=parser.package,
+                    media_body=debugMedia,
+                    deobfuscationFileType='nativeCode',
+                    apkVersionCode=response['versionCode'],
+                ).execute()
+                print(
+                    f'Debug symbols for {response["versionCode"]}'
+                    ' have been uploaded'
+                )
 
     response = (
         service.edits()

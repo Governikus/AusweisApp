@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -44,7 +44,7 @@ ColumnLayout {
 	GAbstractButton {
 		id: expandButton
 
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		Accessible.description: root.selectionTitle !== "" ? qsTr("Currently selected is %1").arg(root.selectionTitle) : ""
 		Accessible.name: root.title
 		Accessible.role: {
@@ -133,7 +133,7 @@ ColumnLayout {
 
 				Layout.rightMargin: root.arrowToLeft ? root.horizontalMargin : 0
 				sourceSize.height: Style.dimens.small_icon_size
-				tintColor: Style.color.textNormal.basic
+				tintColor: Style.color.textNormal.basic_unchecked
 				tintEnabled: false
 				visible: source.toString() !== ""
 			}
@@ -161,7 +161,7 @@ ColumnLayout {
 		bottomLeftCorner: root.drawBottomCorners
 		bottomRightCorner: root.drawBottomCorners
 		clip: true
-		color: Style.color.paneSublevel.background.basic
+		color: Style.color.paneSublevel.background.basic_unchecked
 		implicitHeight: expandButton.checked ? (contentItem.implicitHeight + contentItem.anchors.topMargin + contentItem.anchors.bottomMargin) : 0
 		implicitWidth: contentItem.implicitWidth + contentItem.anchors.leftMargin + contentItem.anchors.rightMargin
 		topLeftCorner: false
@@ -194,7 +194,7 @@ ColumnLayout {
 		Layout.rightMargin: root.horizontalMargin
 		source: expandButton.checked ? "qrc:///images/material_expand_less.svg" : "qrc:///images/material_expand_more.svg"
 		sourceSize.height: Style.text.normal.textSize
-		tintColor: Style.color.textNormal.basic
+		tintColor: Style.color.textNormal.basic_unchecked
 		tintEnabled: true
 	}
 }

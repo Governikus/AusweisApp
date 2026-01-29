@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -24,7 +24,7 @@ TestCase {
 	}
 	function test_tintColor() {
 		let testObject = createTestObject();
-		compare(testObject.tintColor, Style.color.textNormal.basic, "Initial tintColor: text");
+		compare(testObject.tintColor, Style.color.textNormal.basic_unchecked, "Initial tintColor: text");
 		testObject.tintColor = "#000000";
 		compare(testObject.tintColor, "#000000", "Set tintColor");
 	}

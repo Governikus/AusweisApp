@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -17,53 +17,64 @@ Colors {
 	}
 
 	background: palette.base
-	border: control.background.basic
+	border: control.background.basic_unchecked
 	error: "#ff0000"
-	focus_indicator: textNormal.basic
+	focus_indicator: textNormal.basic_unchecked
 	image: "#ff0000"
 	success: "#00ff00"
 	warning: "#ff0000"
 
 	control: DefaultControlColors {
-		content.basic: root.palette.buttonText
-		content.checked: root.textNormal.basic
+		content.basic_checked: root.textNormal.basic_unchecked
+		content.basic_unchecked: root.palette.buttonText
 	}
 	controlCheckbox: DefaultControlColors {
-		background.pressed: root.textNormal.basic
-		content.basic: root.textNormal.basic
+		background.pressed_checked: root.textNormal.basic_unchecked
+		background.pressed_unchecked: root.textNormal.basic_unchecked
+		content.basic_unchecked: root.textNormal.basic_unchecked
 	}
 	controlOptional: DefaultControlColors {
-		content.basic: root.palette.buttonText
-		content.checked: root.textNormal.basic
+		content.basic_checked: root.textNormal.basic_unchecked
+		content.basic_unchecked: root.palette.buttonText
 	}
 	controlRadiobutton: DefaultControlColors {
-		background.checked: root.palette.highlight
-		background.hovered: background.checked
-		background.pressed: background.hovered
-		border.basic: root.palette.buttonText
-		border.checked: background.checked
-		border.hovered: border.checked
-		border.pressed: border.hovered
-		content.basic: border.basic
-		content.checked: root.palette.highlightedText
-		content.hovered: content.checked
-		content.pressed: content.hovered
+		background.basic_checked: root.palette.highlight
+		background.hovered_checked: background.basic_checked
+		background.hovered_unchecked: background.basic_checked
+		background.pressed_checked: background.hovered_unchecked
+		background.pressed_unchecked: background.hovered_unchecked
+		border.basic_checked: background.basic_checked
+		border.basic_unchecked: root.palette.buttonText
+		border.hovered_checked: border.basic_checked
+		border.hovered_unchecked: border.basic_checked
+		border.pressed_checked: border.hovered_unchecked
+		border.pressed_unchecked: border.hovered_unchecked
+		content.basic_checked: root.palette.highlightedText
+		content.basic_unchecked: border.basic_unchecked
+		content.hovered_checked: content.basic_checked
+		content.hovered_unchecked: content.basic_checked
+		content.pressed_checked: content.hovered_unchecked
+		content.pressed_unchecked: content.hovered_unchecked
 	}
 	controlScrollbar: DefaultControlColors {
-		background.basic: root.textNormal.basic
-		background.hovered: root.palette.highlight
-		border.hovered: root.palette.highlight
-		border.pressed: root.palette.highlight
-		content.basic: root.palette.buttonText
-		content.checked: root.textNormal.basic
+		background.basic_unchecked: root.textNormal.basic_unchecked
+		background.hovered_checked: root.palette.highlight
+		background.hovered_unchecked: root.palette.highlight
+		border.hovered_checked: root.palette.highlight
+		border.hovered_unchecked: root.palette.highlight
+		border.pressed_checked: root.palette.highlight
+		border.pressed_unchecked: root.palette.highlight
+		content.basic_checked: root.textNormal.basic_unchecked
+		content.basic_unchecked: root.palette.buttonText
 	}
 	controlStagedProgressBar: DefaultControlColors {
-		background.basic: root.background
-		border.basic: content.basic
+		background.basic_unchecked: root.background
+		border.basic_unchecked: content.basic_unchecked
 	}
 	controlSwitch: DefaultControlColors {
-		background.pressed: root.textNormal.basic
-		content.basic: root.textNormal.basic
+		background.pressed_checked: root.textNormal.basic_unchecked
+		background.pressed_unchecked: root.textNormal.basic_unchecked
+		content.basic_unchecked: root.textNormal.basic_unchecked
 	}
 	linkBasic: DefaultLinkColors {
 	}
@@ -74,21 +85,26 @@ Colors {
 	pane: DefaultPaneColors {
 	}
 	paneSublevel: DefaultPaneColors {
-		background.hovered: root.textNormal.basic
-		background.pressed: root.palette.highlight
-		border.basic: "#576164"
+		background.hovered_checked: root.textNormal.basic_unchecked
+		background.hovered_unchecked: root.textNormal.basic_unchecked
+		background.pressed_checked: root.palette.highlight
+		background.pressed_unchecked: root.palette.highlight
+		border.basic_unchecked: "#576164"
 	}
 	remoteIndicator: ComponentColors {
-		basic: "#ff0000"
-		checked: basic
-		disabled: "#f6b1b1"
-		hovered: basic
-		pressed: basic
+		basic_checked: basic_unchecked
+		basic_unchecked: "#ff0000"
+		disabled_checked: "#f6b1b1"
+		disabled_unchecked: "#f6b1b1"
+		hovered_checked: basic_unchecked
+		hovered_unchecked: basic_unchecked
+		pressed_checked: basic_unchecked
+		pressed_unchecked: basic_unchecked
 	}
 	textHeadline: DefaultTextColors {
 	}
 	textNormal: DefaultTextColors {
-		checked: root.palette.highlightedText
+		basic_checked: root.palette.highlightedText
 	}
 	textSubline: DefaultTextColors {
 	}
@@ -97,55 +113,76 @@ Colors {
 
 	component DefaultControlColors: ControlComponents {
 		background: ComponentColors {
-			basic: root.palette.button
-			checked: root.palette.button
-			disabled: root.disabledPalette.button
-			hovered: root.textNormal.basic
-			pressed: root.palette.highlight
+			basic_checked: root.palette.button
+			basic_unchecked: root.palette.button
+			disabled_checked: root.disabledPalette.button
+			disabled_unchecked: root.disabledPalette.button
+			hovered_checked: root.textNormal.basic_unchecked
+			hovered_unchecked: root.textNormal.basic_unchecked
+			pressed_checked: root.palette.highlight
+			pressed_unchecked: root.palette.highlight
 		}
 		border: ComponentColors {
-			basic: root.textNormal.basic
-			checked: root.textNormal.basic
-			disabled: root.textNormal.disabled
-			hovered: root.palette.base
-			pressed: root.palette.highlightedText
+			basic_checked: root.textNormal.basic_unchecked
+			basic_unchecked: root.textNormal.basic_unchecked
+			disabled_checked: root.textNormal.disabled_unchecked
+			disabled_unchecked: root.textNormal.disabled_unchecked
+			hovered_checked: root.palette.base
+			hovered_unchecked: root.palette.base
+			pressed_checked: root.palette.highlightedText
+			pressed_unchecked: root.palette.highlightedText
 		}
 		content: ComponentColors {
-			basic: root.textNormal.basic
-			checked: root.palette.buttonText
-			disabled: root.textNormal.disabled
-			hovered: root.palette.base
-			pressed: root.palette.highlightedText
+			basic_checked: root.palette.buttonText
+			basic_unchecked: root.textNormal.basic_unchecked
+			disabled_checked: root.textNormal.disabled_unchecked
+			disabled_unchecked: root.textNormal.disabled_unchecked
+			hovered_checked: root.palette.base
+			hovered_unchecked: root.palette.base
+			pressed_checked: root.palette.highlightedText
+			pressed_unchecked: root.palette.highlightedText
 		}
 	}
 	component DefaultLinkColors: ComponentColors {
-		basic: root.palette.text
-		checked: basic
-		disabled: root.disabledPalette.text
-		hovered: root.palette.highlight
-		pressed: root.palette.highlight
+		basic_checked: basic_unchecked
+		basic_unchecked: root.palette.text
+		disabled_checked: root.disabledPalette.text
+		disabled_unchecked: root.disabledPalette.text
+		hovered_checked: root.palette.highlight
+		hovered_unchecked: root.palette.highlight
+		pressed_checked: root.palette.highlight
+		pressed_unchecked: root.palette.highlight
 	}
 	component DefaultPaneColors: CoreComponents {
 		background: ComponentColors {
-			basic: root.palette.base
-			checked: root.palette.highlight
-			disabled: root.disabledPalette.base
-			hovered: root.palette.highlight
-			pressed: root.palette.highlight
+			basic_checked: root.palette.highlight
+			basic_unchecked: root.palette.base
+			disabled_checked: root.disabledPalette.base
+			disabled_unchecked: root.disabledPalette.base
+			hovered_checked: root.palette.highlight
+			hovered_unchecked: root.palette.highlight
+			pressed_checked: root.palette.highlight
+			pressed_unchecked: root.palette.highlight
 		}
 		border: ComponentColors {
-			basic: root.textNormal.basic
-			checked: basic
-			disabled: root.disabledPalette.text
-			hovered: root.textNormal.basic
-			pressed: root.textNormal.basic
+			basic_checked: basic_unchecked
+			basic_unchecked: root.textNormal.basic_unchecked
+			disabled_checked: root.disabledPalette.text
+			disabled_unchecked: root.disabledPalette.text
+			hovered_checked: root.textNormal.basic_unchecked
+			hovered_unchecked: root.textNormal.basic_unchecked
+			pressed_checked: root.textNormal.basic_unchecked
+			pressed_unchecked: root.textNormal.basic_unchecked
 		}
 	}
 	component DefaultTextColors: ComponentColors {
-		basic: root.palette.text
-		checked: basic
-		disabled: root.disabledPalette.text
-		hovered: basic
-		pressed: basic
+		basic_checked: basic_unchecked
+		basic_unchecked: root.palette.text
+		disabled_checked: root.disabledPalette.text
+		disabled_unchecked: root.disabledPalette.text
+		hovered_checked: basic_unchecked
+		hovered_unchecked: basic_unchecked
+		pressed_checked: basic_unchecked
+		pressed_unchecked: basic_unchecked
 	}
 }

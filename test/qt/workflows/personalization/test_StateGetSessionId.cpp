@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetSessionId.h"
 
+#include "LogHandler.h"
 #include "context/PersonalizationContext.h"
 
 #include "MockNetworkReply.h"

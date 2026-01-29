@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateDidAuthenticateEac1.h"
@@ -66,7 +66,7 @@ void StateDidAuthenticateEac1::onCardCommandDone(QSharedPointer<BaseCardCommand>
 
 void StateDidAuthenticateEac1::onEntry(QEvent* pEvent)
 {
-	//: INFO ALL_PLATFORMS Status message after the PIN was entered, Terminal Authentication.
+	//: ALL_PLATFORMS Status message after the PIN was entered, Terminal Authentication.
 	getContext()->setProgress(20, tr("Provider is being verified"));
 	AbstractState::onEntry(pEvent);
 }

@@ -47,5 +47,8 @@ android {
 
     defaultConfig {
         buildConfigField("String", "ROOT_LOGGER", "\"${project.root_logger}\"")
+        ndk {
+            debugSymbolLevel = 'FULL'
+        }
     }
 }

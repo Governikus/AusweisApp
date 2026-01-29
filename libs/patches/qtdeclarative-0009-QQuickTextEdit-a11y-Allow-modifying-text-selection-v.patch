@@ -1,0 +1,200 @@
+From 2bb87e2a3b5eed001f7970dc3e7695d348447b65 Mon Sep 17 00:00:00 2001
+From: Michael Weghorn <m.weghorn@posteo.de>
+Date: Wed, 17 Sep 2025 12:39:04 +0200
+Subject: QQuickTextEdit a11y: Allow modifying text selection via a11y API
+
+Introduce new QAccessibleQuickTextEdit as a11y implementation
+for QQuickTextEdit.
+
+Subclass the existing QAccessibleQuickItem and override the
+methods to modify text selection.
+(For retrieving the existing selection, the logic in
+the base class is fine, but the TextEdit properties selectionStart
+and selectionEnd are read-only, so cannot be set directly there.)
+
+Implement the QAccessibleTextInterface::addSelection logic
+in the base class, so it can also be reused by the
+QAccessibleQuickTextInput class that will be added
+in an upcoming commit to implement similar logic
+for QQuickTextInput and QQuickTextField.
+
+Extend the existing unit test to also test text selection.
+
+Task-number: QTBUG-139943
+Pick-to: 6.10 6.9 6.8
+Change-Id: Ibd6aa3e1bc9a24352c9bef4fcf4a452252d6689c
+---
+ src/quick/CMakeLists.txt                      |  1 +
+ src/quick/accessible/qaccessiblequickitem.cpp |  4 +-
+ .../accessible/qaccessiblequicktextedit.cpp   | 31 ++++++++++++++
+ .../accessible/qaccessiblequicktextedit_p.h   | 42 +++++++++++++++++++
+ .../accessible/qquickaccessiblefactory.cpp    |  8 +++-
+ .../qquickaccessible/tst_qquickaccessible.cpp | 11 +++++
+ 6 files changed, 93 insertions(+), 4 deletions(-)
+ create mode 100644 src/quick/accessible/qaccessiblequicktextedit.cpp
+ create mode 100644 src/quick/accessible/qaccessiblequicktextedit_p.h
+
+diff --git x/qtdeclarative/src/quick/CMakeLists.txt y/qtdeclarative/src/quick/CMakeLists.txt
+index d3d9087a84929b2223fbd300ebb5c14d87679be7..087087982c24ec1eeb08353aabbfe889175694e5 100644
+--- x/qtdeclarative/src/quick/CMakeLists.txt
++++ y/qtdeclarative/src/quick/CMakeLists.txt
+@@ -569,6 +569,7 @@ qt_internal_extend_target(Quick CONDITION QT_FEATURE_quick_designer
+ qt_internal_extend_target(Quick CONDITION QT_FEATURE_accessibility
+     SOURCES
+         accessible/qaccessiblequickitem.cpp accessible/qaccessiblequickitem_p.h
++        accessible/qaccessiblequicktextedit.cpp accessible/qaccessiblequicktextedit_p.h
+         accessible/qaccessiblequickview.cpp accessible/qaccessiblequickview_p.h
+         accessible/qquickaccessiblefactory.cpp accessible/qquickaccessiblefactory_p.h
+     LIBRARIES
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+index 1bc956b1d50af51526b11e5e304b54f8c217c778..484955c395ba5dd432251c55cd8f4a5882e8aff5 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+@@ -997,9 +997,9 @@ int QAccessibleQuickItem::selectionCount() const
+     return 0;
+ }
+ 
+-void QAccessibleQuickItem::addSelection(int /* startOffset */, int /* endOffset */)
++void QAccessibleQuickItem::addSelection(int startOffset, int endOffset)
+ {
+-
++    setSelection(0, startOffset, endOffset);
+ }
+ void QAccessibleQuickItem::removeSelection(int /* selectionIndex */)
+ {
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequicktextedit.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequicktextedit.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..780d69cf9b53f4527725e9eddc494b163b576c70
+--- /dev/null
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequicktextedit.cpp
+@@ -0,0 +1,31 @@
++// Copyright (C) 2025 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++
++#include "qaccessiblequicktextedit_p.h"
++
++QT_BEGIN_NAMESPACE
++
++#if QT_CONFIG(accessibility)
++
++QAccessibleQuickTextEdit::QAccessibleQuickTextEdit(QQuickTextEdit *textEdit)
++    : QAccessibleQuickItem(textEdit)
++{
++}
++
++void QAccessibleQuickTextEdit::removeSelection(int selectionIndex)
++{
++    if (selectionCount() == 1 && selectionIndex == 0) {
++        const int cursorPos = textEdit()->cursorPosition();
++        textEdit()->select(cursorPos, cursorPos);
++    }
++}
++
++void QAccessibleQuickTextEdit::setSelection(int selectionIndex, int startOffset, int endOffset)
++{
++    if (selectionIndex == 0)
++        textEdit()->select(startOffset, endOffset);
++}
++
++#endif // accessibility
++
++QT_END_NAMESPACE
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequicktextedit_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequicktextedit_p.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..c4a7029b904673e92bca178635765158ca13b0d9
+--- /dev/null
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequicktextedit_p.h
+@@ -0,0 +1,42 @@
++// Copyright (C) 2025 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++
++#ifndef QACCESSIBLEQUICKTEXTEDIT_H
++#define QACCESSIBLEQUICKTEXTEDIT_H
++
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++#include "qaccessiblequickitem_p.h"
++
++#include <QtQuick/private/qquicktextedit_p.h>
++
++QT_BEGIN_NAMESPACE
++
++#if QT_CONFIG(accessibility)
++
++class Q_QUICK_EXPORT QAccessibleQuickTextEdit : public QAccessibleQuickItem
++{
++public:
++    QAccessibleQuickTextEdit(QQuickTextEdit *textEdit);
++
++    void removeSelection(int selectionIndex) override;
++    void setSelection(int selectionIndex, int startOffset, int endOffset) override;
++
++private:
++    QQuickTextEdit *textEdit() const { return static_cast<QQuickTextEdit *>(item()); }
++};
++
++#endif // accessibility
++
++QT_END_NAMESPACE
++
++#endif // QACCESSIBLEQUICKTEXTEDIT_H
+diff --git x/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp y/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
+index 00542a2b8302edfc4179d30530ca4c57fd64146f..f8bce6a663040b850aef08a52202ae07b7ba3f7f 100644
+--- x/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
++++ y/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
+@@ -5,16 +5,20 @@
+ 
+ #include "qaccessiblequickview_p.h"
+ #include "qaccessiblequickitem_p.h"
++#include "qaccessiblequicktextedit_p.h"
+ #include <QtQuick/private/qquickitem_p.h>
++#include <QtQuick/private/qquicktextedit_p.h>
+ 
+ QT_BEGIN_NAMESPACE
+ #if QT_CONFIG(accessibility)
+ 
+ QAccessibleInterface *qQuickAccessibleFactory(const QString &classname, QObject *object)
+ {
+-    if (classname == QLatin1String("QQuickWindow")) {
++    if (classname == QLatin1String("QQuickWindow"))
+         return new QAccessibleQuickWindow(qobject_cast<QQuickWindow *>(object));
+-    } else if (classname == QLatin1String("QQuickItem")) {
++    if (classname == QLatin1String("QQuickTextEdit"))
++        return new QAccessibleQuickTextEdit(qobject_cast<QQuickTextEdit *>(object));
++    if (classname == QLatin1String("QQuickItem")) {
+         QQuickItem *item = qobject_cast<QQuickItem *>(object);
+         Q_ASSERT(item);
+         QQuickItemPrivate *itemPrivate = QQuickItemPrivate::get(item);
+diff --git x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+index 375a7e502f7ef5e959a6ea273e622d6981e42193..1f7e27e0404311d70120b03ea8eddbfee24beb15 100644
+--- x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
++++ y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+@@ -522,8 +522,19 @@ void tst_QQuickAccessible::basicPropertiesTest()
+     QVERIFY(!textEdit->state().readOnly);
+     QVERIFY(textEdit->state().focusable);
+     QCOMPARE(textEdit->text(QAccessible::Value), "A multi-line text edit\nTesting Accessibility.");
++
+     auto textEditTextInterface = textEdit->textInterface();
+     QVERIFY(textEditTextInterface);
++    QCOMPARE(textEditTextInterface->selectionCount(), 0);
++    textEditTextInterface->setSelection(0, 1, 4);
++    QCOMPARE(textEditTextInterface->selectionCount(), 1);
++    int selectionStart = 0, selectionEnd = 0;
++    textEditTextInterface->selection(0, &selectionStart, &selectionEnd);
++    QCOMPARE(selectionStart, 1);
++    QCOMPARE(selectionEnd, 4);
++    textEditTextInterface->removeSelection(0);
++    QCOMPARE(textEditTextInterface->selectionCount(), 0);
++
+     auto textEditEditableTextInterface = textEdit->editableTextInterface();
+     QEXPECT_FAIL("", "EditableTextInterface is not implemented", Continue);
+     QVERIFY(textEditEditableTextInterface);

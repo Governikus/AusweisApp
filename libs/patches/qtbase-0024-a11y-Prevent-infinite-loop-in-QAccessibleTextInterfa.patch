@@ -1,0 +1,47 @@
+From ecff5d458d6805a0cf5c24f2a8c16779bbde18f4 Mon Sep 17 00:00:00 2001
+From: Michael Weghorn <m.weghorn@posteo.de>
+Date: Tue, 21 Oct 2025 15:39:23 +0200
+Subject: a11y: Prevent infinite loop in QAccessibleTextInterface::textAtOffset
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Detect the case when there is no more boundary
+and return an empty string and -1 for the start
+and end offset (because no text unit of the wanted
+type could be found), instead of looping
+infinitely.
+
+Fixes: QTBUG-141388
+Task-number: QTBUG-139943
+Pick-to: 6.10
+Change-Id: I752ebfc9015e5de74465f03a1b9bb5662abfdc0e
+Reviewed-by: Morten Johan Sørvig <morten.sorvig@qt.io>
+(cherry picked from commit 7787698c5c0953b8a8dc0c0739bb3c531d43ef86)
+---
+ src/gui/accessible/qaccessible.cpp | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/gui/accessible/qaccessible.cpp y/qtbase/src/gui/accessible/qaccessible.cpp
+index 919e2cc21fa569ba2d28e6aed2f62966952e8928..2966f6574940df9c7f6d7e440ca3eaba4fc1c3bb 100644
+--- x/qtbase/src/gui/accessible/qaccessible.cpp
++++ y/qtbase/src/gui/accessible/qaccessible.cpp
+@@ -2406,13 +2406,17 @@ QString QAccessibleTextInterface::textAtOffset(int offset, QAccessible::TextBoun
+             break;
+     } while (boundary.toPreviousBoundary() > 0);
+     Q_ASSERT(boundary.position() >= 0);
+-    *startOffset = boundary.position();
++    const int startPos = boundary.position();
+ 
+     while (boundary.toNextBoundary() < txt.size()) {
+         if ((boundary.boundaryReasons() & (QTextBoundaryFinder::StartOfItem | QTextBoundaryFinder::EndOfItem)))
+             break;
++        if (boundary.position() == -1)
++            return QString();
+     }
++
+     Q_ASSERT(boundary.position() <= txt.size());
++    *startOffset = startPos;
+     *endOffset = boundary.position();
+ 
+     return txt.mid(*startOffset, *endOffset - *startOffset);

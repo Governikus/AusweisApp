@@ -48,6 +48,7 @@
         <file>card/cvat-DEDEMODEV00038.hex</file>
         <file>card/cvat-DEDEMOPAA00079.hex</file>
         <file>card/cvat-DEDEVDEMO00020.hex</file>
+        <file>card/cvat-template-HolderXXXXXXXX_AuthorityXXXXXXX.hex</file>
         <file>card/cvca-DECVCAeID00102.hex</file>
         <file>card/cvca-DECVCAeID00102_DECVCAeID00103.hex</file>
         <file>card/cvca-DECVCAeID00103.hex</file>
@@ -56,13 +57,13 @@
         <file>card/cvca-DETESTeID00002.hex</file>
         <file>card/cvca-DETESTeID00004_DETESTeID00002.hex</file>
         <file>card/cvca-DETESTeID00004.hex</file>
-        <file>card/cvca-DETESTeID00005_DETESTeID00004.hex</file>
-        <file>card/cvca-DETESTeID00005.hex</file>
+        <file>card/cvca-template-HolderXXXXXXXX_AuthorityXXXXX.hex</file>
         <file>card/cvdv-DEDVeIDDPST00035.hex</file>
         <file>card/cvdv-DEDVeIDDPST00039.hex</file>
         <file>card/cvdv-DEDVeIDDTR101415.hex</file>
         <file>card/cvdv-DEDVtIDGVK300029.hex</file>
         <file>card/cvdv-DEDVtIDGVNK00005.hex</file>
+        <file>card/cvdv-template-HolderXXXXXXXXXX_AuthorityXXXXX.hex</file>
         <file>card/efCardAccess.hex</file>
         <file>card/efCardSecurity.hex</file>
         <file>card/simulatorFiles.json</file>

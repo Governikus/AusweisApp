@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpHandler.h"
@@ -60,20 +60,20 @@ void HttpHandler::handle(const QSharedPointer<HttpRequest>& pRequest)
 	const auto& statusMsg = NetworkManager::getFormattedStatusMessage(HTTP_STATUS_NOT_FOUND);
 
 	Template htmlTemplate = Template::fromFile(QStringLiteral(":/template.html"));
-	//: ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
+	//: ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("TITLE"), tr("Invalid request (%1)").arg(statusMsg));
-	//: ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
+	//: ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Invalid request (%1)").arg(statusMsg));
-	//: ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
+	//: ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("Your browser sent a request that couldn't be interpreted."));
-	//: ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
+	//: ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_SUBHEADER_LABEL"), tr("Error message:"));
-	//: ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
+	//: ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_SUBHEADER"), tr("Unknown request: %1").arg(url.toString()));
-	//: ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
+	//: ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_HEADER"), tr("Would you like to report this error?"));
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocaleCode()));
-	//: ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
+	//: ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_BUTTON"), tr("Report now"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 

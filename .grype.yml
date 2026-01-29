@@ -1,0 +1,16 @@
+ignore:
+  - vulnerability: CVE-2025-10728
+    reason: 'Patch was added to our Qt build.'
+
+  - vulnerability: CVE-2025-12385
+    reason: 'TransactionInfo is the only consumer of those fields. HTML-Tags are stripped in TransactionInfo.'
+
+  - vulnerability: CVE-2023-4969
+    reason: 'Internally used by Qt.'
+
+  - vulnerability: CVE-2026-22184
+    reason: 'Wrong CVE. See https://github.com/madler/zlib/issues/1148'
+
+  - package:
+      name: QTiffPlugin_Attribution_libtiff
+    reason: 'Tiff plugin is not used.'

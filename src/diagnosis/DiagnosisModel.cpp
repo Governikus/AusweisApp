@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisModel.h"
@@ -75,15 +75,15 @@ QString DiagnosisModel::getSectionName(Section pSection) const
 			return QCoreApplication::applicationName();
 
 		case Section::READER:
-			//: LABEL DESKTOP
+			//: DESKTOP
 			return tr("Card reader");
 
 		case Section::NETWORK:
-			//: LABEL DESKTOP
+			//: DESKTOP
 			return tr("Network");
 
 		case Section::SECURITY:
-			//: LABEL DESKTOP
+			//: DESKTOP
 			return tr("Antivirus and firewall");
 	}
 
@@ -98,9 +98,9 @@ void DiagnosisModel::initGeneralSections()
 				mAusweisAppSection << ContentItem(pKey, pValue);
 			});
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	const auto& title = tr("Time of diagnosis");
-	//: LABEL DESKTOP
+	//: DESKTOP
 	const auto& content = tr("Initial diagnosis running, please wait.");
 	mTimestampSection << ContentItem(title, content);
 }
@@ -137,21 +137,21 @@ void DiagnosisModel::updateNetworkSection(bool pUpdateTimestamp)
 void DiagnosisModel::initCardReaderSections()
 {
 	mPcscSection.clear();
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mPcscSection << ContentItem(tr("PC/SC driver information"));
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mPcscSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mPcscSectionRunning = true;
 	mCardReaderSection.clear();
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mCardReaderSection << ContentItem(tr("Card reader"));
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mCardReaderSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mCardReaderSectionRunning = true;
 	mRemoteDeviceSection.clear();
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mRemoteDeviceSection << ContentItem(tr("Paired smartphones"));
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mRemoteDeviceSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mRemoteDeviceSectionRunning = true;
 	Q_EMIT fireRunningChanged();
@@ -177,23 +177,23 @@ void DiagnosisModel::initAntiVirusAndFirewallSection()
 	mAntivirusSection.clear();
 	mFirewallSection.clear();
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mAntivirusSection << ContentItem(tr("Antivirus information"));
 #ifdef Q_OS_WIN
 	mAntivirusSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mAntivirusSectionRunning = true;
 #else
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mAntivirusSection << ContentItem(QString(), tr("No Antivirus information available on this platform."));
 #endif
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mFirewallSection << ContentItem(tr("Firewall information"));
 #ifdef Q_OS_WIN
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mFirewallSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mFirewallSectionRunning = true;
 #else
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mFirewallSection << ContentItem(QString(), tr("No Firewall information available on this platform."));
 #endif
 
@@ -257,11 +257,11 @@ QString DiagnosisModel::boolToString(bool pBoolean) const
 {
 	if (pBoolean)
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		return tr("Yes");
 	}
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	return tr("No");
 }
 
@@ -392,16 +392,16 @@ void DiagnosisModel::onTimestampChanged()
 	QDateTime timestampValue = mContext->getTimestamp();
 	if (timestampValue.isValid())
 	{
-		//: LABEL DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
+		//: DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
 		QString timestamp = LanguageLoader::getInstance().getUsedLocale().toString(timestampValue, tr("d. MMMM yyyy, hh:mm:ss AP"));
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mTimestampSection << ContentItem(tr("Time of diagnosis"), timestamp);
 	}
 	else
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		const auto& title = tr("Time of diagnosis");
-		//: LABEL DESKTOP
+		//: DESKTOP
 		const auto& content = tr("Failed to retrieve date & time");
 		mTimestampSection << ContentItem(title, content);
 	}
@@ -418,15 +418,15 @@ void DiagnosisModel::onNetworkInfoChanged()
 	for (const auto& iface : networkInterfaces)
 	{
 		QStringList interfaceInfos;
-		//: LABEL DESKTOP Interface has no hardware address set
+		//: DESKTOP Interface has no hardware address set
 		QString hardwareAddress = iface.hardwareAddress().isEmpty() ? tr("<Not set>") : iface.hardwareAddress();
-		//: LABEL DESKTOP
+		//: DESKTOP
 		interfaceInfos << tr("Hardware address: %1").arg(hardwareAddress);
 
 		const auto& addresses = iface.addressEntries();
 		if (addresses.isEmpty())
 		{
-			//: LABEL DESKTOP Interface has no IP addresses assigned
+			//: DESKTOP Interface has no IP addresses assigned
 			interfaceInfos << tr("No IP addresses assigned");
 			mNetworkInterfaceSection << ContentItem(iface.humanReadableName(), interfaceInfos.join(QLatin1Char('\n')));
 			continue;
@@ -437,17 +437,17 @@ void DiagnosisModel::onNetworkInfoChanged()
 			const auto& ip = address.ip();
 			if (ip.protocol() == QAbstractSocket::NetworkLayerProtocol::IPv4Protocol)
 			{
-				//: LABEL DESKTOP
+				//: DESKTOP
 				interfaceInfos << tr("IPv4 address: %1").arg(ip.toString());
 			}
 			else if (ip.protocol() == QAbstractSocket::NetworkLayerProtocol::IPv6Protocol)
 			{
-				//: LABEL DESKTOP
+				//: DESKTOP
 				interfaceInfos << tr("IPv6 address: %1").arg(ip.toString());
 			}
 			else
 			{
-				//: LABEL DESKTOP
+				//: DESKTOP
 				interfaceInfos << tr("Unknown address: %1").arg(ip.toString());
 			}
 		}
@@ -465,66 +465,66 @@ void DiagnosisModel::onConnectionTestDone()
 	const auto& server = Env::getShared<HttpServer>(false);
 
 	mNetworkConnectionSection << ContentItem(
-			//: LABEL DESKTOP
+			//: DESKTOP
 			tr("Service addresses"),
-			//: LABEL DESKTOP
+			//: DESKTOP
 			server ? server->boundAddresses().join(QLatin1Char('\n')) : tr("Not bound"));
 
 	QStringList proxyInfo;
 
 	if (mConnectionTest.getIsProxySet())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		proxyInfo << tr("Hostname: %1").arg(mConnectionTest.getProxyHostName());
-		//: LABEL DESKTOP
+		//: DESKTOP
 		proxyInfo << tr("Port: %1").arg(mConnectionTest.getProxyPort());
-		//: LABEL DESKTOP
+		//: DESKTOP
 		proxyInfo << tr("Type: %1").arg(mConnectionTest.getProxyType());
-		//: LABEL DESKTOP list of the capabitlities of the proxy connection
+		//: DESKTOP list of the capabitlities of the proxy connection
 		proxyInfo << tr("Capabilities: %1").arg(mConnectionTest.getProxyCapabilities());
 
 		if (mConnectionTest.getPingTestOnProxySuccessful())
 		{
-			//: LABEL DESKTOP
+			//: DESKTOP
 			proxyInfo << tr("Ping test to proxy: Successful");
 		}
 		else
 		{
-			//: LABEL DESKTOP
+			//: DESKTOP
 			proxyInfo << tr("Ping test to proxy: Failed");
 		}
 
 		if (mConnectionTest.getConnectionTestWithProxySuccessful())
 		{
-			//: LABEL DESKTOP
+			//: DESKTOP
 			proxyInfo << tr("Connection test with proxy: Successful");
 		}
 		else
 		{
-			//: LABEL DESKTOP
+			//: DESKTOP
 			proxyInfo << tr("Connection test with proxy: Failed");
-			//: LABEL DESKTOP
+			//: DESKTOP
 			proxyInfo << tr("Encountered error: %1").arg(mConnectionTest.getErrorOfConnectionTestWithProxy());
 		}
 	}
 	else
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		proxyInfo << tr("No proxy found");
 	}
 
 	if (mConnectionTest.getConnectionTestWithoutProxySuccessful())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		proxyInfo << tr("Connection test without proxy: Successful");
 	}
 	else
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		proxyInfo << tr("Connection test without proxy: Failed");
 	}
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mNetworkConnectionSection << ContentItem(tr("Proxy information"), proxyInfo.join(QLatin1Char('\n')));
 
 	updateNetworkSection();
@@ -539,15 +539,15 @@ void DiagnosisModel::onAntivirusInformationChanged()
 	const auto& antivirusInfos = mAntivirusDetection.getAntivirusInformation();
 	if (antivirusInfos.isEmpty())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		const auto& title = tr("Antivirus information");
-		//: LABEL DESKTOP
+		//: DESKTOP
 		const auto& content = tr("No Antivirus software detected.");
 		mAntivirusSection << ContentItem(title, content);
 	}
 	else
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mAntivirusSection << ContentItem(tr("Antivirus information"));
 
 		for (const auto& info : antivirusInfos)
@@ -555,10 +555,10 @@ void DiagnosisModel::onAntivirusInformationChanged()
 			QStringList avInfo;
 			if (!info->getLastUpdate().isEmpty())
 			{
-				//: LABEL DESKTOP
+				//: DESKTOP
 				avInfo << tr("Last updated: %1").arg(info->getLastUpdate());
 			}
-			//: LABEL DESKTOP
+			//: DESKTOP
 			avInfo << tr("Executable path: %1").arg(info->getExePath());
 			auto antivirusName = info->getDisplayName();
 			mAntivirusSection << ContentItem(antivirusName, avInfo.join(QLatin1Char('\n')));
@@ -574,9 +574,9 @@ void DiagnosisModel::onAntivirusDetectionFailed()
 {
 	mAntivirusSection.clear();
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	const auto& title = tr("Antivirus information");
-	//: LABEL DESKTOP
+	//: DESKTOP
 	const auto& content = tr("Antivirus detection failed.");
 	mAntivirusSection << ContentItem(title, content);
 
@@ -589,12 +589,12 @@ void DiagnosisModel::onFirewallInformationReady()
 	mFirewallSection.clear();
 	mFirewallSectionRunning = false;
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mFirewallSection << ContentItem(tr("Firewall information"));
 	auto installedFirewalls = mFirewallDetection.getDetectedFirewalls();
 	if (installedFirewalls.isEmpty())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mFirewallSection << ContentItem(QString(), tr("No 3rd party firewalls detected"));
 	}
 	else
@@ -606,35 +606,35 @@ void DiagnosisModel::onFirewallInformationReady()
 
 			QString enabled = boolToString(firewall->getEnabled());
 			QString uptodate = boolToString(firewall->getUpToDate());
-			//: LABEL DESKTOP
+			//: DESKTOP
 			firewallInfos << tr("Enabled: %1").arg(enabled);
-			//: LABEL DESKTOP
+			//: DESKTOP
 			firewallInfos << tr("Up to date: %1").arg(uptodate);
 		}
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mFirewallSection << ContentItem(tr("Firewalls from 3rd party vendors"), firewallInfos.join(QLatin1Char('\n')));
 	}
 
 	QStringList windowsFirewallSettings;
 	QString firstRuleExists = boolToString(mFirewallDetection.getFirstRuleExists());
 	QString firstRuleEnabled = boolToString(mFirewallDetection.getFirstRuleEnabled());
-	//: LABEL DESKTOP
+	//: DESKTOP
 	windowsFirewallSettings << tr("Outgoing %1 rule").arg(QCoreApplication::applicationName());
-	//: LABEL DESKTOP
+	//: DESKTOP
 	windowsFirewallSettings << tr("Exists: %1").arg(firstRuleExists);
-	//: LABEL DESKTOP
+	//: DESKTOP
 	windowsFirewallSettings << tr("Enabled: %1").arg(firstRuleEnabled);
 
 	QString secondRuleExists = boolToString(mFirewallDetection.getSecondRuleExists());
 	QString secondRuleEnabled = boolToString(mFirewallDetection.getSecondRuleEnabled());
-	//: LABEL DESKTOP
+	//: DESKTOP
 	windowsFirewallSettings << tr("Incoming %1 rule").arg(QCoreApplication::applicationName());
-	//: LABEL DESKTOP
+	//: DESKTOP
 	windowsFirewallSettings << tr("Exists: %1").arg(secondRuleExists);
-	//: LABEL DESKTOP
+	//: DESKTOP
 	windowsFirewallSettings << tr("Enabled: %1").arg(secondRuleEnabled);
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mFirewallSection << ContentItem(tr("Windows firewall rules"), windowsFirewallSettings.join(QLatin1Char('\n')));
 
 	QStringList windowsFirewallProfiles;
@@ -643,18 +643,18 @@ void DiagnosisModel::onFirewallInformationReady()
 	{
 		windowsFirewallProfiles << profile->getName();
 		QString enabled = boolToString(profile->getEnabled());
-		//: LABEL DESKTOP
+		//: DESKTOP
 		windowsFirewallProfiles << tr("Enabled: %1").arg(enabled);
 	}
 
 	if (windowsFirewallProfiles.isEmpty())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mFirewallSection << ContentItem(tr("Windows firewall profiles"), tr("Diagnosis is running..."));
 	}
 	else
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mFirewallSection << ContentItem(tr("Windows firewall profiles"), windowsFirewallProfiles.join(QLatin1Char('\n')));
 	}
 
@@ -667,9 +667,9 @@ void DiagnosisModel::onFirewallInformationFailed()
 {
 	mFirewallSection.clear();
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	const auto& title = tr("Firewall information");
-	//: LABEL DESKTOP
+	//: DESKTOP
 	const auto& content = tr("An error occurred while trying to gather firewall information. Please check the log for more information.");
 	mFirewallSection << ContentItem(title, content);
 
@@ -682,25 +682,25 @@ void DiagnosisModel::onPcscInfoChanged()
 	mPcscSection.clear();
 	mPcscSectionRunning = false;
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mPcscSection << ContentItem(tr("PC/SC information"));
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mPcscSection << ContentItem(tr("Version"), mContext->getPcscVersion());
 
 	QStringList pcscInfo;
 	for (const auto& info : mContext->getPcscComponents())
 	{
 		pcscInfo << info.getDescription();
-		//: LABEL DESKTOP
+		//: DESKTOP
 		pcscInfo << tr("Vendor: %1").arg(info.getManufacturer());
-		//: LABEL DESKTOP
+		//: DESKTOP
 		pcscInfo << tr("Version: %1").arg(info.getVersion());
-		//: LABEL DESKTOP
+		//: DESKTOP
 		pcscInfo << tr("File path: %1").arg(info.getPath());
 	}
 	if (!pcscInfo.empty())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mPcscSection << ContentItem(tr("Components"), pcscInfo.join(QLatin1Char('\n')));
 	}
 
@@ -708,16 +708,16 @@ void DiagnosisModel::onPcscInfoChanged()
 	for (const auto& info : mContext->getPcscDrivers())
 	{
 		pcscInfo << info.getDescription();
-		//: LABEL DESKTOP
+		//: DESKTOP
 		pcscInfo << tr("Vendor: %1").arg(info.getManufacturer());
-		//: LABEL DESKTOP
+		//: DESKTOP
 		pcscInfo << tr("Version: %1").arg(info.getVersion());
-		//: LABEL DESKTOP
+		//: DESKTOP
 		pcscInfo << tr("File path: %1").arg(info.getPath());
 	}
 	if (!pcscInfo.empty())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mPcscSection << ContentItem(tr("Driver"), pcscInfo.join(QLatin1Char('\n')));
 	}
 
@@ -734,12 +734,12 @@ void DiagnosisModel::onRemoteInfosChanged()
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const auto& trustedCertificates = settings.getTrustedCertificates();
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mRemoteDeviceSection << ContentItem(tr("Paired smartphones"));
 
 	if (trustedCertificates.isEmpty())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mRemoteDeviceSection << ContentItem(QString(), tr("No devices paired."));
 	}
 
@@ -749,14 +749,14 @@ void DiagnosisModel::onRemoteInfosChanged()
 
 		if (!info.getFingerprint().isEmpty())
 		{
-			//: LABEL DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
+			//: DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
 			const QString& timestamp = LanguageLoader::getInstance().getUsedLocale().toString(info.getLastConnected(), tr("dd.MM.yyyy, hh:mm:ss"));
-			//: LABEL DESKTOP
+			//: DESKTOP
 			mRemoteDeviceSection << ContentItem(info.getNameEscaped(), tr("Last connection: %1").arg(timestamp));
 		}
 		else
 		{
-			//: LABEL DESKTOP
+			//: DESKTOP
 			mRemoteDeviceSection << ContentItem(QString::fromLatin1(RemoteServiceSettings::generateFingerprint(cert).toHex()), tr("No information found for this certificate."));
 		}
 	}
@@ -771,14 +771,14 @@ void DiagnosisModel::onReaderInfosChanged()
 	mCardReaderSection.clear();
 	mCardReaderSectionRunning = false;
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	mCardReaderSection << ContentItem(tr("Connected Card readers"));
 
 	const auto& readerInfos = mContext->getReaderInfos();
 	const auto& readerInfoNoDriver = mContext->getReaderInfosNoDriver();
 	if (readerInfos.isEmpty() && readerInfoNoDriver.isEmpty())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mCardReaderSection << ContentItem(QString(), tr("No supported reader found."));
 	}
 
@@ -786,19 +786,19 @@ void DiagnosisModel::onReaderInfosChanged()
 	{
 		QStringList infoList;
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		const auto& basicReader = tr("Basic card reader");
-		//: LABEL DESKTOP
+		//: DESKTOP
 		const auto& standardReader = tr("Standard / comfort card reader");
 		QString readerType = info.isBasicReader() ? basicReader : standardReader;
-		//: LABEL DESKTOP
+		//: DESKTOP
 		infoList << tr("Type: %1").arg(readerType);
-		//: LABEL DESKTOP
+		//: DESKTOP
 		infoList << tr("Card: %1").arg(info.getCardTypeString());
 
 		if (info.hasEid())
 		{
-			//: LABEL DESKTOP
+			//: DESKTOP
 			infoList << tr("Retry counter: %1").arg(info.getRetryCounter());
 		}
 
@@ -807,7 +807,7 @@ void DiagnosisModel::onReaderInfosChanged()
 
 	for (const auto& info : readerInfoNoDriver)
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		mCardReaderSection << ContentItem(info.getName(), tr("No driver installed"));
 	}
 

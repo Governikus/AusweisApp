@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -14,6 +14,7 @@ Item {
 
 	readonly property int activeModule: d.activeModule
 	readonly property bool lockedAndHidden: d.lockedAndHidden
+	required property real safeAreaBottomMargin
 
 	signal resetContentArea
 
@@ -29,13 +30,13 @@ Item {
 	}
 
 	enabled: !lockedAndHidden
-	height: UiPluginModel.safeAreaMargins.bottom + navigationView.implicitHeight
+	height: safeAreaBottomMargin + navigationView.implicitHeight
 
 	states: State {
 		when: d.lockedAndHidden
 
 		PropertyChanges {
-			root.height: UiPluginModel.safeAreaMargins.bottom
+			root.height: root.safeAreaBottomMargin
 		}
 	}
 	transitions: Transition {
@@ -68,7 +69,7 @@ Item {
 			Accessible.ignored: d.lockedAndHidden
 			Layout.alignment: Qt.AlignHCenter
 			activeModule: d.activeModule
-			visible: root.height > UiPluginModel.safeAreaMargins.bottom
+			visible: root.height > root.safeAreaBottomMargin
 
 			onShow: pModule => {
 				root.resetContentArea();
@@ -80,7 +81,7 @@ Item {
 		anchors.bottom: parent.bottom
 		anchors.left: parent.left
 		anchors.right: parent.right
-		color: d.lockedAndHidden ? Style.color.background : Style.color.pane.background.basic
-		height: UiPluginModel.safeAreaMargins.bottom
+		color: d.lockedAndHidden ? Style.color.background : Style.color.pane.background.basic_unchecked
+		height: root.safeAreaBottomMargin
 	}
 }

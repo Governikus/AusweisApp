@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/TransmitCommand.h"
@@ -79,7 +79,7 @@ class test_TransmitCommand
 		void test_InternalExecuteOkSingleCommandWithoutAcceptableStatusCode()
 		{
 			QList<InputAPDUInfo> inputApduInfos(1);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			TransmitCommand command(worker, inputApduInfos, QStringLiteral("slotname"));
@@ -93,7 +93,7 @@ class test_TransmitCommand
 		void test_InternalExecuteOkSingleCommandWithAcceptableStatusCode()
 		{
 			QList<InputAPDUInfo> inputApduInfos(1);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			inputApduInfos[0].addAcceptableStatusCode(QByteArray("90"));
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
@@ -110,7 +110,7 @@ class test_TransmitCommand
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QList<InputAPDUInfo> inputApduInfos(1);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, QByteArray::fromHex("1919"));
 			TransmitCommand command1(worker, inputApduInfos, QStringLiteral("slotname"));
@@ -132,7 +132,7 @@ class test_TransmitCommand
 		{
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QList<InputAPDUInfo> inputApduInfos(1);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			inputApduInfos[0].addAcceptableStatusCode(QByteArray("1010"));
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
@@ -148,7 +148,7 @@ class test_TransmitCommand
 		void test_InternalExecuteOkMultipleCommand()
 		{
 			QList<InputAPDUInfo> inputApduInfos(2);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
@@ -166,7 +166,7 @@ class test_TransmitCommand
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QList<InputAPDUInfo> inputApduInfos(2);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, QByteArray::fromHex("1919"));
@@ -193,7 +193,7 @@ class test_TransmitCommand
 
 			QList<InputAPDUInfo> inputApduInfos1(2);
 			QList<InputAPDUInfo> inputApduInfos2(2);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			inputApduInfos1[0].addAcceptableStatusCode(QByteArray("90"));
 			inputApduInfos1[1].addAcceptableStatusCode(QByteArray("1010"));
@@ -223,7 +223,7 @@ class test_TransmitCommand
 		void test_SlotHandle()
 		{
 			QList<InputAPDUInfo> inputApduInfos(1);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QString name = QStringLiteral("slotname");
 			TransmitCommand command(worker, inputApduInfos, name);
 			QCOMPARE(command.getSlotHandle(), name);
@@ -233,7 +233,7 @@ class test_TransmitCommand
 		void test_EmptyResponse()
 		{
 			QList<InputAPDUInfo> inputApduInfos(2);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			worker->addResponse(CardReturnCode::OK, QByteArray());

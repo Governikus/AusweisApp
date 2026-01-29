@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/CVCertificate.h"
@@ -58,7 +58,7 @@ class test_CVCertificate
 
 		void testParseAllCvcs()
 		{
-			for (auto name : {"cvat-DE0000024001HW.hex", "cvca-DECVCAeID00103.hex", "cvca-DETESTeID00005_DETESTeID00004.hex", "cvat-DEDEMODEV00038.hex", "cvca-DETESTeID00001.hex", "cvca-DETESTeID00005.hex", "cvat-DEDEMOPAA00079.hex", "cvca-DETESTeID00002_DETESTeID00001.hex",
+			for (auto name : {"cvat-DE0000024001HW.hex", "cvca-DECVCAeID00103.hex", "cvat-DEDEMODEV00038.hex", "cvca-DETESTeID00001.hex", "cvat-DEDEMOPAA00079.hex", "cvca-DETESTeID00002_DETESTeID00001.hex",
 							  "cvdv-DEDVeIDDPST00035.hex", "cvat-DEDEVDEMO00020.hex", "cvca-DETESTeID00002.hex", "cvdv-DEDVeIDDPST00039.hex", "cvca-DECVCAeID00102_DECVCAeID00103.hex", "cvca-DETESTeID00004_DETESTeID00002.hex", "cvdv-DEDVeIDDTR101415.hex",
 							  "cvca-DECVCAeID00102.hex", "cvca-DETESTeID00004.hex", "cvdv-DEDVtIDGVNK00005.hex"}
 					)
@@ -119,6 +119,10 @@ class test_CVCertificate
 
 		void debugStream()
 		{
+			QTest::ignoreMessage(QtDebugMsg, "0x0");
+			const auto emptyCvcPointer = QSharedPointer<const CVCertificate>();
+			qDebug() << emptyCvcPointer;
+
 			QTest::ignoreMessage(QtDebugMsg, "CVCA(DETESTeID00001, authority=DETESTeID00001, 2010-08-13 - 2013-08-13, invalid)");
 			QSharedPointer<const CVCertificate> cvca = Converter::certificatefromHex(readFile("cvca-DETESTeID00001.hex"_L1));
 			qDebug() << cvca;
@@ -169,6 +173,20 @@ class test_CVCertificate
 			QVERIFY(*cvca2_const != *cvca1);
 			QVERIFY(*cvca1_const != *cvca2);
 			QVERIFY(*cvca2 != *cvca1_const);
+		}
+
+
+		void hash()
+		{
+			QSharedPointer<const CVCertificate> cvca1 = Converter::certificatefromHex(readFile("cvca-DETESTeID00001.hex"_L1));
+			QSharedPointer<const CVCertificate> cvca2 = Converter::certificatefromHex(readFile("cvca-DETESTeID00001.hex"_L1));
+			QSharedPointer<const CVCertificate> cvca3 = Converter::certificatefromHex(readFile("cvca-DETESTeID00002.hex"_L1));
+
+			QSet<const CVCertificate> set;
+			set.insert(*cvca1);
+			set.insert(*cvca2);
+			set.insert(*cvca3);
+			QCOMPARE(set.size(), 2);
 		}
 
 

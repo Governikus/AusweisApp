@@ -5,12 +5,8 @@
   ],
   "configurePresets": [
     {
-      "name": "ci-win",
-      "inherits": "ci-with-libs"
-    },
-    {
       "name": "ci-win-release",
-      "inherits": "ci-win",
+      "inherits": "ci-with-libs",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "MinSizeRel",
         "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
@@ -20,7 +16,7 @@
     },
     {
       "name": "ci-win-debug",
-      "inherits": "ci-win",
+      "inherits": "ci-with-libs",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "DEBUG",
         "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",

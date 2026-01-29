@@ -15,11 +15,11 @@ Unterstützte C++17 Compiler:
 
 Notwendige Bibliotheken:
 
-- Qt >= 6.4
+- Qt >= 6.8
 
   - http://www.qt.io/download/
 
-- OpenSSL >= 1.1.0
+- OpenSSL >= 1.1.1
 
   - https://www.openssl.org/source/
 
@@ -104,7 +104,7 @@ Windows SDK
 
 - https://developer.microsoft.com/de-de/windows/downloads/windows-sdk/
 
-  - Getestet: 10.0.22621.1
+  - Getestet: 10.0.26100.0
 
   - Umgebungsvariable setzen:
 
@@ -143,10 +143,10 @@ Ninja
 MinGW
 """""
 
-- https://wiki.qt.io/MinGW
+- https://github.com/niXman/mingw-builds-binaries/releases
 
-- Getestet: 13.1.0-202407240918mingw1310
-  https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/tools_mingw1310
+- Getestet: 15.2.0
+  x86_64-15.2.0-release-posix-seh-ucrt-rt_v13-rev0.7z
 
 - Pfad zu MinGW-bin-Verzeichnis muss zur Path-Umgebungsvariable hinzugefügt
   werden
@@ -211,13 +211,8 @@ Perl
 
     - Getestet: msys2-base-x86_64-20220603.tar.xz
 
-    - MSYS2 sollte immer über den Befehl "msys2_shell.cmd -use-full-path" gestartet
-      werden, da MSYS2 sonst einige eigene Pfade nicht findet.
-
-    - Nach Entpacken MSYS2 mit "pacman -Syu" aktualisieren.
-
-    - Wenn sich kein weiteres Perl im Pfad befindet muss für den Build von Qt
-      <msys_base>/usr/bin zum Pfad hinzugefügt werden.
+    - Pfad zur Perl-Executable muss zur Path-Umgebungsvariable hinzugefügt werden.
+      Beispiel: C:\msys64\usr\bin
 
 - ActivePerl/StrawberryPerl
 
@@ -237,32 +232,15 @@ Perl
 OpenSSL / Qt mit MinGW
 """"""""""""""""""""""
 
-Da Qt mittels Batchskript gebaut werden muss, ist es leider nicht möglich dies innerhalb
-von MSYS2 zu bauen [3]. Daher wird OpenSSL und Qt mittels Windows-CLI konfiguriert.
-Dabei wird Qt über Windows-CLI und OpenSSL unter MSYS2 gebaut.
-
 #. cmd.exe von Windows starten
 
-#. mkdir c:\msys64\home\user\qt ("user" ist der Benutzer, der unter MSYS2 verwendet wird)
+#. mkdir c:\qt
 
-#. cd c:\msys64\home\user\qt
+#. cd c:\qt
 
 #. cmake -DCMAKE_BUILD_TYPE=release C:/AusweisApp/libs -G "MinGW Makefiles"
 
-#. MSYS2 Shell starten ("msys2_shell.cmd -use-full-path")
-
-#. cd qt
-
-#. mingw32-make openssl
-
-#. MSYS2 Shell verlassen
-
-#. In der cmd.exe: c:\msys64\home\user\qt
-
-#. mingw32-make qt
-
-
-[3] http://sourceforge.net/p/mingw/bugs/1902/
+#. mingw32-make
 
 
 OpenSSL / Qt mit MSVC

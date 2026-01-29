@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -44,31 +44,31 @@ CheckResultView {
 	buttonText: {
 		switch (result) {
 		case CheckIDCardModel.Result.SUCCESS:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return qsTr("Continue");
 		case CheckIDCardModel.Result.PIN_DEACTIVATED:
 		case CheckIDCardModel.Result.PIN_SUSPENDED:
 		case CheckIDCardModel.Result.PIN_BLOCKED:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return qsTr("How to proceed?");
 		default:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return qsTr("What does that mean?");
 		}
 	}
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	header: qsTr("Test Result")
 	model: resultModel
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	title: qsTr("Check device and ID card")
 
 	GText {
 		font.weight: Style.font.bold
 		horizontalAlignment: Text.AlignHCenter
 		text: (d.successNfc && !root.usedInOnboarding) ? (Style.is_layout_desktop ?
-			//: LABEL DESKTOP
+			//: DESKTOP
 			qsTr("You may now try the function: \"See my personal data\". Click the \"%1\" button to do so now.") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("You may now try the function: \"See my personal data\". Tap the \"%1\" button to do so now.")).arg(root.buttonText) : ""
 		visible: text !== ""
 	}
@@ -78,9 +78,9 @@ CheckResultView {
 		ResultEntry {
 			resultType: ResultEntry.Type.IsSuccess
 			text: d.isPcsc ?
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("Card reader supported") :
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("Smartphone as card reader detected")
 			visible: !d.isNfc
 		}
@@ -89,28 +89,26 @@ CheckResultView {
 
 			resultType: nfcSupported ? ResultEntry.Type.IsSuccess : ResultEntry.Type.IsError
 			text: nfcSupported ?
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("NFC supported") :
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("Your device doesn't support NFC")
 			visible: d.isNfc
 		}
 		ResultEntry {
-
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			text: qsTr("NFC enabled")
 			visible: d.isNfc && root.result > CheckIDCardModel.Result.NO_READER
 		}
 		ResultEntry {
 			resultType: ResultEntry.Type.IsInfo
 
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			text: qsTr("No supported card detected")
 			visible: root.result === CheckIDCardModel.Result.UNKNOWN_CARD_DETECTED
 		}
 		ResultEntry {
-
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			text: qsTr("ID card detected")
 			visible: root.result > CheckIDCardModel.Result.UNKNOWN_CARD_DETECTED
 		}
@@ -119,9 +117,9 @@ CheckResultView {
 
 			resultType: insufficientApduLength ? ResultEntry.Type.IsError : ResultEntry.Type.IsSuccess
 			text: insufficientApduLength ?
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("Extended length not supported") :
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("Extended length supported")
 			visible: !d.isPcsc && root.result >= CheckIDCardModel.Result.INSUFFICIENT_APDU_LENGTH
 		}
@@ -130,9 +128,9 @@ CheckResultView {
 
 			resultType: cardAccessFailed ? ResultEntry.Type.IsError : ResultEntry.Type.IsSuccess
 			text: cardAccessFailed ?
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("ID card access failed") :
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("ID card access successful")
 			visible: root.result >= CheckIDCardModel.Result.CARD_ACCESS_FAILED
 		}
@@ -141,29 +139,28 @@ CheckResultView {
 
 			resultType: pinDeactivated ? ResultEntry.Type.IsError : ResultEntry.Type.IsSuccess
 			text: pinDeactivated ?
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("eID function disabled") :
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			qsTr("eID function enabled")
 			visible: root.result >= CheckIDCardModel.Result.PIN_DEACTIVATED
 		}
 		ResultEntry {
 			resultType: ResultEntry.Type.IsInfo
 
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			text: qsTr("ID card PIN suspended")
 			visible: root.result === CheckIDCardModel.Result.PIN_SUSPENDED
 		}
 		ResultEntry {
 			resultType: ResultEntry.Type.IsInfo
 
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			text: qsTr("ID card PIN blocked")
 			visible: root.result === CheckIDCardModel.Result.PIN_BLOCKED
 		}
 		ResultEntry {
-
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			text: qsTr("ID card functional")
 			visible: root.result === CheckIDCardModel.Result.SUCCESS
 		}

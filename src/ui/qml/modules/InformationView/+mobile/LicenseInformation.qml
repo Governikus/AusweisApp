@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -16,7 +16,7 @@ SectionPage {
 
 	contentIsScrolled: !listView.atYBeginning
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Software license")
 
 	navigationAction: NavigationAction {

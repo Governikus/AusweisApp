@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -22,11 +22,11 @@ RoundedRectangle {
 	required property bool readerSupported
 	property bool showInstalledSupportedIcon: true
 
-	//: INFO DESKTOP Text read by screen reader if the text contains a web link to a card reader driver which may be opened.
+	//: DESKTOP Text read by screen reader if the text contains a web link to a card reader driver which may be opened.
 	Accessible.name: readerName + ". " + ApplicationModel.stripHtmlTags(readerHTMLDescription) + ". " + (textDescription.hasLink ? qsTr("Press space to open link.") : "")
 	Accessible.role: textDescription.hasLink ? Accessible.Button : Accessible.ListItem
 	activeFocusOnTab: textDescription.hasLink
-	color: Style.color.paneSublevel.background.basic
+	color: Style.color.paneSublevel.background.basic_unchecked
 	implicitHeight: rowLayout.implicitHeight
 	implicitWidth: rowLayout.implicitWidth
 
@@ -47,9 +47,20 @@ RoundedRectangle {
 			Layout.preferredHeight: root.iconHeight + 2 * Style.dimens.pane_padding
 			Layout.preferredWidth: root.iconHeight + Style.dimens.pane_padding
 			bottomRightCorner: false
-			color: Style.color.paneSublevel.background.basic
-			gradientColor: Style.color.pane.background.basic
 			topRightCorner: false
+
+			gradient: Gradient {
+				orientation: Gradient.Horizontal
+
+				GradientStop {
+					color: Style.color.paneSublevel.background.basic_unchecked
+					position: 0
+				}
+				GradientStop {
+					color: Style.color.pane.background.basic_unchecked
+					position: 1
+				}
+			}
 
 			Image {
 				id: readerIcon

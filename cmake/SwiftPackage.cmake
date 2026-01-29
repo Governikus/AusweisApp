@@ -80,5 +80,6 @@ if(NOT EXISTS "${DIST_DIR}")
 endif()
 
 set(dist_filename ${DIST_DIR}/${prefix}-${APP_NAME_VERSION}${APP_MISMATCH}.swiftpackage.zip)
+string(REPLACE "AusweisApp2" "AusweisApp" dist_filename "${dist_filename}")
 message(STATUS "Create package: ${dist_filename}")
 execute_process(COMMAND ${CMAKE_COMMAND} -E tar cf "${dist_filename}" --format=zip LICENSE.txt ${prefix}.xcframework Package.swift)

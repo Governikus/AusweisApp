@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Reader.h"
@@ -8,7 +8,9 @@
 #include "MockReader.h"
 #include "TestFileHelper.h"
 
+#include <QPointer>
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -18,21 +20,20 @@ class test_Reader
 	: public QObject
 {
 	Q_OBJECT
-	QSharedPointer<MockReader> mReader;
+	QPointer<MockReader> mReader;
 	QString mReaderName = "test reader"_L1;
 	QSharedPointer<MockCardConnectionWorker> mWorker;
 
 	private Q_SLOTS:
 		void init()
 		{
-			mReader.reset(new MockReader(mReaderName));
-			mWorker.reset(new MockCardConnectionWorker(mReader.data()));
+			mReader = new MockReader(mReaderName);
+			mWorker = MockCardConnectionWorker::create(mReader);
 		}
 
 
 		void cleanup()
 		{
-			mReader.clear();
 			mWorker.clear();
 		}
 
@@ -85,7 +86,7 @@ class test_Reader
 			ReaderInfo rInfo(mReaderName, ReaderManagerPluginType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
-			QSignalSpy spy(mReader.data(), &Reader::fireCardInfoChanged);
+			QSignalSpy spy(mReader, &Reader::fireCardInfoChanged);
 
 			QTest::ignoreMessage(QtDebugMsg, "StatusCode: SUCCESS");
 			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false , PIN initial:  false ");
@@ -112,7 +113,7 @@ class test_Reader
 			ReaderInfo rInfo(mReaderName, ReaderManagerPluginType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
-			QSignalSpy spy(mReader.data(), &Reader::fireCardInfoChanged);
+			QSignalSpy spy(mReader, &Reader::fireCardInfoChanged);
 
 			QTest::ignoreMessage(QtDebugMsg, "StatusCode: SUCCESS");
 			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false , PIN initial:  false ");
@@ -136,7 +137,7 @@ class test_Reader
 			ReaderInfo rInfo(mReaderName, ReaderManagerPluginType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("63D3"));
-			QSignalSpy spy(mReader.data(), &Reader::fireCardInfoChanged);
+			QSignalSpy spy(mReader, &Reader::fireCardInfoChanged);
 
 			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 3 , PIN deactivated: false , PIN initial:  true ");
 			QTest::ignoreMessage(QtDebugMsg, "fireCardInfoChanged");
@@ -169,9 +170,9 @@ class test_Reader
 			QFETCH(int, infoCount);
 			QFETCH(bool, insertable);
 
-			QSignalSpy removed(mReader.data(), &Reader::fireCardRemoved);
-			QSignalSpy properties(mReader.data(), &Reader::fireReaderPropertiesUpdated);
-			QSignalSpy info(mReader.data(), &Reader::fireCardInfoChanged);
+			QSignalSpy removed(mReader, &Reader::fireCardRemoved);
+			QSignalSpy properties(mReader, &Reader::fireReaderPropertiesUpdated);
+			QSignalSpy info(mReader, &Reader::fireCardInfoChanged);
 
 			QVERIFY(!mReader->getReaderInfo().isInsertable());
 			mReader->setInfoCardInfo(CardInfo(type, FileRef(), nullptr, retryCounter));
@@ -184,7 +185,7 @@ class test_Reader
 
 			if (insertable)
 			{
-				QSignalSpy inserted(mReader.data(), &Reader::fireCardInserted);
+				QSignalSpy inserted(mReader, &Reader::fireCardInserted);
 
 				mReader->insertCard();
 				QCOMPARE(inserted.count(), 1);

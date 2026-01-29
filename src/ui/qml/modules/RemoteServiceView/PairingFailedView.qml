@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import Governikus.Animations
@@ -13,9 +13,9 @@ ResultView {
 
 	animationSymbol: Symbol.Type.ERROR
 	animationType: AnimationLoader.Type.SAC_CONNECTION
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	header: qsTr("Pairing failed")
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	subheader: qsTr("Pairing to \"%1\" failed").arg(deviceName)
 	text: errorMessage
 }

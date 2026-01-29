@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginWebService.h"
@@ -81,13 +81,13 @@ bool UiPluginWebService::listening()
 
 		if (showMessage.isEmpty())
 		{
-			//: ERROR ALL_PLATFORMS An unknown program is using the local port on which the AA listens.
+			//: ALL_PLATFORMS An unknown program is using the local port on which the AA listens.
 			showMessage = tr("An unknown program uses the required port (%1). Please exit the other program and try again!").arg(port);
 		}
 
 		if (!serverAppName.isEmpty())
 		{
-			//: ERROR ALL_PLATFORMS A known program is using the local port on which the AA listens.
+			//: ALL_PLATFORMS A known program is using the local port on which the AA listens.
 			showMessage = tr("The program (%1) uses the required port (%2). Please close %1 and try again!").arg(serverAppName).arg(port);
 		}
 	}
@@ -159,14 +159,14 @@ void UiPluginWebService::handleShowUiRequest(const QString& pUiModule, const QSh
 		if (callerVersion > VersionNumber::getApplicationVersion())
 		{
 			qCWarning(webservice) << "Current version is lower than caller version";
-			//: ERROR ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.
+			//: ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.
 			Q_EMIT fireShowUserInformationRequested(tr("You tried to start a newer version (%1) of currently running %2. Please stop the current version (%3) and start again!").arg(version, QCoreApplication::applicationName(), QCoreApplication::applicationVersion()));
 			return;
 		}
 		else if (callerVersion < VersionNumber::getApplicationVersion())
 		{
 			qCWarning(webservice) << "Current version is higher than caller version";
-			//: ERROR ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.
+			//: ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.
 			Q_EMIT fireShowUserInformationRequested(tr("You tried to start an older version (%1) of currently running %2. Please open the currently running version (%3)!").arg(version, QCoreApplication::applicationName(), QCoreApplication::applicationVersion()));
 			return;
 		}
@@ -231,17 +231,17 @@ void UiPluginWebService::sendWorkflowAlreadyActive(const QSharedPointer<HttpRequ
 	}
 
 	Template htmlTemplate = Template::fromFile(QStringLiteral(":/template.html"));
-	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
+	//: ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("TITLE"), tr("Cannot start authentication"));
 	htmlTemplate.setContextParameter(QStringLiteral("APPLICATION_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1").arg(LanguageLoader::getLocaleCode()));
-	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
+	//: ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Cannot start authentication"));
-	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
+	//: ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("An operation is already in progress."));
-	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
+	//: ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_HEADER"), tr("Would you like to try again?"));
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), pRequest->getUrl().toString());
-	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
+	//: ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_BUTTON"), tr("Try again"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
@@ -256,7 +256,7 @@ QString UiPluginWebService::sendErrorPage(const QSharedPointer<HttpRequest>& pRe
 {
 	if (!pRequest->isConnected())
 	{
-		//: ERROR ALL_PLATFORMS No HTTP connection present.
+		//: ALL_PLATFORMS No HTTP connection present.
 		return tr("The browser connection was lost.");
 	}
 
@@ -266,17 +266,17 @@ QString UiPluginWebService::sendErrorPage(const QSharedPointer<HttpRequest>& pRe
 	Template htmlTemplate = Template::fromFile(QStringLiteral(":/template.html"));
 	htmlTemplate.setContextParameter(QStringLiteral("TITLE"), tr("Invalid request (%1)").arg(statusMsg));
 	htmlTemplate.setContextParameter(QStringLiteral("APPLICATION_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1").arg(LanguageLoader::getLocaleCode()));
-	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
+	//: ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Invalid request (%1)").arg(statusMsg));
-	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
+	//: ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("Your browser sent a request that couldn't be interpreted."));
-	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
+	//: ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_SUBHEADER_LABEL"), tr("Error message:"));
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_SUBHEADER"), pStatus.toErrorDescription(true));
-	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
+	//: ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_HEADER"), tr("Would you like to report this error?"));
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocaleCode()));
-	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
+	//: ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_BUTTON"), tr("Report now"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
@@ -316,7 +316,7 @@ QString UiPluginWebService::sendRedirect(const QSharedPointer<HttpRequest>& pReq
 	qCDebug(webservice) << "Perform redirect to URL:" << pRedirectAddress;
 	if (!pRequest->isConnected())
 	{
-		//: ERROR ALL_PLATFORMS The connection to the browser was lost/timed out..
+		//: ALL_PLATFORMS The connection to the browser was lost/timed out..
 		return tr("The connection to the browser was lost while redirecting to the provider (%1). No automatic redirection could be performed.").arg(pRedirectAddress.host());
 	}
 

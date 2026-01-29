@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -30,6 +30,9 @@ FlickableSectionPage {
 	onVisibleChanged: if (!visible)
 		pinField.number = ""
 
+	ScreenshotPreventer {
+		Layout.bottomMargin: -root.spacing
+	}
 	QtObject {
 		id: d
 
@@ -111,25 +114,25 @@ FlickableSectionPage {
 			Heading {
 				id: mainText
 
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				text: root.passwordType === NumberModel.PasswordType.CAN ? qsTr("Enter CAN") :
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				root.passwordType === NumberModel.PasswordType.PUK ? qsTr("Enter PUK") :
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				root.passwordType === NumberModel.PasswordType.REMOTE_PIN ? qsTr("Enter pairing code") :
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				root.passwordType === NumberModel.PasswordType.NEW_PIN ? qsTr("Choose new ID card PIN") :
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				root.passwordType === NumberModel.PasswordType.NEW_PIN_CONFIRMATION ? qsTr("Confirm ID card PIN") :
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				root.passwordType === NumberModel.PasswordType.TRANSPORT_PIN ? qsTr("Enter Transport PIN") :
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				root.passwordType === NumberModel.PasswordType.SMART_PIN ? qsTr("Enter Smart-eID PIN") :
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				root.passwordType === NumberModel.PasswordType.NEW_SMART_PIN ? qsTr("Choose new Smart-eID PIN") :
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				root.passwordType === NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION ? qsTr("Confirm Smart-eID PIN") :
-				//: LABEL ALL_PLATFORMS This is the large main text below the icon.
+				//: ALL_PLATFORMS This is the large main text below the icon.
 				qsTr("Enter ID card PIN")
 			}
 			GText {
@@ -142,55 +145,55 @@ FlickableSectionPage {
 				maximumLineCount: 3
 				text: {
 					if (root.passwordType === NumberModel.PasswordType.CAN) {
-						//: INFO ALL_PLATFORMS The user is required to enter the 6-digit CAN. This is the description for the main text.
+						//: ALL_PLATFORMS The user is required to enter the 6-digit CAN. This is the description for the main text.
 						return qsTr("Please enter the CAN. You can find the CAN in the bottom right on the front of the ID card.");
 					}
 					if (root.passwordType === NumberModel.PasswordType.PUK) {
-						//: INFO ALL_PLATFORMS The PUK is required to unlock the ID card since the wrong ID card PIN entered three times. This is the description for the main text.
+						//: ALL_PLATFORMS The PUK is required to unlock the ID card since the wrong ID card PIN entered three times. This is the description for the main text.
 						return qsTr("Please enter your 10-digit PUK.");
 					}
 					if (root.passwordType === NumberModel.PasswordType.NEW_PIN) {
-						//: INFO ALL_PLATFORMS A new 6-digit ID card PIN needs to be supplied. This is the description for the main text.
+						//: ALL_PLATFORMS A new 6-digit ID card PIN needs to be supplied. This is the description for the main text.
 						return qsTr("You will enter this 6-digit PIN every time you want to use your ID card online.");
 					}
 					if (root.passwordType === NumberModel.PasswordType.NEW_PIN_CONFIRMATION) {
-						//: INFO ALL_PLATFORMS The new ID card PIN needs to be confirmed. This is the description for the main text.
+						//: ALL_PLATFORMS The new ID card PIN needs to be confirmed. This is the description for the main text.
 						return qsTr("The PIN is going to be tied to your ID card. It always stays the same regardless of the device you want to use your ID card with.");
 					}
 					if (root.passwordType === NumberModel.PasswordType.NEW_SMART_PIN) {
-						//: INFO ALL_PLATFORMS A new 6-digit Smart-eID PIN needs to be supplied. This is the description for the main text.
+						//: ALL_PLATFORMS A new 6-digit Smart-eID PIN needs to be supplied. This is the description for the main text.
 						return qsTr("You will enter this 6-digit PIN every time you want to use your Smart-eID.");
 					}
 					if (root.passwordType === NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION) {
-						//: INFO ALL_PLATFORMS The new Smart-eID PIN needs to be confirmed. This is the description for the main text.
+						//: ALL_PLATFORMS The new Smart-eID PIN needs to be confirmed. This is the description for the main text.
 						return qsTr("The PIN is going to be tied to your Smart-eID. It always stays the same regardless of the service you want to use your Smart-eID with.");
 					}
 					if (root.passwordType === NumberModel.PasswordType.TRANSPORT_PIN) {
-						//: INFO ALL_PLATFORMS The Transport PIN is required by AA, it needs to be change to an actual PIN. This is the description for the main text.
+						//: ALL_PLATFORMS The Transport PIN is required by AA, it needs to be change to an actual PIN. This is the description for the main text.
 						return qsTr("You will find the Transport PIN in the letter that was sent to you after you applied for your ID card.");
 					}
 					if (root.passwordType === NumberModel.PasswordType.REMOTE_PIN) {
 						return Style.is_layout_desktop ?
-						//: INFO DESKTOP The pairing code needs to be supplied. This is the description for the main text.
+						//: DESKTOP The pairing code needs to be supplied. This is the description for the main text.
 						qsTr("Enter the pairing code shown on your smartphone.") :
-						//: INFO MOBILE The pairing code for the smartphone is required. This is the description for the main text.
+						//: MOBILE The pairing code for the smartphone is required. This is the description for the main text.
 						qsTr("Enter the pairing code shown on the device you want to pair.");
 					}
 					if (root.passwordType === NumberModel.PasswordType.SMART_PIN) {
 						if (NumberModel.retryCounter === 1) {
-							//: INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered twice on the Smart-eID
+							//: ALL_PLATFORMS The wrong Smart-eID PIN was entered twice on the Smart-eID
 							return qsTr("You have entered an incorrect, 6-digit Smart-eID PIN 2 times. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.");
 						}
 						return ApplicationModel.currentWorkflow === ApplicationModel.Workflow.CHANGE_PIN ?
-						//: INFO ALL_PLATFORMS The AA expects the current Smart-eID PIN with six digits in a PIN change. This is the description for the main text.
+						//: ALL_PLATFORMS The AA expects the current Smart-eID PIN with six digits in a PIN change. This is the description for the main text.
 						qsTr("Please enter your current 6-digit Smart-eID PIN.") :
-						//: INFO ALL_PLATFORMS The AA expects a Smart-eID PIN with six digits in an authentication. This is the description for the main text.
+						//: ALL_PLATFORMS The AA expects a Smart-eID PIN with six digits in an authentication. This is the description for the main text.
 						qsTr("Please enter your 6-digit Smart-eID PIN.");
 					}
 					return ApplicationModel.currentWorkflow === ApplicationModel.Workflow.CHANGE_PIN ?
-					//: INFO ALL_PLATFORMS The AA expects the current ID card PIN with six digits in a PIN change. This is the description for the main text.
+					//: ALL_PLATFORMS The AA expects the current ID card PIN with six digits in a PIN change. This is the description for the main text.
 					qsTr("You have chosen the 6-digit ID card PIN yourself or received it via the PIN Reset Service.") :
-					//: INFO ALL_PLATFORMS The AA expects a ID card PIN with six digits in an authentication. This is the description for the main text.
+					//: ALL_PLATFORMS The AA expects a ID card PIN with six digits in an authentication. This is the description for the main text.
 					qsTr("Please enter your 6-digit ID card PIN.");
 				}
 
@@ -212,9 +215,9 @@ FlickableSectionPage {
 				Layout.alignment: Qt.AlignHCenter
 				Layout.topMargin: Style.dimens.text_spacing
 				text: (root.passwordType === NumberModel.PasswordType.TRANSPORT_PIN ?
-					//: LABEL ALL_PLATFORMS Button to switch to a 6-digit ID card PIN.
+					//: ALL_PLATFORMS Button to switch to a 6-digit ID card PIN.
 					qsTr("Do you have a 6-digit ID card PIN?") :
-					//: LABEL ALL_PLATFORMS Button to start a change of the Transport PIN.
+					//: ALL_PLATFORMS Button to start a change of the Transport PIN.
 					qsTr("Do you have a 5-digit Transport PIN?"))
 				visible: false
 
@@ -280,25 +283,25 @@ FlickableSectionPage {
 			Layout.alignment: grid.isLandscape ? Qt.AlignCenter : Qt.AlignHCenter | Qt.AlignTop
 			deleteEnabled: pinField.number.length > 0
 			submitAccessibleText: root.accessibleContinueText !== "" ? root.accessibleContinueText :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			root.passwordType === NumberModel.PasswordType.CAN ? qsTr("Send CAN") :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			root.passwordType === NumberModel.PasswordType.PUK ? qsTr("Send PUK") :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			root.passwordType === NumberModel.PasswordType.REMOTE_PIN ? qsTr("Send pairing code") :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			root.passwordType === NumberModel.PasswordType.NEW_PIN ? qsTr("Send new ID card PIN") :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			root.passwordType === NumberModel.PasswordType.NEW_PIN_CONFIRMATION ? qsTr("Confirm new ID card PIN") :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			root.passwordType === NumberModel.PasswordType.TRANSPORT_PIN ? qsTr("Send Transport PIN") :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			root.passwordType === NumberModel.PasswordType.SMART_PIN ? qsTr("Send Smart-eID PIN") :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			root.passwordType === NumberModel.PasswordType.NEW_SMART_PIN ? qsTr("Send new Smart-eID PIN") :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			root.passwordType === NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION ? qsTr("Confirm new Smart-eID PIN") :
-			//: LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
+			//: ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.
 			qsTr("Send ID card PIN")
 			submitEnabled: pinField.validInput
 

@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetTcToken.h"
 
 #include "HttpServer.h"
-#include "HttpServerRequestor.h"
 #include "ResourceLoader.h"
 
+#include "MockNetworkManager.h"
 #include "MockNetworkReply.h"
 
 #include <QByteArrayList>
@@ -23,17 +23,25 @@ class test_StateGetTcToken
 	Q_OBJECT
 
 	private:
-		QUrl getUrl(const QString& pUrl)
-		{
-			const auto& port = QString::number(Env::getShared<HttpServer>()->getServerPort());
-			return QUrl(QStringLiteral("http://localhost:%1%2").arg(port, pUrl));
-		}
+		MockNetworkManager mMockNetworkManager;
 
 	private Q_SLOTS:
 		void initTestCase()
 		{
 			ResourceLoader::getInstance().init();
 			HttpServer::cPort = 0;
+		}
+
+
+		void init()
+		{
+			Env::set(NetworkManager::staticMetaObject, &mMockNetworkManager);
+		}
+
+
+		void cleanup()
+		{
+			Env::clear();
 		}
 
 
@@ -81,60 +89,62 @@ class test_StateGetTcToken
 			StateGetTcToken state(context);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
-			const QUrl url("https://a.not.existing.valid.test.url.com"_L1);
-			state.sendRequest(url);
+			MockNetworkReply* const reply = new MockNetworkReply(QByteArray(), HTTP_STATUS_OK);
+			reply->setError(QNetworkReply::UnknownNetworkError, QString());
+			mMockNetworkManager.setNextReply(reply);
+
+			state.sendRequest(QUrl("https://a.not.existing.valid.test.url.com"_L1));
 			QCOMPARE(state.mConnections.size(), 3);
 
-			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QTest::ignoreMessage(QtCriticalMsg, "An error occurred: QNetworkReply::UnknownNetworkError \"Unknown error\"");
+			mMockNetworkManager.fireFinished();
+			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Get_TcToken_Network_Error);
 		}
 
 
 		void test_HttpError_FailureCode_data()
 		{
+			QTest::addColumn<QNetworkReply::NetworkError>("errorCode");
 			QTest::addColumn<http_status>("httpStatusCode");
 			QTest::addColumn<FailureCode>("failureCode");
 
-			QTest::newRow("see other") << HTTP_STATUS_SEE_OTHER << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
-			QTest::newRow("found") << HTTP_STATUS_FOUND << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
-			QTest::newRow("temp redirect") << HTTP_STATUS_TEMPORARY_REDIRECT << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
+			QTest::newRow("see other") << QNetworkReply::NoError << HTTP_STATUS_SEE_OTHER << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
+			QTest::newRow("found") << QNetworkReply::NoError << HTTP_STATUS_FOUND << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
+			QTest::newRow("temp redirect") << QNetworkReply::NoError << HTTP_STATUS_TEMPORARY_REDIRECT << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
 
-			QTest::newRow("perm redirect") << HTTP_STATUS_PERMANENT_REDIRECT << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Server_Reply);
-			QTest::newRow("no content") << HTTP_STATUS_NO_CONTENT << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Server_Reply);
+			QTest::newRow("perm redirect") << QNetworkReply::NoError << HTTP_STATUS_PERMANENT_REDIRECT << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Server_Reply);
+			QTest::newRow("no content") << QNetworkReply::NoError << HTTP_STATUS_NO_CONTENT << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Server_Reply);
 
-			QTest::newRow("bad request") << HTTP_STATUS_BAD_REQUEST << FailureCode(FailureCode::Reason::Get_TcToken_Client_Error);
-			QTest::newRow("not found") << HTTP_STATUS_NOT_FOUND << FailureCode(FailureCode::Reason::Get_TcToken_Client_Error);
+			QTest::newRow("bad request") << QNetworkReply::UnknownNetworkError << HTTP_STATUS_BAD_REQUEST << FailureCode(FailureCode::Reason::Get_TcToken_Client_Error);
+			QTest::newRow("not found") << QNetworkReply::UnknownNetworkError << HTTP_STATUS_NOT_FOUND << FailureCode(FailureCode::Reason::Get_TcToken_Client_Error);
 
-			QTest::newRow("service unavailable") << HTTP_STATUS_SERVICE_UNAVAILABLE << FailureCode(FailureCode::Reason::Get_TcToken_ServiceUnavailable);
-			QTest::newRow("gateway timeout") << HTTP_STATUS_GATEWAY_TIMEOUT << FailureCode(FailureCode::Reason::Get_TcToken_Server_Error);
-			QTest::newRow("bad gateway") << HTTP_STATUS_BAD_GATEWAY << FailureCode(FailureCode::Reason::Get_TcToken_Server_Error);
-			QTest::newRow("server error") << HTTP_STATUS_INTERNAL_SERVER_ERROR << FailureCode(FailureCode::Reason::Get_TcToken_Server_Error);
+			QTest::newRow("service unavailable") << QNetworkReply::UnknownNetworkError << HTTP_STATUS_SERVICE_UNAVAILABLE << FailureCode(FailureCode::Reason::Get_TcToken_ServiceUnavailable);
+			QTest::newRow("gateway timeout") << QNetworkReply::UnknownNetworkError << HTTP_STATUS_GATEWAY_TIMEOUT << FailureCode(FailureCode::Reason::Get_TcToken_Server_Error);
+			QTest::newRow("bad gateway") << QNetworkReply::UnknownNetworkError << HTTP_STATUS_BAD_GATEWAY << FailureCode(FailureCode::Reason::Get_TcToken_Server_Error);
+			QTest::newRow("server error") << QNetworkReply::UnknownNetworkError << HTTP_STATUS_INTERNAL_SERVER_ERROR << FailureCode(FailureCode::Reason::Get_TcToken_Server_Error);
 		}
 
 
 		void test_HttpError_FailureCode()
 		{
+			QFETCH(QNetworkReply::NetworkError, errorCode);
 			QFETCH(http_status, httpStatusCode);
 			QFETCH(FailureCode, failureCode);
-
-			const auto& server = Env::getShared<HttpServer>();
-			QVERIFY(server->isListening());
-			connect(server.data(), &HttpServer::fireNewHttpRequest, this, [httpStatusCode](const QSharedPointer<HttpRequest>& pRequest){
-						pRequest->send(HttpResponse(httpStatusCode));
-					});
-
-			HttpServerRequestor requestor;
-			const auto& reply = requestor.getRequest(getUrl(QStringLiteral("/dummy")));
-			QVERIFY(reply->isFinished());
-			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), httpStatusCode);
 
 			const QSharedPointer<AuthContext> context(new AuthContext());
 			StateGetTcToken state(context);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
-			state.mReply = reply;
-			state.onNetworkReply();
-			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+			MockNetworkReply* const reply = new MockNetworkReply(QByteArray(), httpStatusCode);
+			reply->setError(errorCode, QString());
+			mMockNetworkManager.setNextReply(reply);
+
+			state.sendRequest(QUrl("http://localhost/dummy"_L1));
+			QCOMPARE(state.mConnections.size(), 3);
+
+			mMockNetworkManager.fireFinished();
+			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(context->getFailureCode().value(), failureCode);
 		}
 
@@ -158,6 +168,10 @@ class test_StateGetTcToken
 			StateGetTcToken state(context);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
+			MockNetworkReply* const redirectReply = new MockNetworkReply(QByteArray(), HTTP_STATUS_OK);
+			redirectReply->setError(QNetworkReply::UnknownNetworkError, QString());
+			mMockNetworkManager.setNextReply(redirectReply);
+
 			auto reply = QSharedPointer<MockNetworkReply>::create();
 			reply->setRequest(QNetworkRequest(QUrl("https://a.not.existing.valid.test.url.com/tcToken"_L1)));
 			reply->setAttribute(QNetworkRequest::HttpStatusCodeAttribute, QVariant(302));
@@ -167,7 +181,10 @@ class test_StateGetTcToken
 			QTest::ignoreMessage(QtDebugMsg, "Status Code: 302 \"Found\"");
 			state.onNetworkReply();
 			QCOMPARE(state.mReply->request().url(), QUrl(redirect));
-			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+
+			QTest::ignoreMessage(QtCriticalMsg, "An error occurred: QNetworkReply::UnknownNetworkError \"Unknown error\"");
+			mMockNetworkManager.fireFinished();
+			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Get_TcToken_Network_Error);
 		}
 

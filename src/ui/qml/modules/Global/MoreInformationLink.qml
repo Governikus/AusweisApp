@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -19,7 +19,7 @@ GLink {
 	icon.source: iconVisible ? "qrc:///images/info.svg" : ""
 	iconSize: Style.dimens.small_icon_size
 	maximumLineCount: 2
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	text: qsTr("More information")
 	textStyle: Style.text.link
 	tintIcon: true

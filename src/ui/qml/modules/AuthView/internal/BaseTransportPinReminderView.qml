@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -28,13 +28,13 @@ FlickableSectionPage {
 		contentType: MultiInfoData.Type.CHANGE_PIN
 	}
 	Heading {
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("Set up card PIN")
 	}
 	GText {
 		Layout.alignment: Qt.AlignHCenter
 
-		//: LABEL ALL_PLATFORMS %1 and %2 are replaced with bold highlighting
+		//: ALL_PLATFORMS %1 and %2 are replaced with bold highlighting
 		text: qsTr("You need an %1ID Card PIN%2 in order to use the eID function. If you just have %1Transport PIN%2, you have to %1replace%2 it with an %1ID Card PIN once%2.").arg("<b>").arg("</b>")
 	}
 	MoreInformationLink {
@@ -44,7 +44,7 @@ FlickableSectionPage {
 		onClicked: root.showInfoView(MultiInfoData.Type.CHANGE_PIN)
 	}
 	Subheading {
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("What kind of PIN do you have?")
 	}
 	PinSelectionButtons {

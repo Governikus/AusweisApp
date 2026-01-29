@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -39,7 +39,7 @@ FlickableSectionPage {
 
 		Layout.fillWidth: true
 
-		//: LABEL DESKTOP Title of the self authentication result data view
+		//: DESKTOP Title of the self authentication result data view
 		title: qsTr("Read data")
 
 		Grid {

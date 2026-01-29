@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -16,7 +16,7 @@ import Governikus.View
 SectionPage {
 	id: root
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("Settings")
 
 	titleBarSettings: TitleBarSettings {
@@ -35,20 +35,20 @@ SectionPage {
 		anchors.fill: parent
 		sectionsModel: {
 			let model = [
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("General"),
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("Smartphone as card reader"),
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("USB card reader"),
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("Security and privacy")];
 			if (UiPluginModel.debugBuild) {
-				//: LABEL DESKTOP
+				//: DESKTOP
 				model.push(qsTr("Debug options"));
 			}
 			if (SettingsModel.developerOptions) {
-				//: LABEL DESKTOP
+				//: DESKTOP
 				model.push(qsTr("Developer options"));
 			}
 			return model;

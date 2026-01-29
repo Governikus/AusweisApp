@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -12,7 +12,6 @@ SectionPage {
 	id: root
 
 	property bool autoInsertCard: false
-	property bool hideTechnologySwitch: false
 	property var initialPlugin: null
 	property bool startedByOnboarding: false
 
@@ -20,7 +19,7 @@ SectionPage {
 	signal requestBack
 	signal workflowFinished(bool pSuccess)
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Identify")
 
 	QtObject {
@@ -43,7 +42,6 @@ SectionPage {
 
 		AuthController {
 			autoInsertCard: root.autoInsertCard
-			hideTechnologySwitch: root.hideTechnologySwitch
 			initialPlugin: root.initialPlugin
 			stackView: root.stackView
 			startedByOnboarding: root.startedByOnboarding

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -15,14 +15,11 @@ SelfAuthStartView {
 	id: root
 
 	property bool autoInsertCard: false
-	property bool hideTechnologySwitch: false
 	property var initialPlugin
 
 	signal back
 	signal changeTransportPin
 	signal workflowFinished(int pModuleToShow)
-
-	disagreeButtonText: ""
 
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
@@ -42,8 +39,6 @@ SelfAuthStartView {
 			property bool backRequested: false
 
 			autoInsertCard: root.autoInsertCard
-			hideTechnologySwitch: root.hideTechnologySwitch
-			initialPlugin: root.initialPlugin
 
 			Component.onCompleted: SelfAuthModel.startWorkflow(false)
 			onChangeTransportPin: root.changeTransportPin()

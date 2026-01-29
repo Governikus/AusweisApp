@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -36,11 +36,11 @@ GAbstractButton {
 		TintableIcon {
 			source: root.icon.source
 			sourceSize.height: Style.dimens.huge_icon_size
-			tintColor: Style.color.textTitle.checked
+			tintColor: Style.color.textTitle.basic_checked
 		}
 		GText {
 			Accessible.ignored: true
-			color: root.activeFocus && UiPluginModel.showFocusIndicator ? Style.color.textTitle.checked : Style.color.textTitle.basic
+			color: root.activeFocus && UiPluginModel.showFocusIndicator ? Style.color.textTitle.basic_checked : Style.color.textTitle.basic_unchecked
 			horizontalAlignment: Text.AlignLeft
 			text: root.text
 			textStyle: Style.text.tile

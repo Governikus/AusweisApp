@@ -1,17 +1,19 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/BaseCardCommand.h"
 
 #include "LogHandler.h"
-#include "MockCardConnectionWorker.h"
+#include "MockReader.h"
 
 #include <QtCore>
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class BaseCardCommandDummy
 	: public BaseCardCommand

@@ -1,16 +1,19 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateDestroyPace.h"
 
-#include "MockCardConnectionWorker.h"
 #include "context/ChangePinContext.h"
+
+#include "MockCardConnectionWorker.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
 
 using namespace governikus;
+
 
 class MockCardCommand
 	: public BaseCardCommand
@@ -41,29 +44,27 @@ class test_StateDestroyPace
 	private Q_SLOTS:
 		void test_Run()
 		{
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread workerThread;
 
 			{
 				const QSharedPointer<ChangePinContext> context(new ChangePinContext());
-				const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-				worker->moveToThread(&workerThread);
-				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-				context->setCardConnection(connection);
-				StateDestroyPace state(context);
+				auto worker = MockCardConnectionWorker::create(&workerThread);
+				context->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 
+				StateDestroyPace state(context);
+				QSignalSpy spy(&state, &StateDestroyPace::fireContinue);
 				state.run();
 				QCOMPARE(state.mConnections.size(), 1);
-			}
+				QTRY_COMPARE(spy.size(), 1);
 
-			workerThread.quit();
-			workerThread.wait();
+				context->resetCardConnection();
+			}
 		}
 
 
 		void test_OnDestroyPace()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QSharedPointer<MockCardCommand> command(new MockCardCommand(worker));
 			const QSharedPointer<ChangePinContext> context(new ChangePinContext());
 			StateDestroyPace state(context);

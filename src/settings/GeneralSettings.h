@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -134,6 +134,9 @@ class GeneralSettings
 		[[nodiscard]] QString getDarkMode() const;
 		void setDarkMode(const QString& pMode);
 
+		[[nodiscard]] bool isScreenPrivacy() const;
+		void setScreenPrivacy(bool pEnable);
+
 		[[nodiscard]] QString getIfdServiceToken();
 
 		[[nodiscard]] bool doSmartUpdate() const;
@@ -178,6 +181,7 @@ class GeneralSettings
 		void fireUseSystemFontChanged();
 		void fireUseAnimationsChanged();
 		void fireDarkModeChanged();
+		void fireScreenPrivacyChanged();
 		void fireSmartAvailableChanged(bool pSmartAvailable);
 };
 

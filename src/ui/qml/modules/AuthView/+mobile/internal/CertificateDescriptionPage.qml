@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -24,7 +24,7 @@ FlickableSectionPage {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.leftMargin: Style.dimens.pane_padding
 		Layout.rightMargin: Style.dimens.pane_padding
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Provider Information")
 	}
 	Repeater {

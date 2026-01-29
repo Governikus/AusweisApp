@@ -1,17 +1,21 @@
 /**
- * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 
 QtObject {
-	property url buttonLink: ""
-	property string buttonText: ""
 	property list<MultiInfoContentBlock> contentList
-	property string hint: ""
-	property string hintButtonText: ""
-	property string hintTitle: ""
+	property url firstHintButtonLink: ""
+	property string firstHintButtonText: ""
+	property string firstHintText: ""
+	property string firstHintTitle: ""
+	property string hintBoxesTitle: ""
 
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	property string linkText: qsTr("More information")
+	property url secondHintButtonLink: ""
+	property string secondHintButtonText: ""
+	property string secondHintText: ""
+	property string secondHintTitle: ""
 	property string title
 }

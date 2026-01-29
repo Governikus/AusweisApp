@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -603,6 +603,24 @@ class test_GeneralSettings
 			QCOMPARE(settings.isTrayIconEnabled(), GeneralSettings::trayIconDefault());
 			settings.setTrayIconEnabled(!settings.isTrayIconEnabled());
 			QCOMPARE(settings.isTrayIconEnabled(), !GeneralSettings::trayIconDefault());
+		}
+
+
+		void testScreenPrivacy()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			QSignalSpy spy(&settings, &GeneralSettings::fireScreenPrivacyChanged);
+			bool initial = settings.isScreenPrivacy();
+			bool newValue = !initial;
+
+			settings.setScreenPrivacy(newValue);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(settings.isScreenPrivacy(), newValue);
+
+			settings.setScreenPrivacy(initial);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(settings.isScreenPrivacy(), initial);
 		}
 
 

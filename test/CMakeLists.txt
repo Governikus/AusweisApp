@@ -67,6 +67,12 @@ function(ADD_QML_TEST _sourcefile _platform)
 	add_test(NAME ${TESTNAME} COMMAND ${CMD})
 	set_tests_properties(${TESTNAME} PROPERTIES ENVIRONMENT "${TESTENV}")
 	set_tests_properties(${TESTNAME} PROPERTIES LABELS "qml" TIMEOUT 90)
+
+	file(READ "${_sourcefile}" _content)
+	if(_content MATCHES "\\.forceActiveFocus\\(\\)")
+		message(STATUS "${TESTNAME} requires resource \"activeFocus\"")
+		set_tests_properties(${TESTNAME} PROPERTIES RESOURCE_LOCK activeFocus)
+	endif()
 endfunction()
 
 

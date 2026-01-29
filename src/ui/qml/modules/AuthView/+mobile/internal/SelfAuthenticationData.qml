@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -18,9 +18,12 @@ FlickableSectionPage {
 	property alias okButtonText: okButton.text
 
 	spacing: Style.dimens.pane_spacing
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Identify")
 
+	ScreenshotPreventer {
+		Layout.bottomMargin: -root.spacing
+	}
 	GPane {
 		Layout.fillWidth: true
 
@@ -58,7 +61,7 @@ FlickableSectionPage {
 		id: okButton
 
 		Layout.alignment: Qt.AlignHCenter
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Back to start page")
 
 		onClicked: root.leaveView()

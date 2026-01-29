@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -9,7 +9,7 @@ import Governikus.Style
 GFlickable {
 	id: root
 
-	default property alias data: contentLayout.data
+	default property alias layoutData: contentLayout.data
 	property real maximumContentWidth: -1
 	property alias spacing: contentLayout.spacing
 

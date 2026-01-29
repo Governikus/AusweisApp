@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -19,7 +19,7 @@ SectionPage {
 
 	signal keyPressed(var pEvent)
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("Logs")
 
 	titleBarSettings: TitleBarSettings {
@@ -53,7 +53,7 @@ SectionPage {
 				Layout.maximumWidth: Number.POSITIVE_INFINITY
 				enabled: LogFilesModel.count > 0
 				icon.source: "qrc:///images/desktop/save_icon.svg"
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Save log")
 				tintIcon: true
 
@@ -66,10 +66,10 @@ SectionPage {
 					id: fileDialog
 
 					defaultSuffix: "log"
-					//: LABEL DESKTOP
+					//: DESKTOP
 					nameFilters: qsTr("Logfiles (*.log)")
 
-					//: LABEL DESKTOP
+					//: DESKTOP
 					title: qsTr("Save log")
 
 					onAccepted: logModel.saveLogFile(selectedFile, true)
@@ -80,7 +80,7 @@ SectionPage {
 				disabledTooltipText: qsTr("The current log will be automatically deleted at exit.")
 				enableButton: LogFilesModel.count > 1
 				icon.source: "qrc:///images/trash_icon.svg"
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Delete all logs")
 				tintIcon: true
 
@@ -132,7 +132,7 @@ SectionPage {
 					anchors.fill: parent
 					bottomLeftCorner: logEntry.isLastItem
 					bottomRightCorner: logEntry.isLastItem
-					color: Style.color.pane.background.basic
+					color: Style.color.pane.background.basic_unchecked
 					topLeftCorner: logEntry.isFirstItem
 					topRightCorner: logEntry.isFirstItem
 				}
@@ -180,11 +180,11 @@ SectionPage {
 	ConfirmationPopup {
 		id: confirmationPopup
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		okButtonText: qsTr("Delete")
-		//: INFO DESKTOP All logfiles are about to be removed, user confirmation required.
+		//: DESKTOP All logfiles are about to be removed, user confirmation required.
 		text: qsTr("All old logs will be deleted.")
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Delete all logs")
 		width: UiPluginModel.scaleFactor * 360
 

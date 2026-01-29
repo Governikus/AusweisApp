@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -8,7 +8,7 @@ TestCase {
 	id: testCase
 
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.TitleBar; TitleBar {}", testCase);
+		return createTemporaryQmlObject("import Governikus.TitleBar; TitleBar {safeAreaTopMargin: 0}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();

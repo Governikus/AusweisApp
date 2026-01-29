@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -143,6 +143,12 @@ class test_ApplicationModel
 			model->resetContext(context);
 
 			QCOMPARE(model->getUsedPluginType(), usedPluginType);
+		}
+
+
+		void test_isScreenRecording()
+		{
+			QCOMPARE(Env::getSingleton<ApplicationModel>()->isScreenRecording(), false);
 		}
 
 

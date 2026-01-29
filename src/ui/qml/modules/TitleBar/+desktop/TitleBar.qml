@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -50,7 +50,7 @@ Rectangle {
 				enabled: root.currentSettings.startEnabled
 				horizontalPadding: 0
 				icon.source: "qrc:///images/desktop/home.svg"
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Start page")
 
 				onClicked: root.startClicked()
@@ -86,9 +86,9 @@ Rectangle {
 					id: notifyButton
 
 					Accessible.description: checked ?
-					//: LABEL DESKTOP
+					//: DESKTOP
 					qsTr("Hide in-app notifications of %1").arg(Qt.application.name) :
-					//: LABEL DESKTOP
+					//: DESKTOP
 					qsTr("Show in-app notifications of %1").arg(Qt.application.name)
 					Accessible.role: {
 						if ("Switch" in Accessible) {
@@ -114,6 +114,7 @@ Rectangle {
 				anchors.left: parent.right
 				anchors.top: parent.top
 				anchors.topMargin: firstRow.height
+				visible: notifyButton.visible
 
 				onNewNotification: notifyButton.notify()
 			}
@@ -152,7 +153,7 @@ Rectangle {
 		}
 	}
 	GSeparator {
-		color: Style.color.pane.border.basic
+		color: Style.color.pane.border.basic_unchecked
 		height: Style.dimens.border_width
 
 		anchors {

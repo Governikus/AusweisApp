@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -94,7 +94,7 @@ void StateEstablishPaceChannel::run()
 		return;
 	}
 
-	//: INFO ALL_PLATFORMS First status message after the PIN was entered.
+	//: ALL_PLATFORMS First status message after the PIN was entered.
 	context->setProgress(context->getProgressValue(), tr("The secure channel is opened"));
 
 	qDebug() << "Establish connection using" << mPasswordId;

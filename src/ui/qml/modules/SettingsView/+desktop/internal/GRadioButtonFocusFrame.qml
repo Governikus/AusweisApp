@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -27,12 +27,12 @@ Rectangle {
 
 	// override top and bottom border corner of previous and next button in group
 	Frame {
-		border.color: Style.color.pane.background.basic
+		border.color: Style.color.pane.background.basic_unchecked
 		border.width: root.border.width
 
 		// draw underlying button border to have also the left border
 		Frame {
-			border.color: root.checked ? Style.color.controlRadiobutton.border.checked : Style.color.controlRadiobutton.border.basic
+			border.color: root.checked ? Style.color.controlRadiobutton.border.basic_checked : Style.color.controlRadiobutton.border.basic_unchecked
 			border.width: Style.dimens.border_width
 		}
 	}

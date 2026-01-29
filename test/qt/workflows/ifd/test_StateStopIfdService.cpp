@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateStopIfdService.h"
@@ -7,13 +7,13 @@
 #include "context/IfdServiceContext.h"
 #include "states/StateBuilder.h"
 
-#include "MockCardConnectionWorker.h"
 #include "MockIfdServer.h"
 
 #include <QtTest>
 
 
 using namespace governikus;
+
 
 class test_StateStopIfdService
 	: public QObject

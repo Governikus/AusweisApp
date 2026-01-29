@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -26,38 +26,38 @@ BaseOnboardingView {
 
 	Heading {
 		Layout.bottomMargin: Style.dimens.pane_spacing
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("What is required to use %1?").arg(Qt.application.name)
 	}
 	Subheading {
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: "1. " + qsTr("Your ID card")
 	}
 	GText {
 		Layout.bottomMargin: Style.dimens.pane_spacing
-		//: LABEL DESKTOP %1 + %2 = Bold Tags
+		//: DESKTOP %1 + %2 = Bold Tags
 		text: qsTr("You could either use the %1German ID card%2, an %1electronic residence permit%2 or the %1eID card for EU citizens%2.").arg("<b>").arg("</b>")
 	}
 	Subheading {
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: "2. " + qsTr("A smartphone or a card reader")
 	}
 	GText {
 		Layout.bottomMargin: Style.dimens.pane_spacing
-		//: LABEL DESKTOP %1 = Application Name, %2 + %3 = Bold Tags
+		//: DESKTOP %1 = Application Name, %2 + %3 = Bold Tags
 		text: qsTr("You may use your %2NFC-enabled smartphone%3. To do this you will have to install %1 on this smartphone. Alternatively you may use an %2USB card reader with your PC%3.").arg(Qt.application.name).arg("<b>").arg("</b>")
 	}
 	Subheading {
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: "3. " + qsTr("Your PIN")
 	}
 	GText {
-		//: LABEL DESKTOP  %1 + %2 = Bold Tags, %3 = AusweisApp
+		//: DESKTOP  %1 + %2 = Bold Tags, %3 = AusweisApp
 		text: qsTr("You have received a one-time PIN, the %1Transport PIN%2, as a letter from your competent authority. You can replace this with a%1 6-digit card PIN%2 in the %3 or at the Citizens' Registration Office. If you do not have a PIN or do not remember your card PIN, click here:").arg("<b>").arg("</b>").arg(Qt.application.name)
 	}
 	MoreInformationLink {
 		Layout.bottomMargin: Style.dimens.pane_spacing * 2
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("I can't recall my PIN")
 
 		onClicked: root.push(multiInfoView)
@@ -71,7 +71,7 @@ BaseOnboardingView {
 		MultiInfoView {
 			id: infoView
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			continueButtonText: qsTr("Abort setup")
 			progress: root.progress
 

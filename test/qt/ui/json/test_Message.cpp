@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -25,7 +25,10 @@ class test_Message
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			Env::getSingleton<ReaderManager>()->init();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
+			readerManager->init();
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

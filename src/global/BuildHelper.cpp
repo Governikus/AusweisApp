@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BuildHelper.h"
@@ -39,11 +39,7 @@ QJniObject BuildHelper::getPackageInfo(const QString& pPackageName, int pFlags)
 		}
 	}
 
-	if (env->ExceptionCheck())
-	{
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
+	env.checkAndClearExceptions();
 
 	return result;
 }
@@ -137,11 +133,7 @@ QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 		list << QByteArray(reinterpret_cast<const char* const>(buffer), size);
 	}
 
-	if (env->ExceptionCheck())
-	{
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
+	env.checkAndClearExceptions();
 
 	return list;
 }

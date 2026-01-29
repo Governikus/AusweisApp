@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -96,7 +96,7 @@ SecureStorage::SecureStorage()
 	, mSmartSsdAid()
 	, mLocalIfdPackageName()
 	, mLocalIfdMinVersion()
-	, mLocalIfAllowedCertificateHashes()
+	, mLocalIfdAllowedCertificateHashes()
 	, mLocalIfdMinPskSize()
 	, mTlsConfig()
 	, mTlsConfigPsk()
@@ -271,7 +271,7 @@ void SecureStorage::load()
 		mLocalIfdPackageName = readGroup(config, CONFIGURATION_GROUP_NAME_LOCAL_IFD(), CONFIGURATION_NAME_LOCAL_IFD_PACKAGE_NAME());
 		mLocalIfdMinVersion = readGroup(config, CONFIGURATION_GROUP_NAME_LOCAL_IFD(), CONFIGURATION_NAME_LOCAL_IFD_MIN_VERSION());
 		QJsonObject localIfdValueObject = localIfdValue.toObject();
-		mLocalIfAllowedCertificateHashes = readByteArrayList(localIfdValueObject, CONFIGURATION_NAME_LOCAL_IFD_ALLOWED_CERTIFICATE_HASHES());
+		mLocalIfdAllowedCertificateHashes = readByteArrayList(localIfdValueObject, CONFIGURATION_NAME_LOCAL_IFD_ALLOWED_CERTIFICATE_HASHES());
 		mLocalIfdMinPskSize = localIfdValueObject.value(CONFIGURATION_NAME_LOCAL_IFD_MIN_PSK_SIZE()).toInt();
 	}
 
@@ -433,7 +433,7 @@ const QString& SecureStorage::getLocalIfdMinVersion() const
 
 const QByteArrayList& SecureStorage::getLocalIfdAllowedCertificateHashes() const
 {
-	return mLocalIfAllowedCertificateHashes;
+	return mLocalIfdAllowedCertificateHashes;
 }
 
 

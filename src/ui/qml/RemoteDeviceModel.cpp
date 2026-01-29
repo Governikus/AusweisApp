@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceModel.h"
@@ -77,14 +77,14 @@ QString RemoteDeviceModel::getStatus(const RemoteDeviceModelEntry& pRemoteDevice
 {
 	if (mAllRemoteReaders.isEmpty())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("Not connected");
 	}
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	if (pRemoteDeviceModelEntry.isPairing())
 	{
-		//: LABEL LABEL ANDROID IOS
+		//: MOBILE
 		return tr("Tap to pair");
 	}
 #endif
@@ -95,23 +95,23 @@ QString RemoteDeviceModel::getStatus(const RemoteDeviceModelEntry& pRemoteDevice
 		{
 			if (pRemoteDeviceModelEntry.isSupported())
 			{
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return tr("Available");
 			}
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Paired, but unsupported");
 		}
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("Unavailable");
 	}
 
 	if (!pRemoteDeviceModelEntry.isSupported())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("Unsupported");
 	}
 
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	return tr("Not paired");
 }
 
@@ -146,7 +146,7 @@ QString RemoteDeviceModel::constructDisplayDeviceName(const QModelIndex& pIndex)
 	{
 		return storedName;
 	}
-	//: LABEL ALL_PLATFORMS Describes the former name of the device and is shown as: "New_Name (was Old_Name)"
+	//: ALL_PLATFORMS Describes the former name of the device and is shown as: "New_Name (was Old_Name)"
 	return newRemoteName + QStringLiteral(" (%1 %2)").arg(tr("was"), storedName);
 }
 
@@ -295,7 +295,7 @@ QVariant RemoteDeviceModel::data(const QModelIndex& pIndex, int pRole) const
 		{
 			const auto& locale = LanguageLoader::getInstance().getUsedLocale();
 
-			//: LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
+			//: ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
 			const auto& dateTimeFormat = tr("dd.MM.yyyy hh:mm AP");
 			return locale.toString(reader.getLastConnected(), dateTimeFormat);
 		}

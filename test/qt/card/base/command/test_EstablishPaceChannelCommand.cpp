@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/EstablishPaceChannelCommand.h"
 
 #include "MockCardConnectionWorker.h"
 
+#include <QPointer>
 #include <QtCore>
 #include <QtTest>
 
@@ -21,7 +22,7 @@ class test_EstablishPaceChannelCommand
 	private Q_SLOTS:
 		void test_GetPaceOutput()
 		{
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QByteArray passwort = QByteArrayLiteral("passwort");
 			QByteArray chat("chat");
 			QByteArray description("description");
@@ -48,10 +49,10 @@ class test_EstablishPaceChannelCommand
 
 		void test_InternalExecute()
 		{
-			MockReader reader(QStringLiteral("reader"));
+			QPointer<MockReader> reader = new MockReader(QStringLiteral("reader"));
 			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0, true, true);
-			reader.setInfoCardInfo(info);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			reader->setInfoCardInfo(info);
+			const auto& worker = MockCardConnectionWorker::create(reader);
 
 			worker->addPaceCode(CardReturnCode::OK);
 			worker->addPaceCode(CardReturnCode::OK);
@@ -80,7 +81,7 @@ class test_EstablishPaceChannelCommand
 
 		void test_InternalExecuteNoReader()
 		{
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QByteArray puk("00000000000");
 
 			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
@@ -91,8 +92,8 @@ class test_EstablishPaceChannelCommand
 
 		void test_InternalExecuteNoCard()
 		{
-			MockReader reader(QStringLiteral("reader"));
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			QPointer<MockReader> reader = new MockReader(QStringLiteral("reader"));
+			const auto& worker = MockCardConnectionWorker::create(reader);
 			const QByteArray puk("00000000000");
 
 			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
@@ -103,11 +104,11 @@ class test_EstablishPaceChannelCommand
 
 		void test_InternalExecutePinNotBlocked()
 		{
-			MockReader reader(QStringLiteral("reader"));
+			QPointer<MockReader> reader = new MockReader(QStringLiteral("reader"));
 			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0, true, true);
-			reader.setInfoCardInfo(info);
+			reader->setInfoCardInfo(info);
 
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			const auto& worker = MockCardConnectionWorker::create(reader);
 			const QByteArray puk("00000000000");
 			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
 			command.internalExecute();
@@ -117,10 +118,10 @@ class test_EstablishPaceChannelCommand
 
 		void test_InternalExecuteProtocolError()
 		{
-			MockReader reader(QStringLiteral("reader"));
+			QPointer<MockReader> reader = new MockReader(QStringLiteral("reader"));
 			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0, false, true);
-			reader.setInfoCardInfo(info);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			reader->setInfoCardInfo(info);
+			const auto& worker = MockCardConnectionWorker::create(reader);
 
 			worker->addPaceCode(CardReturnCode::PROTOCOL_ERROR);
 			const QByteArray puk("12131415");
@@ -132,10 +133,10 @@ class test_EstablishPaceChannelCommand
 
 		void test_InternalExecuteOK()
 		{
-			MockReader reader(QStringLiteral("reader"));
+			QPointer<MockReader> reader = new MockReader(QStringLiteral("reader"));
 			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0, false, true);
-			reader.setInfoCardInfo(info);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			reader->setInfoCardInfo(info);
+			const auto& worker = MockCardConnectionWorker::create(reader);
 
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			worker->addPaceCode(CardReturnCode::OK);

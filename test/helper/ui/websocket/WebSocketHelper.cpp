@@ -1,15 +1,16 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebSocketHelper.h"
 
-#include "UiPluginWebSocket.h"
-
-#include <QThread>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QTimer>
 
+
 using namespace governikus;
+
 
 void WebSocketHelper::connectWebsocket(int pPort)
 {

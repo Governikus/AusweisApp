@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -34,13 +34,13 @@ GLink {
 	iconSize: Style.dimens.small_icon_size * 1.5
 	text: switch (root.type) {
 	case NavigationAction.Action.Cancel:
-		//: LABEL DESKTOP
+		//: DESKTOP
 		return qsTr("Cancel");
 	case NavigationAction.Action.Close:
-		//: LABEL DESKTOP
+		//: DESKTOP
 		return qsTr("Close");
 	default:
-		//: LABEL DESKTOP
+		//: DESKTOP
 		return qsTr("Back");
 	}
 	tintIcon: true

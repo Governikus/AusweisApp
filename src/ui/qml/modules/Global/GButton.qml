@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -27,6 +27,11 @@ GAbstractButton {
 	property alias style: colors.controlStyle
 	property TextStyle textStyle: Style.text.button
 	property bool tintIcon: false
+	readonly property string tooltipText: {
+		const charLimit = 74;
+		let text = enableButton ? enabledTooltipText : disabledTooltipText;
+		return text.length <= charLimit ? text : text.slice(0, charLimit) + "…";
+	}
 
 	Accessible.ignored: !enableButton
 	Accessible.name: text
@@ -34,7 +39,7 @@ GAbstractButton {
 	Layout.maximumWidth: Math.ceil(implicitWidth)
 	Layout.minimumWidth: background ? Style.dimens.min_button_width : -1
 	ToolTip.delay: Style.toolTipDelay
-	ToolTip.text: enableButton ? enabledTooltipText : disabledTooltipText
+	ToolTip.text: tooltipText
 	ToolTip.visible: hovered && ToolTip.text !== ""
 	activeFocusOnTab: enableButton
 	font.pixelSize: textStyle.textSize
@@ -101,7 +106,7 @@ GAbstractButton {
 	StatefulColors {
 		id: colors
 
-		controlBorder: controlBackground === controlStyle.background.basic ? controlStyle.border.basic : controlBackground
+		controlBorder: controlBackground === controlStyle.background.basic_unchecked ? controlStyle.border.basic_unchecked : controlBackground
 		disabledCondition: !root.enableButton || !root.enabled
 		hoveredCondition: hoverHandler.hovered
 		statefulControl: root

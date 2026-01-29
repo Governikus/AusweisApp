@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -20,7 +20,7 @@ FlickableSectionPage {
 	signal startOnboarding
 
 	enableTileStyle: false
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Help")
 
 	Column {
@@ -28,7 +28,7 @@ FlickableSectionPage {
 		spacing: Style.dimens.pane_spacing
 
 		GOptionsContainer {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("General")
 			width: parent.width
 
@@ -37,7 +37,7 @@ FlickableSectionPage {
 				drawTopCorners: true
 				icon.source: "qrc:///images/npa.svg"
 				tintIcon: false
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Start setup")
 
 				onClicked: root.startOnboarding()
@@ -48,7 +48,7 @@ FlickableSectionPage {
 				Layout.fillWidth: true
 				icon.source: "qrc:///images/open_website.svg"
 				linkToOpen: "https://www.ausweisapp.bund.de/%1/aa2/faq".arg(SettingsModel.language)
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("FAQ - Frequently asked questions")
 			}
 			MoreViewSeparator {
@@ -57,7 +57,7 @@ FlickableSectionPage {
 				Layout.fillWidth: true
 				icon.source: "qrc:///images/open_website.svg"
 				linkToOpen: "https://www.ausweisapp.bund.de/%1/aa2/support".arg(SettingsModel.language)
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Contact")
 			}
 			MoreViewSeparator {
@@ -66,7 +66,7 @@ FlickableSectionPage {
 				Layout.fillWidth: true
 				icon.source: "qrc:///images/open_website.svg"
 				linkToOpen: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Privacy statement")
 			}
 			MoreViewSeparator {
@@ -75,7 +75,7 @@ FlickableSectionPage {
 				Layout.fillWidth: true
 				icon.source: "qrc:///images/open_website.svg"
 				linkToOpen: "https://www.ausweisapp.bund.de/%1/aa2/a11y".arg(SettingsModel.language)
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Accessibility statement")
 			}
 			MoreViewSeparator {
@@ -84,7 +84,7 @@ FlickableSectionPage {
 				Layout.fillWidth: true
 				icon.source: "qrc:///images/open_website.svg"
 				linkToOpen: "https://www.ausweisapp.bund.de/%1/aa2/providerlist".arg(SettingsModel.language)
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("List of Providers")
 			}
 			MoreViewSeparator {
@@ -94,12 +94,12 @@ FlickableSectionPage {
 				drawBottomCorners: true
 				icon.source: "qrc:///images/open_website.svg"
 				linkToOpen: ApplicationModel.storeUrl
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Rate %1").arg(Qt.application.name)
 			}
 		}
 		GOptionsContainer {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Logs")
 			width: parent.width
 
@@ -108,7 +108,7 @@ FlickableSectionPage {
 
 				Layout.fillWidth: true
 				drawTopCorners: true
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Show Logs")
 
 				onClicked: LogFilesModel.count > 1 ? root.push(logFilesView) : root.push(logView, {
@@ -144,7 +144,7 @@ FlickableSectionPage {
 				Layout.fillWidth: true
 				drawBottomCorners: true
 				icon.source: "qrc:///images/email_icon.svg"
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Send log to the support")
 
 				onClicked: logModel.mailLogFile()
@@ -156,14 +156,14 @@ FlickableSectionPage {
 			}
 		}
 		GOptionsContainer {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Information")
 			width: parent.width
 
 			GMenuItem {
 				Layout.fillWidth: true
 				drawTopCorners: true
-				//: LABEL ANDROID IOS %1 is replaced with the application name
+				//: MOBILE %1 is replaced with the application name
 				title: qsTr("%1 version").arg(Qt.application.name)
 
 				onClicked: root.push(versionInformation)
@@ -180,7 +180,7 @@ FlickableSectionPage {
 			}
 			GMenuItem {
 				Layout.fillWidth: true
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Terms of use and software license")
 
 				onClicked: root.push(licenseInformation)
@@ -198,7 +198,7 @@ FlickableSectionPage {
 			GMenuItem {
 				Layout.fillWidth: true
 				drawBottomCorners: true
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Release notes")
 
 				onClicked: root.push(releaseNotes)

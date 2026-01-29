@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -14,7 +14,7 @@ import Governikus.View
 Item {
 	id: root
 
-	readonly property color iconColor: d.unreadMsg ? Style.color.textSubline.basic : Style.color.textNormal.basic
+	readonly property color iconColor: d.unreadMsg ? Style.color.textSubline.basic_unchecked : Style.color.textNormal.basic_unchecked
 	readonly property bool unreadMessages: d.unreadMsg
 	readonly property bool visibleToUser: d.fadeIn && !fadeOutTimer.running
 
@@ -29,8 +29,6 @@ Item {
 		d.unreadMsg = false;
 		fadeOutTimer.stop();
 	}
-
-	visible: SettingsModel.showInAppNotifications
 
 	QtObject {
 		id: d
@@ -51,9 +49,9 @@ Item {
 		anchors.left: parent.left
 		anchors.leftMargin: d.fadeIn ? -(width + Style.dimens.pane_spacing) : 0
 		anchors.top: parent.top
-		border.color: Style.color.control.border.basic
+		border.color: Style.color.control.border.basic_unchecked
 		border.width: Style.dimens.border_width
-		color: Style.color.control.background.basic
+		color: Style.color.control.background.basic_unchecked
 		height: UiPluginModel.scaleFactor * 120
 		radius: Style.dimens.control_radius
 		visible: anchors.leftMargin < 0
@@ -80,7 +78,7 @@ Item {
 			clip: true
 			model: NotificationModel
 			scrollBarBottomPadding: spacing
-			scrollBarColor: Style.color.control.content.basic
+			scrollBarColor: Style.color.control.content.basic_unchecked
 			scrollBarTopPadding: spacing
 			spacing: Style.dimens.text_spacing
 			topMargin: Style.dimens.pane_padding
@@ -120,7 +118,7 @@ Item {
 							positionViewAtEndTimer.restart();
 						}
 						root.newNotification();
-						//: LABEL DESKTOP %1 will be replaced with a notification text
+						//: DESKTOP %1 will be replaced with a notification text
 						logEntry.Accessible.announce(qsTr("Notification: %1").arg(notificationBody.text));
 					}
 
@@ -128,20 +126,20 @@ Item {
 						id: notificationTime
 
 						Accessible.ignored: true
-						color: Style.color.control.content.basic
+						color: Style.color.control.content.basic_unchecked
 						text: logEntry.time
 					}
 					GText {
 						id: notificationBody
 
 						Accessible.ignored: true
-						color: Style.color.control.content.basic
+						color: Style.color.control.content.basic_unchecked
 						text: logEntry.text
 						width: logEntryList.width - 2 * Style.dimens.pane_padding - notificationTime.width - 3 * logEntryList.spacing
 					}
 				}
 				FocusFrame {
-					borderColor: Style.color.control.content.basic
+					borderColor: Style.color.control.content.basic_unchecked
 					framee: row
 				}
 			}

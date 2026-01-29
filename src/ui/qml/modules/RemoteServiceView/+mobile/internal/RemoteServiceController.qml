@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -96,9 +96,9 @@ Controller {
 		id: editRights
 
 		EditRights {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			actionText: qsTr("You are about to identify yourself towards the following provider using the device \"%1\":").arg(RemoteServiceModel.connectedClientName)
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Card reader")
 			workflowModel: RemoteServiceModel
 
@@ -125,7 +125,7 @@ Controller {
 			cardInitiallyAppeared: RemoteServiceModel.cardInitiallyAppeared
 			smartEidUsed: RemoteServiceModel.readerPluginType === ReaderManagerPluginType.SMART
 			workflowModel: RemoteServiceModel
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			workflowTitle: qsTr("Card reader")
 
 			navigationAction: NavigationAction {
@@ -164,7 +164,7 @@ Controller {
 			enableTransportPinLink: RemoteServiceModel.enableTransportPinLink
 			moreInformationText: infoData.linkText
 			smartEidUsed: root.isSmartWorkflow
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Card reader")
 
 			navigationAction: NavigationAction {

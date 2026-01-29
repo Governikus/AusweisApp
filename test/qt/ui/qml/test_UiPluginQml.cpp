@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginQml.h"
@@ -301,6 +301,22 @@ class test_UiPluginQml
 			plugin.setA11yOnOffSwitchLabelActive(false);
 			QVERIFY(!plugin.isA11yOnOffSwitchLabelActive());
 			QCOMPARE(spy.count(), 2);
+		}
+
+
+		void test_onLanguageChanged()
+		{
+			UiPluginQml plugin;
+			plugin.mEngine.reset(new QQmlApplicationEngine());
+			plugin.onLanguageChanged();
+
+			auto* settingsModel = Env::getSingleton<SettingsModel>();
+
+			const auto& currentLanguage = settingsModel->getLanguage();
+			QCOMPARE(plugin.mEngine->uiLanguage(), currentLanguage);
+
+			settingsModel->setLanguage(currentLanguage == "de"_L1 ? "en"_L1 : "de"_L1);
+			QTRY_COMPARE(plugin.mEngine->uiLanguage(), settingsModel->getLanguage());
 		}
 
 

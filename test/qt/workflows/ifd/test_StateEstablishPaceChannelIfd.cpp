@@ -1,19 +1,20 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEstablishPaceChannelIfd.h"
 
-#include "context/AuthContext.h"
+#include "RemoteIfdServer.h"
 
 #include "MockCardConnectionWorker.h"
-#include "MockIfdServer.h"
-#include "RemoteIfdServer.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class MockEstablishPaceChannelCommand
 	: public EstablishPaceChannelCommand
@@ -47,15 +48,13 @@ class test_StateEstablishPaceChannelIfd
 	QSharedPointer<StateEstablishPaceChannelIfd> mState;
 	QSharedPointer<IfdServiceContext> mContext;
 	QSharedPointer<MockCardConnectionWorker> mWorker;
-	QThread mThread;
 
 	private Q_SLOTS:
 		void init()
 		{
-			mThread.start();
 			mContext.reset(new IfdServiceContext(QSharedPointer<IfdServer>(new RemoteIfdServer())));
 			mState.reset(new StateEstablishPaceChannelIfd(mContext));
-			mWorker.reset(new MockCardConnectionWorker());
+			mWorker = MockCardConnectionWorker::create();
 		}
 
 
@@ -64,8 +63,6 @@ class test_StateEstablishPaceChannelIfd
 			mState.clear();
 			mContext.clear();
 			mWorker.clear();
-			mThread.quit();
-			mThread.wait();
 		}
 
 
@@ -82,16 +79,23 @@ class test_StateEstablishPaceChannelIfd
 
 		void test_Run()
 		{
-			EstablishPaceChannel establishPaceChannel(PacePasswordId::PACE_PIN);
-			const QSharedPointer<IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("SlotHandle"_L1, establishPaceChannel, 6));
-			mContext->setEstablishPaceChannel(message);
-			mWorker->moveToThread(&mThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(mWorker));
-			mContext->setCardConnection(connection);
-			mContext->setPin("0000"_L1);
+			TestHookThread thread;
 
-			mState->run();
-			QCOMPARE(mState->mConnections.size(), 1);
+			{
+				EstablishPaceChannel establishPaceChannel(PacePasswordId::PACE_PIN);
+				const QSharedPointer<IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("SlotHandle"_L1, establishPaceChannel, 6));
+				mContext->setEstablishPaceChannel(message);
+				const auto& worker = MockCardConnectionWorker::create(&thread);
+				mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+				mContext->setPin("0000"_L1);
+
+				QSignalSpy spy(mState.data(), &StateEstablishPaceChannelIfd::fireContinue);
+				mState->run();
+				QCOMPARE(mState->mConnections.size(), 1);
+				QTRY_COMPARE(spy.size(), 1);
+
+				mContext->resetCardConnection();
+			}
 		}
 
 

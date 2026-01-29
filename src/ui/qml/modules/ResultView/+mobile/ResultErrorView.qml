@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -16,9 +16,6 @@ ResultView {
 	property alias errorDescription: textErrorDescription.text
 	property bool errorDetailsShown: false
 	readonly property bool hasErrorDetails: errorCode !== "" || errorDescription !== ""
-	property alias mailButtonText: mailButton.text
-
-	signal mailClicked
 
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Cancel
@@ -33,7 +30,7 @@ ResultView {
 		Layout.leftMargin: -Style.dimens.pane_padding * 2
 		Layout.rightMargin: -Style.dimens.pane_padding * 2
 		horizontalMargin: Style.dimens.pane_padding * 2
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Show Details")
 		visible: root.hasErrorDetails
 
@@ -45,16 +42,5 @@ ResultView {
 			id: textErrorDescription
 
 		}
-	}
-	GButton {
-		id: mailButton
-
-		Layout.alignment: Qt.AlignHCenter
-		icon.source: "qrc:///images/email_icon.svg"
-		style: Style.color.controlOptional
-		tintIcon: true
-		visible: text !== ""
-
-		onClicked: root.mailClicked()
 	}
 }

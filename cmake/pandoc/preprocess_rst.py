@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-import sys
-import re
-import os
 import argparse
+import os
+import re
+import sys
 from abc import ABC, abstractmethod
 
 first_toctree_found = False

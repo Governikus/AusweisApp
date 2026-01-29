@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -37,7 +37,7 @@ Item {
 			closePolicy: Popup.NoAutoClose
 			mainTextFormat: Text.PlainText
 			style: ConfirmationPopup.PopupStyle.NoButtons
-			//: INFO DESKTOP The AA is currently remote controlled via the SDK interface, concurrent usage of the AA is not possible.
+			//: DESKTOP The AA is currently remote controlled via the SDK interface, concurrent usage of the AA is not possible.
 			title: qsTr("Another application uses %1").arg(Qt.application.name)
 		}
 	}

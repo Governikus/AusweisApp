@@ -294,7 +294,7 @@ TAandCAResult performTAandCA(const std::list<std::string>& pTerminalCvcChain, co
 	(void) pSignature;
 	(void) pPin;
 	(void) pEphemeralPublicKey;
-	return TAandCAResult {EidServiceResult::UNSUPPORTED, nullptr, nullptr, nullptr};
+	return TAandCAResult {EidServiceResult::UNSUPPORTED, std::string(), std::string(), std::string()};
 }
 
 
@@ -308,7 +308,7 @@ TAandCAResult performTAandCA(const std::list<std::string>& pTerminalCvcChain, co
  */
 PrepareIdentificationResult prepareIdentification(const std::string& pChat) {
 	(void) pChat;
-	return PrepareIdentificationResult {EidServiceResult::UNSUPPORTED, nullptr, nullptr, nullptr};
+	return PrepareIdentificationResult {EidServiceResult::UNSUPPORTED, std::string(), std::string(), std::string()};
 }
 
 

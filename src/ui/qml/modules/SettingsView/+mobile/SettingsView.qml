@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -20,11 +20,11 @@ FlickableSectionPage {
 
 	enableTileStyle: false
 	spacing: Style.dimens.pane_spacing
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Settings")
 
 	GOptionsContainer {
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("General")
 
 		GRadioGroup {
@@ -35,7 +35,7 @@ FlickableSectionPage {
 			contentSpacing: 0
 			contentTopMargin: 0
 			drawTopCorners: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Change language")
 
 			LanguageButtons {
@@ -54,7 +54,7 @@ FlickableSectionPage {
 			contentSpacing: 0
 			contentTopMargin: 0
 			tintIcon: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Appearance")
 
 			DarkModeButtons {
@@ -69,9 +69,9 @@ FlickableSectionPage {
 		}
 		GSwitch {
 			Layout.fillWidth: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Toggling will restart the %1").arg(Qt.application.name)
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Use system font")
 
 			Component.onCompleted: {
@@ -80,8 +80,26 @@ FlickableSectionPage {
 			onCheckedChanged: {
 				if (checked !== SettingsModel.useSystemFont) {
 					SettingsModel.useSystemFont = checked;
-					UiPluginModel.doRefresh();
+					refreshPopup.open();
 				}
+			}
+
+			ConfirmationPopup {
+				id: refreshPopup
+
+				//: MOBILE
+				cancelButtonText: qsTr("Later")
+				okButtonText: Qt.platform.os === "ios" ?
+				//: IOS
+				qsTr("Restart") :
+				//: ANDROID
+				qsTr("Restart now")
+				//: MOBILE
+				text: qsTr("The font change applies only after restarting the application.")
+				//: MOBILE
+				title: qsTr("Restart required")
+
+				onConfirmed: UiPluginModel.doRefresh()
 			}
 		}
 		SettingsViewSeparator {
@@ -100,7 +118,7 @@ FlickableSectionPage {
 	}
 	GOptionsContainer {
 		Layout.fillWidth: true
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Accessibility")
 
 		GSwitch {
@@ -108,7 +126,7 @@ FlickableSectionPage {
 			checked: !SettingsModel.useAnimations
 			drawTopCorners: true
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Use images instead of animations")
 
 			onCheckedChanged: SettingsModel.useAnimations = !checked
@@ -118,7 +136,7 @@ FlickableSectionPage {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.visualPrivacy
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Hide key animations when entering PIN")
 
 			onCheckedChanged: SettingsModel.visualPrivacy = checked
@@ -128,10 +146,10 @@ FlickableSectionPage {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: !SettingsModel.autoRedirectAfterAuthentication
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("After identification, you will only be redirected back to the provider after confirmation. Otherwise, you will be redirected automatically after a few seconds.")
 			drawBottomCorners: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Manual redirection back to the provider")
 
 			onCheckedChanged: SettingsModel.autoRedirectAfterAuthentication = !checked
@@ -139,7 +157,7 @@ FlickableSectionPage {
 	}
 	GOptionsContainer {
 		Layout.fillWidth: true
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Smartphone as card reader")
 
 		GCollapsible {
@@ -148,7 +166,7 @@ FlickableSectionPage {
 			contentTopMargin: 0
 			drawTopCorners: true
 			selectionTitle: expanded ? "" : SettingsModel.deviceName
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Device name")
 
 			GTextField {
@@ -173,7 +191,7 @@ FlickableSectionPage {
 			Layout.fillWidth: true
 			checked: SettingsModel.pinPadMode
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Enter PIN on this device")
 
 			onCheckedChanged: SettingsModel.pinPadMode = checked
@@ -185,7 +203,7 @@ FlickableSectionPage {
 			checked: SettingsModel.showAccessRights
 			enabled: SettingsModel.pinPadMode
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Show requested rights on this device as well")
 
 			onCheckedChanged: SettingsModel.showAccessRights = checked
@@ -194,11 +212,11 @@ FlickableSectionPage {
 		}
 		GMenuItem {
 			Layout.fillWidth: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Add and remove devices")
 			drawBottomCorners: true
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Manage pairings")
 
 			onClicked: root.push(remoteServiceSettings)
@@ -217,17 +235,17 @@ FlickableSectionPage {
 	}
 	GOptionsContainer {
 		Layout.fillWidth: true
-		//: LABEL ANDROID IOS
-		title: qsTr("Numeric keypad")
+		//: ANDROID
+		title: qsTr("Security and privacy")
 
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.shuffleScreenKeyboard
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
 			drawTopCorners: true
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Shuffle keys")
 
 			onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
@@ -237,27 +255,53 @@ FlickableSectionPage {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.visualPrivacy
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
 			drawBottomCorners: true
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Hide key animations")
 
 			onCheckedChanged: SettingsModel.visualPrivacy = checked
 		}
+		SettingsViewSeparator {
+		}
+		GSwitch {
+			Layout.fillWidth: true
+			checked: SettingsModel.screenPrivacy
+			description: {
+				if (Qt.platform.os === "android") {
+					//: ANDROID
+					return qsTr("Screenshots are prevented while your ID card data is displayed and you enter your PIN/CAN/PUK. If your screen is recorded, you will be notified of the potential collection of sensitive data.");
+				}
+				//: IOS
+				return qsTr("In the event of a screenshot or video recording of the screen, you will be notified about the possible collection of sensitive data.");
+			}
+			drawBottomCorners: true
+			drawTopCorners: true
+			text: {
+				if (Qt.platform.os === "android") {
+					//: ANDROID
+					return qsTr("Prevent screenshots");
+				}
+				//: IOS
+				return qsTr("Detect screen recording");
+			}
+
+			onCheckedChanged: SettingsModel.screenPrivacy = checked
+		}
 	}
 	GOptionsContainer {
 		Layout.fillWidth: true
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Smart-eID")
 		visible: ApplicationModel.smartSupported
 
 		GMenuItem {
 			Layout.fillWidth: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Reset Smart-eID data on your device")
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Reset Smart-eID")
 
 			onClicked: root.push(smartDeleteView)
@@ -272,7 +316,7 @@ FlickableSectionPage {
 	}
 	GOptionsContainer {
 		Layout.fillWidth: true
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("On-site reading")
 		visible: SettingsModel.advancedSettings
 
@@ -281,7 +325,7 @@ FlickableSectionPage {
 			checked: SettingsModel.enableCanAllowed
 			drawTopCorners: true
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Support CAN allowed mode for on-site reading")
 
 			onCheckedChanged: SettingsModel.enableCanAllowed = checked
@@ -294,7 +338,7 @@ FlickableSectionPage {
 			drawBottomCorners: true
 			enabled: SettingsModel.enableCanAllowed
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Skip rights page")
 
 			onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked
@@ -302,7 +346,7 @@ FlickableSectionPage {
 	}
 	GOptionsContainer {
 		Layout.fillWidth: true
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Developer options")
 		visible: SettingsModel.advancedSettings
 
@@ -311,11 +355,11 @@ FlickableSectionPage {
 
 			Layout.fillWidth: true
 			checked: SettingsModel.useSelfauthenticationTestUri
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Allow test sample card usage")
 			drawTopCorners: true
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Testmode for the self-authentication")
 
 			onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
@@ -325,11 +369,11 @@ FlickableSectionPage {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.enableSimulator
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Simulate a test sample card in authentications")
 			drawBottomCorners: true
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Internal card simulator")
 
 			onCheckedChanged: SettingsModel.enableSimulator = checked
@@ -338,18 +382,18 @@ FlickableSectionPage {
 	GOptionsContainer {
 		Layout.fillWidth: true
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Debug options")
 		visible: UiPluginModel.debugBuild
 
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.developerMode
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Use a more tolerant mode")
 			drawTopCorners: true
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Developer mode")
 
 			onCheckedChanged: SettingsModel.developerMode = checked
@@ -358,11 +402,11 @@ FlickableSectionPage {
 		}
 		GMenuItem {
 			Layout.fillWidth: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Show Transport PIN reminder, store feedback and close reminder dialogs.")
 			drawBottomCorners: true
 			icon.source: "qrc:///images/material_refresh.svg"
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Reset hideable dialogs")
 
 			onClicked: SettingsModel.resetHideableDialogs()
@@ -371,7 +415,7 @@ FlickableSectionPage {
 	GOptionsContainer {
 		Layout.fillWidth: true
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Extend Transport PIN")
 		visible: UiPluginModel.debugBuild
 
@@ -385,7 +429,7 @@ FlickableSectionPage {
 				checkable: true
 				checked: SettingsModel.appendTransportPin === ""
 				style: Style.color.controlOptional
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				text: qsTr("Disable")
 
 				onClicked: SettingsModel.appendTransportPin = ""
@@ -410,7 +454,7 @@ FlickableSectionPage {
 	GOptionsContainer {
 		Layout.fillWidth: true
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Create dummy entries")
 		visible: UiPluginModel.debugBuild
 
@@ -422,7 +466,7 @@ FlickableSectionPage {
 				Layout.rightMargin: Style.dimens.pane_padding
 				Layout.topMargin: Style.dimens.pane_padding
 
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				text: qsTr("New Logfile")
 
 				onClicked: {
@@ -435,7 +479,7 @@ FlickableSectionPage {
 				Layout.leftMargin: Style.dimens.pane_padding
 				Layout.rightMargin: Style.dimens.pane_padding
 
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				text: qsTr("15 days old Logfile")
 
 				onClicked: {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -81,9 +81,9 @@ class ReaderConfigurationInfo
 };
 
 
-inline auto qHash(const ReaderConfigurationInfo& info)
+inline auto qHash(const ReaderConfigurationInfo& info, size_t pSeed)
 {
-	return qHash(info.getName());
+	return qHash(info.getName(), pSeed);
 }
 
 

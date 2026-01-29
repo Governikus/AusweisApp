@@ -153,7 +153,7 @@ elseif(MAC)
 			file(GLOB_RECURSE DYLIB "${_dir}/${entry}/*.dylib")
 			foreach(_lib ${DYLIB})
 				file(RELATIVE_PATH _lib_dest "${_dir}" "${_lib}")
-				if(NOT _lib_dest MATCHES "XmlListModel|Particles.2|LocalStorage|Shapes") # not needed stuff
+				if(NOT _lib_dest MATCHES "XmlListModel|LocalStorage|Shapes") # not needed stuff
 					get_filename_component(_lib_dest_dir ${_lib_dest} DIRECTORY)
 					install(FILES ${_lib} DESTINATION ${MACOS_BUNDLE_RESOURCES_DIR}/qml/${_lib_dest_dir} COMPONENT Runtime)
 				endif()

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -28,7 +28,7 @@ GFlickableColumnLayout {
 
 		Layout.topMargin: root.titleTopMargin
 
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("What kind of PIN do you have?")
 		wrapMode: Text.WordWrap
 	}

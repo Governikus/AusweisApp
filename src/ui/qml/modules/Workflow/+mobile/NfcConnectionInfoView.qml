@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -31,7 +31,7 @@ FlickableSectionPage {
 	signal showRemoteServiceSettings
 
 	spacing: Style.dimens.pane_spacing
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("My ID card is not detected")
 
 	navigationAction: NavigationAction {
@@ -41,7 +41,7 @@ FlickableSectionPage {
 	}
 
 	GText {
-		//: INFO ANDROID IOS
+		//: MOBILE
 		text: qsTr("If your ID card is not recognized when it is read, there could be various reasons.")
 	}
 	ResultNfcAnimation {
@@ -53,11 +53,11 @@ FlickableSectionPage {
 		spacing: Style.dimens.groupbox_spacing
 
 		Subheading {
-			//: INFO ANDROID IOS
+			//: MOBILE
 			text: qsTr("NFC interface")
 		}
 		GText {
-			//: INFO ANDROID IOS
+			//: MOBILE
 			text: qsTr("The NFC interface, and therefore the point at which the ID card must be placed, varies depending on the smartphone model. Find out where the NFC interface is on your smartphone model.")
 		}
 		GButton {
@@ -71,7 +71,7 @@ FlickableSectionPage {
 			Accessible.role: Accessible.Link
 			Layout.alignment: Qt.AlignHCenter
 			icon.source: "qrc:///images/open_website.svg"
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Tutorial: Using NFC")
 			tintIcon: true
 
@@ -82,7 +82,7 @@ FlickableSectionPage {
 		spacing: Style.dimens.groupbox_spacing
 
 		Subheading {
-			//: INFO ANDROID IOS
+			//: MOBILE
 			text: qsTr("Sources of interference")
 		}
 		GText {
@@ -93,17 +93,17 @@ FlickableSectionPage {
 		spacing: Style.dimens.groupbox_spacing
 
 		Subheading {
-			//: INFO ANDROID IOS
+			//: MOBILE
 			text: qsTr("Alternatives")
 		}
 		GText {
-			//: INFO ANDROID IOS
+			//: MOBILE
 			text: qsTr("If the connection does not work despite following the tips, you can use another smartphone as a card reader.")
 			visible: root.showRemoteReaderInfos
 		}
 		GButton {
 			Layout.alignment: Qt.AlignHCenter
-			//: INFO ANDROID IOS
+			//: MOBILE
 			text: qsTr("Connect using a card reader")
 			tintIcon: true
 			visible: root.showRemoteReaderInfos
@@ -111,7 +111,7 @@ FlickableSectionPage {
 			onClicked: root.showRemoteServiceSettings()
 		}
 		GText {
-			//: INFO ANDROID IOS "%1" is replaced with "AusweisApp"
+			//: MOBILE "%1" is replaced with "AusweisApp"
 			text: qsTr("You can also use %1 on a PC and connect an USB card reader to read the ID card.").arg(Qt.application.name)
 		}
 	}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ECardApiResult.h"
@@ -363,116 +363,116 @@ QString ECardApiResult::getMessage(Minor pMinor)
 	switch (pMinor)
 	{
 		case Minor::AL_Unknown_Error:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("An unexpected error has occurred during processing.");
 
 		case Minor::AL_No_Permission:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Use of the function by the client application is not permitted.");
 
 		case Minor::AL_Internal_Error:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("An internal error has occurred during processing.");
 
 		case Minor::AL_Parameter_Error:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("There was some problem with a provided or omitted parameter.");
 
 		case Minor::AL_Unknown_API_Function:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The API function is unknown.");
 
 		case Minor::AL_Not_Initialized:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The framework or layer has not been initialized.");
 
 		case Minor::AL_Warning_Connection_Disconnected:
 		case Minor::AL_Session_Terminated_Warning:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The active session has been terminated.");
 
 		case Minor::AL_Communication_Error:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("A Communication error occurred during processing.");
 
 		case Minor::DP_Timeout_Error:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The operation was terminated as the set time was exceeded.");
 
 		case Minor::DP_Unknown_Channel_Handle:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The operation was aborted as an invalid channel handle was used.");
 
 		case Minor::DP_Communication_Error:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("A Communication error occurred during processing.");
 
 		case Minor::DP_Trusted_Channel_Establishment_Failed:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("A trusted channel could not be opened.");
 
 		case Minor::DP_Unknown_Protocol:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The operation was aborted as an unknown protocol was used.");
 
 		case Minor::DP_Unknown_Cipher_Suite:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The operation was aborted as an unknown cipher suite was used.");
 
 		case Minor::DP_Unknown_Webservice_Binding:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The operation was aborted as an unknown web service binding was used.");
 
 		case Minor::DP_Node_Not_Reachable:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("A Communication error occurred during processing.");
 
 		case Minor::IFDL_Timeout_Error:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The operation was terminated as the set time was exceeded.");
 
 		case Minor::IFDL_Terminal_NoCard:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The card is missing or was removed.");
 
 		case Minor::IFDL_IO_RepeatedDataMismatch:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The new PIN and the confirmation do not match.");
 
 		case Minor::IFDL_IO_UnknownPINFormat:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The format of the PIN is wrong.");
 
 		case Minor::KEY_KeyGenerationNotPossible:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Signature certificate key generation is not possible.");
 
 		case Minor::SAL_Cancellation_by_User:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The process has been cancelled.");
 
 		case Minor::IL_Signature_InvalidCertificatePath:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("One or more certificate checks failed. The operation will be aborted due to security reasons.");
 
 		case Minor::SAL_Invalid_Key:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("This action cannot be performed. The eID function of your ID card is not activated.");
 
 		case Minor::SAL_SecurityConditionNotSatisfied:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.");
 
 		case Minor::SAL_MEAC_AgeVerificationFailedWarning:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The age verification failed.");
 
 		case Minor::SAL_MEAC_CommunityVerificationFailedWarning:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The community verification failed.");
 
 		case Minor::SAL_MEAC_DocumentValidityVerificationFailed:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("The ID card is invalid or disabled.");
 
 		case Minor::IFDL_UnknownSlot:

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -25,7 +25,7 @@ FlickableSectionPage {
 
 	spacing: Style.dimens.pane_spacing
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Manage pairings")
 
 	navigationAction: NavigationAction {
@@ -47,7 +47,7 @@ FlickableSectionPage {
 	GOptionsContainer {
 		containerPadding: Style.dimens.pane_padding
 		containerSpacing: Style.dimens.text_spacing
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Paired devices")
 		visible: availablePairedDeviceList.count > 0
 
@@ -59,9 +59,9 @@ FlickableSectionPage {
 			delegate: DevicesListDelegate {
 				Layout.fillWidth: true
 				description: root.allowUsage ?
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				qsTr("Tap to use device") :
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				qsTr("Available")
 				width: availablePairedDeviceList.width
 
@@ -73,7 +73,7 @@ FlickableSectionPage {
 	GOptionsContainer {
 		containerPadding: Style.dimens.pane_padding
 		containerSpacing: Style.dimens.text_spacing
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Last connected")
 		visible: unavailablePairedDeviceList.count > 0
 
@@ -84,7 +84,7 @@ FlickableSectionPage {
 
 			delegate: DevicesListDelegate {
 				Layout.fillWidth: true
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				description: qsTr("Tap to remove device")
 				width: unavailablePairedDeviceList.width
 
@@ -102,12 +102,12 @@ FlickableSectionPage {
 		property var deviceId
 		property string deviceName
 
-		//: INFO ANDROID IOS
+		//: MOBILE
 		okButtonText: qsTr("Remove")
-		//: INFO ANDROID IOS
+		//: MOBILE
 		text: qsTr("Do you want to remove the pairing of the device \"%1\"?").arg(deviceName)
 
-		//: INFO ANDROID IOS
+		//: MOBILE
 		title: qsTr("Remove pairing")
 
 		onConfirmed: RemoteServiceModel.forgetDevice(deviceId)
@@ -115,7 +115,7 @@ FlickableSectionPage {
 	GOptionsContainer {
 		containerPadding: Style.dimens.pane_padding
 		containerSpacing: Style.dimens.text_spacing
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Add pairing")
 
 		Repeater {
@@ -126,7 +126,7 @@ FlickableSectionPage {
 
 			delegate: DevicesListDelegate {
 				Layout.fillWidth: true
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				description: qsTr("Tap to pair")
 				width: searchDeviceList.width
 
@@ -140,14 +140,14 @@ FlickableSectionPage {
 			}
 		}
 		GText {
-			//: INFO ANDROID IOS Wifi is not enabled and no new devices can be paired.
+			//: MOBILE Wifi is not enabled and no new devices can be paired.
 			text: qsTr("Please connect your WiFi to use another smartphone as card reader (SaC).")
 			visible: !ApplicationModel.wifiEnabled
 		}
 		GButton {
 			Layout.alignment: Qt.AlignHCenter
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Enable WiFi")
 			visible: !ApplicationModel.wifiEnabled
 
@@ -184,7 +184,7 @@ FlickableSectionPage {
 		EnterPasswordView {
 			passwordType: NumberModel.PasswordType.REMOTE_PIN
 			progress: root.progress
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Pairing code")
 
 			navigationAction: NavigationAction {
@@ -200,8 +200,8 @@ FlickableSectionPage {
 		id: pairingProgressView
 
 		ProgressView {
-			//: LABEL ANDROID IOS
-			headline: qsTr("Pairing the device ...")
+			//: MOBILE
+			headline: qsTr("Pairing the device...")
 			progress: root.progress
 			title: root.title
 

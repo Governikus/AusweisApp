@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -57,25 +57,25 @@ FlickableSectionPage {
 			ListElement {
 				imagePath: "qrc:///images/mobile/device_tile.svg"
 				module: UiModule.CHECK_ID_CARD
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				titleText: qsTr("Check device and ID card")
 			}
 			ListElement {
 				imagePath: "qrc:///images/lock.svg"
 				module: UiModule.PINMANAGEMENT
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				titleText: qsTr("Change PIN")
 			}
 			ListElement {
 				imagePath: "qrc:///images/mydata_tile.svg"
 				module: UiModule.SELF_AUTHENTICATION
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				titleText: qsTr("See my personal data")
 			}
 			ListElement {
 				imagePath: "qrc:///images/mobile/smarteid.svg"
 				module: UiModule.SMART_EID
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				titleText: qsTr("Smart-eID")
 			}
 		}
@@ -134,10 +134,8 @@ FlickableSectionPage {
 		reuseItems: true
 		snapMode: ListView.SnapOneItem
 
-		onCountChanged: {
-			updateTileLimits();
-			currentIndex = 1;
-		}
+		Component.onCompleted: currentIndex = 1
+		onCountChanged: updateTileLimits()
 		onHeightChanged: updateTileLimits()
 		onWidthChanged: updateTileLimits()
 	}
@@ -152,7 +150,7 @@ FlickableSectionPage {
 		delegate: Rectangle {
 			required property int index
 
-			color: index === indicator.currentIndex ? Style.color.control.border.basic : Style.color.control.border.disabled
+			color: index === indicator.currentIndex ? Style.color.control.border.basic_unchecked : Style.color.control.border.disabled_unchecked
 			implicitHeight: Style.dimens.pageindicator_size
 			implicitWidth: Style.dimens.pageindicator_size
 			radius: width / 2

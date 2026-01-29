@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisController.h"
@@ -74,7 +74,7 @@ DiagnosisController::PcscInfo DiagnosisController::retrievePcscInfo()
 		const QVariant version = pcscInfo.getValue(ReaderManagerPluginInfo::Key::PCSC_LITE_VERSION);
 		if (version.isValid())
 		{
-			result.mPcscVersion = tr("pcsclite %1").arg(version.toString());
+			result.mPcscVersion = QStringLiteral("pcsclite %1").arg(version.toString());
 		}
 		else
 		{

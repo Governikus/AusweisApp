@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -25,10 +25,10 @@ RoundedRectangle {
 	signal pairDevice(var pDeviceId)
 	signal unpairDevice(var pDeviceId)
 
-	//: INFO DESKTOP Name of remote device. %1 is replaced with the name.
+	//: DESKTOP Name of remote device. %1 is replaced with the name.
 	Accessible.name: qsTr("Smartphone named \"%1\".").arg(remoteDeviceName)
 	Accessible.role: Accessible.Grouping
-	color: Style.color.paneSublevel.background.basic
+	color: Style.color.paneSublevel.background.basic_unchecked
 	implicitHeight: rowLayout.implicitHeight + 2 * rowLayout.anchors.margins
 	implicitWidth: rowLayout.implicitWidth + 2 * rowLayout.anchors.margins
 
@@ -58,7 +58,7 @@ RoundedRectangle {
 				width: parent.width
 			}
 			GText {
-				//: INFO DESKTOP Status of remote device. %1 is replaced with the status.
+				//: DESKTOP Status of remote device. %1 is replaced with the status.
 				Accessible.name: qsTr("Status: \"%1\".").arg(text)
 				text: root.remoteDeviceStatus
 				visible: text !== ""
@@ -71,15 +71,16 @@ RoundedRectangle {
 			readonly property bool shouldPair: root.isPairing && !root.hasCustomContent
 			readonly property bool shouldUnpair: root.isPaired && !root.isPairing && !root.hasCustomContent
 
-			//: LABEL DESKTOP Text of pairing button, %1 will be Pair/Unpair and %2 is replaced with device name
+			//: DESKTOP Text of pairing button, %1 will be Pair/Unpair and %2 is replaced with device name
 			Accessible.name: qsTr("%1 device \"%2\"").arg(text).arg(root.remoteDeviceName)
 			Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
 			icon.source: shouldUnpair ? "qrc:///images/trash_icon.svg" : ""
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: shouldPair ? qsTr("Pair") :
-			//: LABEL DESKTOP
+			//: DESKTOP
 			shouldUnpair ? qsTr("Unpair") : ""
 			tintIcon: true
+			visible: text !== ""
 
 			onClicked: shouldPair ? root.pairDevice(root.deviceId) : shouldUnpair ? root.unpairDevice(root.deviceId) : {}
 		}

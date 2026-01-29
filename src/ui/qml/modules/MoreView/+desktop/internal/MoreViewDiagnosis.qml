@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick.Layouts
@@ -14,11 +14,11 @@ GPane {
 
 	GMenuItem {
 		Layout.fillWidth: true
-		//: LABEL DESKTOP
+		//: DESKTOP
 		buttonText: qsTr("Show system data")
 		iconSource: "qrc:/images/info.svg"
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("System data")
 
 		onClicked: root.showDiagnosis()
@@ -28,11 +28,11 @@ GPane {
 	}
 	GMenuItem {
 		Layout.fillWidth: true
-		//: LABEL DESKTOP
+		//: DESKTOP
 		buttonText: qsTr("Show logs")
 		iconSource: "qrc:/images/desktop/list_icon.svg"
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Logs")
 
 		onClicked: root.showLogs()

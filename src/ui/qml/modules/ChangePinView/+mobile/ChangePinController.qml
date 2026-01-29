@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -23,7 +23,6 @@ Controller {
 	property bool autoInsertCard: false
 	property Component cardNotActivatedDelegate: null
 	property Component errorViewDelegate: null
-	property bool hideTechnologySwitch: false
 	property var initialPlugin: null
 	property bool isNewPin: false
 	readonly property bool isSmartWorkflow: ChangePinModel.readerPluginType === ReaderManagerPluginType.SMART
@@ -49,6 +48,12 @@ Controller {
 		continueWorkflowIfComfortReader();
 	}
 	function displaySuccessView(pPasswordType) {
+		if (d.lastInputSuccessType === pPasswordType) {
+			continueWorkflowIfComfortReader();
+			return;
+		}
+
+		d.lastInputSuccessType = pPasswordType;
 		if (stackView.currentItem instanceof InputSuccessView) {
 			replace(inputSuccessView, {
 				passwordType: pPasswordType
@@ -162,6 +167,7 @@ Controller {
 	QtObject {
 		id: d
 
+		property int lastInputSuccessType: -1
 		property int workflowProgress: 0
 
 		function setWorkflowProgress(pProgress) {
@@ -199,7 +205,6 @@ Controller {
 			id: workflow
 
 			autoInsertCard: root.autoInsertCard
-			hideSwitch: root.hideTechnologySwitch
 			initialPlugin: root.initialPlugin
 			progress: progressTracker
 			smartEidUsed: root.smartEidUsed
@@ -284,12 +289,17 @@ Controller {
 			id: pinResultView
 
 			animation: ChangePinModel.statusCodeAnimation
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			buttonText: qsTr("Back to start page")
-			hintButtonText: ChangePinModel.statusHintActionText
-			hintText: ChangePinModel.statusHintText
-			hintTitle: ChangePinModel.statusHintTitle
+			firstHintButtonText: ChangePinModel.statusHintActionText
+			firstHintText: ChangePinModel.statusHintText
+			firstHintTitle: ChangePinModel.statusHintTitle
+			hintBoxesTitle: ChangePinModel.statusHintBoxesTitle
 			progress: progressTracker
+			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
+			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
+			secondHintText: Utils.getSecondPRSHintText(ChangePinModel.statusCode)
+			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			smartEidUsed: root.smartEidUsed
 			text: ChangePinModel.resultString
 			title: root.title
@@ -301,7 +311,7 @@ Controller {
 			}
 
 			onContinueClicked: ChangePinModel.continueWorkflow()
-			onHintClicked: {
+			onFirstHintClicked: {
 				ChangePinModel.continueWorkflow();
 				ChangePinModel.invokeStatusHintAction();
 			}
@@ -387,15 +397,15 @@ Controller {
 			headline: {
 				if (root.isSmartWorkflow) {
 					return root.isNewPin ?
-					//: LABEL ANDROID IOS Processing screen label while the card communication is running after the new Smart-eID PIN has been entered during PIN change process.
+					//: MOBILE Processing screen label while the card communication is running after the new Smart-eID PIN has been entered during PIN change process.
 					qsTr("Setting new Smart-eID PIN") :
-					//: LABEL ANDROID IOS Processing screen label while the card communication is running before the new ID card PIN has been entered during PIN change process.
+					//: MOBILE Processing screen label while the card communication is running before the new ID card PIN has been entered during PIN change process.
 					qsTr("Change Smart-eID PIN");
 				}
 				return root.isNewPin ?
-				//: LABEL ANDROID IOS Processing screen label while the card communication is running after the new ID card PIN has been entered during PIN change process.
+				//: MOBILE Processing screen label while the card communication is running after the new ID card PIN has been entered during PIN change process.
 				qsTr("Setting new ID card PIN") :
-				//: LABEL ANDROID IOS Processing screen label while the card communication is running before the new ID card PIN has been entered during PIN change process.
+				//: MOBILE Processing screen label while the card communication is running before the new ID card PIN has been entered during PIN change process.
 				qsTr("Change ID card PIN");
 			}
 			progress: progressTracker
@@ -405,14 +415,14 @@ Controller {
 					return "";
 				}
 				if (root.isSmartWorkflow) {
-					//: INFO ANDROID IOS Generic progress message during PIN change process.
+					//: MOBILE Generic progress message during PIN change process.
 					return qsTr("Please wait a moment.");
 				}
 				if (ChangePinModel.isBasicReader) {
-					//: INFO ANDROID IOS Loading screen during PIN change process, data communication is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.
+					//: MOBILE Loading screen during PIN change process, data communication is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.
 					return qsTr("Please do not move the ID card.");
 				}
-				//: INFO ANDROID IOS Either an comfort card reader or smartphone-as-card-reader is used, the user needs to react to request on that device.
+				//: MOBILE Either an comfort card reader or smartphone-as-card-reader is used, the user needs to react to request on that device.
 				return qsTr("Please observe the display of your card reader.");
 			}
 			title: root.title

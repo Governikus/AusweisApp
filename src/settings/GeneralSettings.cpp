@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -54,6 +54,7 @@ SETTINGS_NAME(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED, "skipRightsOnCanAllowed"
 SETTINGS_NAME(SETTINGS_NAME_IFD_SERVICE_TOKEN, "ifdServiceToken")
 SETTINGS_NAME(SETTINGS_NAME_SMART_AVAILABLE, "smartAvailable")
 SETTINGS_NAME(SETTINGS_NAME_TRAY_ICON_ENABLED, "enableTrayIcon")
+SETTINGS_NAME(SETTINGS_NAME_SCREEN_PRIVACY, "screenPrivacy")
 } // namespace
 
 GeneralSettings::GeneralSettings()
@@ -743,6 +744,23 @@ void GeneralSettings::setDarkMode(const QString& pMode)
 		mStore->setValue(SETTINGS_NAME_DARK_MODE(), pMode);
 		save(mStore);
 		Q_EMIT fireDarkModeChanged();
+	}
+}
+
+
+bool GeneralSettings::isScreenPrivacy() const
+{
+	return mStore->value(SETTINGS_NAME_SCREEN_PRIVACY(), true).toBool();
+}
+
+
+void GeneralSettings::setScreenPrivacy(bool pEnable)
+{
+	if (isScreenPrivacy() != pEnable)
+	{
+		mStore->setValue(SETTINGS_NAME_SCREEN_PRIVACY(), pEnable);
+		save(mStore);
+		Q_EMIT fireScreenPrivacyChanged();
 	}
 }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -20,20 +20,28 @@ FlickableSectionPage {
 	property alias buttonIcon: buttonContinue.icon.source
 	property alias buttonLayoutDirection: buttonContinue.layoutDirection
 	property alias buttonText: buttonContinue.text
-	default property alias children: layout.data
+	property string firstHintButtonLink
+	property alias firstHintButtonText: hintItem.buttonText
+	property alias firstHintText: hintItem.text
+	property alias firstHintTitle: hintItem.title
 	property alias header: paneTitle.text
-	property string hintButtonLink
-	property alias hintButtonText: hintItem.buttonText
-	property alias hintText: hintItem.text
-	property alias hintTitle: hintItem.title
+	property alias hintBoxesTitle: hintBoxesTitle.text
 	property string linkToOpen
+	property alias mailButtonText: mailButton.text
+	default property alias resultData: layout.data
+	property string secondHintButtonLink
+	property alias secondHintButtonText: secondHintItem.buttonText
+	property alias secondHintText: secondHintItem.text
+	property alias secondHintTitle: secondHintItem.title
 	property alias subheader: subheader.text
 	property alias text: resultText.text
 	property alias textFormat: resultText.textFormat
 
 	signal cancelClicked
 	signal continueClicked
-	signal hintClicked
+	signal firstHintClicked
+	signal mailClicked
+	signal secondHintClicked
 
 	function confirm() {
 		buttonContinue.clicked();
@@ -47,6 +55,13 @@ FlickableSectionPage {
 		onClicked: root.cancelClicked()
 	}
 
+	QtObject {
+		id: d
+
+		property bool buttonCorrectionNeeded: !contentBetweenButtons && mailButton.visible
+		property bool contentBetweenButtons: hintBoxesTitle.visible || hintItem.visible || secondHintItem.visible
+		property real maxButtonWidth: Math.max(buttonContinue.implicitWidth, mailButton.implicitWidth)
+	}
 	PaneTitle {
 		id: paneTitle
 
@@ -75,19 +90,46 @@ FlickableSectionPage {
 			visible: text !== ""
 		}
 	}
-	GSpacer {
-		Layout.fillHeight: true
+	GButton {
+		id: mailButton
+
+		Layout.alignment: Qt.AlignHCenter
+		Layout.maximumWidth: d.buttonCorrectionNeeded ? d.maxButtonWidth : implicitWidth
+		Layout.preferredWidth: d.buttonCorrectionNeeded ? d.maxButtonWidth : implicitWidth
+		icon.source: "qrc:///images/email_icon.svg"
+		style: Style.color.controlOptional
+		tintIcon: true
+		visible: text !== ""
+
+		onClicked: root.mailClicked()
+	}
+	GText {
+		id: hintBoxesTitle
+
+		textStyle: Style.text.subline
+		visible: text !== ""
 	}
 	Hint {
 		id: hintItem
 
 		Layout.fillWidth: true
-		linkToOpen: root.hintButtonLink
-		//: LABEL ANDROID IOS
+		linkToOpen: root.firstHintButtonLink
+		//: MOBILE
 		title: qsTr("Hint")
 		visible: text !== ""
 
-		onClicked: root.hintClicked()
+		onClicked: root.firstHintClicked()
+	}
+	Hint {
+		id: secondHintItem
+
+		Layout.fillWidth: true
+		linkToOpen: root.secondHintButtonLink
+		//: MOBILE
+		title: qsTr("Hint")
+		visible: text !== ""
+
+		onClicked: root.secondHintClicked()
 	}
 	GButton {
 		id: buttonContinue
@@ -97,8 +139,11 @@ FlickableSectionPage {
 		Accessible.description: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, Accessible.name) : ""
 		Accessible.role: hasLink ? Accessible.Link : Accessible.Button
 		Layout.alignment: Qt.AlignHCenter
+		Layout.maximumWidth: d.buttonCorrectionNeeded ? d.maxButtonWidth : implicitWidth
+		Layout.preferredWidth: d.buttonCorrectionNeeded ? d.maxButtonWidth : implicitWidth
+		Layout.topMargin: d.buttonCorrectionNeeded ? -Style.dimens.pane_spacing + Style.dimens.text_spacing : 0
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("OK")
 		tintIcon: true
 		visible: text !== ""

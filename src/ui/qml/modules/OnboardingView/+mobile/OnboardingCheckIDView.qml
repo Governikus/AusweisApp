@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -67,10 +67,10 @@ BaseOnboardingView {
 		CheckIDCardResultView {
 			id: resultView
 
-			//: LABEL IOS ANDROID
+			//: MOBILE
 			header: qsTr("Read ID card")
 
-			//: LABEL IOS ANDROID
+			//: MOBILE
 			subheader: qsTr("Test result")
 			title: root.title
 			usedInOnboarding: true
@@ -153,7 +153,7 @@ BaseOnboardingView {
 		}
 	}
 	Heading {
-		//: LABEL IOS ANDROID
+		//: MOBILE
 		text: qsTr("Read ID card")
 	}
 	AnimationLoader {
@@ -166,7 +166,7 @@ BaseOnboardingView {
 		id: subText
 
 		Layout.alignment: Text.AlignHCenter
-		//: LABEL IOS ANDROID
+		//: MOBILE
 		text: root.connectedDeviceNamesEmpty ? "" : qsTr("Connected to %1. Please follow the instructions on your smartphone.").arg(RemoteServiceModel.connectedServerDeviceNames)
 	}
 	GSpacer {
@@ -178,7 +178,7 @@ BaseOnboardingView {
 		visible: checkIDCardModel.result <= CheckIDCardModel.Result.UNKNOWN_CARD_DETECTED
 
 		GText {
-			//: LABEL IOS ANDROID
+			//: MOBILE
 			text: root.connectedDeviceNamesEmpty ? qsTr("Looking for device") : qsTr("Looking for ID card")
 			textStyle: Style.text.link
 		}

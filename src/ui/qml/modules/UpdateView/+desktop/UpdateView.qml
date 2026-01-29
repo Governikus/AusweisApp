@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -19,11 +19,11 @@ FlickableSectionPage {
 	id: root
 
 	readonly property bool downloadRunning: SettingsModel.appUpdateData.downloadRunning
-	readonly property var update: SettingsModel.appUpdateData
+	readonly property var updateData: SettingsModel.appUpdateData
 
 	spacing: Style.dimens.pane_spacing
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("Application update")
 
 	titleBarSettings: TitleBarSettings {
@@ -31,7 +31,7 @@ FlickableSectionPage {
 
 		onNavigationActionClicked: {
 			if (root.downloadRunning) {
-				root.update.abortDownload();
+				root.updateData.abortDownload();
 			}
 			root.leaveView();
 		}
@@ -40,31 +40,31 @@ FlickableSectionPage {
 	Subheading {
 		elide: Text.ElideRight
 		maximumLineCount: 1
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("Update available")
 	}
 	GText {
-		//: LABEL DESKTOP %1 is replaced with the current version number
+		//: DESKTOP %1 is replaced with the current version number
 		text: qsTr("An update for the outdated installed version (%1) is available for download.").arg(Qt.application.version)
 	}
 	UpdateViewInformation {
 		id: updateInformation
 
 		Layout.fillWidth: true
-		downloadSize: root.update.size
-		releaseDate: root.update.date
-		version: root.update.version
+		downloadSize: root.updateData.size
+		releaseDate: root.updateData.date
+		version: root.updateData.version
 	}
 	UpdateViewButtonRow {
 		id: updateButtons
 
 		Layout.fillWidth: true
 		downloadInProgress: root.downloadRunning
-		downloadProgressKB: root.update.downloadProgress
-		downloadTotalKB: root.update.downloadTotal
-		version: root.update.version
+		downloadProgressKB: root.updateData.downloadProgress
+		downloadTotalKB: root.updateData.downloadTotal
+		version: root.updateData.version
 
-		onAbortDownload: root.update.abortDownload()
+		onAbortDownload: root.updateData.abortDownload()
 		onStartDownload: download.exec()
 	}
 	GPane {
@@ -104,27 +104,27 @@ FlickableSectionPage {
 			warning.exec(pError, pSupportInfo);
 		}
 
-		target: root.update
+		target: root.updateData
 	}
 	ConfirmationPopup {
 		id: download
 
 		function exec() {
-			if (root.update.compatible)
+			if (root.updateData.compatible)
 				load();
 			else
 				open();
 		}
 		function load() {
-			root.update.download();
+			root.updateData.download();
 		}
 
 		closePolicy: Popup.NoAutoClose
-		//: LABEL DESKTOP
+		//: DESKTOP
 		okButtonText: qsTr("Update anyway")
-		//: INFO DESKTOP Text of the popup that is shown when the requested update is not compatible with the OS.
-		text: qsTr("Troubleshooting and user support for the %1 is no longer available for your current operating system. Version %2 has not been tested with your current operating system, use is at your own risk.").arg(Qt.application.name).arg(root.update.version)
-		//: INFO DESKTOP Header of the popup that is shown when the requested update is not compatible with the OS.
+		//: DESKTOP Text of the popup that is shown when the requested update is not compatible with the OS.
+		text: qsTr("Troubleshooting and user support for the %1 is no longer available for your current operating system. Version %2 has not been tested with your current operating system, use is at your own risk.").arg(Qt.application.name).arg(root.updateData.version)
+		//: DESKTOP Header of the popup that is shown when the requested update is not compatible with the OS.
 		title: qsTr("Warning - Your operating system is no longer supported")
 
 		onCancelled: close()
@@ -143,7 +143,7 @@ FlickableSectionPage {
 		}
 
 		style: ConfirmationPopup.PopupStyle.OkButton
-		//: INFO DESKTOP Header of the popup that is shown when the app download failed.
+		//: DESKTOP Header of the popup that is shown when the app download failed.
 		title: qsTr("Warning - Update failed")
 
 		GText {

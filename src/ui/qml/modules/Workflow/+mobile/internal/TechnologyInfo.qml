@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -53,10 +53,6 @@ ColumnLayout {
 		id: additionalContentItem
 
 		visible: false
-	}
-	GSpacer {
-		Layout.fillHeight: true
-		visible: enableButton.visible
 	}
 	GButton {
 		id: enableButton

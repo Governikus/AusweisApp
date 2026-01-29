@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceSettings.h"
@@ -81,7 +81,7 @@ QString RemoteServiceSettings::getDefaultDeviceName() const
 	QString name = DeviceInfo::getName();
 	if (name.isEmpty())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("Smartphone as card reader (SaC)");
 	}
 

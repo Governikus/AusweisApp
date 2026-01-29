@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -91,7 +91,6 @@ class UiPluginQml
 		[[nodiscard]] bool isDeveloperVersion() const override;
 		[[nodiscard]] QString getDominator() const override;
 		[[nodiscard]] bool isDominated() const override;
-		[[nodiscard]] QVariantMap getSafeAreaMargins() const override;
 		[[nodiscard]] bool isHighContrastEnabled() const override;
 		[[nodiscard]] bool isOsDarkModeEnabled() const;
 		[[nodiscard]] bool isDarkModeEnabled() const override;
@@ -141,6 +140,7 @@ class UiPluginQml
 		void onTrayIconEnabledChanged();
 		void onAppConfigChanged();
 		void onReaderStatusChanged(const ReaderManagerPluginInfo& pInfo) const;
+		void onLanguageChanged() const;
 };
 
 } // namespace governikus

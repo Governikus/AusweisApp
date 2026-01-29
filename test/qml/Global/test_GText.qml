@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick
+
 import QtTest
+
 import Governikus.Global
 import Governikus.Style
 
@@ -45,14 +46,21 @@ TestCase {
 
 		text: "initial text"
 
-		onLinkActivated: testObject.text = "link activated"
-
 		TestCase {
+			function cleanupTestCase() {
+				testRunner.clearUrlScheme("testing");
+			}
+			function initTestCase() {
+				testRunner.registerUrlScheme("testing");
+				testRunner.urlInvoked.connect(function (pUrl) {
+					testObject.text = "link activated " + pUrl;
+				});
+			}
 			function test_spacePress() {
-				testObject.text = "Test <a href=\"#\">Test<\a> Test";
+				testObject.text = "Test <a href=\"testing://localhost\">Test<\a> Test";
 				testObject.forceActiveFocus();
 				keyClick(Qt.Key_Space);
-				compare(testObject.text, "link activated", "Link activated");
+				compare(testObject.text, "link activated testing://localhost");
 			}
 
 			when: windowShown

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TrayIcon.h"
@@ -85,7 +85,7 @@ void TrayIcon::create()
 
 	if (!generalSettings.isAutoStart())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		Env::getSingleton<ApplicationModel>()->showFeedback(tr("Application was started."));
 	}
 #endif
@@ -110,14 +110,14 @@ void TrayIcon::updateMenu()
 	trayIconMenu->clear();
 
 	#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX) || defined(Q_OS_BSD4)
-	//: LABEL DESKTOP
+	//: DESKTOP
 	auto* showApplicationAction = new QAction(tr("Open"), trayIconMenu);
 	connect(showApplicationAction, &QAction::triggered, this, &TrayIcon::fireShow);
 	trayIconMenu->addAction(showApplicationAction);
 	trayIconMenu->addSeparator();
 	#endif
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	auto* quitAction = new QAction(tr("Quit %1").arg(QCoreApplication::applicationName()), trayIconMenu);
 	connect(quitAction, &QAction::triggered, this, &TrayIcon::fireQuit);
 	trayIconMenu->addAction(quitAction);

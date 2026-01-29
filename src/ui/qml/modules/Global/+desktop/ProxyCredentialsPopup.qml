@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -13,10 +13,10 @@ ConfirmationPopup {
 
 	property ProxyCredentials credentials
 
-	//: LABEL DESKTOP Text of the button in the proxy credentials popup.
+	//: DESKTOP Text of the button in the proxy credentials popup.
 	okButtonText: qsTr("Sign in")
 
-	//: LABEL DESKTOP Title of the proxy credentials popup.
+	//: DESKTOP Title of the proxy credentials popup.
 	title: qsTr("Sign in")
 	width: formGrid.width + 2 * Style.dimens.pane_padding
 
@@ -32,7 +32,7 @@ ConfirmationPopup {
 		credentials.password = passwordInput.text;
 	}
 	onCredentialsChanged: {
-		//: LABEL DESKTOP Text of the proxy credentials popup. An example for %1 is http://proxy.example.com:1337.
+		//: DESKTOP Text of the proxy credentials popup. An example for %1 is http://proxy.example.com:1337.
 		text = qsTr("The proxy %1 requires username and password.").arg(credentials ? credentials.url : "");
 		userInput.text = credentials ? credentials.proposedUser : "";
 		passwordInput.text = "";
@@ -46,10 +46,10 @@ ConfirmationPopup {
 		verticalItemAlignment: Text.AlignVCenter
 
 		GText {
-			//: LABEL DESKTOP Accessible name.
+			//: DESKTOP Accessible name.
 			Accessible.name: qsTr("Proxy credential username")
 
-			//: LABEL DESKTOP Label of the textfield for the username.
+			//: DESKTOP Label of the textfield for the username.
 			text: qsTr("Username")
 		}
 		GTextField {
@@ -58,10 +58,10 @@ ConfirmationPopup {
 			width: 300 * UiPluginModel.scaleFactor
 		}
 		GText {
-			//: LABEL DESKTOP Accessible name.
+			//: DESKTOP Accessible name.
 			Accessible.name: qsTr("Proxy credential password")
 
-			//: LABEL DESKTOP Label of the textfield for the password.
+			//: DESKTOP Label of the textfield for the password.
 			text: qsTr("Password")
 		}
 		GTextField {

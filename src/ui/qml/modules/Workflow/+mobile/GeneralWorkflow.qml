@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -20,7 +20,6 @@ SectionPage {
 
 	property alias autoInsertCard: technologyInfo.autoInsertCard
 	property alias cardInitiallyAppeared: technologyInfo.cardInitiallyAppeared
-	property bool hideSwitch: false
 	property var initialPlugin: null
 	readonly property bool isLandscape: ApplicationWindow.window && ApplicationWindow.menuBar ? ApplicationWindow.window.height - ApplicationWindow.menuBar.height < ApplicationWindow.window.width : false
 	required property var workflowModel
@@ -74,7 +73,7 @@ SectionPage {
 
 				animationSymbol: Symbol.Type.ERROR
 				animationType: AnimationLoader.Type.SAC_RESULT
-				//: INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.
+				//: MOBILE The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.
 				text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
 				title: root.workflowTitle
 

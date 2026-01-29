@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "context/WorkflowContext.h"
 
 #include "MockCardConnection.h"
 #include "MockCardConnectionWorker.h"
+#include "TestHookThread.h"
 #include "TestWorkflowContext.h"
 
 #include <QtTest>
@@ -226,12 +227,10 @@ class test_WorkflowContext
 
 		void test_IsPinBlocked()
 		{
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread workerThread;
 
 			{
-				const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-				worker->moveToThread(&workerThread);
+				const auto& worker = MockCardConnectionWorker::create(&workerThread);
 				mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 				QVERIFY(!mContext->isPinBlocked());
 
@@ -244,10 +243,9 @@ class test_WorkflowContext
 				const ReaderInfo readerInfo2(QString(), ReaderManagerPluginType::UNKNOWN, cardInfo2);
 				Q_EMIT worker->fireReaderInfoChanged(readerInfo2);
 				QVERIFY(mContext->isPinBlocked());
-			}
 
-			workerThread.quit();
-			workerThread.wait();
+				mContext->resetCardConnection();
+			}
 		}
 
 

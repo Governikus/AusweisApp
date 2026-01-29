@@ -1,13 +1,22 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockIfdServer.h"
 
-#include "MockDataChannel.h"
 #include "ServerMessageHandlerImpl.h"
 
+
 using namespace governikus;
+
+
+QSharedPointer<MockDataChannel> MockIfdServer::createDataChannel()
+{
+	const auto& dataChannel = QSharedPointer<MockDataChannel>::create();
+	connect(dataChannel.data(), &MockDataChannel::destroyed, this, &MockIfdServer::fireDataChannelDestroyed);
+	return dataChannel;
+}
+
 
 MockIfdServer::MockIfdServer(bool pIsLocal)
 	: IfdServer()
@@ -15,7 +24,7 @@ MockIfdServer::MockIfdServer(bool pIsLocal)
 	, mConnected(false)
 	, mPairing(false)
 	, mIsLocal(pIsLocal)
-	, mServerMessageHandler(QSharedPointer<ServerMessageHandlerImpl>(new ServerMessageHandlerImpl(QSharedPointer<MockDataChannel>::create())))
+	, mServerMessageHandler(new ServerMessageHandlerImpl(createDataChannel()))
 {
 }
 
@@ -38,6 +47,7 @@ bool MockIfdServer::start(const QString& pServerName)
 void MockIfdServer::stop()
 {
 	mRunning = false;
+	mServerMessageHandler.reset();
 	Q_EMIT fireIsRunningChanged();
 }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -50,9 +50,9 @@ FlickableSectionPage {
 		ProgressView {
 			progressValue: SmartModel.progress
 			smartEidUsed: root.smartEidUsed
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Please wait a moment.")
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Smart-eID")
 		}
 	}
@@ -65,10 +65,10 @@ FlickableSectionPage {
 			animationSymbol: success ? Symbol.Type.CHECK : Symbol.Type.ERROR
 			animationType: AnimationLoader.Type.STATUS
 			mailButtonText: success ? "" :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("Send log")
 			smartEidUsed: root.smartEidUsed
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Smart-eID")
 
 			onCancelClicked: root.close()
@@ -96,8 +96,7 @@ FlickableSectionPage {
 
 		}
 		GText {
-
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("If you want to use that functionality again, you need to set up a new Smart-eID first.")
 		}
 	}
@@ -111,7 +110,7 @@ FlickableSectionPage {
 		buttonColor: Style.color.warning
 		icon.source: "qrc:///images/identify.svg"
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Reset Smart-eID")
 
 		onClicked: deleteConfirmation.open()

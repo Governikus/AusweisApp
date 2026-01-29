@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
 
 import QtQuick
 
+import Governikus.Global
 import Governikus.EnterPasswordView
 import Governikus.TitleBar
 import Governikus.MultiInfoView
@@ -20,7 +21,6 @@ Controller {
 	id: root
 
 	property bool autoInsertCard: false
-	property bool hideTechnologySwitch: false
 	property var initialPlugin: null
 	property bool isInitialState: true
 	readonly property bool isSelfAuth: ApplicationModel.currentWorkflow === ApplicationModel.Workflow.SELF_AUTHENTICATION
@@ -50,6 +50,12 @@ Controller {
 		continueWorkflowIfComfortReader();
 	}
 	function displaySuccessView(pPasswordType) {
+		if (d.lastInputSuccessType === pPasswordType) {
+			continueWorkflowIfComfortReader();
+			return;
+		}
+
+		d.lastInputSuccessType = pPasswordType;
 		replace(inputSuccessView, {
 			passwordType: pPasswordType
 		});
@@ -205,6 +211,11 @@ Controller {
 		processStateChange(AuthModel.currentState);
 	}
 
+	QtObject {
+		id: d
+
+		property int lastInputSuccessType: -1
+	}
 	Connections {
 		function onFireStateEntered(pState) {
 			root.processStateChange(pState);
@@ -241,31 +252,31 @@ Controller {
 		id: progressView
 
 		ProgressView {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			headline: (AuthModel.error ? qsTr("Cancel authentication process") :
-				//: INFO ANDROID IOS Header of the progress status message during the authentication process.
+				//: MOBILE Header of the progress status message during the authentication process.
 				root.isInitialState ? qsTr("Acquiring provider certificate") :
-				//: INFO ANDROID IOS Header of the progress status message during the authentication process.
+				//: MOBILE Header of the progress status message during the authentication process.
 				qsTr("Authentication in progress"))
-			//: LABEL ANDROID IOS Name of an progress indicator during an authentication read by screen readers
+			//: MOBILE Name of an progress indicator during an authentication read by screen readers
 			progressBarA11yText: qsTr("Authentication progress")
 			progressBarVisible: root.workflowProgressVisible
 			progressText: AuthModel.progressMessage
 			progressValue: AuthModel.progressValue
 			smartEidUsed: root.smartEidUsed
 			text: {
-				//: INFO ANDROID IOS Generic status message during the authentication process.
+				//: MOBILE Generic status message during the authentication process.
 				if (root.isInitialState || AuthModel.error || root.isSmartWorkflow) {
 					return qsTr("Please wait a moment.");
 				}
 				if (AuthModel.isBasicReader) {
-					//: INFO ANDROID IOS Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
+					//: MOBILE Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
 					return qsTr("Please do not move the ID card.");
 				}
-				//: INFO ANDROID IOS The card reader requests the user's attention.
+				//: MOBILE The card reader requests the user's attention.
 				return qsTr("Please observe the display of your card reader.");
 			}
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Identify")
 
 			navigationAction: NavigationAction {
@@ -292,9 +303,9 @@ Controller {
 
 		SelfAuthenticationData {
 			okButtonText: root.startedByOnboarding ?
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("Back to setup") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("Back to start page")
 			smartEidUsed: root.smartEidUsed
 
@@ -328,7 +339,6 @@ Controller {
 
 		GeneralWorkflow {
 			autoInsertCard: root.autoInsertCard
-			hideSwitch: root.hideTechnologySwitch
 			initialPlugin: root.initialPlugin
 			smartEidUsed: root.smartEidUsed
 			workflowModel: AuthModel
@@ -372,7 +382,7 @@ Controller {
 		id: enterPinView
 
 		EnterPasswordView {
-			//: LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authentication
+			//: MOBILE A11y button to confirm the PIN and start the provider authentication
 			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || passwordType === NumberModel.PasswordType.SMART_PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
 			moreInformationText: infoData.linkText
 			smartEidUsed: root.smartEidUsed
@@ -452,17 +462,22 @@ Controller {
 			id: authResultView
 
 			animation: AuthModel.statusCodeAnimation
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			buttonText: root.startedByOnboarding ? qsTr("Back to setup") : AuthModel.resultViewButtonText
 			errorCode: AuthModel.statusCodeDisplayString
 			errorDescription: AuthModel.errorText
-			//: LABEL ANDROID IOS
+			firstHintButtonText: AuthModel.statusHintActionText
+			firstHintText: AuthModel.statusHintText
+			firstHintTitle: AuthModel.statusHintTitle
+			//: MOBILE
 			header: qsTr("Authentication failed")
-			hintButtonText: AuthModel.statusHintActionText
-			hintText: AuthModel.statusHintText
-			hintTitle: AuthModel.statusHintTitle
-			//: LABEL ANDROID IOS
+			hintBoxesTitle: AuthModel.statusHintBoxesTitle
+			//: MOBILE
 			mailButtonText: AuthModel.errorIsMasked ? qsTr("Send log") : ""
+			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
+			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
+			secondHintText: Utils.getSecondPRSHintText(AuthModel.statusCode)
+			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			smartEidUsed: root.smartEidUsed
 			subheader: AuthModel.errorHeader
 			text: AuthModel.resultString
@@ -475,7 +490,7 @@ Controller {
 			}
 
 			onContinueClicked: AuthModel.continueWorkflow()
-			onHintClicked: {
+			onFirstHintClicked: {
 				AuthModel.continueWorkflow();
 				AuthModel.invokeStatusHintAction();
 			}

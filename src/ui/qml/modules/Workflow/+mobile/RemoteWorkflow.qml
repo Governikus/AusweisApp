@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -38,10 +38,10 @@ GFlickableColumnLayout {
 		Layout.alignment: Qt.AlignHCenter
 		enableButtonText: {
 			if (!root.wifiEnabled) {
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				return qsTr("Enable WiFi");
 			} else if (!root.foundSelectedReader) {
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				return qsTr("Manage pairings");
 			} else {
 				return "";
@@ -49,10 +49,10 @@ GFlickableColumnLayout {
 		}
 		infoText: {
 			if (!root.wifiEnabled) {
-				//: INFO ANDROID IOS The WiFi module needs to be enabled in the system settings to use the remote service.
+				//: MOBILE The WiFi module needs to be enabled in the system settings to use the remote service.
 				return qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.");
 			} else if (!root.foundSelectedReader) {
-				//: INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.
+				//: MOBILE No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.
 				return qsTr("Allow a connection on a paired smartphone or pair a new smartphone.");
 			} else {
 				return "";
@@ -68,22 +68,22 @@ GFlickableColumnLayout {
 			} else if (!!AuthModel.eidTypeMismatchError) {
 				return AuthModel.eidTypeMismatchError;
 			} else if (ApplicationModel.extendedLengthApdusUnsupported) {
-				//: INFO ANDROID IOS The device does not support Extended Length and can not be used as card reader.
+				//: MOBILE The device does not support Extended Length and can not be used as card reader.
 				return qsTr("The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).");
 			} else {
-				//: INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.
+				//: MOBILE The connection to the smartphone was established, the ID card may be inserted.
 				return qsTr("Connected to %1. Please follow the instructions on the connected smartphone.").arg(RemoteServiceModel.connectedServerDeviceNames);
 			}
 		}
 		titleText: {
 			if (!root.wifiEnabled) {
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				return qsTr("Wifi disabled");
 			} else if (!root.foundSelectedReader) {
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				return qsTr("No smartphone as card reader connected");
 			} else {
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				return qsTr("Determine card");
 			}
 		}

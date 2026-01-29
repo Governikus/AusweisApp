@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -91,7 +91,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 	{
 		if (mCallback == null || pSessionId.compareTo(mCallbackSessionId) != 0)
 		{
-			LogHandler.getLogger().warning("Android service: Invalid sessiond ID!");
+			LogHandler.getLogger().warning("Android service: Invalid session ID!");
 			return false;
 		}
 		return true;

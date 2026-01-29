@@ -1,0 +1,57 @@
+From 35434965020c695e9df9c98c6be790c811240080 Mon Sep 17 00:00:00 2001
+From: Jens Trillmann <jens.trillmann@governikus.de>
+Date: Mon, 29 Sep 2025 17:25:38 +0200
+Subject: Make nonvisible vertical a11y elements in Flickable not FKA
+ accessible
+
+When navigating an app using FKA elements of Flickables can be selected
+by FKA even if they are currently not on screen anymore, e.g. when they
+are behind a title bar or a footer. This leads to unintuitive behavior,
+as FKA prefers to focus the scrolled invisible elements instead of the
+visible title bar or footer elements.
+To combat this by only allowing FKA focus on elements that are completely
+inside the Flickable rect. We make an exception for horizontal flickables,
+as they are needed for e.g. landing page horizontal Flickables.
+---
+ .../platforms/ios/quiaccessibilityelement.mm  | 28 ++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+index 69faf63e56c9141fedff5260f009325ed8219299..a9f62e3feeadd810d212b04e66b04a5e91dbfc4e 100644
+--- x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+@@ -395,7 +395,33 @@ struct RotorNameTranslator {
+ 
+ - (BOOL)canBecomeFocused
+ {
+-    return YES;
++    QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || !iface->isValid()) {
++        qWarning() << "invalid accessible interface for: " << self.axid;
++        return NO;
++    }
++    QAccessibleInterface *parentIface = iface->parent();
++    while (parentIface) {
++        if (!parentIface || !parentIface->isValid()) {
++            return YES;
++        }
++        const auto accessibleRole = parentIface->role();
++        if (accessibleRole == QAccessible::ScrollBar) {
++            break;
++        }
++        parentIface = parentIface->parent();
++    }
++
++    if (!parentIface) {
++        return YES;
++    }
++
++    QRect itemRect = iface->rect();
++    QRect parentRect = parentIface->rect();
++
++    bool strict_vertical_outside = itemRect.y() < parentRect.y()
++        || itemRect.y() + itemRect.height() > parentRect.y() + parentRect.height();
++    return !strict_vertical_outside;
+ }
+ 
+ @end

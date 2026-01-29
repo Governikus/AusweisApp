@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -21,20 +21,20 @@ BaseOnboardingView {
 	}
 
 	Heading {
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Do you want to also use the %1 on a PC/Mac?").arg(Qt.application.name)
 		wrapMode: Text.WordWrap
 	}
 	GText {
 		Layout.topMargin: Style.dimens.pane_spacing
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("In order to also perform online authentications on a PC/Mac, you may pair your smartphone as a card reader. To do so, you need to have the %1 installed on both devices.").arg(Qt.application.name)
 	}
 	GInformativeButton {
 		Layout.fillWidth: true
 		Layout.topMargin: Style.dimens.pane_spacing
 		isPane: true
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("No, I just want to use this device")
 
 		onClicked: root.continueOnboarding()
@@ -43,7 +43,7 @@ BaseOnboardingView {
 		Layout.fillWidth: true
 		Layout.topMargin: Style.dimens.pane_spacing
 		isPane: true
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Yes, I also want to use a PC/Mac")
 
 		onClicked: root.setupDesktopUsage()

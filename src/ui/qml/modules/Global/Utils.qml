@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma Singleton
@@ -18,12 +18,21 @@ QtObject {
 		}
 		return findGFlickable(pItem.parent);
 	}
+	function getSecondPRSHintText(pGlobalStatusCode) {
+		if (PinResetInformationModel.hasPinResetService && pGlobalStatusCode === GlobalStatusCode.Card_Pin_Deactivated)
+			return PinResetInformationModel.activateOnlineFunctionAtAuthorityHint;
+
+		if (PinResetInformationModel.hasPinResetService && pGlobalStatusCode === GlobalStatusCode.Card_Puk_Blocked)
+			return PinResetInformationModel.resetPinAtAuthorityHint;
+
+		return "";
+	}
 	function platformAgnosticLinkOpenText(pLink, pName) {
 		if (Qt.platform.os === "ios" || Qt.platform.os === "android") {
-			//: INFO ANDROID IOS Hint that a link is present, which will open in the browser
+			//: MOBILE Hint that a link is present, which will open in the browser
 			return qsTr("Tap to open the following website in your browser: %1").arg(pLink);
 		}
-		//: INFO DESKTOP Hint that a link is present, which will open in the browser
+		//: DESKTOP Hint that a link is present, which will open in the browser
 		let desktopDescription = qsTr("Press space to open the following website in your browser: %1").arg(pLink);
 		if (Qt.platform.os === "osx") {
 			return "%1, %2".arg(pName).arg(desktopDescription);

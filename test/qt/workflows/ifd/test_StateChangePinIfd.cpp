@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateChangePinIfd.h"
@@ -8,11 +8,13 @@
 
 #include "MockCardConnectionWorker.h"
 #include "MockIfdServer.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
 
 using namespace governikus;
+
 
 class MockSetEidPinCommand
 	: public SetEidPinCommand
@@ -46,11 +48,11 @@ class test_StateChangePinIfd
 	private Q_SLOTS:
 		void test_Run()
 		{
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread workerThread;
 
 			{
-				const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(QSharedPointer<IfdServer>(new MockIfdServer())));
+				auto* ifdServer = new MockIfdServer();
+				const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(QSharedPointer<IfdServer>(ifdServer)));
 				StateChangePinIfd state(context);
 				const QString slotHandle = QStringLiteral("slot");
 				const QByteArray input("input");
@@ -62,16 +64,19 @@ class test_StateChangePinIfd
 				QCOMPARE(context->getModifyPinMessageResponseApdu().getStatusCode(), StatusCode::UNKNOWN);
 				QCOMPARE(spyContinue.count(), 1);
 
-				const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-				worker->moveToThread(&workerThread);
-				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-				context->setCardConnection(connection);
+				auto worker = MockCardConnectionWorker::create(&workerThread);
+				context->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 				state.run();
 				QCOMPARE(state.mConnections.size(), 1);
-			}
+				QTRY_COMPARE(spyContinue.size(), 2);
 
-			workerThread.quit();
-			workerThread.wait();
+				context->resetCardConnection();
+				QSignalSpy spy(ifdServer, &MockIfdServer::fireDataChannelDestroyed);
+				ifdServer->stop();
+				QTRY_COMPARE(spy.count(), 1);
+
+				context->resetCardConnection();
+			}
 		}
 
 
@@ -80,7 +85,7 @@ class test_StateChangePinIfd
 			const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(QSharedPointer<IfdServer>(new MockIfdServer())));
 			StateChangePinIfd state(context);
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QByteArray pin("000000");
 			const QSharedPointer<MockSetEidPinCommand> setEidCommand(new MockSetEidPinCommand(worker, pin));
 			QSignalSpy spyContinue(&state, &StateChangePinIfd::fireContinue);

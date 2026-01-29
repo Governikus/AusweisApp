@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceModel.h"
@@ -310,7 +310,7 @@ void RemoteServiceModel::onConnectionInfoChanged(bool pConnected)
 {
 	if (mContext && pConnected)
 	{
-		//: INFO ANDROID IOS The smartphone is connected as card reader (SaK) and currently processing an authentication request. The user is asked to pay attention the its screen.
+		//: MOBILE The smartphone is connected as card reader (SaK) and currently processing an authentication request. The user is asked to pay attention the its screen.
 		mConnectionInfo = tr("Please pay attention to the display on your other device \"%1\".").arg(getConnectedClientName());
 		Q_EMIT fireConnectionInfoChanged();
 	}
@@ -497,12 +497,12 @@ QString RemoteServiceModel::getErrorMessage(bool pNfcPluginEnabled, bool pWifiEn
 {
 	if (!pWifiEnabled)
 	{
-		//: INFO ALL_PLATFORMS The WiFi feature is not enabled but required to use the smartphone as a card reader (SaK).
+		//: ALL_PLATFORMS The WiFi feature is not enabled but required to use the smartphone as a card reader (SaK).
 		return tr("Please connect your WiFi to use your smartphone as a card reader (SaC).");
 	}
 	if (!pNfcPluginEnabled)
 	{
-		//: INFO ALL_PLATFORMS NFC is available but not active.
+		//: ALL_PLATFORMS NFC is available but not active.
 		return tr("The NFC radio standard is required for communication with the ID card.\n\nPlease enable NFC to use your smartphone as a card reader (SaC).");
 	}
 

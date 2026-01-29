@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CheckIDCardModel.h"
@@ -9,12 +9,15 @@
 using namespace governikus;
 
 
-CheckIDCardModel::CheckIDCardModel(QObject* pParent)
+CheckIDCardModel::CheckIDCardModel(QObject* pParent, int pReaderConnectionTimeout)
 	: QObject(pParent)
 	, mIsRunning(false)
 	, mResult(Result::UNKNOWN)
 	, mPluginType(ReaderManagerPluginType::UNKNOWN)
 {
+	mReaderConnectionWait.setSingleShot(true);
+	mReaderConnectionWait.setInterval(pReaderConnectionTimeout);
+	connect(&mReaderConnectionWait, &QTimer::timeout, this, &CheckIDCardModel::onReaderConnectionWaitEnded);
 }
 
 
@@ -28,7 +31,7 @@ void CheckIDCardModel::onCardInserted(const ReaderInfo& pInfo)
 {
 	if (!mReaderWithCard.isEmpty() && pInfo.getName() != mReaderWithCard)
 	{
-		qWarning() << "Detected multiple readers with cards";
+		qWarning() << "Detected conflicting readers with cards";
 		return;
 	}
 
@@ -77,7 +80,7 @@ void CheckIDCardModel::onCardRemoved(const ReaderInfo& pInfo)
 
 void CheckIDCardModel::onReaderAdded(const ReaderInfo& pInfo)
 {
-	if (pInfo.hasCard())
+	if (pInfo.hasCard() && pInfo.hasEid())
 	{
 		onCardInserted(pInfo);
 	}
@@ -100,6 +103,20 @@ void CheckIDCardModel::onReaderPropertiesUpdated(const ReaderInfo& pInfo)
 	if (pInfo.insufficientApduLength())
 	{
 		stopScanWithResult(Result::INSUFFICIENT_APDU_LENGTH);
+	}
+}
+
+
+void CheckIDCardModel::onReaderConnectionWaitEnded()
+{
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
+	const auto readers = readerManager->getReaderInfos();
+	for (const auto& reader : readers)
+	{
+		if (reader.hasCard())
+		{
+			onCardInserted(reader);
+		}
 	}
 }
 
@@ -169,12 +186,14 @@ void CheckIDCardModel::startScanIfNecessary()
 	// Directly check all readers if an id card is already present
 	for (const auto& info : readerInfos)
 	{
-		if (info.hasCard())
+		if (info.hasCard() && info.hasEid())
 		{
 			onReaderAdded(info);
-			break;
+			return;
 		}
 	}
+
+	mReaderConnectionWait.start();
 
 	Q_EMIT fireResultChanged();
 }
@@ -186,6 +205,8 @@ void CheckIDCardModel::stopScan()
 	{
 		return;
 	}
+
+	mReaderConnectionWait.stop();
 
 	auto* readerManager = Env::getSingleton<ReaderManager>();
 	disconnect(readerManager, &ReaderManager::fireCardInserted, this, &CheckIDCardModel::onCardInserted);

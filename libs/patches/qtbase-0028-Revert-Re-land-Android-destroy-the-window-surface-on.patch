@@ -1,0 +1,218 @@
+From 934eab0277269d7dceea7f08b1039b61566d2ffa Mon Sep 17 00:00:00 2001
+From: Assam Boudjelthia <assam.boudjelthia@qt.io>
+Date: Wed, 3 Sep 2025 14:51:47 +0300
+Subject: Revert "Re-land: Android: destroy the window surface only after exit
+ transition"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This reverts commit 5ef73686cfb488dfc6a4077a2ecb12f883de1461.
+
+Reason for revert: causes multiple regressions.
+
+Pick-to: 6.9 6.10
+Task-number: QTBUG-127705
+Task-number: QTBUG-139606
+Task-number: QTBUG-139659
+Change-Id: I446d2aad7babf71ed59aa56e29e01b85eb940867
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+(cherry picked from commit a113197fec0af3698f80679cef5a848426918863)
+---
+ .../qt/android/QtActivityDelegate.java        | 37 +++++++-------
+ .../org/qtproject/qt/android/QtWindow.java    | 50 +------------------
+ .../android/qandroidplatformwindow.cpp        | 11 ----
+ 3 files changed, 18 insertions(+), 80 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
+index 58d332c72812a0fbdf322c3be5dbd1c390e7e1b8..a62dc2095fc3c1930f7bc1fb35d8c401c8755c8f 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
+@@ -9,11 +9,9 @@ import android.app.Activity;
+ import android.content.pm.ActivityInfo;
+ import android.content.pm.PackageManager;
+ import android.content.res.Configuration;
+-import android.content.res.TypedArray;
+ import android.graphics.drawable.ColorDrawable;
+ import android.graphics.drawable.Drawable;
+ import android.graphics.Rect;
+-import android.graphics.Color;
+ import android.os.Build;
+ import android.util.DisplayMetrics;
+ import android.util.Log;
+@@ -43,6 +41,7 @@ class QtActivityDelegate extends QtActivityDelegateBase
+     private boolean m_splashScreenSticky = false;
+     private boolean m_backendsRegistered = false;
+ 
++    private View m_dummyView = null;
+     private final HashMap<Integer, View> m_nativeViews = new HashMap<>();
+ 
+     QtActivityDelegate(Activity activity)
+@@ -205,19 +204,6 @@ class QtActivityDelegate extends QtActivityDelegateBase
+                                                             ViewGroup.LayoutParams.MATCH_PARENT,
+                                                             ViewGroup.LayoutParams.MATCH_PARENT));
+                 m_layout.addView(m_splashScreen);
+-
+-                // Set DayNight theme as layout background so splash screen
+-                // is not visible with opaque windows.
+-                TypedArray typedArray = m_activity.getTheme().obtainStyledAttributes(
+-                                        android.R.style.Theme_DeviceDefault_DayNight,
+-                                        new int[]{ android.R.attr.colorBackground });
+-                try {
+-                    int backgroundColor = typedArray.getColor(0, Color.WHITE);
+-                    Drawable background = new ColorDrawable(backgroundColor);
+-                    m_layout.setBackground(background);
+-                } finally {
+-                    typedArray.recycle();
+-                }
+             }
+         } catch (Exception e) {
+             e.printStackTrace();
+@@ -400,9 +386,15 @@ class QtActivityDelegate extends QtActivityDelegateBase
+             if (m_layout == null)
+                 return;
+ 
++            if (m_topLevelWindows.isEmpty()) {
++                if (m_dummyView != null) {
++                    m_layout.removeView(m_dummyView);
++                    m_dummyView = null;
++                }
++            }
++
+             m_layout.addView(window, m_topLevelWindows.size());
+             m_topLevelWindows.put(window.getId(), window);
+-            window.setToDestroy(false);
+             if (!m_splashScreenSticky)
+                 hideSplashScreen();
+         });
+@@ -416,10 +408,10 @@ class QtActivityDelegate extends QtActivityDelegateBase
+             if (m_topLevelWindows.containsKey(id)) {
+                 QtWindow window = m_topLevelWindows.remove(id);
+                 window.setOnApplyWindowInsetsListener(null); // Set in QtWindow for safe margins
+-                if (window.isFrontmostVisibleWindow()) {
+-                    window.setToDestroy(true);
+-                    // Keep current shown window open during shutdown transition
+-                    m_layout.postDelayed(() -> { window.destroySurface(); }, 500);
++                if (m_topLevelWindows.isEmpty()) {
++                   // Keep last frame in stack until it is replaced to get correct
++                   // shutdown transition
++                   m_dummyView = window;
+                } else if (m_layout != null) {
+                    m_layout.removeView(window);
+                }
+@@ -478,6 +470,11 @@ class QtActivityDelegate extends QtActivityDelegateBase
+             return;
+ 
+         QtNative.runAction(()-> {
++            if (m_dummyView != null) {
++                m_layout.removeView(m_dummyView);
++                m_dummyView = null;
++            }
++
+             if (m_nativeViews.containsKey(id))
+                 m_layout.removeView(m_nativeViews.remove(id));
+ 
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtWindow.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtWindow.java
+index 7a3db400f9e7dffd8ebe73b22d69ef77d51a9efd..1f5ae6c2ad95dbab92fd1c33a9a934c4c09c1ce1 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtWindow.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtWindow.java
+@@ -20,7 +20,6 @@ import android.view.WindowInsets;
+ import android.os.Build;
+ 
+ import java.util.HashMap;
+-import java.util.concurrent.atomic.AtomicBoolean;
+ 
+ @SuppressLint("ViewConstructor")
+ class QtWindow extends QtLayout implements QtSurfaceInterface {
+@@ -31,7 +30,6 @@ class QtWindow extends QtLayout implements QtSurfaceInterface {
+     private GestureDetector m_gestureDetector;
+     private final QtEditText m_editText;
+     private final QtInputConnection.QtInputConnectionListener m_inputConnectionListener;
+-    private final AtomicBoolean m_canBeDestroyed = new AtomicBoolean(true);
+ 
+     private static native void setSurface(int windowId, Surface surface);
+     private static native void safeAreaMarginsChanged(Insets insets, int id);
+@@ -164,52 +162,6 @@ class QtWindow extends QtLayout implements QtSurfaceInterface {
+         });
+     }
+ 
+-    // Use only for Qt for Android and not Qt Quick for Android
+-    @UsedFromNativeCode
+-    public void setToDestroy(boolean destroy)
+-    {
+-        m_canBeDestroyed.set(destroy);
+-    }
+-    // Use only for Qt for Android and not Qt Quick for Android
+-    private QtLayout getParentContainer()
+-    {
+-        if (!(getParent() instanceof QtLayout))
+-            return null;
+-        return (QtLayout) getParent();
+-    }
+-    // Use only for Qt for Android and not Qt Quick for Android
+-    public boolean isFrontmostVisibleWindow()
+-    {
+-        QtLayout parent = getParentContainer();
+-        if (getVisibility() != View.VISIBLE || parent == null)
+-            return false;
+-        for (int index = parent.indexOfChild(this) + 1; index < parent.getChildCount(); index ++) {
+-            View child = parent.getChildAt(index);
+-            if (child instanceof QtWindow && child.isShown())
+-                return false;
+-        }
+-        return true;
+-    }
+-    // Use only for Qt for Android and not Qt Quick for Android
+-    @UsedFromNativeCode
+-    public boolean isLastVisibleTopLevelWindow()
+-    {
+-        QtLayout parent = getParentContainer();
+-        if (getVisibility() != View.VISIBLE || parent == null)
+-            return false;
+-        for (int index = parent.indexOfChild(this) - 1; index >= 0; index--) {
+-            View child = parent.getChildAt(index);
+-            if (child instanceof QtWindow) {
+-                QtWindow childWindow = (QtWindow) child;
+-                if (child.getVisibility() == View.VISIBLE && !childWindow.m_canBeDestroyed.get())
+-                    return false;
+-            }
+-        }
+-        if (parent.getChildCount() > 1 && !isFrontmostVisibleWindow())
+-            return false;
+-        return true;
+-    }
+-
+     @Override
+     public void onSurfaceChanged(Surface surface)
+     {
+@@ -276,7 +228,7 @@ class QtWindow extends QtLayout implements QtSurfaceInterface {
+     void destroySurface()
+     {
+         QtNative.runAction(()-> {
+-            if (m_surfaceContainer != null && m_canBeDestroyed.get()) {
++            if (m_surfaceContainer != null) {
+                 removeView(m_surfaceContainer);
+                 m_surfaceContainer = null;
+                 }
+diff --git x/qtbase/src/plugins/platforms/android/qandroidplatformwindow.cpp y/qtbase/src/plugins/platforms/android/qandroidplatformwindow.cpp
+index f20bb2be11c596f3a84726a4f7cc1f8bb13b15fe..e904145a7c91fd96ecf054474677fa6c12fe736c 100644
+--- x/qtbase/src/plugins/platforms/android/qandroidplatformwindow.cpp
++++ y/qtbase/src/plugins/platforms/android/qandroidplatformwindow.cpp
+@@ -168,17 +168,6 @@ void QAndroidPlatformWindow::setVisible(bool visible)
+ {
+     if (isEmbeddingContainer())
+         return;
+-
+-    if (!visible && window()->isTopLevel()) {
+-        // Do not hide last Qt for Android window.
+-        // We don't want the splash screen to be shown during the app's
+-        // exit because it would be the foremost visible screen.
+-        if (QtAndroid::isQtApplication()) {
+-            visible = m_nativeQtWindow.callMethod<bool>("isLastVisibleTopLevelWindow");
+-            m_nativeQtWindow.callMethod<void>("setToDestroy", !visible);
+-        }
+-    }
+-
+     m_nativeQtWindow.callMethod<void>("setVisible", visible);
+ 
+     if (visible) {

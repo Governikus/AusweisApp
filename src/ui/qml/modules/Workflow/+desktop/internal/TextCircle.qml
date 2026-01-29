@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -13,7 +13,7 @@ Rectangle {
 	readonly property double maximumHeight: enabledFontMetrics.height * 2.5
 	property alias text: number.text
 
-	border.color: Style.color.control.border.basic
+	border.color: Style.color.control.border.basic_unchecked
 	border.width: Style.dimens.border_width
 	color: Style.color.transparent
 	enabled: false

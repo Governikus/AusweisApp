@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateChangePin.h"
@@ -59,16 +59,16 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 				case StatusCode::SUCCESS:
 					if (context->isSmartCardUsed())
 					{
-						//: INFO ALL_PLATFORMS The Smart-eID PIN was changed successfully.
+						//: ALL_PLATFORMS The Smart-eID PIN was changed successfully.
 						context->setSuccessMessage(tr("You have successfully changed your Smart-eID PIN."));
 					}
 					else
 					{
 						context->setSuccessMessage(
-								//: INFO ALL_PLATFORMS The ID card PIN was changed successfully.
-								tr("You have successfully changed your ID card PIN.") + QStringLiteral("<br>")
-								//: LABEL DESKTOP
-								+ tr("You may now remove your ID card from the device."));
+								//: ALL_PLATFORMS The ID card PIN was changed successfully (1/2).
+								tr("You have successfully changed your ID card PIN.") + QStringLiteral("<br>") +
+								//: ALL_PLATFORMS The ID card PIN was changed successfully (2/2).
+								tr("You may now remove your ID card from the device."));
 					}
 					Q_EMIT fireContinue();
 					return;

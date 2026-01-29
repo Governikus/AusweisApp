@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -9,8 +9,6 @@ import Governikus.Type
 
 SelfAuthStartView {
 	id: root
-
-	disagreeButtonText: ""
 
 	titleBarSettings: TitleBarSettings {
 		navigationAction: NavigationAction.Action.Back

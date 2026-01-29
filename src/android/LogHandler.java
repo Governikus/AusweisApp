@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -70,6 +70,7 @@ public class LogHandler extends Handler
 	}
 
 
+	@Override
 	public void publish(LogRecord pRecord)
 	{
 		if (mInitialized)
@@ -83,12 +84,14 @@ public class LogHandler extends Handler
 	}
 
 
+	@Override
 	public void close()
 	{
 		// abstract method
 	}
 
 
+	@Override
 	public void flush()
 	{
 		// abstract method
