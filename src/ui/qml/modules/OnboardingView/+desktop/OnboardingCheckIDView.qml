@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -69,10 +69,10 @@ BaseOnboardingView {
 		CheckIDCardResultView {
 			id: resultView
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			header: qsTr("Read ID card")
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			subheader: qsTr("Test result")
 			title: root.title
 			usedInOnboarding: true
@@ -157,7 +157,7 @@ BaseOnboardingView {
 		}
 	}
 	Heading {
-		//: INFO DESKTOP
+		//: DESKTOP
 		text: qsTr("Read ID card")
 	}
 	AnimationLoader {
@@ -170,9 +170,9 @@ BaseOnboardingView {
 		id: subText
 
 		Layout.alignment: Text.AlignHCenter
-		//: INFO DESKTOP
+		//: DESKTOP
 		text: root.isPcsc ? qsTr("Please ensure that the ID card is placed on the card reader.") :
-		//: INFO DESKTOP
+		//: DESKTOP
 		qsTr("Please follow the instructions on your smartphone.")
 	}
 	GSpacer {
@@ -184,7 +184,7 @@ BaseOnboardingView {
 		visible: root.isPcsc && checkIDCardModel.result <= CheckIDCardModel.Result.UNKNOWN_CARD_DETECTED
 
 		GText {
-			//: INFO DESKTOP
+			//: DESKTOP
 			text: qsTr("Looking for ID card")
 			textStyle: Style.text.link
 		}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -18,7 +18,7 @@ FlickableSectionPage {
 
 	signal logFilesListItemClicked(int index)
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Select Log")
 
 	navigationAction: NavigationAction {
@@ -66,11 +66,11 @@ FlickableSectionPage {
 	ConfirmationPopup {
 		id: confirmationPopup
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		okButtonText: qsTr("Delete")
-		//: INFO ANDROID IOS All logfiles are about to be removed, user confirmation required.
+		//: MOBILE All logfiles are about to be removed, user confirmation required.
 		text: qsTr("All old logs will be deleted.")
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Delete all logs")
 
 		onConfirmed: LogFilesModel.removeOtherLogFiles()

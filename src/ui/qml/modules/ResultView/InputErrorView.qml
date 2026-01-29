@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -76,30 +76,30 @@ FlickableSectionPage {
 		text: {
 			switch (root.returnCode) {
 			case CardReturnCode.INVALID_CAN:
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return qsTr("Wrong CAN");
 			case CardReturnCode.INVALID_PUK:
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return qsTr("Wrong PUK");
 			case CardReturnCode.INVALID_PIN:
 			case CardReturnCode.INVALID_PIN_2:
 			case CardReturnCode.INVALID_PIN_3:
 				return root.isTransportPin ?
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				qsTr("Wrong Transport PIN") : root.smartEidUsed ?
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				qsTr("Wrong Smart-eID PIN") :
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				qsTr("Wrong ID card PIN");
 			}
 			switch (root.passwordType) {
 			case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
 			case NumberModel.PasswordType.NEW_PIN:
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return qsTr("Wrong new ID card PIN confirmation");
 			case NumberModel.PasswordType.NEW_SMART_PIN:
 			case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return qsTr("Wrong new Smart-eID PIN confirmation");
 			}
 			return "";
@@ -128,6 +128,7 @@ FlickableSectionPage {
 	}
 	GSpacer {
 		Layout.fillHeight: true
+		visible: Style.is_layout_desktop
 	}
 	GContinueButton {
 		onClicked: root.continueClicked()

@@ -73,11 +73,16 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake;${libs_dir}")
 include(Versions)
 
 function(execute_dir dir)
-	execute_process(COMMAND ${GIT_EXECUTABLE} ${ARGN}
+	set(options NO_FAIL)
+	set(oneValueArgs)
+	set(multiValueArgs)
+	cmake_parse_arguments(_PARAM "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+	execute_process(COMMAND ${GIT_EXECUTABLE} ${_PARAM_UNPARSED_ARGUMENTS}
 		WORKING_DIRECTORY "${REPOSITORY_DIR}/${dir}"
 		RESULT_VARIABLE _result)
 
-	if(NOT "${_result}" EQUAL 0)
+	if(NOT _PARAM_NO_FAIL AND NOT "${_result}" EQUAL 0)
 		message(FATAL_ERROR "git failed: ${_result}")
 	endif()
 endfunction()
@@ -118,7 +123,7 @@ endfunction()
 
 function(git_checkout prefix)
 	get_version_branch("${prefix}" version tmp_branch)
-	execute_dir("${prefix}" fetch)
+	execute_dir("${prefix}" fetch NO_FAIL)
 	execute_dir("${prefix}" checkout -q ${version})
 	execute_process(COMMAND ${GIT_EXECUTABLE} branch -D ${tmp_branch} WORKING_DIRECTORY ${REPOSITORY_DIR}/${prefix})
 	execute_process(COMMAND ${GIT_EXECUTABLE} am --abort WORKING_DIRECTORY ${REPOSITORY_DIR}/${prefix} OUTPUT_QUIET ERROR_QUIET)

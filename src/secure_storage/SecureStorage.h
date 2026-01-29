@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -49,7 +49,7 @@ class SecureStorage
 		QString mSmartSsdAid;
 		QString mLocalIfdPackageName;
 		QString mLocalIfdMinVersion;
-		QByteArrayList mLocalIfAllowedCertificateHashes;
+		QByteArrayList mLocalIfdAllowedCertificateHashes;
 		int mLocalIfdMinPskSize;
 
 		TlsConfiguration mTlsConfig;

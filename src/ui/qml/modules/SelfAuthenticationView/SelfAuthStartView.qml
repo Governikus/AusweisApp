@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -14,24 +14,21 @@ DecisionView {
 
 	signal startSelfAuth
 
-	agreeButtonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.error : Style.color.control.background.basic
-	agreeButtonIcon: "qrc:///images/identify.svg"
-
-	//: LABEL ALL_PLATFORMS
-	agreeButtonText: qsTr("See my personal data")
 	descriptionTextsModel: [
-		//: INFO ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		qsTr("This way you can make sure that everything is working and that the data stored on your eID card is up to date before you identify yourself to a provider."),
-		//: INFO ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		qsTr("To do this, you go through an authentication process at Governikus GmbH & Co. KG, the manufacturer of the %1.").arg(Qt.application.name)]
-	disagreeButtonHighlighted: false
-	//: INFO ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	headlineText: qsTr("Use eID function")
-
-	//: INFO ALL_PLATFORMS
+	primaryButton.buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.error : Style.color.control.background.basic_unchecked
+	primaryButton.icon.source: "qrc:///images/identify.svg"
+	//: ALL_PLATFORMS
+	primaryButton.text: qsTr("See my personal data")
+	primaryButton.tintIcon: true
+	//: ALL_PLATFORMS
 	subtitleText: qsTr("Have a look which data is stored on your eID card")
-	tintAgreeButtonIcon: true
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	title: qsTr("Identify")
 
 	customContentSourceComponent: PrivacyStatement {
@@ -44,5 +41,5 @@ DecisionView {
 		}
 	}
 
-	onAgreeClicked: startSelfAuth()
+	onPrimaryButtonClicked: startSelfAuth()
 }

@@ -1,0 +1,41 @@
+From bbde4aff22b3b1043e03c3322b2c0a15ebf5861a Mon Sep 17 00:00:00 2001
+From: Timur Pocheptsov <timur.pocheptsov@qt.io>
+Date: Mon, 14 Apr 2025 14:22:51 +0200
+Subject: QWebSocketPrivate: disconnect/reconnect from/to destroyed
+
+QWebSocket connects to signals of its internal 'tcp socket', including
+the 'destroyed' signal to handle destruction of the socket.
+Then it disconnects from these signals at a few points, including when
+creating a new socket, by using a wildcard disconnect.
+
+Since a79d5b8d0856, a recent change in qtbase, disconnecting from
+the 'destroyed' signal using a wildcard disconnect prints a warning.
+Since this was our intended behavior we now disconnect it separately to
+be explicit and to avoid the warning.
+
+Fixes: QTBUG-135959
+Change-Id: I5bd13b1635d504feace76d201fdb6db65454ddf2
+Reviewed-by: Mate Barany <mate.barany@qt.io>
+(cherry picked from commit 0c0f476150e501f311d054c67426b4d2304d2cbd)
+---
+ src/websockets/qwebsocket_p.cpp | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git x/qtwebsockets/src/websockets/qwebsocket_p.cpp y/qtwebsockets/src/websockets/qwebsocket_p.cpp
+index fac6c9cecb6d47a019a6c6c176ab957455cd2854..416006eda116fbbcf58bbfe948175dd3bbd26fb7 100644
+--- x/qtwebsockets/src/websockets/qwebsocket_p.cpp
++++ y/qtwebsockets/src/websockets/qwebsocket_p.cpp
+@@ -735,8 +735,12 @@ void QWebSocketPrivate::makeConnections(QTcpSocket *pTcpSocket)
+  */
+ void QWebSocketPrivate::releaseConnections(const QTcpSocket *pTcpSocket)
+ {
+-    if (Q_LIKELY(pTcpSocket))
++    if (Q_LIKELY(pTcpSocket)) {
++        // Explicitly disconnect this signal to avoid warning being printed about a destroyed-signal
++        // being disconnected with the wildcard disconnect below
++        disconnect(pTcpSocket, &QObject::destroyed, this, &QWebSocketPrivate::socketDestroyed);
+         pTcpSocket->disconnect();
++    }
+     m_dataProcessor->disconnect();
+ }
+ 

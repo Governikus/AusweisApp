@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderModel.h"
@@ -26,9 +26,9 @@ QString ReaderModel::getLastUpdatedInformation() const
 		return QString();
 	}
 
-	//: LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString
+	//: ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString
 	const auto& updateTime = LanguageLoader::getInstance().getUsedLocale().toString(mConnectedReadersUpdateTime, tr("hh:mm:ss AP"));
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	return tr("The list of card readers was last updated at %1.").arg(updateTime);
 }
 
@@ -107,7 +107,7 @@ QString ReaderModel::getHTMLDescription(const QModelIndex& pIndex) const
 
 	if (!isPcscScanRunning())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("The smartcard service of your system is not reachable.");
 	}
 
@@ -115,20 +115,20 @@ QString ReaderModel::getHTMLDescription(const QModelIndex& pIndex) const
 	{
 		if (isInstalledReader(pIndex))
 		{
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Driver installed");
 		}
 
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		const auto& driverInfo = tr("No driver installed");
-		//: INFO ALL_PLATFORMS The driver for card reader needs to be installed, the download link is provided in the message.
+		//: ALL_PLATFORMS The driver for card reader needs to be installed, the download link is provided in the message.
 		const auto& driverDownloadInfo = tr("Please download and install the driver you can find at: %1").
 				arg(QStringLiteral("<a href=\"%1\">%1</a>").arg(mConnectedReaders.at(pIndex.row()).getUrl()));
 
 		return driverInfo + QStringLiteral("<br>") + driverDownloadInfo;
 	}
 
-	//: INFO ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	return tr("This card reader is not officially supported and may not work as expected.");
 }
 

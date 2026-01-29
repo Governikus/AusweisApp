@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateChangePin.h"
 
 #include "MockCardConnection.h"
 #include "MockCardConnectionWorker.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
@@ -83,24 +84,22 @@ class test_StateChangePin
 	private Q_SLOTS:
 		void test_Run()
 		{
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread thread;
 
 			{
-				const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-				worker->moveToThread(&workerThread);
-				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+				auto worker = MockCardConnectionWorker::create(&thread);
 				const QSharedPointer<ChangePinContext> context(new ChangePinContext());
-				context->setCardConnection(connection);
+				context->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 				StateChangePin state(context);
 
+				QSignalSpy spy(&state, &StateChangePin::fireNoCardConnection);
 				QTest::ignoreMessage(QtDebugMsg, "Invoke set Eid PIN command");
 				state.run();
 				QCOMPARE(state.mConnections.size(), 1);
-			}
+				QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 
-			workerThread.quit();
-			workerThread.wait();
+				context->resetCardConnection();
+			}
 		}
 
 
@@ -146,7 +145,7 @@ class test_StateChangePin
 
 			const QSharedPointer<ChangePinContext> context(new ChangePinContext());
 			StateChangePin state(context);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QSharedPointer<MockSetEidPinCommand> command(new MockSetEidPinCommand(worker));
 			const ReaderInfo readerInfo("NFC"_L1, ReaderManagerPluginType::NFC);
 			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));
@@ -190,7 +189,7 @@ class test_StateChangePin
 
 			const QSharedPointer<ChangePinContext> context(new ChangePinContext());
 			StateChangePin state(context);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QSharedPointer<MockSetEidPinCommand> command(new MockSetEidPinCommand(worker));
 			const ReaderInfo readerInfo("SMART"_L1, type, CardInfo(CardType::SMART_EID));
 			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));

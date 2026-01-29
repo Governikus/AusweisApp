@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PinResetInformationModel.h"
@@ -107,54 +107,6 @@ class test_PinResetInformationModel
 		}
 
 
-		void test_getNoPinAndNoPukHint()
-		{
-			auto* config = Env::getSingleton<ProviderConfiguration>();
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
-			const auto& noPrs = Env::getSingleton<PinResetInformationModel>()->getNoPinAndNoPukHint();
-			QVERIFY(!noPrs.isNull());
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
-			const auto& prs = Env::getSingleton<PinResetInformationModel>()->getNoPinAndNoPukHint();
-			QVERIFY(!prs.isNull());
-
-			QVERIFY(noPrs != prs);
-		}
-
-
-		void test_getRequestNewPinHint()
-		{
-			auto* config = Env::getSingleton<ProviderConfiguration>();
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
-			const auto& noPrs = Env::getSingleton<PinResetInformationModel>()->getRequestNewPinHint();
-			QVERIFY(!noPrs.isNull());
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
-			const auto& prs = Env::getSingleton<PinResetInformationModel>()->getRequestNewPinHint();
-			QVERIFY(!prs.isNull());
-
-			QVERIFY(noPrs != prs);
-		}
-
-
-		void test_getActivateOnlineFunctionHint()
-		{
-			auto* config = Env::getSingleton<ProviderConfiguration>();
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
-			const auto& noPrs = Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionHint();
-			QVERIFY(!noPrs.isNull());
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
-			const auto& prs = Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionHint();
-			QVERIFY(!prs.isNull());
-
-			QVERIFY(noPrs != prs);
-		}
-
-
 		void test_getActivateOnlineFunctionActionText()
 		{
 			auto* config = Env::getSingleton<ProviderConfiguration>();
@@ -171,67 +123,38 @@ class test_PinResetInformationModel
 		}
 
 
-		void test_getPinResetHintNoPin()
-		{
-			auto* config = Env::getSingleton<ProviderConfiguration>();
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
-			const auto& noPrs = Env::getSingleton<PinResetInformationModel>()->getPinResetHintNoPin();
-			QVERIFY(!noPrs.isNull());
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
-			const auto& prs = Env::getSingleton<PinResetInformationModel>()->getPinResetHintNoPin();
-			QVERIFY(!prs.isNull());
-
-			QVERIFY(noPrs != prs);
-		}
-
-
-		void test_getPinResetHintTransportPin()
-		{
-			auto* config = Env::getSingleton<ProviderConfiguration>();
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
-			const auto& noPrs = Env::getSingleton<PinResetInformationModel>()->getPinResetHintTransportPin();
-			QVERIFY(!noPrs.isNull());
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
-			const auto& prs = Env::getSingleton<PinResetInformationModel>()->getPinResetHintTransportPin();
-			QVERIFY(!prs.isNull());
-
-			QVERIFY(noPrs != prs);
-		}
-
-
 		void test_getPinResetHint()
 		{
 			auto* config = Env::getSingleton<ProviderConfiguration>();
 
 			config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
-			const auto& noPrs = Env::getSingleton<PinResetInformationModel>()->getPinResetHint();
-			QVERIFY(!noPrs.isNull());
+			const auto& noPrs = Env::getSingleton<PinResetInformationModel>()->getResetPinWithPRSHint();
+			QVERIFY(noPrs == QString());
 
 			config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
-			const auto& prs = Env::getSingleton<PinResetInformationModel>()->getPinResetHint();
+			const auto& prs = Env::getSingleton<PinResetInformationModel>()->getResetPinWithPRSHint();
 			QVERIFY(!prs.isNull());
 
 			QVERIFY(noPrs != prs);
 		}
 
 
-		void test_getPinResetActionText()
+		void test_stringReturnerNotNull()
 		{
-			auto* config = Env::getSingleton<ProviderConfiguration>();
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
-			const auto& noPrs = Env::getSingleton<PinResetInformationModel>()->getPinResetActionText();
-			QVERIFY(!noPrs.isNull());
-
-			config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
-			const auto& prs = Env::getSingleton<PinResetInformationModel>()->getPinResetActionText();
-			QVERIFY(!prs.isNull());
-
-			QVERIFY(noPrs != prs);
+			auto res = Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionForPRSHint();
+			QVERIFY(res != QString());
+			res = Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionAtAuthorityHint();
+			QVERIFY(res != QString());
+			res = Env::getSingleton<PinResetInformationModel>()->getResetPinWithPRSActionText();
+			QVERIFY(res != QString());
+			res = Env::getSingleton<PinResetInformationModel>()->getResetPinAtAuthorityActionText();
+			QVERIFY(res != QString());
+			res = Env::getSingleton<PinResetInformationModel>()->getResetPinWithPRSHintTitle();
+			QVERIFY(res != QString());
+			res = Env::getSingleton<PinResetInformationModel>()->getResetPinAtAuthorityHintTitle();
+			QVERIFY(res != QString());
+			res = Env::getSingleton<PinResetInformationModel>()->getResetPinAtAuthorityHint();
+			QVERIFY(res != QString());
 		}
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -20,7 +20,6 @@ SectionPage {
 	property Component cardNotActivatedDelegate: null
 	property Component errorViewDelegate: null
 	property bool hidePinTypeSelection: false
-	property bool hideTechnologySwitch: false
 	property var initialPlugin: null
 	readonly property bool isSmartWorkflow: ChangePinModel.readerPluginType === ReaderManagerPluginType.SMART
 	property int navigationActionType: NavigationAction.Action.Cancel
@@ -41,7 +40,7 @@ SectionPage {
 
 	contentIsScrolled: !changePinViewContent.atYBeginning
 	smartEidUsed: isSmartWorkflow
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Change PIN")
 
 	navigationAction: NavigationAction {
@@ -84,8 +83,6 @@ SectionPage {
 			autoInsertCard: root.autoInsertCard
 			cardNotActivatedDelegate: root.cardNotActivatedDelegate
 			errorViewDelegate: root.errorViewDelegate
-			hideTechnologySwitch: root.hideTechnologySwitch
-			initialPlugin: root.initialPlugin
 			navigationActionType: root.navigationActionType
 			skipProgressView: root.skipProgressView
 			smartEidUsed: root.smartEidUsed
@@ -119,7 +116,7 @@ SectionPage {
 				root.push(changePinInfoView);
 			}
 		}
-		onChangePinInfoRequested: root.push(pinTypeInfoView)
+		onChangePinInfoRequested: root.push(multiInfoViewPinInfo)
 		onChangeTransportPin: {
 			if (root.skipInfoView) {
 				root.startPinChange(true);
@@ -130,7 +127,7 @@ SectionPage {
 		onNoPinAvailable: {
 			d.oldLockedAndHiddenStatus = root.getLockedAndHidden();
 			root.setLockedAndHidden();
-			root.push(pinUnknownView);
+			root.push(multiInfoViewNoPin);
 		}
 	}
 	ProgressTracker {
@@ -174,7 +171,7 @@ SectionPage {
 		}
 	}
 	Component {
-		id: pinTypeInfoView
+		id: multiInfoViewPinInfo
 
 		MultiInfoView {
 			infoContent: changePinViewContent.pinInfo
@@ -190,7 +187,7 @@ SectionPage {
 		}
 	}
 	Component {
-		id: pinUnknownView
+		id: multiInfoViewNoPin
 
 		MultiInfoView {
 			continueButtonText: root.usedInOnboarding ? qsTr("Abort setup") : ""

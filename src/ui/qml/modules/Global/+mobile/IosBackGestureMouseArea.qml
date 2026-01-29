@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 
@@ -15,7 +15,6 @@ MouseArea {
 
 	signal backGestureTriggered
 
-	enabled: visible
 	preventStealing: enabled
 
 	onPositionChanged: mouse => {

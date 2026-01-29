@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
@@ -169,7 +169,7 @@ QByteArray LogHandler::readLogFile(qint64 pStart, qint64 pLength)
 
 	if (useLogFile())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return QObject::tr("An error occurred in log handling: %1").arg(mLogFile->errorString()).toUtf8();
 	}
 

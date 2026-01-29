@@ -1,17 +1,19 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateDidAuthenticateEac2.h"
 
 #include "MockCardConnectionWorker.h"
 #include "TestAuthContext.h"
-#include "TestFileHelper.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class MockDidAuthenticateEAC2Command
 	: public DidAuthenticateEAC2Command
@@ -42,14 +44,12 @@ class test_StateDidAuthenticateEac2
 	Q_OBJECT
 	QSharedPointer<AuthContext> mAuthContext;
 	QSharedPointer<StateDidAuthenticateEac2> mState;
-	QThread workerThread;
 
 	private Q_SLOTS:
 		void init()
 		{
 			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 			mState.reset(new StateDidAuthenticateEac2(mAuthContext));
-			workerThread.start();
 		}
 
 
@@ -57,27 +57,29 @@ class test_StateDidAuthenticateEac2
 		{
 			mState.clear();
 			mAuthContext.clear();
-			workerThread.quit();
-			workerThread.wait();
 		}
 
 
 		void test_Run()
 		{
-			QSignalSpy spy(mState.data(), &StateDidAuthenticateEac2::fireAbort);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const EstablishPaceChannelOutput invalidOutput;
+			TestHookThread workerThread;
 
-			mAuthContext->setCardConnection(connection);
-			mAuthContext->setPaceOutputData(invalidOutput);
+			{
+				QSignalSpy spy(mState.data(), &StateDidAuthenticateEac2::fireAbort);
+				const auto& worker = MockCardConnectionWorker::create(&workerThread);
+				const EstablishPaceChannelOutput invalidOutput;
 
-			mState->run();
-			QCOMPARE(mState->mConnections.size(), 0);
-			QCOMPARE(mAuthContext->getStatus(), GlobalStatus::Code::Workflow_No_Permission_Error);
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Did_Authenticate_Eac2_Invalid_Cvc_Chain);
-			QCOMPARE(spy.count(), 1);
+				mAuthContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+				mAuthContext->setPaceOutputData(invalidOutput);
+
+				mState->run();
+				QCOMPARE(mState->mConnections.size(), 0);
+				QCOMPARE(mAuthContext->getStatus(), GlobalStatus::Code::Workflow_No_Permission_Error);
+				QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Did_Authenticate_Eac2_Invalid_Cvc_Chain);
+				QCOMPARE(spy.count(), 1);
+
+				mAuthContext->resetCardConnection();
+			}
 		}
 
 
@@ -104,7 +106,7 @@ class test_StateDidAuthenticateEac2
 			QSignalSpy spyAbort(mState.data(), &StateDidAuthenticateEac2::fireAbort);
 			QSignalSpy spyContinue(mState.data(), &StateDidAuthenticateEac2::fireContinue);
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const CVCertificateChain certificate;
 			const QByteArray key("key");
 			const QByteArray signature("signature");

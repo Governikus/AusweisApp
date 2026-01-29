@@ -21,6 +21,11 @@ if(LIBS_GOVERNIKUS)
 	step(${T_TARGET} gcovr)
 endif()
 
+LIST_PATCH_FILES(PATCH_FILES)
+if(DAILY OR (REVIEW AND ".grype.yml" IN_LIST PATCH_FILES))
+	step(${T_CTEST} -C periodic -L grype)
+endif()
+
 if(DAILY)
 	if(DEFINED ENV{JENKINS_HOME})
 		step(${T_TARGET} cloc.report)

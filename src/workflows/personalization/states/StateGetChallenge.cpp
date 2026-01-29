@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetChallenge.h"
@@ -48,7 +48,7 @@ void StateGetChallenge::setProgress() const
 {
 	const auto& context = getContext();
 	Q_ASSERT(context);
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	context->setProgress(10, tr("Getting challenge from server"));
 }
 

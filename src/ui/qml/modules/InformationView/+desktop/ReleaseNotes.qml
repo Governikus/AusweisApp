@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -18,7 +18,7 @@ ReleaseNotesView {
 	footer: GButton {
 		anchors.horizontalCenter: parent.horizontalCenter
 		icon.source: "qrc:///images/material_refresh.svg"
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("Retry")
 		tintIcon: true
 		visible: releaseInformationModel.allowRetry

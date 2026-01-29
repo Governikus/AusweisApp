@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WifiInfo.h"
@@ -40,11 +40,9 @@ bool WifiInfo::getCurrentWifiEnabled() const
 			"(Landroid/content/Context;)Z",
 			context.object<jobject>());
 
-	if (env->ExceptionCheck())
+	if (env.checkAndClearExceptions())
 	{
 		qCCritical(network) << "Cannot call WifiInfo.wifiEnabled()";
-		env->ExceptionDescribe();
-		env->ExceptionClear();
 		return false;
 	}
 

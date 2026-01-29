@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateSendWhitelistSurvey.h"
@@ -12,13 +12,14 @@
 #include "VolatileSettings.h"
 #include "states/StateBuilder.h"
 
-#include "MockCardConnectionWorker.h"
 #include "TestAuthContext.h"
 
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class MockSecureStorage
 	: public SecureStorage

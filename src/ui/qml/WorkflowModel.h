@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -53,6 +53,7 @@ class WorkflowModel
 	Q_PROPERTY(QString statusCodeDisplayString READ getStatusCodeDisplayString NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintText READ getStatusHintText NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintTitle READ getStatusHintTitle NOTIFY fireResultChanged)
+	Q_PROPERTY(QString statusHintBoxesTitle READ getStatusHintBoxesTitle NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintActionText READ getStatusHintActionText NOTIFY fireResultChanged)
 	Q_PROPERTY(governikus::EnumGAnimation::GAnimation statusCodeAnimation READ getStatusCodeAnimation NOTIFY fireResultChanged)
 	Q_PROPERTY(bool showRemoveCardFeedback READ showRemoveCardFeedback NOTIFY fireRemoveCardFeedbackChanged)
@@ -102,6 +103,7 @@ class WorkflowModel
 
 		[[nodiscard]] QString getStatusHintText() const;
 		[[nodiscard]] QString getStatusHintTitle() const;
+		[[nodiscard]] QString getStatusHintBoxesTitle() const;
 		[[nodiscard]] QString getStatusHintActionText() const;
 		[[nodiscard]] Q_INVOKABLE bool invokeStatusHintAction();
 

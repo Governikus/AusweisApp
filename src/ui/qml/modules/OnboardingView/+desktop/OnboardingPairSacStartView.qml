@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -22,7 +22,7 @@ BaseOnboardingView {
 
 	Heading {
 		Layout.bottomMargin: Style.dimens.pane_spacing
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("Set up smartphone as card reader")
 	}
 	GridLayout {
@@ -46,7 +46,7 @@ BaseOnboardingView {
 		Layout.alignment: Qt.AlignHCenter
 		icon.source: "qrc:///images/material_arrow_right.svg"
 		layoutDirection: Qt.RightToLeft
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("Continue pairing")
 		tintIcon: true
 
@@ -79,18 +79,17 @@ BaseOnboardingView {
 		spacing: Style.dimens.groupbox_spacing
 
 		Subheading {
-			//: LABEL DESKTOP %1 is replaced with the name AusweisApp
+			//: DESKTOP %1 is replaced with the name AusweisApp
 			text: "1. " + qsTr("Install %1 on your smartphone").arg(Qt.application.name)
 		}
 		GText {
-
-			//: LABEL DESKTOP %1 and %2 are replaced with bold highlighting, %3 with the name AusweisApp
+			//: DESKTOP %1 and %2 are replaced with bold highlighting, %3 with the name AusweisApp
 			text: qsTr("Scan the QR code, search your %1app store%2 for %3 or open the following link in your smartphone:").arg("<b>").arg("</b>").arg(Qt.application.name)
 		}
 		GText {
-			readonly property string link: "https://www.ausweisapp.bund.de/%1/aa2/download".arg(SettingsModel.language)
+			readonly property string downloadLink: "https://www.ausweisapp.bund.de/%1/aa2/download".arg(SettingsModel.language)
 
-			text: "<a href=\"%1\">%1</a>".arg(link)
+			text: "<a href=\"%1\">%1</a>".arg(downloadLink)
 		}
 		AusweisAppLogo {
 		}
@@ -99,15 +98,15 @@ BaseOnboardingView {
 		spacing: Style.dimens.groupbox_spacing
 
 		Subheading {
-			//: LABEL DESKTOP %1 is replaced with the name AusweisApp
+			//: DESKTOP %1 is replaced with the name AusweisApp
 			text: "2. " + qsTr("Open %1 on your smartphone").arg(Qt.application.name)
 		}
 		GText {
-			//: LABEL DESKTOP %1/%3 is replaced with bold highlighting, %2 with the name AusweisApp
+			//: DESKTOP %1/%3 is replaced with bold highlighting, %2 with the name AusweisApp
 			text: qsTr("Select \"%1Set up %2%3\" there.").arg("<b>").arg(Qt.application.name).arg("</b>")
 		}
 		GText {
-			//: LABEL DESKTOP %1/%2 is replaced with bold highlighting
+			//: DESKTOP %1/%2 is replaced with bold highlighting
 			text: qsTr("You will then be asked whether you want to set up a PC/Mac too. Select the option \"%1Yes, I want to use a PC/Mac too%2\" here. You now select \"%1Continue pairing%2\" on both devices.").arg("<b>").arg("</b>")
 		}
 	}

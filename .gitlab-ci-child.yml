@@ -1,4 +1,4 @@
-image: ${DOCKER_REGISTRY_MIRROR}/alpine:3.22
+image: ${DOCKER_REGISTRY_MIRROR}/alpine:3.23
 
 variables:
   GIT_STRATEGY: empty
@@ -7,6 +7,8 @@ variables:
   CCACHE_BASEDIR: "$CI_PROJECT_DIR"
   CCACHE_REMOTE_ONLY: true
   CCACHE_RESHARE: true
+  MIRROR_GITHUB: https://github.com
+  MIRROR_QT: https://download.qt.io
 
 workflow:
   name: '$PIPELINE_NAME'
@@ -21,19 +23,37 @@ workflow:
   pkg:
     - |
       if command -v apk >/dev/null 2>&1; then
+        if [ -n "$MIRROR_ALPINE" ]; then
+          sed -i "s|https://[^/]*/alpine/|$MIRROR_ALPINE/|g" /etc/apk/repositories
+        fi
         apk add mercurial cmake samurai make gdb lldb uv python3
       elif command -v apt-get >/dev/null 2>&1; then
+        . /etc/os-release
+
+        if [ -n "$MIRROR_UBUNTU" ] && [ "$ID" = "ubuntu" ]; then
+          sed -i "s|http[s]\?://[^/]*/ubuntu/|$MIRROR_UBUNTU/|g" /etc/apt/sources.list.d/ubuntu.sources
+          echo "Acquire::https::$(echo $MIRROR_UBUNTU | sed -E 's|https?://([^/]*).*|\1|')::Verify-Peer \"false\";" \
+                >> /etc/apt/apt.conf.d/99disable-ssl-check
+        fi
+        if [ -n "$MIRROR_DEBIAN" ] && [ "$ID" = "debian" ]; then
+          sed -i "s|http[s]\?://[^/]*|$MIRROR_DEBIAN|g" /etc/apt/sources.list.d/debian.sources
+          echo "Acquire::https::$(echo $MIRROR_DEBIAN | sed -E 's|https?://([^/]*).*|\1|')::Verify-Peer \"false\";" \
+                >> /etc/apt/apt.conf.d/99disable-ssl-check
+        fi
+
+        echo "Acquire::https::Pipeline-Depth "0";" > /etc/apt/apt.conf.d/99fix-connection
+
         apt-get update
         apt-get install -y mercurial cmake ninja-build make gdb lldb python3 curl ca-certificates
-        curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/0.9.3/uv-installer.sh | sh
+        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/astral-sh/uv/releases/download/0.9.26/uv-installer.sh | sh
         source $HOME/.local/bin/env
       elif command -v dnf >/dev/null 2>&1; then
         dnf -y install mercurial cmake ninja-build make gdb lldb uv python3
       elif command -v sw_vers >/dev/null 2>&1; then
         export UV_NO_MODIFY_PATH=1
         export UV_INSTALL_DIR=$BINARY_DIR
-        curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/0.9.3/uv-installer.sh | sh
-        curl --proto '=https' --tlsv1.2 -LsSf https://github.com/ccache/ccache/releases/download/v4.12.1/ccache-4.12.1-darwin.tar.gz \
+        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/astral-sh/uv/releases/download/0.9.26/uv-installer.sh | sh
+        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/ccache/ccache/releases/download/v4.12.2/ccache-4.12.2-darwin.tar.gz \
              | tar -C $BINARY_DIR --strip-components=1 -xz "*/ccache"
         export PATH="$BINARY_DIR/:$PATH"
       fi
@@ -42,7 +62,7 @@ workflow:
     - source $VIRTUAL_ENV/bin/activate
     - |
       if command -v sw_vers >/dev/null 2>&1; then
-        uv pip install mercurial cmake==4.1.0 ninja
+        uv pip install mercurial==7.1.2 cmake==4.1.0 ninja==1.13.0
       fi
 
 .Base:
@@ -67,23 +87,13 @@ workflow:
       when: never
     - when: on_success
 
-.Packages:
-  extends: .Base
-  variables:
-    PACKAGES_DIR: $CI_PROJECT_DIR/packages
-  cache:
-    - key: packages
-      paths:
-        - packages
-      when: always
-
 default:
   before_script:
     - export PATH=$BINARY_DIR:$PATH
     - !reference [.prepare, setup]
 
 Libraries_Linux:
-  extends: .Packages
+  extends: .Base
   tags:
     - $HIGH_RUNNER
   before_script:
@@ -139,6 +149,12 @@ Linux_Alpine:
   extends: Libraries_Linux
   tags:
     - $MEDIUM_RUNNER
+  variables:
+    GRYPE_DB_CACHE_DIR: $CI_PROJECT_DIR/grype
+  cache:
+    - key: grype
+      paths:
+        - grype
   needs:
     - job: Libraries_Linux
       artifacts: false
@@ -152,7 +168,7 @@ Linux_Alpine:
         compiler: [g++]
         cxx_standard: [17]
   script:
-    - apk add clang clazy gnupg gcovr check-jsonschema typos py3-codespell yamllint ruff
+    - apk add clang clazy gnupg gcovr check-jsonschema typos py3-codespell yamllint ruff grype
     - uv pip install sphinx-lint
     - cmake -P source/ci.cmake -- -DCMAKE_CXX_COMPILER=${compiler} -DCMAKE_CXX_STANDARD=${cxx_standard}
   artifacts:
@@ -193,7 +209,7 @@ Linux_OpenSSL:
       junit: build/**/results.*.junit.xml
 
 SonarQube:
-  extends: .Packages
+  extends: .Base
   tags:
     - $HIGH_RUNNER
   image: ${DOCKER_REGISTRY_MIRROR}/ubuntu:25.10
@@ -201,10 +217,6 @@ SonarQube:
     LANG: "C.UTF-8"
     LC_ALL: "C.UTF-8"
   cache:
-    - key: packages
-      paths:
-        - packages
-      when: always
     - key: "${CI_JOB_NAME}-${REV}"
       paths:
         - sonar
@@ -264,7 +276,7 @@ Linux_Debian_Qt:
       junit: build/**/results.*.junit.xml
 
 .AndroidBase:
-  extends: .Packages
+  extends: .Base
   variables:
     ANDROID_CMDLINE_TOOLS: 13114758
     ANDROID_NDK_VERSION: 28.2.13676358
@@ -273,33 +285,21 @@ Linux_Debian_Qt:
     ANDROID_NDK_ROOT: $ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION
     ANDROID_CMDLINE_TOOLS_ZIP: commandlinetools-linux-${ANDROID_CMDLINE_TOOLS}_latest.zip
     GRADLE_USER_HOME: $CI_PROJECT_DIR/.gradle
+    SDK_TEST_BASE_URL: https://dl.google.com/android/repository/
   cache:
-    - key: packages
-      paths:
-        - packages
-      when: always
     - key: "${CI_JOB_NAME}-gradle"
       paths:
         - .gradle/caches/
         - .gradle/wrapper/
-    - key: "${CI_JOB_NAME}-${ANDROID_CMDLINE_TOOLS}-${ANDROID_NDK_VERSION}-${ANDROID_COMPONENTS}"
-      paths:
-        - $ANDROID_SDK_ROOT
   before_script:
     - !reference [.prepare, setup]
-    - apk add gcompat maven gradle ccache unzip perl bash g++ linux-headers
+    - apk add gcompat maven gradle ccache unzip perl bash g++ linux-headers libxslt
     - |
-      if [ ! -d "$ANDROID_SDK_ROOT" ]; then
-        if [ ! -f "$PACKAGES_DIR/$ANDROID_CMDLINE_TOOLS_ZIP" ]; then
-          mkdir -p $PACKAGES_DIR
-          wget -O $PACKAGES_DIR/$ANDROID_CMDLINE_TOOLS_ZIP "https://dl.google.com/android/repository/$ANDROID_CMDLINE_TOOLS_ZIP"
-        fi
-        unzip -d /tmp/cmd $PACKAGES_DIR/$ANDROID_CMDLINE_TOOLS_ZIP
-        set +o pipefail
-        yes | /tmp/cmd/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT $(eval echo $ANDROID_COMPONENTS)
-        rm -rf /tmp/cmd
-        set -o pipefail
-      fi
+      wget -O /tmp/$ANDROID_CMDLINE_TOOLS_ZIP "$MIRROR_GOOGLE/android/repository/$ANDROID_CMDLINE_TOOLS_ZIP"
+      unzip -d /tmp/cmd /tmp/$ANDROID_CMDLINE_TOOLS_ZIP
+      set +o pipefail
+      yes | /tmp/cmd/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT $(eval echo $ANDROID_COMPONENTS)
+      set -o pipefail
   artifacts:
     expire_in: 1 week
     paths:
@@ -334,6 +334,9 @@ Android_AAR:
           - x86_64
   script:
     - cmake -DPROPAGATE=ON -P source/ci.cmake -- -DCMAKE_ANDROID_ARCH_ABI=${arch}
+  artifacts:
+    reports:
+      junit: build/lint-results-junit.xml
 
 Android_Merged-AAR:
   extends: .Base
@@ -371,6 +374,9 @@ Android_APK:
         uv pip install google-api-python-client
       fi
     - cmake -DPROPAGATE=ON -P source/ci.cmake -- -DCMAKE_ANDROID_ARCH_ABI=${arch}
+  artifacts:
+    reports:
+      junit: build/lint-results-junit.xml
 
 Docs:
   image:
@@ -420,7 +426,7 @@ Container:
   variables:
     STORAGE_DRIVER: vfs
   script:
-    - apk add buildah runc netavark iptables
+    - apk add podman buildah runc netavark iptables
     - |
       cat <<EOF > /etc/containers/registries.conf.d/mirror.conf
 
@@ -438,7 +444,7 @@ Container:
       - build/AusweisApp*.tar
 
 FreeBSD:
-  extends: .Packages
+  extends: .Base
   tags:
     - freebsd
   script:
@@ -451,7 +457,7 @@ FreeBSD:
       junit: build/**/results.*.junit.xml
 
 Libraries_iOS:
-  extends: .Packages
+  extends: .Base
   parallel:
     matrix:
       - target:
@@ -464,7 +470,7 @@ Libraries_iOS:
     - cmake -P source/ci.cmake
 
 .iOS:
-  extends: .Packages
+  extends: .Base
   tags:
     - iOS
   script:
@@ -521,7 +527,7 @@ iOS_SwiftPackage:
       - build/dist/*.zip
 
 Libraries_MacOS:
-  extends: .Packages
+  extends: .Base
   tags:
     - macOS
   script:
@@ -552,28 +558,65 @@ MacOS:
       junit: build/**/results.*.junit.xml
 
 .Windows:
-  extends: .Packages
+  extends: .Base
   variables:
-    GIT_STRATEGY: none
+    UV_VERSION: 0.9.26
+    NINJA_VERSION: 1.13.2
+    CCACHE_VERSION: 4.12.2
+    JOM_VERSION: "1_1_5"
+    PERL_VERSION: 5.42.0.1
+    MSYS2_VERSION: 20251213
   before_script:
     - "ls env:"
+    - mkdir $env:BINARY_DIR -ErrorAction Stop | Out-Null
     - |
-      $items = Get-ChildItem -Force
-      foreach ($item in $items) {
-        if ($item.PSIsContainer -and $item.Name -ieq "packages") {
-          continue
-        }
-        cmake -E rm -rf $item.name
+      curl --proto '=https' --tlsv1.2 -LsSf -o uv.zip -w "Finished: %{url}\n" `
+           $MIRROR_GITHUB/astral-sh/uv/releases/download/${UV_VERSION}/uv-x86_64-pc-windows-msvc.zip
+      tar -xf uv.zip -C $env:BINARY_DIR uv.exe
+    - |
+      curl --proto '=https' --tlsv1.2 -LsSf -o ninja.zip -w "Finished: %{url}\n" `
+           $MIRROR_GITHUB/ninja-build/ninja/releases/download/v${NINJA_VERSION}/ninja-win.zip
+      tar -xf ninja.zip -C $env:BINARY_DIR ninja.exe
+    - |
+      curl --proto '=https' --tlsv1.2 -LsSf -o ccache.zip -w "Finished: %{url}\n" `
+           $MIRROR_GITHUB/ccache/ccache/releases/download/v${CCACHE_VERSION}/ccache-${CCACHE_VERSION}-windows-x86_64.zip
+      tar -xf ccache.zip --strip-components=1 -C $env:BINARY_DIR */ccache.exe
+      & "$env:BINARY_DIR/ccache.exe" --set-config=max_size=15.0G
+    - |
+      curl --proto '=https' --tlsv1.2 -LsSf -o jom.zip -w "Finished: %{url}\n" `
+           $MIRROR_QT/official_releases/jom/jom_${JOM_VERSION}.zip
+      tar -xf jom.zip -C $env:BINARY_DIR jom.exe
+    - |
+      if ($env:CI_RUNNER_TAGS -match 'MSVC') {
+            $baseUrl = "$MIRROR_GITHUB/StrawberryPerl/Perl-Dist-Strawberry/releases/download"
+            curl --proto '=https' --tlsv1.2 -LsSf -o perl.zip -w "Finished: %{url}\n" `
+                 ${baseUrl}/SP_54201_64bit/strawberry-perl-${PERL_VERSION}-64bit-portable.zip
+            mkdir $env:BINARY_DIR/perl -ErrorAction Stop | Out-Null
+            tar -xf perl.zip -C $env:BINARY_DIR/perl
+      }
+      if ($env:CI_RUNNER_TAGS -match 'GNU') {
+            $baseUrl = "$MIRROR_GITHUB/msys2/msys2-installer/releases/download"
+            curl --proto '=https' --tlsv1.2 -LsSf -o msys2.tar.xz -w "Finished: %{url}\n" `
+                 ${baseUrl}/2025-12-13/msys2-base-x86_64-${MSYS2_VERSION}.tar.xz
+            tar -xf msys2.tar.xz -C $env:BINARY_DIR
       }
     - |
-      hg clone -U $REPOSITORY source
-      hg update -r $REVISION -R source
-    - uv venv $VIRTUAL_ENV
-    - powershell -Command "& '$env:VIRTUAL_ENV\Scripts\activate.ps1'"
+      $env:PATH = "$env:BINARY_DIR;$env:PATH"
+      if ($env:CI_RUNNER_TAGS -match 'MSVC') {
+        $env:PATH = "$env:PATH;$env:BINARY_DIR/perl/perl/bin"
+      }
+      if ($env:CI_RUNNER_TAGS -match 'GNU') {
+        $env:PATH = "$env:PATH;$env:BINARY_DIR/msys64/usr/bin"
+      }
+    - uv venv $env:VIRTUAL_ENV --python 3.12
+    - '& "$env:VIRTUAL_ENV/Scripts/activate.ps1"'
+    - uv pip install mercurial==7.1.2 cmake==4.2.0
+    # https://foss.heptapod.net/mercurial/mercurial-devel/-/issues/6635
+    - $env:PATH = "$env:PATH;$env:VIRTUAL_ENV/Lib/site-packages"
+    - hg clone -U $REPOSITORY source
+    - hg update -r $REVISION -R source
   script:
     - cmake -P source/ci.cmake
-  after_script:
-    - cmake -E rm -rf source libs
   artifacts:
     expire_in: 1 week
     paths:
@@ -607,7 +650,7 @@ Win_GNU:
     matrix:
       - target:
           - MSI
-          - Tests
+          - dev
 
 Win_MSVC:
   extends: Libraries_Win_MSVC
@@ -618,14 +661,8 @@ Win_MSVC:
   parallel:
     matrix:
       - target: MSI
-        compiler: cl
-      - target: MSI
-        compiler: clang-cl
-      - target: MSI
-        compiler: clang++
-      - target: MSI_dev
-        compiler: cl
-      - target: Tests_dev
+        compiler: [cl, clang-cl, clang++]
+      - target: dev
         compiler: cl
   script:
     - cmake -P source/ci.cmake -- -DCMAKE_CXX_COMPILER="$env:compiler"
@@ -707,6 +744,10 @@ Deploy_Archive:
             compiler: cl
     - job: Docs
     - job: Source
+    - job: Container
+      parallel:
+        matrix:
+          - target: SDK
   script:
     - apk add samba-client
     - !reference [.Deploy, script]

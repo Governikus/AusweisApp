@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -26,7 +26,7 @@ Row {
 		property bool filter: false
 
 		Accessible.checked: filter
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		Accessible.name: qsTr("Filter")
 		Accessible.role: Accessible.CheckBox
 		icon.source: filter ? "qrc:///images/filter_off.svg" : "qrc:///images/filter.svg"
@@ -37,7 +37,7 @@ Row {
 	TitleBarAction {
 		id: shareButton
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		Accessible.name: qsTr("Share log")
 		icon.source: "qrc:///images/mobile/share.svg"
 		visible: false
@@ -47,7 +47,7 @@ Row {
 	TitleBarAction {
 		id: removeAllButton
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		Accessible.name: qsTr("Delete all logs")
 		icon.source: "qrc:///images/trash_icon.svg"
 		visible: false

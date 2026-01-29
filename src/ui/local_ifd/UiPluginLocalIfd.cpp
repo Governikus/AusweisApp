@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginLocalIfd.h"
@@ -161,8 +161,8 @@ JNIEXPORT jboolean JNICALL Java_com_governikus_ausweisapp2_AusweisApp2LocalIfdSe
 	const auto& serviceToken = QString::fromUtf8(nativeString);
 	pEnv->ReleaseStringUTFChars(pServiceToken, nativeString);
 
-	const auto& aa2ServiceToken = Env::getSingleton<AppSettings>()->getGeneralSettings().getIfdServiceToken();
-	return serviceToken == aa2ServiceToken;
+	const auto& aaServiceToken = Env::getSingleton<AppSettings>()->getGeneralSettings().getIfdServiceToken();
+	return serviceToken == aaServiceToken;
 }
 
 

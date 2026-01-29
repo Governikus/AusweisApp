@@ -1,0 +1,45 @@
+From 11c1e50d0628e90f1faa93bf446bab2a8dbbb913 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Mon, 20 Oct 2025 10:43:52 +0200
+Subject: Fix native a11y role of QAccessible::LayeredPane
+
+* The QML StackView started to use this role in
+  qtdeclarative ee7151d5ab29ba812a93c1231ddc59c9129a7af0.
+* This will replace "Unknown" with "Window" on Windows with NVDA.
+* On macOS the behavior with VoiceOver is not changed but
+  it seems sensible to supplement the mapping as well.
+
+Fixes: QTBUG-134138
+Pick-to: 6.10 6.8
+Change-Id: Iab5c7339a82d91b6eafdba45fa31c0537a94a135
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+(cherry picked from commit 6b4da1662fa5688d489f75aba76bf15e707448f8)
+---
+ src/plugins/platforms/cocoa/qcocoaaccessibility.mm              | 1 +
+ src/plugins/platforms/windows/uiautomation/qwindowsuiautils.cpp | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
+index 6063795d6b4e9f9ee9d2ad0d431d84e49abd4b75..642d7cf115f400df5a73f7511784df90f6298d67 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
+@@ -160,6 +160,7 @@ static void populateRoleMap()
+     roleMap[QAccessible::Graphic] = NSAccessibilityImageRole;
+     roleMap[QAccessible::Tree] = NSAccessibilityOutlineRole;
+     roleMap[QAccessible::BlockQuote] = NSAccessibilityGroupRole;
++    roleMap[QAccessible::LayeredPane] = NSAccessibilityGroupRole;
+ }
+ 
+ /*
+diff --git x/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiautils.cpp y/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiautils.cpp
+index 268961486e75ea82d26172309051056d7c61369c..5a58759fbd5dcc3a45dd894707b6118506c4ea82 100644
+--- x/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiautils.cpp
++++ y/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiautils.cpp
+@@ -152,6 +152,7 @@ long roleToControlTypeId(QAccessible::Role role)
+         {QAccessible::WebDocument, UIA_DocumentControlTypeId},
+         {QAccessible::Heading, UIA_TextControlTypeId},
+         {QAccessible::BlockQuote, UIA_GroupControlTypeId},
++        {QAccessible::LayeredPane, UIA_PaneControlTypeId},
+     };
+ 
+     return mapping.value(role, UIA_CustomControlTypeId);

@@ -1,0 +1,71 @@
+From 922cadf5e77aee1d25c92c6fba5b88304d823815 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Mon, 5 Jan 2026 08:21:09 +0100
+Subject: Add feature for Qt Quick Dialogs
+
+The shared libraries for dialogs have a size of ~2MB for 64bit
+and ~1.5MB for 32bit on Android . Even if this libraries are not
+used they are deployed in an APK on Android. They also pull in
+folderlistmodel from Qt Labs.
+
+Task-number: QTBUG-67720
+Pick-to: 6.11
+Change-Id: I99f7c1f930b034cfca0d0b0a23c4b25979b94b67
+Reviewed-by: Alexandru Croitor <alexandru.croitor@qt.io>
+(cherry picked from commit ebe48ea0802b45847529432883963b8ff0d486ea)
+---
+ src/CMakeLists.txt                        | 2 +-
+ src/quick/configure.cmake                 | 6 ++++++
+ src/quickcontrolstestutils/CMakeLists.txt | 2 +-
+ 3 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git x/qtdeclarative/src/CMakeLists.txt y/qtdeclarative/src/CMakeLists.txt
+index 02e1011cd21f1c53d48b2ea987ab9794ac252933..62aeb6cf3636560ff29ba2399dd09e903603377b 100644
+--- x/qtdeclarative/src/CMakeLists.txt
++++ y/qtdeclarative/src/CMakeLists.txt
+@@ -69,7 +69,7 @@ if(TARGET Qt::Gui AND TARGET Qt::qsb AND QT_FEATURE_qml_animation)
+     add_subdirectory(quicktemplates)
+     add_subdirectory(quickcontrolsimpl)
+     add_subdirectory(quickcontrols)
+-    if(QT_FEATURE_quicktemplates2_container)
++    if(QT_FEATURE_quick_dialogs AND QT_FEATURE_quicktemplates2_container)
+         add_subdirectory(quickdialogs)
+     endif()
+     if (QT_FEATURE_quickcontrols2_macos OR QT_FEATURE_quickcontrols2_windows)
+diff --git x/qtdeclarative/src/quick/configure.cmake y/qtdeclarative/src/quick/configure.cmake
+index 99dcc24569946113d156186df0a8e19f74a32b24..0b5537411905cd6d10bcf588e380dc4fb78e606e 100644
+--- x/qtdeclarative/src/quick/configure.cmake
++++ y/qtdeclarative/src/quick/configure.cmake
+@@ -37,6 +37,11 @@ qt_feature("quick-designer" PRIVATE
+     LABEL "Support for Qt Quick Designer"
+     PURPOSE "Provides support for the Qt Quick Designer in Qt Creator."
+ )
++qt_feature("quick-dialogs" PRIVATE
++    SECTION "Qt Quick"
++    LABEL "Support for Qt Quick Dialogs"
++    PURPOSE "Allows you to create and interact with system dialogs from QML."
++)
+ qt_feature("quick-flipable" PRIVATE
+     SECTION "Qt Quick"
+     LABEL "Flipable item"
+@@ -130,6 +135,7 @@ qt_configure_add_summary_section(NAME "Qt Quick")
+ qt_configure_add_summary_entry(ARGS "quick-animatedimage")
+ qt_configure_add_summary_entry(ARGS "quick-canvas")
+ qt_configure_add_summary_entry(ARGS "quick-designer")
++qt_configure_add_summary_entry(ARGS "quick-dialogs")
+ qt_configure_add_summary_entry(ARGS "quick-flipable")
+ qt_configure_add_summary_entry(ARGS "quick-gridview")
+ qt_configure_add_summary_entry(ARGS "quick-listview")
+diff --git x/qtdeclarative/src/quickcontrolstestutils/CMakeLists.txt y/qtdeclarative/src/quickcontrolstestutils/CMakeLists.txt
+index ef1757dbfeb005d074591804168c016ea4459e3b..237b26537602fd9f4857baebb872147499438dd9 100644
+--- x/qtdeclarative/src/quickcontrolstestutils/CMakeLists.txt
++++ y/qtdeclarative/src/quickcontrolstestutils/CMakeLists.txt
+@@ -25,7 +25,7 @@ qt_internal_add_module(QuickControlsTestUtilsPrivate
+     NO_GENERATE_CPP_EXPORTS
+     QT_LICENSE_ID QT_COMMERCIAL_OR_GPL3
+ )
+-qt_internal_extend_target(QuickControlsTestUtilsPrivate CONDITION QT_FEATURE_quicktemplates2_container
++qt_internal_extend_target(QuickControlsTestUtilsPrivate CONDITION QT_FEATURE_quick_dialogs AND QT_FEATURE_quicktemplates2_container
+     SOURCES
+         dialogstestutils.cpp
+         dialogstestutils_p.h

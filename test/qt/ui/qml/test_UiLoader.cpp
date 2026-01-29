@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiLoader.h"

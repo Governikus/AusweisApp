@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogFilesModel.h"
@@ -121,11 +121,11 @@ QVariant LogFilesModel::data(const QModelIndex& pIndex, int pRole) const
 		{
 			if (file.isEmpty())
 			{
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return tr("Current log");
 			}
 
-			//: LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
+			//: ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
 			const auto fileName = LanguageLoader::getInstance().getUsedLocale().toString(LogHandler::getFileDate(QFileInfo(file)), tr("dd.MM.yyyy hh:mm:ss"));
 			return fileName;
 		}

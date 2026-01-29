@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -34,7 +34,7 @@ Controller {
 	}
 
 	property bool skipSelectReader: false
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	readonly property string smartEidTitle: qsTr("Smart-eID")
 	property bool smartEidUsed: false
 	required property string title
@@ -295,12 +295,12 @@ Controller {
 		id: editRights
 
 		EditRights {
-			//: INFO ANDROID IOS The user is informed that the ID card needs to be read to create a Smart-eID.
+			//: MOBILE The user is informed that the ID card needs to be read to create a Smart-eID.
 			actionText: qsTr("The Smart-eID issuing authority needs to read your ID card's data in order to store it on this device:")
-			//: LABEL IOS_PHONE ANDROID_PHONE
+			//: MOBILE
 			dataText: qsTr("By entering your ID card PIN, access to the following data of your ID card will be allowed to the mentioned provider:")
 			smartEidUsed: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Set up Smart-eID")
 			workflowModel: PersonalizationModel
 
@@ -340,7 +340,7 @@ Controller {
 		EnterPasswordView {
 			moreInformationText: infoData.linkText
 			smartEidUsed: root.workflowState !== PersonalizationController.WorkflowStates.Pin
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Set up Smart-eID")
 
 			navigationAction: NavigationAction {

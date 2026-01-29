@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -23,7 +23,7 @@ BaseOnboardingView {
 	}
 
 	Heading {
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("How would you like to read your ID card?")
 	}
 	GSpacer {
@@ -34,11 +34,11 @@ BaseOnboardingView {
 		Layout.bottomMargin: Style.dimens.pane_spacing
 		Layout.fillWidth: true
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		description: qsTr("Connect an USB card reader")
 		isPane: true
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("By card reader")
 
 		onClicked: root.useUsbReader()
@@ -47,11 +47,11 @@ BaseOnboardingView {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		description: qsTr("Use a NFC-enabled smartphone as card reader")
 		isPane: true
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("By smartphone")
 
 		onClicked: root.useSmartPhone()

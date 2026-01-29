@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -16,17 +16,17 @@ GPane {
 	property bool enablePaneOptic: true
 	readonly property bool hasConnectedReader: readerRepeater.count > 0
 	readonly property string hintTextBase: "%1<br>%2".arg(
-	//: LABEL DESKTOP
+	//: DESKTOP
 	qsTr("After connecting a new card reader it may take a few seconds to recognize the driver.")).arg(
-	//: LABEL DESKTOP
+	//: DESKTOP
 	qsTr("It may be necessary to restart your system after installing the driver."))
 	property alias showHint: hintAndDateText.visible
 
 	Accessible.ignored: true
-	color: root.enablePaneOptic ? Style.color.pane.background.basic : Style.color.transparent
+	color: root.enablePaneOptic ? Style.color.pane.background.basic_unchecked : Style.color.transparent
 	contentPadding: root.enablePaneOptic ? Style.dimens.pane_padding : 0
 	layer.enabled: root.enablePaneOptic
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("Connected USB card readers")
 	titleMargins: root.enablePaneOptic ? Style.dimens.pane_padding : 0
 
@@ -36,7 +36,7 @@ GPane {
 		pluginType: ReaderManagerPluginType.PCSC
 	}
 	ColumnLayout {
-		//: LABEL DESKTOP
+		//: DESKTOP
 		Accessible.name: qsTr("List of connected card readers.")
 		Accessible.role: Accessible.List
 		Layout.topMargin: -root.contentSpacing
@@ -62,12 +62,12 @@ GPane {
 			symbol.type: Symbol.Type.WARNING
 		}
 		GText {
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("The connection to your system's smartcard service could not be established. You can try to resolve this issue and restart the scan.")
 		}
 		GButton {
 			Layout.minimumWidth: implicitWidth
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Restart smartcard scan")
 
 			onClicked: readerScanEnabler.restartScan()
@@ -78,7 +78,7 @@ GPane {
 		readerHTMLDescription: ""
 		readerImagePath: "qrc:///images/desktop/default_reader.png"
 		readerInstalled: false
-		//: LABEL DESKTOP
+		//: DESKTOP
 		readerName: qsTr("No card reader connected")
 		readerSupported: true
 		showInstalledSupportedIcon: false
@@ -103,8 +103,8 @@ GPane {
 			id: hintText
 
 			Layout.alignment: Qt.AlignVCenter
-			color: Style.color.textSubline.basic
-			//: LABEL DESKTOP
+			color: Style.color.textSubline.basic_unchecked
+			//: DESKTOP
 			text: root.hintTextBase + " " + qsTr("Only connected card readers are shown here.") + " " + ReaderModel.lastUpdatedInformation
 			verticalAlignment: Text.AlignBottom
 		}

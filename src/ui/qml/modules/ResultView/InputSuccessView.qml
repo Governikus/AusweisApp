@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -52,13 +52,13 @@ FlickableSectionPage {
 		text: {
 			switch (root.passwordType) {
 			case NumberModel.PasswordType.CAN:
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return qsTr("CAN is correct");
 			case NumberModel.PasswordType.PUK:
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return qsTr("PUK is correct");
 			case NumberModel.PasswordType.TRANSPORT_PIN:
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return qsTr("Transport PIN correct");
 			default:
 				return "";
@@ -69,7 +69,7 @@ FlickableSectionPage {
 	Subheading {
 		id: subHeader
 
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("Now set your personal ID card PIN")
 		visible: root.passwordType === NumberModel.PasswordType.TRANSPORT_PIN
 	}
@@ -79,20 +79,20 @@ FlickableSectionPage {
 		text: {
 			switch (root.passwordType) {
 			case NumberModel.PasswordType.CAN:
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return root.isTransportPin ? "%1<br/><br/>%2".arg(qsTr("Please enter your <b>5-digit Transport PIN</b>. <b>This is your last attempt</b>.")).arg(qsTr("If you enter a wrong Transport PIN again, the PIN will be blocked. This block may only be removed using the PUK.")) :
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				"%1<br/><br/>%2".arg(qsTr("Please enter your <b>6-digit ID card PIN</b>. <b>This is your last attempt</b>.")).arg(qsTr("If you enter a wrong ID Card PIN again, the PIN will be blocked. This block may only be removed using the PUK."));
 			case NumberModel.PasswordType.PUK:
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return root.isTransportPin ? qsTr("You now have <b>3 more attempts</b> to enter your correct <b>Transport PIN</b>.") :
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				qsTr("You now have <b>3 more attempts</b> to enter your correct <b>ID card PIN</b>.");
 			case NumberModel.PasswordType.TRANSPORT_PIN:
 				return "%1<br>%2"
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				.arg(qsTr("The Transport PIN is now replaced by your personal 6-digit ID card PIN."))
-				//: INFO ALL_PLATFORMS The text between %1 and %2 will be emphasized.
+				//: ALL_PLATFORMS The text between %1 and %2 will be emphasized.
 				.arg(qsTr("Afterwards the %1Transport PIN is no longer required.%2").arg("<b>").arg("</b>"));
 			default:
 				return "";
@@ -101,6 +101,7 @@ FlickableSectionPage {
 	}
 	GSpacer {
 		Layout.fillHeight: true
+		visible: Style.is_layout_desktop
 	}
 	GContinueButton {
 		onClicked: root.continueClicked()

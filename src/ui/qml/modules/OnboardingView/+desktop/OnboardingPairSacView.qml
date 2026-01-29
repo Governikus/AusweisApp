@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -32,7 +32,7 @@ BaseOnboardingView {
 	Heading {
 		Layout.bottomMargin: Style.dimens.pane_spacing
 		Layout.topMargin: -root.spacing
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("Set up smartphone as card reader")
 	}
 	GPane {
@@ -44,10 +44,10 @@ BaseOnboardingView {
 			backgroundColor: Style.color.transparent
 			drawBottomCorners: true
 			drawTopCorners: true
-			//: LABEL DESKTOP
+			//: DESKTOP
 			selectionTitle: expanded ? "" : qsTr("Click the arrow to show.")
 			startExpanded: true
-			//: LABEL DESKTOP
+			//: DESKTOP
 			title: qsTr("Pairing instructions")
 
 			PairingGuide {
@@ -57,7 +57,7 @@ BaseOnboardingView {
 	Subheading {
 		id: deviceListHeading
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		text: qsTr("Available devices")
 	}
 	AvailableDevices {
@@ -113,7 +113,7 @@ BaseOnboardingView {
 				Layout.fillWidth: true
 
 				customContent: GButton {
-					//: LABEL DESKTOP
+					//: DESKTOP
 					text: qsTr("Use device")
 
 					onClicked: root.continueOnboarding()
@@ -134,7 +134,7 @@ BaseOnboardingView {
 			isPaired: false
 			isPairing: false
 			linkQualityInPercent: 0
-			//: LABEL DESKTOP
+			//: DESKTOP
 			remoteDeviceName: qsTr("No device within reach")
 			remoteDeviceStatus: ""
 			visible: devicesInPairingMode.count === 0 && availablePairedDevices.count === 0
@@ -143,7 +143,7 @@ BaseOnboardingView {
 				Utils.positionViewAtItem(this)
 		}
 		MoreInformationLink {
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("My smartphone does not show up")
 
 			onClicked: root.push(multiInfoView)
@@ -172,7 +172,7 @@ BaseOnboardingView {
 
 		Rectangle {
 			anchors.fill: parent
-			border.color: Style.color.textSubline.basic
+			border.color: Style.color.textSubline.basic_unchecked
 			border.width: Style.dimens.pane_border_highlight_width
 			color: Style.color.transparent
 		}
@@ -181,22 +181,22 @@ BaseOnboardingView {
 		spacing: Style.dimens.groupbox_spacing
 
 		GText {
-			//: LABEL DESKTOP %1/%3 are replaced with bold highlighting, %2 with the name AusweisApp
+			//: DESKTOP %1/%3 are replaced with bold highlighting, %2 with the name AusweisApp
 			text: "1. " + qsTr("Ensure that the %1%2%3 on the smartphone that you want to use as card reader is %1up to date%3.").arg("<b>").arg(Qt.application.name).arg("</b>")
 		}
 		GText {
-			//: LABEL DESKTOP %1/%2 are replaced with bold highlighting
+			//: DESKTOP %1/%2 are replaced with bold highlighting
 			text: "2. " + qsTr("Connect both devices to the %1same network%2, e.g. via WiFi.").arg("<b>").arg("</b>")
 		}
 		GText {
-			//: LABEL DESKTOP %1/%2 are replaced with bold highlighting
+			//: DESKTOP %1/%2 are replaced with bold highlighting
 			text: "3. " + qsTr("Select the %1Card reader%2 entry in the bottom menu bar on your smartphone.").arg("<b>").arg("</b>")
 		}
 		FramedImage {
 			source: "qrc:///images/desktop/navigation_bar_%1.png".arg(SettingsModel.language)
 		}
 		GText {
-			//: LABEL DESKTOP %1/%2 are replaced with bold highlighting
+			//: DESKTOP %1/%2 are replaced with bold highlighting
 			text: "4. " + qsTr("Then select %1Pair device%2 or, if a device was already paired, %1Pair new device%2.").arg("<b>").arg("</b>")
 		}
 		RowLayout {
@@ -208,7 +208,7 @@ BaseOnboardingView {
 			}
 			GText {
 				Accessible.ignored: true
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("or")
 			}
 			FramedImage {
@@ -216,7 +216,7 @@ BaseOnboardingView {
 			}
 		}
 		GText {
-			//: LABEL DESKTOP %1 will be replaced with the Available Devices list name
+			//: DESKTOP %1 will be replaced with the Available Devices list name
 			text: "5. " + qsTr("Afterwards, a pairing code is displayed on your smartphone. You may then select the device in the %1 list to enter the pairing code.").arg("<b>" + deviceListHeading.text + "</b>")
 		}
 	}

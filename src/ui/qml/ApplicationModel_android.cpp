@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -24,6 +24,20 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifyScreen
 }
 
 
+JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifyScreenRecordingChanged(JNIEnv* pEnv, jobject pObj)
+{
+	Q_UNUSED(pEnv)
+	Q_UNUSED(pObj)
+	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
+				auto* applicationModel = Env::getSingleton<ApplicationModel>();
+				if (applicationModel)
+				{
+					Q_EMIT applicationModel->fireScreenRecordingChanged();
+				}
+			}, Qt::QueuedConnection);
+}
+
+
 }
 
 
@@ -42,11 +56,9 @@ static void showSystemSettings(const QString& pAction)
 		QtAndroidPrivate::startActivity(intent, 0);
 	}
 
-	if (env->ExceptionCheck())
+	if (env.checkAndClearExceptions())
 	{
 		qCCritical(qml) << "Cannot call an action as activity:" << pAction;
-		env->ExceptionDescribe();
-		env->ExceptionClear();
 	}
 }
 
@@ -130,11 +142,9 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 						jint(1));
 				toast.callMethod<void>("show");
 
-				if (env->ExceptionCheck())
+				if (env.checkAndClearExceptions())
 				{
 					qCCritical(qml) << "Suppressing an unexpected exception.";
-					env->ExceptionDescribe();
-					env->ExceptionClear();
 					// The toast was probably not displayed (e.g. DeadObjectException). We halt on error
 					// since it is used to display information to the user as required by the TR.
 					Q_ASSERT(false);
@@ -149,12 +159,32 @@ void ApplicationModel::keepScreenOn(bool pActive) const
 				QJniObject context = QNativeInterface::QAndroidApplication::context();
 				context.callMethod<void>("keepScreenOn", "(Z)V", pActive);
 				QJniEnvironment env;
-				if (env->ExceptionCheck())
+				if (env.checkAndClearExceptions())
 				{
 					qCCritical(qml) << "Exception calling java native function.";
-					env->ExceptionDescribe();
-					env->ExceptionClear();
 				}
 			});
 
+}
+
+
+void ApplicationModel::preventScreenshot(bool pPrevent) const
+{
+	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pPrevent](){
+				QJniObject context = QNativeInterface::QAndroidApplication::context();
+				context.callMethod<void>("preventScreenshot", "(Z)V", pPrevent);
+				QJniEnvironment env;
+				if (env.checkAndClearExceptions())
+				{
+					qCCritical(qml) << "Exception calling java native function.";
+				}
+			});
+}
+
+
+bool ApplicationModel::isScreenRecording() const
+{
+	QJniObject context = QNativeInterface::QAndroidApplication::context();
+	const jboolean result = context.callMethod<jboolean>("isScreenRecordingRunning", "()Z");
+	return result != JNI_FALSE;
 }

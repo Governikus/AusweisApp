@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -20,7 +20,7 @@ GPane {
 	signal linkAboutToOpen
 
 	Accessible.ignored: true
-	color: Style.color.paneSublevel.background.basic
+	color: Style.color.paneSublevel.background.basic_unchecked
 	contentSpacing: 0
 	drawShadow: false
 	titleTextStyle: Style.text.subline

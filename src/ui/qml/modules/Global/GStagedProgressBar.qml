@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -17,11 +17,11 @@ Rectangle {
 
 	Accessible.focusable: true
 	Accessible.ignored: !visible
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	Accessible.name: qsTr("Step %1 of %2. This step is %3 percent complete.").arg(d.currentStage).arg(d.stages).arg(Math.floor(d.absoluteProgress * 100))
 	Accessible.role: Accessible.ProgressBar
-	color: Style.color.pane.background.basic
-	implicitHeight: bars.implicitHeight
+	color: Style.color.pane.background.basic_unchecked
+	implicitHeight: Style.dimens.stagedprogressbar_height
 	layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 
 	layer.effect: GDropShadow {
@@ -42,13 +42,9 @@ Rectangle {
 	RowLayout {
 		id: bars
 
+		anchors.fill: parent
 		spacing: Style.dimens.stagedprogressbar_spacing
 
-		anchors {
-			left: parent.left
-			right: parent.right
-			top: parent.top
-		}
 		Repeater {
 			model: d.stages
 
@@ -57,14 +53,14 @@ Rectangle {
 
 				required property int index
 
+				Layout.fillHeight: true
 				Layout.fillWidth: true
-				border.color: d.colors.border.basic
+				border.color: d.colors.border.basic_unchecked
 				border.width: Style.dimens.border_width
-				color: d.colors.background.basic
-				implicitHeight: Style.dimens.stagedprogressbar_height
+				color: d.colors.background.basic_unchecked
 
 				Rectangle {
-					color: d.colors.content.basic
+					color: d.colors.content.basic_unchecked
 					width: {
 						let thisStage = bar.index + 1;
 						if (thisStage > d.currentStage) {

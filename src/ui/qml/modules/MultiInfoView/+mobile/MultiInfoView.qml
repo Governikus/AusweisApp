@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -15,15 +15,20 @@ import Governikus.TitleBar
 FlickableSectionPage {
 	id: root
 
-	readonly property url buttonLink: infoContent.buttonLink
 	readonly property var contentList: infoContent.contentList
 	property string continueButtonText
-	readonly property string hint: infoContent.hint
-	readonly property string hintButtonText: infoContent.hintButtonText
-	readonly property string hintTitle: infoContent.hintTitle
+	readonly property string firstHint: infoContent.firstHint
+	readonly property url firstHintButtonLink: infoContent.firstHintButtonLink
+	readonly property string firstHintButtonText: infoContent.firstHintButtonText
+	readonly property string firstHintTitle: infoContent.firstHintTitle
+	readonly property string hintBoxesTitle: infoContent.hintBoxesTitle
 	property MultiInfoData infoContent: MultiInfoData {
 	}
 	readonly property string infoContentTitle: infoContent.title
+	readonly property url secondHintButtonLink: infoContent.secondHintButtonLink
+	readonly property string secondHintButtonText: infoContent.secondHintButtonText
+	readonly property string secondHintText: infoContent.secondHintText
+	readonly property string secondHintTitle: infoContent.secondHintTitle
 
 	signal abortCurrentWorkflow
 	signal close
@@ -40,7 +45,8 @@ FlickableSectionPage {
 
 	Column {
 		Layout.fillWidth: true
-		Layout.margins: Style.dimens.pane_padding
+		Layout.leftMargin: Style.dimens.pane_padding
+		Layout.rightMargin: Style.dimens.pane_padding
 		spacing: Style.dimens.pane_spacing
 
 		GRepeater {
@@ -104,23 +110,41 @@ FlickableSectionPage {
 			}
 		}
 	}
+	GText {
+		Layout.topMargin: Style.dimens.pane_spacing
+		text: root.hintBoxesTitle
+		textStyle: Style.text.subline
+		visible: text !== ""
+	}
 	Hint {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
 		Layout.topMargin: Style.dimens.pane_spacing
-		buttonText: root.hintButtonText
-		linkToOpen: root.buttonLink
-		text: root.hint
-		//: LABEL ANDROID IOS
-		title: root.hintTitle !== "" ? root.hintTitle : qsTr("Hint")
+		buttonText: root.firstHintButtonText
+		linkToOpen: root.firstHintButtonLink
+		text: root.firstHint
+		//: MOBILE
+		title: root.firstHintTitle !== "" ? root.firstHintTitle : qsTr("Hint")
 		visible: text !== ""
 
 		onLinkAboutToOpen: root.abortCurrentWorkflow()
 	}
-	GSpacer {
-		Layout.fillHeight: true
+	Hint {
+		Layout.alignment: Qt.AlignHCenter
+		Layout.fillWidth: true
+		Layout.topMargin: Style.dimens.pane_spacing
+		buttonText: root.secondHintButtonText
+		linkToOpen: root.secondHintButtonLink
+		text: root.secondHintText
+		//: MOBILE
+		title: root.secondHintTitle !== "" ? root.secondHintTitle : qsTr("Hint")
+		visible: text !== ""
+
+		onLinkAboutToOpen: root.abortCurrentWorkflow()
 	}
 	GContinueButton {
+		id: continueButton
+
 		text: root.continueButtonText
 
 		onClicked: root.continueClicked()

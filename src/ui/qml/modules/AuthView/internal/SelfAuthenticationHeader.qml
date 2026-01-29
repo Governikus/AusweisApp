@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -21,9 +21,9 @@ RowLayout {
 		symbol.type: Symbol.Type.CHECK
 	}
 	GText {
-		//: INFO ALL_PLATFORMS Status message that the self authentication successfully completed (1/2).
+		//: ALL_PLATFORMS Status message that the self authentication successfully completed (1/2).
 		text: qsTr("Successfully read data.") + "<br>" +
-		//: INFO ALL_PLATFORMS Status message that the self authentication successfully completed (2/2).
+		//: ALL_PLATFORMS Status message that the self authentication successfully completed (2/2).
 		qsTr("You may now remove your ID card from the device.")
 	}
 }

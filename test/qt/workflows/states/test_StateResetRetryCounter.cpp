@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateResetRetryCounter.h"
@@ -10,10 +10,10 @@
 #include "TestWorkflowContext.h"
 
 #include <QSharedPointer>
-#include <QThread>
 #include <QtTest>
 
 #include <optional>
+
 
 using namespace governikus;
 
@@ -86,7 +86,7 @@ class test_StateResetRetryCounter
 
 			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			StateResetRetryCounter state(context);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QSharedPointer<MockCardCommand> command(new MockCardCommand(worker));
 			QSignalSpy spyContinue(&state, &StateResetRetryCounter::fireContinue);
 			QSignalSpy spyAbort(&state, &StateResetRetryCounter::fireAbort);

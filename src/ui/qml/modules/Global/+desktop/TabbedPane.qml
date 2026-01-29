@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -77,7 +77,7 @@ Item {
 				GListView {
 					id: sectionNameList
 
-					//: LABEL DESKTOP
+					//: DESKTOP
 					Accessible.name: qsTr("Sidebar")
 					Accessible.role: Accessible.PageTabList
 					anchors.fill: parent
@@ -107,7 +107,7 @@ Item {
 			id: flickable
 
 			Accessible.ignored: !ApplicationModel.screenReaderRunning && (Qt.platform.os === "osx" || Qt.platform.os === "ios")
-			//: LABEL DESKTOP %1 will be replaced with the title of the tab
+			//: DESKTOP %1 will be replaced with the title of the tab
 			Accessible.name: root.sectionsModel ? qsTr("Content of tab \"%1\"").arg(root.sectionsModel[sectionNameList.currentIndex]) : ""
 			Accessible.role: Accessible.Grouping
 			bottomMargin: 0

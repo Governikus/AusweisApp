@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -266,10 +266,6 @@ void AppController::onLanguageChanged()
 
 	if (newLocale == usedLocale)
 	{
-		if (QLocale() != usedLocale)
-		{
-			QLocale::setDefault(usedLocale);
-		}
 		return;
 	}
 
@@ -286,7 +282,6 @@ void AppController::onLanguageChanged()
 	{
 		languageLoader.load(newLocale);
 	}
-	QLocale::setDefault(languageLoader.getUsedLocale());
 
 	Q_EMIT fireTranslationChanged();
 }

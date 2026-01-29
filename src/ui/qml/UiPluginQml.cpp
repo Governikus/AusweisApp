@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginQml.h"
@@ -37,6 +37,7 @@
 
 	#include <QFont>
 	#include <QJniEnvironment>
+	#include <QJniObject>
 #endif
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
@@ -184,8 +185,6 @@ void UiPluginQml::init()
 	QQuickWindow* rootWindow = getRootWindow();
 	if (rootWindow != nullptr)
 	{
-		connect(rootWindow, &QQuickWindow::sceneGraphInitialized, this, &UiPluginQml::fireSafeAreaMarginsChanged, Qt::QueuedConnection);
-		connect(rootWindow->screen(), &QScreen::orientationChanged, this, &UiPluginQml::fireSafeAreaMarginsChanged, Qt::QueuedConnection);
 		connect(rootWindow, &QQuickWindow::sceneGraphError, this, &UiPluginQml::onSceneGraphError);
 		qCDebug(qml) << "Using renderer interface:" << rootWindow->rendererInterface()->graphicsApi();
 
@@ -197,6 +196,7 @@ void UiPluginQml::init()
 
 	onWindowPaletteChanged();
 	onUserDarkModeChanged();
+	onLanguageChanged();
 
 #ifdef Q_OS_WIN
 	QMetaObject::invokeMethod(this, [] {
@@ -383,6 +383,7 @@ void UiPluginQml::onApplicationInitialized()
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireUseSystemFontChanged, this, &UiPluginQml::onUseSystemFontChanged);
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireDarkModeChanged, this, &UiPluginQml::onUserDarkModeChanged);
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireDarkModeChanged, this, &UiPluginQml::fireDarkModeEnabledChanged);
+	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireLanguageChanged, this, &UiPluginQml::onLanguageChanged);
 
 	const auto* service = Env::getSingleton<Service>();
 	connect(service, &Service::fireAppcastFinished, this, &UiPluginModel::setUpdatePending);
@@ -634,7 +635,19 @@ void UiPluginQml::onRawLog(const QString& pMessage, const QString& pCategoryName
 void UiPluginQml::doRefresh()
 {
 	qCDebug(qml) << "Reload qml files";
+#if defined(Q_OS_ANDROID)
+	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([](){
+				QJniObject activity = QNativeInterface::QAndroidApplication::context();
+				if (!activity.isValid())
+				{
+					qCDebug(qml) << "Unable to refresh UIPluginQML, Android activity not valid.";
+					return;
+				}
+				activity.callMethod<void>("recreate", "()V");
+			});
+#else
 	QMetaObject::invokeMethod(this, &UiPluginQml::init, Qt::QueuedConnection);
+#endif
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 	QMetaObject::invokeMethod(this, [this]{
 				Q_EMIT fireShowUiRequested(UiModule::CURRENT);
@@ -678,58 +691,6 @@ bool UiPluginQml::isDominated() const
 	return !mDominator.isNull();
 }
 
-
-#ifndef Q_OS_IOS
-QVariantMap UiPluginQml::getSafeAreaMargins() const
-{
-	QVariantMap marginMap;
-
-	marginMap[QStringLiteral("top")] = 0;
-	marginMap[QStringLiteral("right")] = 0;
-	marginMap[QStringLiteral("bottom")] = 0;
-	marginMap[QStringLiteral("left")] = 0;
-
-	#ifdef Q_OS_ANDROID
-	if (QJniObject activity = QNativeInterface::QAndroidApplication::context(); activity.isValid())
-	{
-		auto screen = QGuiApplication::primaryScreen();
-		auto windowInsets = activity.callObjectMethod("getWindowInsets", "()Landroid/view/ViewGroup$MarginLayoutParams;");
-
-		marginMap[QStringLiteral("top")] = windowInsets.getField<jint>("topMargin") / screen->devicePixelRatio();
-		marginMap[QStringLiteral("left")] = windowInsets.getField<jint>("leftMargin") / screen->devicePixelRatio();
-		marginMap[QStringLiteral("right")] = windowInsets.getField<jint>("rightMargin") / screen->devicePixelRatio();
-		marginMap[QStringLiteral("bottom")] = windowInsets.getField<jint>("bottomMargin") / screen->devicePixelRatio();
-	}
-	#endif
-
-	return marginMap;
-}
-
-
-#endif
-
-#ifdef Q_OS_ANDROID
-extern "C"
-{
-
-JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifySafeAreaMarginsChanged(JNIEnv* pEnv, jobject pObj)
-{
-	Q_UNUSED(pEnv)
-	Q_UNUSED(pObj)
-
-	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-				UiPluginQml* const uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginQml>();
-				if (uiPlugin)
-				{
-					Q_EMIT uiPlugin->fireSafeAreaMarginsChanged();
-				}
-			}, Qt::QueuedConnection);
-}
-
-
-}
-
-#endif
 
 #ifndef Q_OS_MACOS
 bool UiPluginQml::isHighContrastEnabled() const
@@ -956,6 +917,15 @@ void UiPluginQml::onReaderStatusChanged(const ReaderManagerPluginInfo& pInfo) co
 #else
 	Q_UNUSED(pInfo)
 #endif
+}
+
+
+void UiPluginQml::onLanguageChanged() const
+{
+	if (mEngine)
+	{
+		mEngine->setUiLanguage(Env::getSingleton<SettingsModel>()->getLanguage());
+	}
 }
 
 

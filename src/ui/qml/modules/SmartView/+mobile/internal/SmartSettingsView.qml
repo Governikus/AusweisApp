@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -23,15 +23,15 @@ ColumnLayout {
 		Layout.fillWidth: true
 		spacing: Style.dimens.pane_spacing
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Smart-eID")
 
 		GMenuItem {
 			Layout.fillWidth: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Show Smart-eID data")
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Try Smart-eID")
 			visible: root.smartState === SmartModel.State.READY
 
@@ -44,10 +44,10 @@ ColumnLayout {
 		}
 		GMenuItem {
 			Layout.fillWidth: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Change the chosen Smart-eID PIN")
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Change Smart-eID PIN")
 			visible: root.smartState === SmartModel.State.READY
 
@@ -60,10 +60,10 @@ ColumnLayout {
 		}
 		GMenuItem {
 			Layout.fillWidth: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Renew your Smart-eID with current data")
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Renew Smart-eID")
 			visible: root.smartState === SmartModel.State.READY
 
@@ -76,10 +76,10 @@ ColumnLayout {
 		}
 		GMenuItem {
 			Layout.fillWidth: true
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			description: qsTr("Delete Smart-eID data from your device")
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Delete Smart-eID")
 			visible: root.smartState === SmartModel.State.READY
 

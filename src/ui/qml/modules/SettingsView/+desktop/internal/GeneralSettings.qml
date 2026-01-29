@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -18,7 +18,7 @@ ColumnLayout {
 
 	GPane {
 		Layout.fillWidth: true
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Change language")
 
 		onFocusChanged: if (focus)
@@ -31,7 +31,7 @@ ColumnLayout {
 		Layout.fillWidth: true
 		contentPadding: 0
 		contentSpacing: Style.dimens.pane_spacing / 2
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Appearance")
 
 		onFocusChanged: if (focus)
@@ -45,10 +45,10 @@ ColumnLayout {
 			Layout.fillWidth: true
 			checked: SettingsModel.useSystemFont
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			description: qsTr("Toggling will restart the %1").arg(Qt.application.name)
 			drawBottomCorners: true
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Use system font")
 
 			onCheckedChanged: {
@@ -65,13 +65,13 @@ ColumnLayout {
 		Layout.fillWidth: true
 		contentPadding: 0
 		contentSpacing: 0
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Accessibility")
 
 		GSwitch {
 			Layout.fillWidth: true
 			checked: !SettingsModel.useAnimations
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Use images instead of animations")
 
 			onCheckedChanged: SettingsModel.useAnimations = !checked
@@ -79,7 +79,7 @@ ColumnLayout {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.visualPrivacy
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Hide key animations when entering PIN")
 
 			onCheckedChanged: SettingsModel.visualPrivacy = checked
@@ -87,10 +87,10 @@ ColumnLayout {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: !SettingsModel.autoRedirectAfterAuthentication
-			//: LABEL DESKTOP
+			//: DESKTOP
 			description: qsTr("After identification, you will only be redirected back to the provider after confirmation. Otherwise, you will be redirected automatically after a few seconds.")
 			drawBottomCorners: true
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Manual redirection back to the provider")
 
 			onCheckedChanged: SettingsModel.autoRedirectAfterAuthentication = !checked
@@ -100,7 +100,7 @@ ColumnLayout {
 		Layout.fillWidth: true
 		contentPadding: 0
 		contentSpacing: 0
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Behavior")
 
 		onFocusChanged: if (focus)
@@ -109,10 +109,10 @@ ColumnLayout {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.autoStartApp
-			//: LABEL DESKTOP Description for auto-start option
+			//: DESKTOP Description for auto-start option
 			description: qsTr("The %1 gets started on system boot, so that it can be opened automatically on an authentication. It has to be started manually otherwise.").arg(Qt.application.name)
 			enabled: !SettingsModel.autoStartSetByAdmin && SettingsModel.autoStartAvailable
-			//: LABEL DESKTOP Text for auto-start option
+			//: DESKTOP Text for auto-start option
 			text: qsTr("Automatically start %1 (recommended)").arg(Qt.application.name)
 
 			onCheckedChanged: SettingsModel.autoStartApp = checked
@@ -122,12 +122,12 @@ ColumnLayout {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.trayIconEnabled
-			//: LABEL MACOS Description for attaching the AA to the menu bar/system tray
+			//: MACOS Description for attaching the AA to the menu bar/system tray
 			description: qsTr("The %1 continues to run in the background after the application window is closed, so that it can be opened automatically on an authentication.").arg(Qt.application.name)
 			text: Qt.platform.os === "osx" ?
-			//: LABEL MACOS Text for attaching the AA to the menu bar
+			//: MACOS Text for attaching the AA to the menu bar
 			qsTr("Attach %1 to menu bar (recommended)").arg(Qt.application.name) :
-			//: LABEL WINDOWS Text for attaching the AA to the system tray
+			//: WINDOWS Text for attaching the AA to the system tray
 			qsTr("Attach %1 to system tray (recommended)").arg(Qt.application.name)
 
 			onCheckedChanged: SettingsModel.trayIconEnabled = checked
@@ -138,7 +138,7 @@ ColumnLayout {
 			Layout.fillWidth: true
 			checked: SettingsModel.autoCloseWindowAfterAuthentication
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Close %1 window after authentication").arg(Qt.application.name)
 
 			onCheckedChanged: SettingsModel.autoCloseWindowAfterAuthentication = checked
@@ -148,21 +148,21 @@ ColumnLayout {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.autoUpdateCheck
-			//: LABEL DESKTOP %1 is replaced with the application name
+			//: DESKTOP %1 is replaced with the application name
 			description: qsTr("When you start %1, it automatically checks for updates. Updates are not performed automatically. If this option is disabled, you have to manually check for updates in the settings.").arg(Qt.application.name)
 			enabled: !SettingsModel.autoUpdateCheckSetByAdmin && !SettingsModel.appUpdateData.appcastRunning
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Automatically check for software updates at program start (recommended)")
 			visible: SettingsModel.autoUpdateAvailable
 
 			onCheckedChanged: SettingsModel.autoUpdateCheck = checked
 		}
 		ColumnLayout {
-			readonly property bool isCheckingForUpdate: update.appcastRunning
-			readonly property var update: SettingsModel.appUpdateData
-			readonly property bool updateAvailable: SettingsModel.appUpdateData.updateAvailable
-			readonly property bool updateValid: SettingsModel.appUpdateData.valid
+			readonly property bool isCheckingForUpdate: updateData.appcastRunning
+			readonly property bool updateAvailable: updateData.updateAvailable
+			readonly property var updateData: SettingsModel.appUpdateData
+			readonly property bool updateValid: updateData.valid
 
 			Layout.bottomMargin: Style.dimens.pane_padding
 			Layout.leftMargin: Style.dimens.pane_padding
@@ -171,12 +171,12 @@ ColumnLayout {
 			visible: SettingsModel.autoUpdateAvailable
 
 			GText {
-				color: (parent.updateAvailable || !parent.updateValid) ? Style.color.textNormal.basic : Style.color.textSubline.basic
-				text: parent.update.appcastStatus
+				color: (parent.updateAvailable || !parent.updateValid) ? Style.color.textNormal.basic_unchecked : Style.color.textSubline.basic_unchecked
+				text: parent.updateData.appcastStatus
 				visible: text !== ""
 			}
 			GButton {
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Show update")
 				visible: parent.updateAvailable
 
@@ -185,7 +185,7 @@ ColumnLayout {
 			GProgressBar {
 				Layout.fillWidth: true
 				text: "%1 %".arg(Math.floor(value))
-				value: 100 * parent.update.appcastProgress / parent.update.appcastTotal
+				value: 100 * parent.updateData.appcastProgress / parent.updateData.appcastTotal
 				visible: parent.isCheckingForUpdate
 			}
 			GLink {
@@ -193,9 +193,9 @@ ColumnLayout {
 				font.underline: true
 				horizontalPadding: 0
 				text: !parent.isCheckingForUpdate ?
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("Start manual search for software update") :
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("Abort search")
 				verticalPadding: 0
 				visible: !parent.updateAvailable
@@ -207,7 +207,7 @@ ColumnLayout {
 	GPane {
 		Layout.fillWidth: true
 		contentPadding: 0
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Network")
 		visible: SettingsModel.customProxyAttributesPresent
 
@@ -219,7 +219,7 @@ ColumnLayout {
 			checked: SettingsModel.useCustomProxy
 			drawBottomCorners: true
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Use the proxy (%1) specified during the installation.").arg(SettingsModel.customProxyUrl)
 
 			onCheckedChanged: SettingsModel.useCustomProxy = checked

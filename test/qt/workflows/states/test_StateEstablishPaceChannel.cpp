@@ -1,19 +1,23 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEstablishPaceChannel.h"
 
 #include "AppSettings.h"
+#include "ReaderManager.h"
+#include "VolatileSettings.h"
+
 #include "MockCardConnectionWorker.h"
 #include "TestAuthContext.h"
-#include "TestFileHelper.h"
-#include "context/ChangePinContext.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class MockEstablishPaceChannelCommand
 	: public EstablishPaceChannelCommand
@@ -41,7 +45,7 @@ class test_StateEstablishPaceChannel
 	: public QObject
 {
 	Q_OBJECT
-	QThread mWorkerThread;
+	QScopedPointer<TestHookThread> mWorkerThread;
 	QSharedPointer<AuthContext> mAuthContext;
 	QSharedPointer<StateEstablishPaceChannel> mState;
 
@@ -49,18 +53,14 @@ class test_StateEstablishPaceChannel
 		void initTestCase()
 		{
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(true);
-		}
-
-
-		void cleanupTestCase()
-		{
-			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(false);
+			Env::getSingleton<ReaderManager>(); // just init in MainThread because of QObject
+			Env::getSingleton<VolatileSettings>(); // just init in MainThread because of QObject
 		}
 
 
 		void init()
 		{
-			mWorkerThread.start();
+			mWorkerThread.reset(new TestHookThread());
 			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 			mState.reset(StateBuilder::createState<StateEstablishPaceChannel>(mAuthContext));
 		}
@@ -70,8 +70,13 @@ class test_StateEstablishPaceChannel
 		{
 			mState.clear();
 			mAuthContext.clear();
-			mWorkerThread.quit();
-			mWorkerThread.wait();
+			mWorkerThread.reset();
+		}
+
+
+		void cleanupTestCase()
+		{
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(false);
 		}
 
 
@@ -103,25 +108,27 @@ class test_StateEstablishPaceChannel
 		{
 			QFETCH(int, initialProgress);
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&mWorkerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			auto worker = MockCardConnectionWorker::create(mWorkerThread.data());
 			const QString password("0000000"_L1);
 
 			mAuthContext->setPin(password);
-			mAuthContext->setCardConnection(connection);
+			mAuthContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 			mAuthContext->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
 
 			mAuthContext->setProgress(initialProgress, QString());
 			QCOMPARE(mAuthContext->getProgressValue(), initialProgress);
 			QCOMPARE(mAuthContext->getProgressMessage(), QString());
 
+			QSignalSpy spy(mState.data(), &StateEstablishPaceChannel::firePaceChannelFailed);
 			QTest::ignoreMessage(QtDebugMsg, "Establish connection using PACE_PIN");
 			mState->run();
 			QCOMPARE(mAuthContext->getEstablishPaceChannelType(), PacePasswordId::PACE_PIN);
 			QCOMPARE(mState->mPasswordId, PacePasswordId::PACE_PIN);
 			QCOMPARE(mAuthContext->getProgressValue(), initialProgress);
 			QCOMPARE(mAuthContext->getProgressMessage(), tr("The secure channel is opened"));
+			QTRY_COMPARE(spy.size(), 1);
+
+			mAuthContext->resetCardConnection();
 		}
 
 
@@ -154,14 +161,13 @@ class test_StateEstablishPaceChannel
 
 		void test_OnUserCancelled()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&mWorkerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			auto worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mAuthContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cInfo(CardType::NONE, FileRef(), QSharedPointer<EFCardAccess>(), 3, false, false);
 			ReaderInfo rInfo;
 			rInfo.setCardInfo(cInfo);
 			Q_EMIT worker->fireReaderInfoChanged(rInfo);
-			mAuthContext->setCardConnection(connection);
 
 			QSignalSpy spyAbort(mState.data(), &AbstractState::fireAbort);
 
@@ -170,6 +176,8 @@ class test_StateEstablishPaceChannel
 			QCOMPARE(mAuthContext->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_Cancellation_By_User);
 			QCOMPARE(mAuthContext->getLastPaceResult(), CardReturnCode::CANCELLATION_BY_USER);
 			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::User_Cancelled);
+
+			mAuthContext->resetCardConnection();
 		}
 
 
@@ -214,15 +222,15 @@ class test_StateEstablishPaceChannel
 			QSignalSpy spyContinue(mState.data(), &StateEstablishPaceChannel::fireContinue);
 
 			mState->mPasswordId = password;
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			const QSharedPointer<MockEstablishPaceChannelCommand> command(new MockEstablishPaceChannelCommand(worker, PacePasswordId::PACE_PIN));
-			worker->moveToThread(&mWorkerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			auto worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mAuthContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+			QSharedPointer<MockEstablishPaceChannelCommand> command(new MockEstablishPaceChannelCommand(worker, PacePasswordId::PACE_PIN));
+
 			const CardInfo cInfo(CardType::NONE, FileRef(), QSharedPointer<EFCardAccess>(), retryCounter, false, false);
 			ReaderInfo rInfo;
 			rInfo.setCardInfo(cInfo);
 			Q_EMIT worker->fireReaderInfoChanged(rInfo);
-			mAuthContext->setCardConnection(connection);
+
 			if (canAllowed)
 			{
 				*mAuthContext->getAccessRightManager() += AccessRight::CAN_ALLOWED;
@@ -292,6 +300,9 @@ class test_StateEstablishPaceChannel
 				QCOMPARE(spyAbort.count(), 1);
 			}
 			QCOMPARE(mAuthContext->getFailureCode(), failureCode);
+
+			command.reset();
+			mAuthContext->resetCardConnection();
 		}
 
 

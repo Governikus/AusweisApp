@@ -1,0 +1,83 @@
+From 6473a7d443421db89eb97085eb17e0b25ee0d1cf Mon Sep 17 00:00:00 2001
+From: Timon Sassor <timon.sassor@governikus.de>
+Date: Mon, 15 Sep 2025 13:32:26 +0200
+Subject: Android: Fix double emission of certain a11y events
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+3c709198838866d5122c69a30cacdc806605d0cf and
+e7a211d702d6aa21a30eff56ceeffc153385443e introduced a11y actions for
+focusing and scrolling. However they also accidentally introduced a
+double emission of their according events. This causes problems, since
+every new event stops the processing and announcement of the previous in
+TalkBack.
+
+We remove the sendEventForVirtualViewId() calls from performAction() and
+performActionForVirtualViewId(), because they are the culprit. If an
+action like focus or scroll changes the app state, an a11y update is
+triggered, which ends up calling notifyObjectFocus() or
+notifyScrolledEvent() where the according event is then emitted and the
+a11y delegate state is updated.
+
+For the focus there is an exception, since an element cannot gain the
+active focus if is is disabled. However TalkBack should still be able to
+place its focus frame on that element and read out its content.
+
+Pick-to: 6.10 6.8
+Change-Id: I9061eec713fd5382feb7aacafdffe393968ef8f1
+Reviewed-by: Lars Schmertmann <SmallLars@t-online.de>
+Reviewed-by: Morten Johan Sørvig <morten.sorvig@qt.io>
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit 249cec4c5c6a438b8a201b14157f38a3f7a3fad2)
+---
+ .../qt/android/QtAccessibilityDelegate.java   | 23 ++++++-------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+index 70b0c9d7e904faf34da888c86b0af24fffea84aa..3f43d6cf113de459b287f8b2da5bd9c9f78167db 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+@@ -526,17 +526,6 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+             boolean handled = false;
+             //Log.i(TAG, "PERFORM ACTION: " + action + " on " + virtualViewId);
+             switch (action) {
+-                case AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS:
+-                    // Only handle the FOCUS action if it's placing focus on
+-                    // a different view that was previously focused.
+-                    if (m_focusedVirtualViewId != virtualViewId) {
+-                        m_focusedVirtualViewId = virtualViewId;
+-                        m_view.invalidate();
+-                        sendEventForVirtualViewId(virtualViewId,
+-                                AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED);
+-                        handled = true;
+-                    }
+-                    break;
+                 case AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS:
+                     if (m_focusedVirtualViewId == virtualViewId) {
+                         m_focusedVirtualViewId = INVALID_ID;
+@@ -577,17 +566,19 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+                 sendEventForVirtualViewId(virtualViewId, AccessibilityEvent.TYPE_VIEW_CLICKED);
+             break;
+         case AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS:
+-            success = QtNativeAccessibility.focusAction(virtualViewId);
++            if (m_focusedVirtualViewId != virtualViewId) {
++                success = QtNativeAccessibility.focusAction(virtualViewId);
++                if (!success) {
++                    notifyObjectFocus(virtualViewId);
++                    success = true;
++                }
++            }
+             break;
+         case AccessibilityNodeInfo.ACTION_SCROLL_FORWARD:
+             success = QtNativeAccessibility.scrollForward(virtualViewId);
+-            if (success)
+-                sendEventForVirtualViewId(virtualViewId, AccessibilityEvent.TYPE_VIEW_SCROLLED);
+             break;
+         case AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD:
+             success = QtNativeAccessibility.scrollBackward(virtualViewId);
+-            if (success)
+-                sendEventForVirtualViewId(virtualViewId, AccessibilityEvent.TYPE_VIEW_SCROLLED);
+             break;
+         }
+         return success;

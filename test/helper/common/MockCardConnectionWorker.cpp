@@ -1,28 +1,48 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockCardConnectionWorker.h"
+
+#include <QThread>
+
 
 using namespace governikus;
 
 
 MockCardConnectionWorker::MockCardConnectionWorker(Reader* pReader)
 	: CardConnectionWorker(pReader)
-	, mReader(pReader)
 	, mResponseCodes()
 	, mResponseData()
 	, mPaceCodes()
 {
+	pReader->setParent(this);
+}
+
+
+QSharedPointer<MockCardConnectionWorker> MockCardConnectionWorker::create(Reader* pReader)
+{
+	return QSharedPointer<MockCardConnectionWorker>(new MockCardConnectionWorker(pReader));
+}
+
+
+QSharedPointer<MockCardConnectionWorker> MockCardConnectionWorker::create(TestHookThread* pThread, Reader* pReader)
+{
+	if (pThread == nullptr)
+	{
+		return create(pReader);
+	}
+
+	const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(pReader), &MockCardConnectionWorker::deleteLater);
+	worker->moveToThread(pThread->getThread());
+	pThread->waitForDestruction(worker.data());
+	return worker;
 }
 
 
 MockCardConnectionWorker::~MockCardConnectionWorker()
 {
-	if (!mReader.isNull())
-	{
-		mReader->deleteLater();
-	}
+	Q_ASSERT(QThread::currentThread() == thread());
 }
 
 
@@ -79,7 +99,7 @@ ResponseApduResult MockCardConnectionWorker::transmit(const CommandApdu& pComman
 
 CardReturnCode MockCardConnectionWorker::updateRetryCounter()
 {
-	if (!mReader->getReaderInfo().hasCard())
+	if (!getReaderInfo().hasCard())
 	{
 		return CardReturnCode::CARD_NOT_FOUND;
 	}

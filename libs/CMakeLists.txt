@@ -146,15 +146,20 @@ string(REPLACE "." ";" QT_VERSION_LIST ${QT})
 list(GET QT_VERSION_LIST 0 QT_MAJOR_VERSION)
 list(GET QT_VERSION_LIST 1 QT_MINOR_VERSION)
 set(QT_SUBVERSION ${QT_MAJOR_VERSION}.${QT_MINOR_VERSION})
-list(APPEND QT_URLS https://download.qt.io/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single/${QT_FILE})
-list(APPEND QT_URLS https://ftp.fau.de/qtproject/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single/${QT_FILE})
+if(NOT DEFINED ENV{MIRROR_QT})
+	set(ENV{MIRROR_QT} https://download.qt.io)
+endif()
+list(APPEND QT_URLS $ENV{MIRROR_QT}/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single/${QT_FILE})
 
 set(OPENSSL_SOURCE https://www.openssl.org/source)
 if("${OPENSSL}" MATCHES "SNAP")
 	list(APPEND OPENSSL_URLS ${OPENSSL_SOURCE}/snapshot/${OPENSSL_FILE})
 else()
 	string(SUBSTRING ${OPENSSL} 0 5 OPENSSL_SUBVERSION)
-	list(APPEND OPENSSL_URLS https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL}/${OPENSSL_FILE})
+	if(NOT DEFINED ENV{MIRROR_GITHUB})
+		set(ENV{MIRROR_GITHUB} https://github.com)
+	endif()
+	list(APPEND OPENSSL_URLS $ENV{MIRROR_GITHUB}/openssl/openssl/releases/download/openssl-${OPENSSL}/${OPENSSL_FILE})
 	list(APPEND OPENSSL_URLS ${OPENSSL_SOURCE}/old/${OPENSSL_SUBVERSION}/${OPENSSL_FILE})
 endif()
 
@@ -351,6 +356,8 @@ endif()
 #########################################################################
 list(APPEND ENABLED_TARGETS qt)
 
+set(QT_CONFIGURE_FLAGS_HOST -release -optimize-size -shared -no-openssl -no-zstd -no-opengl)
+
 if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 	if(APPLE)
 		set(QT_CONFIGURE_FLAGS -debug-and-release) # debug-only framework builds are not supported on macOS
@@ -377,9 +384,9 @@ set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -system-proxies -openssl-linked -I 
 version_to_hex(QT_HEX "${QT}")
 
 set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -disable-deprecated-up-to ${QT_HEX})
-set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -opensource -confirm-license)
-set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -nomake examples -nomake tests -no-mtdev -no-dbus)
-set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -qt-zlib -qt-pcre -qt-harfbuzz)
+set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -opensource -confirm-license -sbom)
+set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -nomake examples -nomake tests -no-dbus)
+set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -qt-zlib -qt-pcre)
 if(NOT INTEGRATED_SDK)
 	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -qt-libpng -qt-libjpeg)
 endif()
@@ -388,51 +395,9 @@ if(CMAKE_CXX_COMPILER_LAUNCHER STREQUAL "ccache")
 	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -ccache)
 endif()
 
+######## Modules
 
-# qtbase
-list(APPEND NO_FEATURES printsupport private_tests sql xml)
-if(CONTAINER_SDK)
-	list(APPEND NO_FEATURES testlib)
-endif()
-# qtbase/src/corelib
-list(APPEND NO_FEATURES hijricalendar islamiccivilcalendar jalalicalendar)
-list(APPEND NO_FEATURES sharedmemory filesystemwatcher)
-# qtbase/src/gui
-list(APPEND NO_FEATURES imageformat_bmp imageformat_ppm imageformat_xbm)
-list(APPEND NO_FEATURES pdf textodfwriter undocommand undogroup undostack)
-# qtbase/src/network
-list(APPEND NO_FEATURES brotli dnslookup dtls localserver libresolv)
-list(APPEND NO_FEATURES schannel sctp securetransport topleveldomain)
-# qtbase/src/testlib
-list(APPEND NO_FEATURES testlib_selfcover)
-# qtconnectivity
-list(APPEND NO_FEATURES bluetooth)
-# qtdeclarative/src/quickcontrols
-list(APPEND NO_FEATURES quickcontrols2-imagine quickcontrols2-material quickcontrols2-universal)
-if(NOT DEVELOPER)
-	list(APPEND NO_FEATURES quickcontrols2-fusion)
-endif()
-if(IOS OR ANDROID)
-	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -no-widgets)
-else()
-	# qtbase/src/widgets
-	list(APPEND NO_FEATURES calendarwidget colordialog dial fontcombobox fontdialog)
-	list(APPEND NO_FEATURES lcdnumber splashscreen syntaxhighlighter undoview)
-	if(NOT MAC)
-		list(APPEND NO_FEATURES mdiarea)
-	endif()
-endif()
-# qtscxml
-list(APPEND NO_FEATURES qeventtransition scxml statemachine-qml)
-# qttools
-list(APPEND NO_FEATURES designer)
-if(CONTAINER_SDK)
-	list(APPEND NO_FEATURES androiddeployqt)
-endif()
-foreach(feature ${NO_FEATURES})
-	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -no-feature-${feature})
-endforeach()
-
+set(QT_CONFIGURE_FLAGS_HOST ${QT_CONFIGURE_FLAGS_HOST} -submodules qtbase,qtdeclarative,qttools)
 
 set(QT_MODULES qtbase,qtwebsockets,qtscxml)
 if(NOT INTEGRATED_SDK)
@@ -446,8 +411,101 @@ if(INTEGRATED_SDK)
 endif()
 set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -skip ${QT_MODULES_SKIP})
 
+######## Submodules
 
-set(QT_CONFIGURE_FLAGS_OTHER -no-journald -no-directfb -no-linuxfb)
+if(CONTAINER_SDK)
+	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-gui)
+endif()
+
+if(IOS OR ANDROID)
+	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -no-widgets)
+else()
+	set(QT_CONFIGURE_FLAGS_HOST ${QT_CONFIGURE_FLAGS_HOST} -no-widgets)
+endif()
+
+######## Features
+
+macro(DISABLE_FEATURES FLAGS)
+    foreach(feature ${ARGN})
+        list(APPEND ${FLAGS} -no-feature-${feature})
+    endforeach()
+endmacro()
+
+# qtbase
+DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED printsupport private_tests sql xml)
+if(CONTAINER_SDK)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED testlib)
+endif()
+
+# qtbase/src/corelib
+DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED hijricalendar islamiccivilcalendar jalalicalendar)
+DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED sharedmemory filesystemwatcher)
+
+# qtbase/src/gui
+if(NOT CONTAINER_SDK)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED directfb imageformat_bmp imageformat_ppm imageformat_xbm)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED linuxfb mtdev pdf textodfwriter undocommand undogroup undostack)
+	list(APPEND QT_CONFIGURE_FLAGS_SHARED -qt-harfbuzz)
+endif()
+
+# qtbase/src/network
+DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED brotli dnslookup dtls localserver libresolv)
+DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED schannel sctp securetransport topleveldomain)
+
+# qtbase/src/testlib
+if(NOT CONTAINER_SDK)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED testlib_selfcover)
+endif()
+
+# qtbase/src/widgets
+if(NOT (CONTAINER_SDK OR IOS OR ANDROID))
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS calendarwidget colordialog dial fontcombobox fontdialog)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS lcdnumber splashscreen syntaxhighlighter undoview)
+	if(NOT MAC)
+		DISABLE_FEATURES(QT_CONFIGURE_FLAGS mdiarea)
+	endif()
+endif()
+
+# qtconnectivity
+if(NOT INTEGRATED_SDK)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS bluetooth)
+endif()
+
+# qtdeclarative/src/quick
+if(IOS OR ANDROID)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quick-dialogs)
+endif()
+if(NOT CONTAINER_SDK)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quick-particles quick-path quick-pathview)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quick-sprite quick-tableview quick-treeview)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quick-vectorimage)
+endif()
+
+# qtdeclarative/src/quickcontrols
+if(NOT CONTAINER_SDK)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quickcontrols2-fluentwinui3 quickcontrols2-imagine)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quickcontrols2-material quickcontrols2-universal)
+	if(NOT DEVELOPER)
+		DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quickcontrols2-fusion)
+	endif()
+endif()
+
+# qtscxml
+DISABLE_FEATURES(QT_CONFIGURE_FLAGS qeventtransition scxml statemachine-qml)
+
+# qttools
+if(CONTAINER_SDK)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED androiddeployqt)
+else()
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED designer qdoc)
+endif()
+
+# qtwebsockets
+DISABLE_FEATURES(QT_CONFIGURE_FLAGS websockets-qml)
+
+########
+
+set(QT_CONFIGURE_FLAGS_OTHER -no-journald)
 set(QT_CONFIGURE configure)
 
 if(APPLE)
@@ -457,7 +515,7 @@ if(IOS)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -xplatform macx-ios-clang)
 
 	if(CMAKE_OSX_SYSROOT MATCHES "iphonesimulator")
-		set(QT_HOST_CMAKE_FLAGS ${QT_HOST_CMAKE_FLAGS} -DCMAKE_OSX_SYSROOT=macosx)
+		set(ADDITIONAL_QT_DEFINES_HOST ${ADDITIONAL_QT_DEFINES_HOST} -DCMAKE_OSX_SYSROOT=macosx)
 		if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64" OR CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
 			set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES})
 		endif()
@@ -476,7 +534,7 @@ elseif(WIN32 OR CYGWIN)
 		set(QT_ENV OPENSSL_LIBS=-lcrypto\ -lssl)
 	endif()
 
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-icu -no-sql-odbc)
+	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-icu)
 
 	if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows" OR CYGWIN)
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -opengl dynamic -platform ${QT_PLATFORM})
@@ -525,9 +583,6 @@ endif()
 if(QT_ENV)
 	set(QT_ENV ${CMAKE_COMMAND} -E env ${QT_ENV})
 endif()
-if(CONTAINER_SDK)
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-gui -no-accessibility -no-freetype)
-endif()
 
 if(IOS OR ANDROID)
 	option(BUILD_HOST_QT "Build host Qt" ON)
@@ -549,10 +604,9 @@ if (BUILD_HOST_QT AND (IOS OR ANDROID))
 	set(QT_HOST_DEPEND qt-host)
 	set(QT_HOST_PATH ${DESTINATION_DIR}/qt-host)
 
-	set(QT_HOST_CONFIGURE_FLAGS -prefix ${QT_HOST_PATH} -release -optimize-size -shared -no-widgets -no-openssl -no-zstd -no-opengl)
-	set(QT_HOST_CONFIGURE_FLAGS ${QT_HOST_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SHARED})
-	set(QT_HOST_CMAKE_FLAGS ${QT_HOST_CMAKE_FLAGS} -DCMAKE_PREFIX_PATH=${QT_HOST_PATH})
-	set(QT_HOST_CONFIGURE_FLAGS ${QT_HOST_CONFIGURE_FLAGS} -submodules qtbase,qtdeclarative,qttools)
+	set(QT_CONFIGURE_FLAGS_HOST ${QT_CONFIGURE_FLAGS_HOST} -prefix ${QT_HOST_PATH})
+	set(QT_CONFIGURE_FLAGS_HOST ${QT_CONFIGURE_FLAGS_HOST} ${QT_CONFIGURE_FLAGS_SHARED})
+	set(ADDITIONAL_QT_DEFINES_HOST ${ADDITIONAL_QT_DEFINES_HOST} -DCMAKE_PREFIX_PATH=${QT_HOST_PATH})
 
 	ExternalProject_Add(qt-host
 		URL ${QT_URLS}
@@ -560,7 +614,7 @@ if (BUILD_HOST_QT AND (IOS OR ANDROID))
 		DOWNLOAD_DIR ${PACKAGES_DIR}
 
 		PATCH_COMMAND ${QT_PATCHES_CMD}
-		CONFIGURE_COMMAND <SOURCE_DIR>/${QT_CONFIGURE} ${QT_HOST_CONFIGURE_FLAGS} -- ${QT_HOST_CMAKE_FLAGS}
+		CONFIGURE_COMMAND <SOURCE_DIR>/${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS_HOST} -- ${ADDITIONAL_QT_DEFINES_HOST}
 		BUILD_COMMAND ${CMAKE_COMMAND} --build . ${MAKE_JOBS}
 		INSTALL_COMMAND ${CMAKE_COMMAND} --install .
 	)
@@ -570,6 +624,10 @@ if(QT_HOST_PATH)
 	set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DQT_HOST_PATH=${QT_HOST_PATH})
 endif()
 
+set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SHARED})
+set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DOPENSSL_ROOT_DIR=${DESTINATION_DIR})
+set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DCMAKE_PREFIX_PATH=${DESTINATION_DIR})
+
 ExternalProject_Add(qt
 	DEPENDS openssl ${QT_HOST_DEPEND}
 	URL ${QT_URLS}
@@ -577,7 +635,7 @@ ExternalProject_Add(qt
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
 	PATCH_COMMAND ${QT_PATCHES_CMD}
-	CONFIGURE_COMMAND ${QT_ENV} <SOURCE_DIR>/${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SHARED} -- -DOPENSSL_ROOT_DIR=${DESTINATION_DIR} -DCMAKE_PREFIX_PATH=${DESTINATION_DIR} ${ADDITIONAL_QT_DEFINES}
+	CONFIGURE_COMMAND ${QT_ENV} <SOURCE_DIR>/${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} -- ${ADDITIONAL_QT_DEFINES}
 	BUILD_COMMAND ${CMAKE_COMMAND} --build . ${MAKE_JOBS}
 	INSTALL_COMMAND ${CMAKE_COMMAND} --install .
 )
@@ -615,14 +673,25 @@ if(DVCS_FOUND)
 endif()
 
 list(APPEND TARBALL_NAME Toolchain ${CMAKE_SYSTEM_NAME} ${CMAKE_HOST_SYSTEM_PROCESSOR} ${CMAKE_CXX_COMPILER_ID} ${CMAKE_BUILD_TYPE})
-if(ANDROID)
+
+if(WIN32)
+	if(SIGNTOOL_CMD)
+		configure_file(${PROJECT_CMAKE_DIR}/SignFiles.cmake.in ${CMAKE_BINARY_DIR}/SignFiles.cmake @ONLY)
+		list(APPEND GENERATE_LIBS_ID_SEED "${PROJECT_CMAKE_DIR}/SignFiles.cmake.in")
+		set(SIGN_COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_BINARY_DIR}/SignFiles.cmake")
+	endif()
+elseif(MAC)
+	set(APPLE_SDK macosx)
+elseif(ANDROID)
 	list(APPEND TARBALL_NAME ${CMAKE_ANDROID_ARCH_ABI})
 elseif(IOS)
 	if(CMAKE_OSX_SYSROOT MATCHES "iphonesimulator")
-		list(APPEND TARBALL_NAME iphonesimulator)
+		set(APPLE_SDK iphonesimulator)
 	else()
-		list(APPEND TARBALL_NAME iphoneos)
+		set(APPLE_SDK iphoneos)
 	endif()
+	list(APPEND TARBALL_NAME "${APPLE_SDK}")
+
 	if(CMAKE_OSX_ARCHITECTURES)
 		list(APPEND TARBALL_NAME ${CMAKE_OSX_ARCHITECTURES})
 	endif()
@@ -646,12 +715,14 @@ elseif(LINUX)
 	endif()
 endif()
 
-if(WIN32)
-	if(SIGNTOOL_CMD)
-		configure_file(${PROJECT_CMAKE_DIR}/SignFiles.cmake.in ${CMAKE_BINARY_DIR}/SignFiles.cmake @ONLY)
-		list(APPEND GENERATE_LIBS_ID_SEED "${PROJECT_CMAKE_DIR}/SignFiles.cmake.in")
-		set(SIGN_COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_BINARY_DIR}/SignFiles.cmake")
-	endif()
+if(APPLE_SDK)
+	execute_process(
+		COMMAND xcrun --sdk ${APPLE_SDK} --show-sdk-path
+		OUTPUT_VARIABLE APPLE_SDK_PATH
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
+	message(STATUS "APPLE_SDK_PATH: ${APPLE_SDK_PATH}")
+	list(APPEND GENERATE_LIBS_ID_SEED "${APPLE_SDK_PATH}")
 endif()
 
 add_custom_target(compress.pre

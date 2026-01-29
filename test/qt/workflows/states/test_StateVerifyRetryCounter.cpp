@@ -1,19 +1,23 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateVerifyRetryCounter.h"
 
+#include "ReaderManager.h"
 #include "states/StateBuilder.h"
 
 #include "MockCardConnectionWorker.h"
+#include "TestHookThread.h"
 #include "TestWorkflowContext.h"
 
 #include <QByteArrayList>
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_StateVerifyRetryCounter
 	: public QObject
@@ -21,36 +25,41 @@ class test_StateVerifyRetryCounter
 	Q_OBJECT
 	QSharedPointer<StateVerifyRetryCounter> mState;
 	QSharedPointer<WorkflowContext> mContext;
-	QThread mWorkerThread;
+	QScopedPointer<TestHookThread> mWorkerThread;
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<ReaderManager>(); // just init in MainThread because of QObject
+		}
+
+
 		void init()
 		{
+			mWorkerThread.reset(new TestHookThread());
 			mContext.reset(new TestWorkflowContext());
 			mState.reset(StateBuilder::createState<StateVerifyRetryCounter>(mContext));
 			mState->onEntry(nullptr);
-			mWorkerThread.start();
 		}
 
 
 		void cleanup()
 		{
-			mWorkerThread.quit();
-			mWorkerThread.wait();
 			mState.clear();
 			mContext.clear();
+			mWorkerThread.reset();
 		}
 
 
 		void test_Run()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&mWorkerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3);
 			const ReaderInfo readerInfo(QString(), ReaderManagerPluginType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
-			mContext->setCardConnection(connection);
+
 			mContext->setExpectedRetryCounter(3);
 			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
 
@@ -78,13 +87,14 @@ class test_StateVerifyRetryCounter
 			mContext->setPin(password);
 			mContext->setCan(password);
 			mContext->setPuk(password);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&mWorkerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 2);
 			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPluginType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
-			mContext->setCardConnection(connection);
+
 			mContext->setReaderName("test reader"_L1);
 			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
 
@@ -102,13 +112,13 @@ class test_StateVerifyRetryCounter
 
 		void test_Run_ExpectedReader()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&mWorkerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3);
 			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPluginType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
-			mContext->setCardConnection(connection);
+
 			mContext->rememberReader();
 			mContext->setReaderName("test reader"_L1);
 			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
@@ -124,13 +134,13 @@ class test_StateVerifyRetryCounter
 
 		void test_Run_NotExpectedReader()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&mWorkerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 2);
 			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPluginType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
-			mContext->setCardConnection(connection);
+
 			mContext->rememberReader();
 			mContext->setReaderName("other reader"_L1);
 			QSignalSpy spyChanged(mState.data(), &StateVerifyRetryCounter::fireReaderOrCardChanged);
@@ -146,13 +156,13 @@ class test_StateVerifyRetryCounter
 
 		void test_Run_ActualNotEqualExpectedRetryCounter()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&mWorkerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 2);
 			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPluginType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
-			mContext->setCardConnection(connection);
+
 			mContext->rememberReader();
 			mContext->setReaderName("test reader"_L1);
 			mContext->setExpectedRetryCounter(1);

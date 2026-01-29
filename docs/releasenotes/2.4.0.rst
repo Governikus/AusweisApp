@@ -12,6 +12,7 @@ Anwender
 
 - Beschleunigung der Verbindung mit einem Smartphone als Kartenleser.
 
+
 Entwickler
 """"""""""
 - Aktualisierung von Qt auf die Version 6.9.2.

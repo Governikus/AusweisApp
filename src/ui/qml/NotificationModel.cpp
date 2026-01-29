@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NotificationModel.h"
@@ -31,7 +31,7 @@ void NotificationModel::onNewLogMsg(const QString& pMsg, const QString& pCategor
 
 		const auto size = static_cast<int>(mNotificationEntries.size());
 		beginInsertRows(QModelIndex(), size, size);
-		//: LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString
+		//: ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString
 		const auto& time = QTime::currentTime().toString(tr("hh:mm:ss"));
 		mNotificationEntries.append({time, pMsg});
 		endInsertRows();

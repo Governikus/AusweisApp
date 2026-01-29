@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEnterPacePassword.h"
@@ -37,7 +37,7 @@ void StateEnterPacePassword::onEntry(QEvent* pEvent)
 
 		default:
 			const auto* volatileSettings = Env::getSingleton<VolatileSettings>();
-			//: INFO IOS The current session was interrupted because of a wrong password.
+			//: IOS The current session was interrupted because of a wrong password.
 			stopNfcScanIfNecessary(volatileSettings->isUsedAsSDK() ? volatileSettings->getMessages().getSessionFailed() : tr("Access denied."));
 	}
 

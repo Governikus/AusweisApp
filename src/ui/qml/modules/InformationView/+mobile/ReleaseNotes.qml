@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -14,7 +14,7 @@ SectionPage {
 
 	contentIsScrolled: !releaseNotes.atYBeginning
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Release notes")
 
 	navigationAction: NavigationAction {
@@ -52,7 +52,7 @@ SectionPage {
 			Layout.alignment: Qt.AlignHCenter
 			Layout.rightMargin: Style.dimens.pane_padding
 			icon.source: "qrc:///images/material_refresh.svg"
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Retry")
 			tintIcon: true
 			visible: releaseInformationModel.allowRetry

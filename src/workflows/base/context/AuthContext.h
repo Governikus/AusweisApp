@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -80,8 +80,7 @@ class AuthContext
 		QSharedPointer<AccessRightManager> mAccessRightManager;
 		QMultiMap<QUrl, QSslCertificate> mCertificates;
 		QSharedPointer<const CVCertificate> mDvCvc;
-		CVCertificateChainBuilder mCvcChainBuilderProd;
-		CVCertificateChainBuilder mCvcChainBuilderTest;
+		CVCertificateChainBuilder mCvcChainBuilder;
 		QByteArray mSslSession;
 		QByteArray mSslSessionPsk;
 		BrowserHandler mBrowserHandler;

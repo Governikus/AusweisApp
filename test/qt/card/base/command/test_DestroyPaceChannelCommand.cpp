@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/DestroyPaceChannelCommand.h"
@@ -21,13 +21,13 @@ class test_DestroyPaceChannelCommand
 	private Q_SLOTS:
 		void test_InternalExecute()
 		{
-			QSharedPointer<MockCardConnectionWorker> worker1(new MockCardConnectionWorker());
+			const auto& worker1 = MockCardConnectionWorker::create();
 			worker1->addPaceCode(CardReturnCode::OK);
 			DestroyPaceChannelCommand command1(worker1, QStringLiteral("slotname"));
 			command1.internalExecute();
 			QCOMPARE(command1.getReturnCode(), CardReturnCode::OK);
 
-			QSharedPointer<MockCardConnectionWorker> worker2(new MockCardConnectionWorker());
+			const auto& worker2 = MockCardConnectionWorker::create();
 			worker2->addPaceCode(CardReturnCode::UNKNOWN);
 			DestroyPaceChannelCommand command2(worker2, QStringLiteral("slotname"));
 			command2.internalExecute();

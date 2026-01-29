@@ -124,8 +124,14 @@ elseif(AAR)
 	file(GLOB FILES "${T_DIST_DIR}/*.aar")
 endif()
 
+find_program(XSLTPROC xsltproc REQUIRED)
+file(GLOB LINT_RESULT "${T_BUILD_DIR}/src/android-build/build/reports/lint-results*.xml")
+step(${XSLTPROC} ${CMAKE_SOURCE_DIR}/ci/lint-to-junit.xsl ${LINT_RESULT} OUTPUT_FILE ${T_BUILD_DIR}/lint-results-junit.xml)
+
 hashsum(${FILES})
 
 if(NOT RELEASE)
 	step(${T_CTEST})
+
+	step(grep -Fq failures=\"0\" ${T_BUILD_DIR}/lint-results-junit.xml)
 endif()

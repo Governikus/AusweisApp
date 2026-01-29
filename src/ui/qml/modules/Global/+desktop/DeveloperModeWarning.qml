@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -15,7 +15,7 @@ Item {
 		anchors.fill: parent
 	}
 	Rectangle {
-		color: Style.color.paneSublevel.background.basic
+		color: Style.color.paneSublevel.background.basic_unchecked
 		height: childrenRect.height
 		opacity: 0.7
 		radius: Style.dimens.pane_radius
@@ -33,11 +33,11 @@ Item {
 			GText {
 				anchors.verticalCenter: parent.verticalCenter
 
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Developer Mode: Enabled!")
 			}
 			GButton {
-				//: LABEL DESKTOP Global button to disable developer mode.
+				//: DESKTOP Global button to disable developer mode.
 				text: qsTr("Disable")
 
 				onClicked: SettingsModel.developerMode = false

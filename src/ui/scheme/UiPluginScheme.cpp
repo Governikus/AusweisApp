@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginScheme.h"
@@ -134,6 +134,17 @@ void UiPluginScheme::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& p
 	if (const auto& context = pRequest->getContext().objectCast<AuthContext>(); context)
 	{
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	#ifdef Q_OS_ANDROID
+		QNativeInterface::QAndroidApplication::runOnAndroidMainThread([](){
+					QJniObject context = QNativeInterface::QAndroidApplication::context();
+					context.callMethod<void>("resetStoredIntent", "()V");
+					QJniEnvironment env;
+					if (env.checkAndClearExceptions())
+					{
+						qCCritical(scheme) << "Exception calling java native function.";
+					}
+				});
+	#endif
 		// Only skip redirects on mobile platforms because it induces a forced focus change
 		if (context->isSkipMobileRedirect())
 		{

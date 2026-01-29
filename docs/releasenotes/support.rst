@@ -58,13 +58,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 141
+- Chrome 144
 
-- Firefox 144
+- Firefox 147
 
 - Safari 26 (macOS)
 
-- Edge 141
+- Edge 144
 
 
 
@@ -130,13 +130,13 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 141 (iOS/Android)
+- Chrome 144 (iOS/Android)
 
-- Firefox 144 (iOS/Android)
+- Firefox 147 (iOS/Android)
 
-- Edge 141 (iOS/Android)
+- Edge 144 (iOS/Android)
 
-- Samsung Internet 28 (Android)
+- Samsung Internet 29 (Android)
 
 - Safari 26 (iOS)
 

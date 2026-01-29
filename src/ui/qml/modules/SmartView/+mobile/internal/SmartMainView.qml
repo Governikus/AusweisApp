@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -32,10 +32,10 @@ ColumnLayout {
 		text: {
 			switch (root.smartState) {
 			case SmartModel.State.UPDATING_STATUS:
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				return qsTr("Updating Smart-eID status...");
 			case SmartModel.State.READY:
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				return qsTr("Smart-eID ready for use");
 			default:
 				return "";
@@ -51,10 +51,10 @@ ColumnLayout {
 		text: {
 			switch (root.smartState) {
 			case SmartModel.State.UPDATING_STATUS:
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				return qsTr("Please wait a moment.");
 			case SmartModel.State.READY:
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				return qsTr("Your Smart-eID is set up and ready for use. You can now perform online identifications without your ID card if supported by the provider.");
 			default:
 				return "";
@@ -78,13 +78,11 @@ ColumnLayout {
 		visible: root.showCheck
 
 		GText {
-
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("With the Smart-eID you may also use the online identification function without the ID card.")
 		}
 		GText {
-
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Check here if your device is suitable to set up a Smart-eID.")
 		}
 	}
@@ -95,7 +93,7 @@ ColumnLayout {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.topMargin: Style.dimens.pane_spacing
 		icon.source: "qrc:///images/device_button.svg"
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Start check")
 		tintIcon: true
 		visible: root.showCheck

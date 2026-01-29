@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -273,7 +273,7 @@ GlobalStatus::Code WorkflowModel::getStatusCode() const
 
 QString WorkflowModel::getStatusCodeDisplayString() const
 {
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	return tr("Error code: %1").arg(getEnumName(getStatusCode()));
 }
 
@@ -333,16 +333,22 @@ QString WorkflowModel::getStatusHintText() const
 	switch (getStatusCode())
 	{
 		case GlobalStatus::Code::Card_Puk_Blocked:
-			return Env::getSingleton<PinResetInformationModel>()->getRequestNewPinHint();
+		{
+			auto pinResetModel = Env::getSingleton<PinResetInformationModel>();
+			return pinResetModel->hasPinResetService() ? pinResetModel->getResetPinWithPRSHint() : pinResetModel->getResetPinAtAuthorityHint();
+		}
 
 		case GlobalStatus::Code::Card_Pin_Deactivated:
-			return Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionHint();
+		{
+			auto pinResetModel = Env::getSingleton<PinResetInformationModel>();
+			return pinResetModel->hasPinResetService() ? pinResetModel->getActivateOnlineFunctionForPRSHint() : pinResetModel->getActivateOnlineFunctionAtAuthorityHint();
+		}
 
 		case GlobalStatus::Code::Card_ValidityVerificationFailed:
 			return tr("Contact your local citizens' office (B\u00FCrgeramt) to apply for a new ID card or to unblock the ID card.");
 
 		case GlobalStatus::Code::Card_Smart_Invalid:
-			//: LABEL ANDROID IOS The hint text that is shown right above the redirect button that appears when a user tried to usa an unusable Smart-eID
+			//: MOBILE The hint text that is shown right above the redirect button that appears when a user tried to usa an unusable Smart-eID
 			return tr("Renew your Smart-eID and set a new PIN in the Smart-eID menu.");
 
 		default:
@@ -357,8 +363,28 @@ QString WorkflowModel::getStatusHintTitle() const
 	{
 		case GlobalStatus::Code::Card_Puk_Blocked:
 		case GlobalStatus::Code::Card_Pin_Deactivated:
-			//: LABEL ALL_PLATFORMS Hint title to assist the user on how to set a new PIN
-			return tr("Set a new PIN");
+		{
+			auto pinResetModel = Env::getSingleton<PinResetInformationModel>();
+			return pinResetModel->hasPinResetService() ? pinResetModel->getResetPinWithPRSHintTitle() : pinResetModel->getResetPinAtAuthorityHintTitle();
+		}
+
+		default:
+			return QString();
+	}
+}
+
+
+QString WorkflowModel::getStatusHintBoxesTitle() const
+{
+	switch (getStatusCode())
+	{
+		case GlobalStatus::Code::Card_Puk_Blocked:
+			//: ALL_PLATFORMS Hint title to assist the user on how to set a new PIN
+			return tr("My PUK is used up. How do I set a new PIN?");
+
+		case GlobalStatus::Code::Card_Pin_Deactivated:
+			//: ALL_PLATFORMS Hint title to assist the user on how to set a new PIN
+			return tr("How do I activate the eID function?");
 
 		default:
 			return QString();
@@ -371,13 +397,16 @@ QString WorkflowModel::getStatusHintActionText() const
 	switch (getStatusCode())
 	{
 		case GlobalStatus::Code::Card_Puk_Blocked:
-			return Env::getSingleton<PinResetInformationModel>()->getPinResetActionText();
+		{
+			auto pinResetModel = Env::getSingleton<PinResetInformationModel>();
+			return pinResetModel->hasPinResetService() ? pinResetModel->getResetPinWithPRSActionText() : pinResetModel->getResetPinAtAuthorityActionText();
+		}
 
 		case GlobalStatus::Code::Card_Pin_Deactivated:
 			return Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionActionText();
 
 		case GlobalStatus::Code::Card_Smart_Invalid:
-			//: LABEL ANDROID IOS The text on the redirect button that appears when the user tried to use an unusable Smart-eID
+			//: MOBILE The text on the redirect button that appears when the user tried to use an unusable Smart-eID
 			return tr("Go to Smart-eID menu");
 
 		default:
@@ -554,17 +583,17 @@ QString WorkflowModel::eidTypeMismatchError() const
 		{
 			if (mContext->getAcceptedEidTypes().contains(AcceptedEidType::CARD_CERTIFIED))
 			{
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return tr("The used Smart-eID is not accepted by the server. Please restart the remote service on your connected smartphone and try again with a physical ID card.");
 			}
 			else
 			{
-				//: INFO ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				return tr("The used Smart-eID is not accepted by the server. Please stop the remote service and use another Smart-eID or contact the service provider.");
 			}
 		}
 
-		//: INFO ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("The used ID card is not accepted by the server. Please remove the ID card from your device or card reader and use a Smart-eID or contact the service provider.");
 	}
 

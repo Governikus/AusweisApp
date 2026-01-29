@@ -1,0 +1,68 @@
+From e80379e8e4580eab75088b19b8b3b6e695b467d1 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Tue, 9 Sep 2025 08:13:29 +0200
+Subject: Introduce signal ScrollingPositionChanged to signal ongoing scrolling
+
+Task-number: QTBUG-139833
+Change-Id: I3b16f7c14cf49dc7b06f2d6b225d246829c0b503
+---
+ src/gui/accessible/qaccessible_base.h         | 31 ++++++++++---------
+ .../android/qandroidplatformaccessibility.cpp |  3 +-
+ 2 files changed, 18 insertions(+), 16 deletions(-)
+
+diff --git x/qtbase/src/gui/accessible/qaccessible_base.h y/qtbase/src/gui/accessible/qaccessible_base.h
+index 96445de2b88a83a498ac5996358e7804744b2980..09276aaaa16aae0286a15e3d5df97b5ad9dbe8b7 100644
+--- x/qtbase/src/gui/accessible/qaccessible_base.h
++++ y/qtbase/src/gui/accessible/qaccessible_base.h
+@@ -28,21 +28,22 @@ class Q_GUI_EXPORT QAccessible
+ public:
+ 
+     enum Event {
+-        SoundPlayed          = 0x0001,
+-        Alert                = 0x0002,
+-        ForegroundChanged    = 0x0003,
+-        MenuStart            = 0x0004,
+-        MenuEnd              = 0x0005,
+-        PopupMenuStart       = 0x0006,
+-        PopupMenuEnd         = 0x0007,
+-        ContextHelpStart     = 0x000C,
+-        ContextHelpEnd       = 0x000D,
+-        DragDropStart        = 0x000E,
+-        DragDropEnd          = 0x000F,
+-        DialogStart          = 0x0010,
+-        DialogEnd            = 0x0011,
+-        ScrollingStart       = 0x0012,
+-        ScrollingEnd         = 0x0013,
++        SoundPlayed              = 0x0001,
++        Alert                    = 0x0002,
++        ForegroundChanged        = 0x0003,
++        MenuStart                = 0x0004,
++        MenuEnd                  = 0x0005,
++        PopupMenuStart           = 0x0006,
++        PopupMenuEnd             = 0x0007,
++        ContextHelpStart         = 0x000C,
++        ContextHelpEnd           = 0x000D,
++        DragDropStart            = 0x000E,
++        DragDropEnd              = 0x000F,
++        DialogStart              = 0x0010,
++        DialogEnd                = 0x0011,
++        ScrollingStart           = 0x0012,
++        ScrollingEnd             = 0x0013,
++        ScrollingPositionChanged = 0x0014,
+ 
+         MenuCommand          = 0x0018,
+ 
+diff --git x/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp y/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
+index ac8b40b9a20d089473a26f347190aac0341b23c3..673b031158dc79257ae5acfd0c3f9a299453efed 100644
+--- x/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
+@@ -34,7 +34,8 @@ void QAndroidPlatformAccessibility::notifyAccessibilityUpdate(QAccessibleEvent *
+         QtAndroidAccessibility::notifyObjectFocus(event->uniqueId());
+     } else if (event->type() == QAccessible::ValueChanged) {
+         QtAndroidAccessibility::notifyValueChanged(event->uniqueId());
+-    } else if (event->type() == QAccessible::ScrollingEnd) {
++    } else if (event->type() == QAccessible::ScrollingEnd
++               || event->type() == QAccessible::ScrollingPositionChanged) {
+         QtAndroidAccessibility::notifyScrolledEvent(event->uniqueId());
+     } else if (event->type() == QAccessible::NameChanged
+                || event->type() == QAccessible::DescriptionChanged) {

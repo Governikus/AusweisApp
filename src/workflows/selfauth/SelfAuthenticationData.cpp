@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthenticationData.h"
@@ -89,7 +89,7 @@ QString SelfAuthenticationData::SelfData::getValue(SelfAuthData pData) const
 			return QStringLiteral("D");
 		}
 
-		//: INFO ALL_PLATFORMS The requested data is not stored on this chip's generation.
+		//: ALL_PLATFORMS The requested data is not stored on this chip's generation.
 		return tr("This data has not been stored in this chip generation.");
 	}
 
@@ -226,17 +226,17 @@ void SelfAuthenticationData::SelfData::addAddress(OrderedSelfData& pSelfData) co
 {
 	if (!getValue(SelfAuthData::PlaceOfResidenceNoPlaceInfo).isNull())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		add(pSelfData, tr("Address"), getValue(SelfAuthData::PlaceOfResidenceNoPlaceInfo));
 	}
 	if (!getValue(SelfAuthData::PlaceOfResidenceStreet).isNull())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		add(pSelfData, getValue(SelfAuthData::PlaceOfResidenceNoPlaceInfo).isNull() ? tr("Address") : QString(), getValue(SelfAuthData::PlaceOfResidenceStreet));
 	}
 	if (!getValue(SelfAuthData::PlaceOfResidenceZipCode).isNull() || !getValue(SelfAuthData::PlaceOfResidenceCity).isNull())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		add(pSelfData, getValue(SelfAuthData::PlaceOfResidenceStreet).isNull() ? tr("Address") : QString(), getValue(SelfAuthData::PlaceOfResidenceZipCode) + ' '_L1 + getValue(SelfAuthData::PlaceOfResidenceCity));
 	}
 	if (!getValue(SelfAuthData::PlaceOfResidenceCountry).isNull())
@@ -249,13 +249,13 @@ void SelfAuthenticationData::SelfData::addAddress(OrderedSelfData& pSelfData) co
 QString SelfAuthenticationData::SelfData::formatDate(const QString& pDate)
 {
 	static const QList formattingPattern({
-	            //: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString
+	            //: ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString
 				std::make_pair(QStringLiteral("yyyy-MM-dd+hh:mm"), QLatin1String(QT_TR_NOOP("dd.MM.yyyy"))),
-	            //: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day
+	            //: ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day
 				std::make_pair(QStringLiteral("yyyy-MM"), QLatin1String(QT_TR_NOOP("xx.MM.yyyy"))),
-	            //: LABEL ALL_PLATFORMS Additional date format with unknown day
+	            //: ALL_PLATFORMS Additional date format with unknown day
 				std::make_pair(QStringLiteral("yyyyMM"), QLatin1String(QT_TR_NOOP("xx.MM.yyyy"))),
-	            //: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day and month
+	            //: ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day and month
 				std::make_pair(QStringLiteral("yyyy"), QLatin1String(QT_TR_NOOP("xx.xx.yyyy"))),
 			});
 
@@ -282,26 +282,26 @@ SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::SelfData::getOrd
 	}
 
 	//fill layout with new data, see 18 Personalausweisgesetz (PAuswG)
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Family name"), getValue(SelfAuthData::FamilyNames));
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Birth name"), getValue(SelfAuthData::BirthName));
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Given name(s)"), getValue(SelfAuthData::GivenNames));
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Doctoral degree"), getValue(SelfAuthData::AcademicTitle));
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Date of birth"), formatDate(getValue(SelfAuthData::DateOfBirth)));
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Place of birth"), getValue(SelfAuthData::PlaceOfBirth));
 	addAddress(orderedSelfData);
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Document type"), getValue(SelfAuthData::DocumentType));
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Nationality"), getValue(SelfAuthData::Nationality));
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Religious / artistic name"), getValue(SelfAuthData::ArtisticName));
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Issuing country"), getValue(SelfAuthData::IssuingState));
 
 	const auto& documentType = getValue(SelfAuthData::DocumentType);
@@ -314,11 +314,11 @@ SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::SelfData::getOrd
 				documentType == QLatin1String("AF") ||
 				documentType == QLatin1String("TA")))
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		add(orderedSelfData, tr("Residence permit I"), getValue(SelfAuthData::ResidencePermitI));
 	}
 
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	add(orderedSelfData, tr("Valid until"), formatDate(getValue(SelfAuthData::DateOfExpiry)));
 
 	return orderedSelfData;

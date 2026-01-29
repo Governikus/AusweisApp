@@ -1,16 +1,19 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateTransmit.h"
 
 #include "MockCardConnectionWorker.h"
+#include "TestHookThread.h"
 
 #include <QByteArrayList>
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class MockTransmitCommand
 	: public TransmitCommand
@@ -48,15 +51,12 @@ class test_StateTransmit
 	private Q_SLOTS:
 		void test_Run()
 		{
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread workerThread;
 
 			{
-				const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-				worker->moveToThread(&workerThread);
-				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+				auto worker = MockCardConnectionWorker::create(&workerThread);
 				const QSharedPointer<AuthContext> context(new AuthContext());
-				context->setCardConnection(connection);
+				context->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 				StateTransmit stateTransmit(context);
 
 				const QString slotHandle("slot"_L1);
@@ -72,12 +72,14 @@ class test_StateTransmit
 				context->setTransmit(transmit);
 				context->setTransmitResponse(response);
 
+				QSignalSpy spyAbort(&stateTransmit, &StateTransmit::fireAbort);
+				QTest::ignoreMessage(QtWarningMsg, "Transmit unsuccessful. Return code: Unknown_Error | \"An unexpected error has occurred during processing.\"");
 				stateTransmit.run();
 				QCOMPARE(stateTransmit.mConnections.size(), 1);
-			}
+				QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
 
-			workerThread.quit();
-			workerThread.wait();
+				context->resetCardConnection();
+			}
 		}
 
 
@@ -87,7 +89,7 @@ class test_StateTransmit
 			const QSharedPointer<TransmitResponse> response(new TransmitResponse());
 			context->setTransmitResponse(response);
 			StateTransmit stateTransmit(context);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			QList<InputAPDUInfo> vector(5);
 			const InputAPDUInfo info(QByteArray("info"));
 			vector.insert(0, info);

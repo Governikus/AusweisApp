@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -26,7 +26,7 @@ ColumnLayout {
 
 		GText {
 			font.weight: Style.font.bold
-			//: LABEL DESKTOP Information about the available, new version number.
+			//: DESKTOP Information about the available, new version number.
 			text: qsTr("New version")
 		}
 		GText {
@@ -35,7 +35,7 @@ ColumnLayout {
 		}
 		GText {
 			font.weight: Style.font.bold
-			//: LABEL DESKTOP Date when the available update was released.
+			//: DESKTOP Date when the available update was released.
 			text: qsTr("Release date")
 		}
 		GText {
@@ -43,7 +43,7 @@ ColumnLayout {
 		}
 		GText {
 			font.weight: Style.font.bold
-			//: LABEL DESKTOP Download size of the available update in megabyte.
+			//: DESKTOP Download size of the available update in megabyte.
 			text: qsTr("Download size")
 		}
 		GText {
@@ -52,7 +52,7 @@ ColumnLayout {
 		GText {
 			font.weight: Style.font.bold
 
-			//: LABEL DESKTOP Plaintext link to the update download.
+			//: DESKTOP Plaintext link to the update download.
 			text: qsTr("Download link")
 			visible: root.downloadUrl !== ""
 		}
@@ -62,7 +62,7 @@ ColumnLayout {
 		}
 		GText {
 			font.weight: Style.font.bold
-			//: LABEL DESKTOP Link to download checksum to verify the downloaded update file.
+			//: DESKTOP Link to download checksum to verify the downloaded update file.
 			text: qsTr("Checksum link")
 			visible: root.checksumUrl !== ""
 		}

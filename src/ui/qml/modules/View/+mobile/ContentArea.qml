@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -25,7 +25,7 @@ Item {
 	property int activeModule
 	readonly property var currentSectionPage: if (visibleItem)
 		visibleItem.currentItem
-	readonly property var visibleItem: visibleChildren[0]
+	readonly property var visibleItem: visibleChildren.filter(item => item instanceof TabBarView)[0]
 
 	TabBarView {
 		id: authView
@@ -49,6 +49,7 @@ Item {
 		id: mainView
 
 		anchors.fill: parent
+		clip: true
 		visible: root.activeModule === UiModule.DEFAULT
 
 		initialItem: MainView {
@@ -160,7 +161,7 @@ Item {
 		id: changeTransportPinController
 
 		ChangePinController {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			title: qsTr("Change PIN")
 
 			Component.onCompleted: ChangePinModel.startWorkflow(true, false)

@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "IfdServer.h"
 
+#include "MockDataChannel.h"
+
 #include <QTest>
+
 
 namespace governikus
 {
@@ -22,6 +25,8 @@ class MockIfdServer
 		bool mPairing;
 		bool mIsLocal;
 		QSharedPointer<ServerMessageHandler> mServerMessageHandler;
+
+		QSharedPointer<MockDataChannel> createDataChannel();
 
 	public:
 		MockIfdServer(bool pIsLocal = false);
@@ -43,7 +48,8 @@ class MockIfdServer
 			return mIsLocal;
 		}
 
-
+	Q_SIGNALS:
+		void fireDataChannelDestroyed();
 };
 
 } // namespace governikus

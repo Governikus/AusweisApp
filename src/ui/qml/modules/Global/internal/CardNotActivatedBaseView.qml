@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -16,10 +16,10 @@ ResultView {
 	id: root
 
 	property bool continueButtonVisible: false
-	//: LABEL ALL_PLATFORMS
-	readonly property string hasCodeSubHeaderText: qsTr("Activate ID card with PIN reset letter")
-	//: LABEL ALL_PLATFORMS
-	readonly property string hasNoCodeSubHeaderText: qsTr("Request eID function activation")
+	//: ALL_PLATFORMS
+	readonly property string hasCodeSubHeaderText: qsTr("Activate ID card with PIN Reset Letter")
+	//: ALL_PLATFORMS
+	readonly property string hasNoCodeSubHeaderText: qsTr("How do I activate the eID function?")
 
 	signal decisionHasCodeClicked
 	signal decisionHasNoCodeClicked
@@ -31,10 +31,10 @@ ResultView {
 	animationSymbol: Symbol.Type.BLOCK
 	animationType: AnimationLoader.Type.CARD_RESULT
 	buttonText: ""
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	header: qsTr("eID function is not activated")
-	//: LABEL ALL_PLATFORMS
-	subheader: PinResetInformationModel.hasPinResetService ? qsTr("Did you recently order a PIN reset letter with an activation code?") : hasNoCodeSubHeaderText
+	//: ALL_PLATFORMS
+	subheader: PinResetInformationModel.hasPinResetService ? qsTr("Did you recently order a PIN Reset Letter with an activation code?") : hasNoCodeSubHeaderText
 
 	Loader {
 		Layout.fillWidth: true
@@ -84,26 +84,26 @@ ResultView {
 
 			GInformativeButton {
 				Layout.fillWidth: true
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				description: qsTr("Activate your ID card using the activation code")
 				isPane: true
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				text: qsTr("Yes, I already have an activation code")
 
 				onClicked: root.decisionHasCodeClicked()
 			}
 			GInformativeButton {
 				Layout.fillWidth: true
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				description: qsTr("Request the activation of the eID function")
 				isPane: true
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				text: qsTr("No, I don't have an activation code")
 
 				onClicked: root.decisionHasNoCodeClicked()
 			}
 			GContinueButton {
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				text: qsTr("Abort setup")
 				visible: root.continueButtonVisible
 
@@ -118,15 +118,15 @@ ResultView {
 			spacing: root.spacing
 
 			GText {
-				//: LABEL ALL_PLATFORMS
-				text: qsTr("Enter your activation code of your present PIN reset letter into the following website.")
+				//: ALL_PLATFORMS
+				text: qsTr("Enter your activation code of your present PIN Reset Letter into the following website.")
 			}
 			GButton {
 				Accessible.description: Utils.platformAgnosticLinkOpenText(PinResetInformationModel.pinResetActivationUrl, Accessible.name)
 				Accessible.role: Accessible.Link
 				Layout.alignment: Qt.AlignHCenter
 				icon.source: "qrc:///images/open_website.svg"
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				text: qsTr("Enter activation code")
 				tintIcon: true
 
@@ -143,28 +143,22 @@ ResultView {
 			Hint {
 				Layout.alignment: Qt.AlignHCenter
 				Layout.fillWidth: true
-				//: LABEL ALL_PLATFORMS
-				buttonText: qsTr("Request action code")
+				buttonText: PinResetInformationModel.resetPinWithPRSActionText
 				linkToOpen: PinResetInformationModel.pinResetUrl
-				//: LABEL ALL_PLATFORMS
-				text: qsTr("You can request a PIN reset letter with an activation code on the following website.")
-				//: LABEL ALL_PLATFORMS
-				title: qsTr("Online via PIN reset service")
+				text: PinResetInformationModel.activateOnlineFunctionForPRSHint
+				title: PinResetInformationModel.resetPinWithPRSHintTitle
 				visible: PinResetInformationModel.hasPinResetService
 			}
 			Hint {
 				Layout.alignment: Qt.AlignHCenter
 				Layout.fillWidth: true
-				//: LABEL ALL_PLATFORMS
-				buttonText: qsTr("Find competent authority")
+				buttonText: PinResetInformationModel.resetPinAtAuthorityActionText
 				linkToOpen: PinResetInformationModel.administrativeSearchUrl
-				//: LABEL ALL_PLATFORMS
-				text: qsTr("You can activate the eID function directly at your competent authority.")
-				//: LABEL ALL_PLATFORMS
-				title: qsTr("At your competent authority")
+				text: PinResetInformationModel.activateOnlineFunctionAtAuthorityHint
+				title: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			}
 			GContinueButton {
-				//: LABEL ALL_PLATFORMS
+				//: ALL_PLATFORMS
 				text: qsTr("Abort setup")
 				visible: root.continueButtonVisible && !PinResetInformationModel.hasPinResetService
 

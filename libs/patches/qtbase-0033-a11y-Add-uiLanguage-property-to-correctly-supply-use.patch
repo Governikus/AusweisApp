@@ -1,0 +1,52 @@
+From 90308630b311c6bc4e05ff6b3a2a262488926617 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Wed, 5 Nov 2025 14:09:37 +0100
+Subject: a11y: Add uiLanguage property to correctly supply used language
+
+Currently, there is no simple and straight forward way to retrieve the
+actually used app langauge (see QTBUG-140337). The default implementation
+returns the OS language but QML Accessible will use QJSEngine::uiLanguage.
+
+Task-number: QTBUG-141701
+Change-Id: I2baff0892cca55765f1e2a01702d399c8289d022
+---
+ src/gui/accessible/qaccessible.cpp | 6 ++++++
+ src/gui/accessible/qaccessible.h   | 1 +
+ 2 files changed, 7 insertions(+)
+
+diff --git x/qtbase/src/gui/accessible/qaccessible.cpp y/qtbase/src/gui/accessible/qaccessible.cpp
+index 2966f6574940df9c7f6d7e440ca3eaba4fc1c3bb..32190c304e2c69e4d2918ffe46a47913a2f4ed16 100644
+--- x/qtbase/src/gui/accessible/qaccessible.cpp
++++ y/qtbase/src/gui/accessible/qaccessible.cpp
+@@ -17,6 +17,7 @@
+ #include <qpa/qplatformintegration.h>
+ 
+ #include <QtCore/qdebug.h>
++#include <QtCore/qlocale.h>
+ #include <QtCore/qloggingcategory.h>
+ #include <QtCore/qmetaobject.h>
+ #include <QtCore/private/qmetaobject_p.h>
+@@ -1333,6 +1334,11 @@ QColor QAccessibleInterface::backgroundColor() const
+     return QColor();
+ }
+ 
++QString QAccessibleInterface::uiLanguage() const
++{
++    return QLocale().bcp47Name();
++}
++
+ /*!
+     \fn QAccessibleTextInterface *QAccessibleInterface::textInterface()
+ */
+diff --git x/qtbase/src/gui/accessible/qaccessible.h y/qtbase/src/gui/accessible/qaccessible.h
+index 5d371c88a116fc2cf5859b0a487ffa16f3c17b19..5bb5a47da2ccf18e997aa703e1c16a084a9f919b 100644
+--- x/qtbase/src/gui/accessible/qaccessible.h
++++ y/qtbase/src/gui/accessible/qaccessible.h
+@@ -78,6 +78,7 @@ public:
+     virtual QAccessible::Role role() const = 0;
+     virtual QAccessible::State state() const = 0;
+ 
++    virtual QString uiLanguage() const;
+     virtual QColor foregroundColor() const;
+     virtual QColor backgroundColor() const;
+ 

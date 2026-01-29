@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -74,7 +74,7 @@ OnboardingStartView {
 		id: setupInfoView
 
 		MultiInfoView {
-			//: LABEL DESKTOP
+			//: DESKTOP
 			continueButtonText: qsTr("Continue")
 			title: root.title
 
@@ -422,8 +422,8 @@ OnboardingStartView {
 		id: startSelfAuth
 
 		SelfAuthStartView {
-			//: LABEL DESKTOP
-			disagreeButtonText: qsTr("Skip this step")
+			//: DESKTOP
+			secondaryButton.text: qsTr("Skip this step")
 			title: root.title
 
 			titleBarSettings: TitleBarSettings {
@@ -432,7 +432,7 @@ OnboardingStartView {
 				startEnabled: false
 			}
 
-			onDisagreeClicked: root.push(completionView)
+			onSecondaryButtonClicked: root.push(completionView)
 			onStartSelfAuth: {
 				root.push(authView);
 				SelfAuthModel.startWorkflow(false);
@@ -467,7 +467,7 @@ OnboardingStartView {
 				onNavigationActionClicked: root.pop()
 			}
 
-			onAgreeClicked: root.exitOnboarding()
+			onPrimaryButtonClicked: root.exitOnboarding()
 		}
 	}
 }

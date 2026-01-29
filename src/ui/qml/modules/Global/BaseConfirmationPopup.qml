@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -19,12 +19,12 @@ Popup {
 	}
 
 	property alias buttons: buttonContainer.children
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	property string cancelButtonText: qsTr("Cancel")
 	default property alias children: customContent.children
 	property int horizontalTextAlignment: Text.AlignLeft
 	property alias mainTextFormat: mainText.textFormat
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	property string okButtonText: qsTr("OK")
 	property alias showCloseButton: closeButton.visible
 	property int style: ConfirmationPopup.PopupStyle.OkButton | ConfirmationPopup.PopupStyle.CancelButton

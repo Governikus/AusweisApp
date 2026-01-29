@@ -1,19 +1,23 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreparePace.h"
 
+#include "ReaderManager.h"
 #include "states/StateBuilder.h"
 
 #include "MockCardConnectionWorker.h"
+#include "TestHookThread.h"
 #include "TestWorkflowContext.h"
 
 #include <QByteArrayList>
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_StatePreparePace
 	: public QObject
@@ -21,24 +25,29 @@ class test_StatePreparePace
 	Q_OBJECT
 	QSharedPointer<StatePreparePace> mState;
 	QSharedPointer<TestWorkflowContext> mContext;
-	QThread workerThread;
+	QScopedPointer<TestHookThread> mWorkerThread;
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<ReaderManager>(); // just init in MainThread because of QObject
+		}
+
+
 		void init()
 		{
+			mWorkerThread.reset(new TestHookThread());
 			mContext.reset(new TestWorkflowContext());
 			mState.reset(StateBuilder::createState<StatePreparePace>(mContext));
-			workerThread.start();
 			mState->onEntry(nullptr);
 		}
 
 
 		void cleanup()
 		{
-			workerThread.quit();
-			workerThread.wait();
 			mContext.clear();
 			mState.clear();
+			mWorkerThread.reset();
 		}
 
 
@@ -58,10 +67,8 @@ class test_StatePreparePace
 		{
 			QSignalSpy spy(mState.data(), &StatePreparePace::fireEnterPacePassword);
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			mContext->setCardConnection(connection);
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 			mContext->setCanAllowedMode(true);
 			QTest::ignoreMessage(QtDebugMsg, "CAN allowed required");
 			mContext->setStateApproved();
@@ -72,15 +79,14 @@ class test_StatePreparePace
 
 		void test_Run_RetryCounter0_Smart()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cardInfo(CardType::SMART_EID, FileRef(), QSharedPointer<const EFCardAccess>(), 0);
 			const ReaderInfo readerInfo(QString(), ReaderManagerPluginType::REMOTE_IFD, cardInfo);
-			mContext->setCardConnection(connection);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
-			QSignalSpy spyAbort(mState.data(), &StatePreparePace::fireAbort);
 
+			QSignalSpy spyAbort(mState.data(), &StatePreparePace::fireAbort);
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getStatus().getStatusCode(), GlobalStatus::Code::Card_Smart_Invalid);
@@ -104,16 +110,15 @@ class test_StatePreparePace
 		{
 			QFETCH(ReaderManagerPluginType, type);
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0);
 			const ReaderInfo readerInfo(QString(), type, cardInfo);
-			mContext->setCardConnection(connection);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
+
 			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePace::fireEnterPacePassword);
 			QSignalSpy spyContinue(mState.data(), &StatePreparePace::fireContinue);
-
 			QTest::ignoreMessage(QtDebugMsg, "PUK required");
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
@@ -130,16 +135,15 @@ class test_StatePreparePace
 
 		void test_Run_RetryCounter1()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 1);
 			const ReaderInfo readerInfo(QString(), ReaderManagerPluginType::UNKNOWN, cardInfo);
-			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePace::fireEnterPacePassword);
-			QSignalSpy spyContinue(mState.data(), &StatePreparePace::fireContinue);
-			mContext->setCardConnection(connection);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 
+			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePace::fireEnterPacePassword);
+			QSignalSpy spyContinue(mState.data(), &StatePreparePace::fireContinue);
 			QTest::ignoreMessage(QtDebugMsg, "CAN required");
 			QTest::ignoreMessage(QtDebugMsg, "PACE_CAN done: false");
 			mContext->setStateApproved();
@@ -158,16 +162,15 @@ class test_StatePreparePace
 
 		void test_Run_RetryCounter3()
 		{
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+
 			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3);
 			const ReaderInfo readerInfo(QString(), ReaderManagerPluginType::UNKNOWN, cardInfo);
-			mContext->setCardConnection(connection);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
+
 			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePace::fireEnterPacePassword);
 			QSignalSpy spyContinue(mState.data(), &StatePreparePace::fireContinue);
-
 			QTest::ignoreMessage(QtDebugMsg, "PIN allowed");
 			QTest::ignoreMessage(QtDebugMsg, "PACE_PIN done: false");
 			mContext->setStateApproved();

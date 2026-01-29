@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -15,7 +15,7 @@ import Governikus.Type
 FlickableSectionPage {
 	id: root
 
-	//: LABEL ANDROID IOS %1 is replaced with the application name
+	//: MOBILE %1 is replaced with the application name
 	title: qsTr("%1 version").arg(Qt.application.name)
 
 	navigationAction: NavigationAction {
@@ -37,16 +37,16 @@ FlickableSectionPage {
 			case 8:
 			case 9:
 				if (!ApplicationModel.screenReaderRunning) {
-					//: INFO ANDROID IOS Used in notifications when the user taps the version information
+					//: MOBILE Used in notifications when the user taps the version information
 					ApplicationModel.showFeedback(qsTr("%1 more taps to toggle the advanced settings.").arg(10 - advancedSettingsCounter), true);
 				}
 				break;
 			case 10:
 				SettingsModel.advancedSettings = !SettingsModel.advancedSettings;
 				ApplicationModel.showFeedback((SettingsModel.advancedSettings ?
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					qsTr("Advanced settings activated.") :
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					qsTr("Advanced settings deactivated.")), true);
 				advancedSettingsCounter = 0;
 				break;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateUpdateSupportInfo.h"
@@ -29,7 +29,7 @@ void StateUpdateSupportInfo::run()
 	const auto func = [this]() {
 				const auto& context = getContext();
 				const auto& smartManager = SmartManager::get();
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				context->setProgress(context->getProgressValue(), tr("Checking Smart-eID status"));
 
 				const auto& supportResult = smartManager->updateSupportInfo();

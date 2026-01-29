@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -17,7 +17,7 @@ Item {
 	property alias playAnimation: animation.enabled
 	property alias source: image.source
 	property alias sourceSize: image.sourceSize
-	property color tintColor: Style.color.textNormal.basic
+	property color tintColor: Style.color.textNormal.basic_unchecked
 	property bool tintEnabled: true
 
 	implicitHeight: image.implicitHeight

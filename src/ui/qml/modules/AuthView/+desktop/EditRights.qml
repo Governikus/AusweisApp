@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -46,11 +46,11 @@ FlickableSectionPage {
 		Accessible.name: confirmButton.text
 		Layout.alignment: Qt.AlignHCenter
 		icon.source: "qrc:/images/identify.svg"
-		//: LABEL DESKTOP %1 can be "CAN" or "PIN"
+		//: DESKTOP %1 can be "CAN" or "PIN"
 		text: qsTr("Proceed to %1 entry").arg((NumberModel.isCanAllowedMode ?
-			//: LABEL DESKTOP Inserted into "Proceed to %1 entry"
+			//: DESKTOP Inserted into "Proceed to %1 entry"
 			qsTr("CAN") :
-			//: LABEL DESKTOP Inserted into "Proceed to %1 entry"
+			//: DESKTOP Inserted into "Proceed to %1 entry"
 			qsTr("PIN")))
 		tintIcon: true
 
@@ -59,16 +59,16 @@ FlickableSectionPage {
 	GText {
 		Layout.alignment: Qt.AlignLeft
 		text: NumberModel.isCanAllowedMode ?
-		//: LABEL DESKTOP
+		//: DESKTOP
 		qsTr("By entering the CAN, access to the following data of the ID card will be allowed to the mentioned provider:") :
-		//: LABEL DESKTOP
+		//: DESKTOP
 		qsTr("By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:")
 	}
 	GPane {
 		Layout.fillWidth: true
-		color: Style.color.paneSublevel.background.basic
+		color: Style.color.paneSublevel.background.basic_unchecked
 
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Transactional information")
 		visible: !!AuthModel.transactionInfo || !requestedDataRow.visible
 
@@ -82,7 +82,7 @@ FlickableSectionPage {
 			visible: !!text
 		}
 		GText {
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.")
 			visible: !writeDataPane.visible && !readDataPane.visible
 		}
@@ -104,7 +104,7 @@ FlickableSectionPage {
 			Layout.fillWidth: true
 			border.color: Style.color.warning
 			border.width: Style.dimens.pane_border_highlight_width
-			color: Style.color.paneSublevel.background.basic
+			color: Style.color.paneSublevel.background.basic_unchecked
 			visible: writeData.count > 0
 
 			DataGroup {
@@ -114,7 +114,7 @@ FlickableSectionPage {
 				chat: ChatModel.write
 				columns: readDataPane.visible ? 1 : requestedDataRow.maxColumns
 
-				//: LABEL DESKTOP
+				//: DESKTOP
 				title: qsTr("Write access (update)")
 				titleStyle: Style.text.headline
 				writeAccess: true
@@ -125,7 +125,7 @@ FlickableSectionPage {
 
 			Layout.alignment: Qt.AlignTop
 			Layout.fillWidth: true
-			color: Style.color.paneSublevel.background.basic
+			color: Style.color.paneSublevel.background.basic_unchecked
 			visible: requiredData.count > 0 || optionalData.count > 0
 
 			RowLayout {
@@ -144,7 +144,7 @@ FlickableSectionPage {
 					chat: ChatModel.required
 					columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (optionalData.visible ? 1 : 0) - (count > optionalData.count ? 0 : 1))
 
-					//: LABEL DESKTOP
+					//: DESKTOP
 					title: qsTr("Read access")
 				}
 				DataGroup {
@@ -156,7 +156,7 @@ FlickableSectionPage {
 					chat: ChatModel.optional
 					columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (requiredData.visible ? requiredData.columns : 0))
 
-					//: LABEL DESKTOP
+					//: DESKTOP
 					title: qsTr("Read access (optional)")
 				}
 			}

@@ -1,0 +1,86 @@
+From dcf1f6cbeabc98ffab11d5dbc85bde905e1024bb Mon Sep 17 00:00:00 2001
+From: Giuseppe D'Angelo <giuseppe.dangelo@kdab.com>
+Date: Wed, 27 Aug 2025 23:14:03 +0200
+Subject: Upgrade PCRE2 to 10.46
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+New upstream release.
+
+It fixes CVE-2025-58050, which is exploitable only on patterns
+controlled by an attacker, which we don't support (patterns are security
+sensitive as one may DOS an application). Still, apply the upgrade.
+
+[ChangeLog][Third-Party Code] PCRE2 was updated to version 10.46.
+
+Pick-to: 6.8 6.5
+Change-Id: Ia52e73b9eb1f777eb02257406c30af26ed744509
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+(cherry picked from commit b2197776c65ba466df9baf9407f3c36afa0e6208)
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+(cherry picked from commit b3da68f8edf70f669ec6efb86b8b6fd48de30a63)
+(cherry picked from commit 5ff534446a592a848c2184a8f28a4de3de70bdab)
+---
+ src/3rdparty/pcre2/qt_attribution.json | 8 ++++----
+ src/3rdparty/pcre2/src/pcre2.h         | 4 ++--
+ src/3rdparty/pcre2/src/pcre2_match.c   | 3 +++
+ 3 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git x/qtbase/src/3rdparty/pcre2/qt_attribution.json y/qtbase/src/3rdparty/pcre2/qt_attribution.json
+index 114f2c83b7ce8b0487edfbd31d5ac51ce63b7538..20b841eec6fac391e99467952ba64f87840acece 100644
+--- x/qtbase/src/3rdparty/pcre2/qt_attribution.json
++++ y/qtbase/src/3rdparty/pcre2/qt_attribution.json
+@@ -8,8 +8,8 @@
+ 
+     "Description": "The PCRE library is a set of functions that implement regular expression pattern matching using the same syntax and semantics as Perl 5.",
+     "Homepage": "http://www.pcre.org/",
+-    "Version": "10.45",
+-    "DownloadLocation": "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.45/pcre2-10.45.tar.bz2",
++    "Version": "10.46",
++    "DownloadLocation": "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.46/pcre2-10.46.tar.bz2",
+     "PURL": "pkg:github/PCRE2Project/pcre2@pcre2-$<VERSION>",
+     "CPE": "cpe:2.3:a:pcre:pcre2:$<VERSION>:*:*:*:*:*:*:*",
+     "License": "BSD 3-clause \"New\" or \"Revised\" License with PCRE2 binary-like Packages Exception",
+@@ -27,8 +27,8 @@
+     "Path": "deps/sljit",
+     "Description": "The PCRE library is a set of functions that implement regular expression pattern matching using the same syntax and semantics as Perl 5.",
+     "Homepage": "http://www.pcre.org/",
+-    "Version": "10.45",
+-    "DownloadLocation": "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.45/pcre2-10.45.tar.bz2",
++    "Version": "10.46",
++    "DownloadLocation": "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.46/pcre2-10.46.tar.bz2",
+     "PURL": "pkg:github/PCRE2Project/pcre2@$<VERSION>",
+     "CPE": "cpe:2.3:a:pcre:pcre2:$<VERSION>:*:*:*:*:*:*:*",
+     "License": "BSD 2-clause \"Simplified\" License",
+diff --git x/qtbase/src/3rdparty/pcre2/src/pcre2.h y/qtbase/src/3rdparty/pcre2/src/pcre2.h
+index 061f3db0a76eedc1c7e7ad9bed8be8edd7d9e012..a6c739fb9182dba9d79d056d8fef66d4d578e9d5 100644
+--- x/qtbase/src/3rdparty/pcre2/src/pcre2.h
++++ y/qtbase/src/3rdparty/pcre2/src/pcre2.h
+@@ -42,9 +42,9 @@ POSSIBILITY OF SUCH DAMAGE.
+ /* The current PCRE version information. */
+ 
+ #define PCRE2_MAJOR           10
+-#define PCRE2_MINOR           45
++#define PCRE2_MINOR           46
+ #define PCRE2_PRERELEASE      
+-#define PCRE2_DATE            2025-02-05
++#define PCRE2_DATE            2025-08-27
+ 
+ /* When an application links to a PCRE DLL in Windows, the symbols that are
+ imported have to be identified as such. When building PCRE2, the appropriate
+diff --git x/qtbase/src/3rdparty/pcre2/src/pcre2_match.c y/qtbase/src/3rdparty/pcre2/src/pcre2_match.c
+index 5adc03480522f6526b551970ee272748d91596e3..34a92eaa36ed369a845c6a602c467e7e9f6864f3 100644
+--- x/qtbase/src/3rdparty/pcre2/src/pcre2_match.c
++++ y/qtbase/src/3rdparty/pcre2/src/pcre2_match.c
+@@ -5824,6 +5824,9 @@ fprintf(stderr, "++ %2ld op=%3d %s\n", Fecode - mb->start_code, *Fecode,
+               assert_accept_frame->offset_top * sizeof(PCRE2_SIZE));
+         Foffset_top = assert_accept_frame->offset_top;
+         Fmark = assert_accept_frame->mark;
++        mb->end_subject = Lsaved_end_subject;
++        mb->true_end_subject = mb->end_subject + Ltrue_end_extra;
++        mb->moptions = Lsaved_moptions;
+         break;
+         }
+ 

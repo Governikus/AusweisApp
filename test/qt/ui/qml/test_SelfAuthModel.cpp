@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthModel.h"
@@ -8,6 +8,7 @@
 
 #include "MockCardConnectionWorker.h"
 #include "TestFileHelper.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
@@ -63,29 +64,28 @@ class test_SelfAuthModel
 
 		void test_IsBasicReader()
 		{
+			TestHookThread workerThread;
 
-			QThread workerThread;
-			workerThread.start();
+			{
+				QVERIFY(mModel->isBasicReader());
 
-			QVERIFY(mModel->isBasicReader());
+				const auto& worker = MockCardConnectionWorker::create(&workerThread);
+				QSharedPointer<CardConnection> connection(new CardConnection(worker));
+				mContext->setCardConnection(connection);
+				ReaderInfo info;
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			mContext->setCardConnection(connection);
-			ReaderInfo info;
+				info.setBasicReader(true);
+				Q_EMIT worker->fireReaderInfoChanged(info);
+				mModel->resetContext(mContext);
+				QVERIFY(mModel->isBasicReader());
 
-			info.setBasicReader(true);
-			Q_EMIT worker->fireReaderInfoChanged(info);
-			mModel->resetContext(mContext);
-			QVERIFY(mModel->isBasicReader());
+				info.setBasicReader(false);
+				Q_EMIT worker->fireReaderInfoChanged(info);
+				QVERIFY(!mModel->isBasicReader());
 
-			info.setBasicReader(false);
-			Q_EMIT worker->fireReaderInfoChanged(info);
-			QVERIFY(!mModel->isBasicReader());
-
-			workerThread.quit();
-			workerThread.wait();
+				mContext->setCardConnection(nullptr);
+				connection.reset();
+			}
 		}
 
 

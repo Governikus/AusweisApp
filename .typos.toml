@@ -9,6 +9,7 @@ extend-exclude = [
     "resources/**",
     "libs/**",
     "test/fixture/**",
+    "utils/aa2-copyright/target/**",
 ]
 ignore-hidden = true
 ignore-files = true

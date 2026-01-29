@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQml
 import QtQuick
@@ -243,6 +243,8 @@ TestCase {
 		compare(testObject.enabledTooltipText, "enabledTooltipText", "Initial enabledTooltipText: empty");
 		compare(testObject.disabledTooltipText, "disabledTooltipText", "Initial disabledTooltipText: empty");
 		testObject.enableButton = false;
+		testObject.disabledTooltipText = "Quite long text that will be truncated after whatever character is beyond the limit.";
+		compare(testObject.tooltipText, "Quite long text that will be truncated after whatever character is beyond …");
 	}
 
 	name: "test_GButton"

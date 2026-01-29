@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/DidAuthenticateEAC1Command.h"
@@ -36,7 +36,7 @@ class test_DidAuthenticateEAC1Command
 		void test_InternalExecuteOKEmptyChallenge()
 		{
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			ResponseApdu response(QByteArray::fromHex("9000"));
 			worker->addResponse(CardReturnCode::OK, response);
@@ -52,7 +52,7 @@ class test_DidAuthenticateEAC1Command
 
 		void test_InternalExecuteOK()
 		{
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			ResponseApdu response(QByteArray::fromHex("00000000000000009000"));
 			worker->addResponse(CardReturnCode::OK, response);
@@ -67,7 +67,7 @@ class test_DidAuthenticateEAC1Command
 		void test_InternalExecuteFailed()
 		{
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 
 			ResponseApdu response1(QByteArray::fromHex("63C0"));
 			worker->addResponse(CardReturnCode::PIN_BLOCKED, response1);
@@ -93,7 +93,7 @@ class test_DidAuthenticateEAC1Command
 
 		void test_GetChallenge()
 		{
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			DidAuthenticateEAC1Command command(worker);
 			command.mChallenge = QByteArray("abc");
 			QCOMPARE(command.getChallenge(), QByteArray("abc"));

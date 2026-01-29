@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -18,7 +18,7 @@ Item {
 
 		bottomLeftCorner: false
 		bottomRightCorner: false
-		color: Style.color.paneSublevel.background.basic
+		color: Style.color.paneSublevel.background.basic_unchecked
 		height: bottomRectangle.height / 2
 		radius: Style.dimens.titlepane_radius
 		width: bottomRectangle.width - 2 * Style.dimens.titlepane_radius
@@ -32,7 +32,7 @@ Item {
 		id: bottomRectangle
 
 		anchors.bottom: root.bottom
-		borderColor: Style.color.pane.border.basic
+		border.color: Style.color.pane.border.basic_unchecked
 		bottomLeftCorner: false
 		bottomRightCorner: false
 		color: Style.color.background

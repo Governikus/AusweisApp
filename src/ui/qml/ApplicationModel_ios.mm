@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -23,14 +23,15 @@ using namespace governikus;
 @end
 
 
-@interface VoiceOverObserver
+@interface NotificationObserver
 	: NSObject
-@property BOOL mRunning;
+@property BOOL mScreenReaderRunning;
 - (instancetype) init;
 - (void) receiveNotification: (NSNotification*) notification;
+- (bool) isScreenCaptured;
 @end
 
-@implementation VoiceOverObserver
+@implementation NotificationObserver
 
 
 - (instancetype)init {
@@ -52,7 +53,18 @@ using namespace governikus;
 	name:UIAccessibilityElementFocusedNotification
 	object:nil];
 
-	self.mRunning = UIAccessibilityIsVoiceOverRunning();
+	[[NSNotificationCenter defaultCenter]
+	addObserver:self
+	selector:@selector(receiveNotification:)
+	name:UIApplicationUserDidTakeScreenshotNotification
+	object:nil];
+
+	[[NSNotificationCenter defaultCenter] addObserver:self
+	selector:@selector(receiveNotification:)
+	name:UIScreenCapturedDidChangeNotification
+	object:nil];
+
+	self.mScreenReaderRunning = UIAccessibilityIsVoiceOverRunning();
 
 	return self;
 }
@@ -64,9 +76,9 @@ using namespace governikus;
 			UIAccessibilityVoiceOverStatusDidChangeNotification])
 	{
 		BOOL isRunning = UIAccessibilityIsVoiceOverRunning();
-		if (self.mRunning != isRunning)
+		if (self.mScreenReaderRunning != isRunning)
 		{
-			self.mRunning = isRunning;
+			self.mScreenReaderRunning = isRunning;
 			ApplicationModel::notifyScreenReaderChangedThreadSafe();
 		}
 	}
@@ -100,13 +112,51 @@ using namespace governikus;
 					}, Qt::QueuedConnection);
 		}
 	}
+	else if ([notification.name
+			isEqualToString:
+			UIApplicationUserDidTakeScreenshotNotification])
+	{
+		QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
+					auto* applicationModel = Env::getSingleton<ApplicationModel>();
+					if (applicationModel)
+					{
+						Q_EMIT applicationModel->fireScreenshotTaken();
+					}
+				}, Qt::QueuedConnection);
+	}
+	else if ([notification.name
+			isEqualToString:
+			UIScreenCapturedDidChangeNotification])
+	{
+		QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
+					auto* applicationModel = Env::getSingleton<ApplicationModel>();
+					if (applicationModel)
+					{
+						Q_EMIT applicationModel->fireScreenRecordingChanged();
+					}
+				}, Qt::QueuedConnection);
+	}
+}
+
+
+- (bool)isScreenCaptured {
+	if (@available(iOS 17.0, *))
+	{
+		UIWindow* window = PlatformTools::getFirstWindow();
+		if (window)
+		{
+			return(window.traitCollection.sceneCaptureState == UISceneCaptureStateActive);
+		}
+	}
+
+	return [UIScreen mainScreen].isCaptured;
 }
 
 
 @end
 
 
-ApplicationModel::Private::Private() : mObserver([[VoiceOverObserver alloc] init])
+ApplicationModel::Private::Private() : mObserver([[NotificationObserver alloc] init])
 {
 }
 
@@ -119,7 +169,13 @@ ApplicationModel::Private::~Private()
 
 bool ApplicationModel::isScreenReaderRunning() const
 {
-	return mPrivate->mObserver.mRunning;
+	return mPrivate->mObserver.mScreenReaderRunning;
+}
+
+
+bool ApplicationModel::isScreenRecording() const
+{
+	return [mPrivate->mObserver isScreenCaptured];
 }
 
 

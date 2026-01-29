@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginQml.h"
@@ -93,29 +93,6 @@ UiPluginQml::Private::Private() : mSystemSettingsTracker([[SystemSettingsTracker
 // It's important that the definition of the destructor is in a .mm file: Otherwise the compiler won't compile it in Objective-C++ mode and ARC won't work.
 UiPluginQml::Private::~Private()
 {
-}
-
-
-QVariantMap UiPluginQml::getSafeAreaMargins() const
-{
-	UIWindow* window = PlatformTools::getFirstWindow();
-	if (!window)
-	{
-		return {
-			{"top"_L1, 0},
-			{"right"_L1, 0},
-			{"bottom"_L1, 0},
-			{"left"_L1, 0}
-		};
-	}
-	UIEdgeInsets safeAreaInsets = window.safeAreaInsets;
-
-	return {
-		{"top"_L1, safeAreaInsets.top},
-		{"right"_L1, safeAreaInsets.right},
-		{"bottom"_L1, safeAreaInsets.bottom},
-		{"left"_L1, safeAreaInsets.left}
-	};
 }
 
 

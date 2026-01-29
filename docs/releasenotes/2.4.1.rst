@@ -1,0 +1,22 @@
+AusweisApp 2.4.1
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 29. Januar 2026
+
+
+Anwender
+""""""""
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- Aktivierung der Sicherheitssysteme bezüglich Screenshots auf mobilen
+  Systemen bei der Passworteingabe und dem Ergebnis der Selbstauskunft.
+
+- Instabiles Verhalten bei der Verwendung von Smartphones als Kartenleser korrigiert.
+
+
+Entwickler
+""""""""""
+- Aktualisierung von OpenSSL auf die Version 3.5.5.
+
+- Das Container-SDK enthält nur noch notwendige Bibliotheken
+  anstatt eines kompletten Paketmanagers der Distribution.

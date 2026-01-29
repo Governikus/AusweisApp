@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -51,7 +51,7 @@ Rectangle {
 			GText {
 				Accessible.role: Accessible.Heading
 				Layout.alignment: Qt.AlignBottom
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Current Log")
 				textStyle: Style.text.title
 			}
@@ -60,7 +60,7 @@ Rectangle {
 			}
 			ColumnLayout {
 				GText {
-					//: LABEL DESKTOP
+					//: DESKTOP
 					text: qsTr("Zoom:")
 					textStyle: logTextStyle
 				}
@@ -82,19 +82,19 @@ Rectangle {
 				property bool filter: false
 
 				Accessible.name: filter ?
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("Filter. Activated.") :
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("Filter. Deactivated.")
 				icon.source: filter ? "qrc:///images/filter_off.svg" : "qrc:///images/filter.svg"
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Filter")
 
 				onClicked: filter = !filter
 			}
 			LogButton {
 				icon.source: "qrc:///images/desktop/save_icon.svg"
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Save log")
 
 				onClicked: {
@@ -106,10 +106,10 @@ Rectangle {
 					id: fileDialog
 
 					defaultSuffix: "log"
-					//: LABEL DESKTOP
+					//: DESKTOP
 					nameFilters: qsTr("Logfiles (*.log)")
 
-					//: LABEL DESKTOP
+					//: DESKTOP
 					title: qsTr("Save log")
 
 					onAccepted: logModel.saveLogFile(selectedFile, true)
@@ -132,7 +132,7 @@ Rectangle {
 			GText {
 				Layout.alignment: Qt.AlignTop
 
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Select level:")
 				textStyle: logTextStyle
 			}
@@ -169,7 +169,7 @@ Rectangle {
 			GText {
 				Layout.alignment: Qt.AlignTop
 
-				//: LABEL DESKTOP
+				//: DESKTOP
 				text: qsTr("Select category:")
 			}
 			GridLayout {
@@ -236,7 +236,7 @@ Rectangle {
 			}
 			GText {
 				horizontalAlignment: Text.AlignHCenter
-				//: INFO DESKTOP No log entries, placeholder text.
+				//: DESKTOP No log entries, placeholder text.
 				text: qsTr("Currently there are no log entries matching your filter.")
 				visible: listView.count === 0
 

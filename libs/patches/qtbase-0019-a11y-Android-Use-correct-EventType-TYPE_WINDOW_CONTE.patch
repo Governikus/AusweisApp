@@ -1,0 +1,48 @@
+From c4405796d297d0eb613d4866e038e556fcae2bb6 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Tue, 2 Sep 2025 11:53:28 +0200
+Subject: a11y Android: Use correct EventType TYPE_WINDOW_CONTENT_CHANGED
+
+* The correct way to announce changes of accessible name, description
+  and value is to use the EventType TYPE_WINDOW_CONTENT_CHANGED with
+  the correct CONTENT_CHANGE_TYPE set.
+
+* We don't need to pass the (new) value anymore to the
+  notifyValueChanged and notifyNameOrDescriptionChanged method anymore.
+
+* Now TalkBack plays a sound to represent changes of the value of
+  e.g. the progressbar instead of announcing the value as text.
+
+Task-number: QTBUG-139712
+Pick-to: 6.8 6.10
+Change-Id: Ic9cd4f4cf212ba3cd3d392dacce1955d7cb2bf54
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit a067a4f6dade4c53303459469917c94ef6268941)
+---
+ .../qtproject/qt/android/QtAccessibilityDelegate.java | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+index f737437e8dfec9b7892bc0480e02d8278a70d2c0..70b0c9d7e904faf34da888c86b0af24fffea84aa 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+@@ -242,12 +242,15 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+                 return;
+             }
+ 
+-            final AccessibilityEvent event =
+-                    AccessibilityEvent.obtain(AccessibilityEvent.TYPE_ANNOUNCEMENT);
++            final CharSequence className = getNodeForVirtualViewId(viewId).getClassName();
++            final int eventType =
++                    className != null && className.equals("android.widget.ProgressBar")
++                    ? AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
++                    : AccessibilityEvent.TYPE_ANNOUNCEMENT;
++            final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
+ 
+             event.setEnabled(true);
+-            event.setClassName(getNodeForVirtualViewId(viewId).getClassName());
+-
++            event.setClassName(className);
+             event.setContentDescription(value);
+ 
+             if (event.getText().isEmpty() && TextUtils.isEmpty(event.getContentDescription())) {

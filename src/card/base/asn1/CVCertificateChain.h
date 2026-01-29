@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -22,12 +22,9 @@ namespace governikus
 class CVCertificateChain
 	: public QList<QSharedPointer<const CVCertificate>>
 {
-	private:
-		bool mProductive;
-
 	public:
-		explicit CVCertificateChain(bool pProductive = true);
-		explicit CVCertificateChain(const QList<QSharedPointer<const CVCertificate>>& pCvcs, bool pProductive);
+		explicit CVCertificateChain();
+		explicit CVCertificateChain(const QList<QSharedPointer<const CVCertificate>>& pCvcs);
 
 		/*!
 		 * Return the document verifier certificate.

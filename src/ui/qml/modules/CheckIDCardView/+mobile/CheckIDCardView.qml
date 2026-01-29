@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -30,7 +30,7 @@ FlickableSectionPage {
 	signal changeTransportPin
 	signal checkSuccess
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Check device and ID card")
 
 	navigationAction: NavigationAction {
@@ -52,7 +52,6 @@ FlickableSectionPage {
 		id: selfAuthView
 
 		SelfAuthenticationView {
-			hideTechnologySwitch: true
 			initialPlugin: root.readerType
 
 			onBack: {
@@ -153,21 +152,18 @@ FlickableSectionPage {
 			tintColor: Style.color.image
 		}
 		Subheading {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Check if your device & ID card are ready for use")
 		}
 		GText {
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("To use the eID function, your device must meet certain technical requirements. Furthermore, the eID function must be activated.")
-		}
-		GSpacer {
-			Layout.fillHeight: true
 		}
 		GButton {
 			Layout.alignment: Qt.AlignHCenter
 			icon.source: "qrc:///images/device_button.svg"
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Start check")
 			tintIcon: true
 

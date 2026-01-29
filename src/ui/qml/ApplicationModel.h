@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,8 +19,10 @@
 #include <QtQml/qqmlregistration.h>
 
 
-#if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
+#if defined(Q_OS_MACOS)
 Q_FORWARD_DECLARE_OBJC_CLASS(VoiceOverObserver);
+#elif defined(Q_OS_IOS)
+Q_FORWARD_DECLARE_OBJC_CLASS(NotificationObserver);
 #endif
 
 class test_UiPluginQml;
@@ -63,6 +65,8 @@ class ApplicationModel
 
 	Q_PROPERTY(bool screenReaderRunning READ isScreenReaderRunning NOTIFY fireScreenReaderRunningChanged)
 
+	Q_PROPERTY(bool screenRecording READ isScreenRecording NOTIFY fireScreenRecordingChanged)
+
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	Q_PROPERTY(QUrl customConfigPath READ getCustomConfigPath CONSTANT)
 #endif
@@ -79,7 +83,12 @@ class ApplicationModel
 		{
 			Private();
 			~Private();
+	#if defined(Q_OS_IOS)
+			NotificationObserver* const mObserver;
+	#elif defined(Q_OS_MACOS)
 			VoiceOverObserver* const mObserver;
+	#endif
+
 		};
 		const QScopedPointer<Private> mPrivate;
 #endif
@@ -150,6 +159,8 @@ class ApplicationModel
 
 		[[nodiscard]] bool isScreenReaderRunning() const;
 
+		[[nodiscard]] bool isScreenRecording() const;
+
 		[[nodiscard]] ReaderManagerPluginType getUsedPluginType() const;
 
 		Q_INVOKABLE void enableWifi()const;
@@ -158,6 +169,7 @@ class ApplicationModel
 		Q_INVOKABLE void showSettings(const Settings& pAction) const;
 		Q_INVOKABLE void showFeedback(const QString& pMessage, bool pReplaceExisting = false);
 		Q_INVOKABLE void keepScreenOn(bool pActive) const;
+		Q_INVOKABLE void preventScreenshot(bool pPrevent) const;
 
 		[[nodiscard]] Q_INVOKABLE QStringList getLicenseText() const;
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
@@ -191,6 +203,9 @@ class ApplicationModel
 		void fireScreenReaderRunningChanged();
 
 		void fireA11yFocusChanged(QQuickItem* pItem);
+
+		void fireScreenRecordingChanged();
+		void fireScreenshotTaken();
 };
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -8,6 +8,7 @@ import QtQuick
 
 import Governikus.Animations
 import Governikus.EnterPasswordView
+import Governikus.Global
 import Governikus.MultiInfoView
 import Governikus.ProgressView
 import Governikus.ResultView
@@ -59,6 +60,12 @@ ProgressView {
 		continueWorkflowIfComfortReader();
 	}
 	function displaySuccessView(pPasswordType) {
+		if (d.lastInputSuccessType === pPasswordType) {
+			continueWorkflowIfComfortReader();
+			return;
+		}
+
+		d.lastInputSuccessType = pPasswordType;
 		push(inputSuccessView, {
 			passwordType: pPasswordType
 		});
@@ -210,42 +217,47 @@ ProgressView {
 		AuthModel.continueWorkflow();
 	}
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	headline: (AuthModel.error ? qsTr("Cancel authentication process") :
-		//: INFO DESKTOP Header of the progress status message during the authentication process.
+		//: DESKTOP Header of the progress status message during the authentication process.
 		isInitialState ? qsTr("Acquiring provider certificate") :
-		//: INFO DESKTOP Header of the progress status message during the authentication process.
+		//: DESKTOP Header of the progress status message during the authentication process.
 		qsTr("Authentication in progress"))
-	//: LABEL DESKTOP Name of an progress indicator during an authentication read by screen readers
+	//: DESKTOP Name of an progress indicator during an authentication read by screen readers
 	progressBarA11yText: qsTr("Authentication progress")
 	progressBarVisible: workflowProgressVisible
 	progressText: AuthModel.progressMessage
 	progressValue: AuthModel.progressValue
 	text: {
 		if (isInitialState) {
-			//: INFO DESKTOP Generic status message during the authentication process.
+			//: DESKTOP Generic status message during the authentication process.
 			return qsTr("Please wait a moment.");
 		}
 		if (AuthModel.isBasicReader) {
-			//: INFO DESKTOP Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
+			//: DESKTOP Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
 			return qsTr("Please do not move the ID card.");
 		}
 		if (workflowState === AuthController.WorkflowStates.Processing || workflowState === AuthController.WorkflowStates.Password) {
-			//: INFO DESKTOP The card reader requests the user's attention.
+			//: DESKTOP The card reader requests the user's attention.
 			return qsTr("Please observe the display of your card reader.");
 		}
 
-		//: INFO DESKTOP Generic status message during the authentication process.
+		//: DESKTOP Generic status message during the authentication process.
 		return qsTr("Please wait a moment.");
 	}
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("Identify")
 	titleBarSettings: cancelNavigation
 
 	Component.onCompleted: if (AuthModel.currentState === "StateParseTcTokenUrl")
 		rerunCurrentState()
 
+	QtObject {
+		id: d
+
+		property int lastInputSuccessType: -1
+	}
 	MultiInfoData {
 		id: infoData
 
@@ -284,11 +296,10 @@ ProgressView {
 		id: checkConnectivityView
 
 		ProgressView {
-
-			//: INFO DESKTOP Header of the message that no network connection is present during the authentication procedure.
+			//: DESKTOP Header of the message that no network connection is present during the authentication procedure.
 			headline: qsTr("No network connectivity")
 			icon: "qrc:///images/no_internet.svg"
-			//: INFO DESKTOP Content of the message that no network connection is present during the authentication procedure.
+			//: DESKTOP Content of the message that no network connection is present during the authentication procedure.
 			text: qsTr("Please establish an internet connection.")
 			tintColor: Style.color.image
 			title: root.title
@@ -428,9 +439,9 @@ ProgressView {
 			animationSymbol: Symbol.Type.ERROR
 			animationType: AnimationLoader.Type.NFC_RESULT
 			text: AuthModel.isRemoteReader ?
-			//: INFO DESKTOP The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
+			//: DESKTOP The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
 			qsTr("Weak NFC signal. Please\n change the card position\n remove the mobile phone case (if present)\n connect the smartphone with a charging cable") :
-			//: INFO DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.
+			//: DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.
 			qsTr("Weak NFC signal. Please\n make sure the card is positioned correctly on the reader\n do note move the card while it is being accessed")
 			title: root.title
 			titleBarSettings: cancelNavigation
@@ -445,15 +456,14 @@ ProgressView {
 		id: regularAbortedAuthView
 
 		ProgressView {
-
-			//: INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider
+			//: DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider
 			headline: qsTr("Aborting process and informing the service provider")
 			text: {
 				if (connectivityManager.networkInterfaceActive) {
-					//: INFO DESKTOP Information message about cancellation process with present network connectivity
+					//: DESKTOP Information message about cancellation process with present network connectivity
 					return qsTr("Please wait a moment.");
 				}
-				//: INFO DESKTOP Information message about cancellation process without working network connectivity
+				//: DESKTOP Information message about cancellation process without working network connectivity
 				return qsTr("Network problems detected, trying to reach server within 30 seconds.");
 			}
 			title: root.title
@@ -482,9 +492,9 @@ ProgressView {
 
 		SelfAuthenticationData {
 			okButtonText: root.startedByOnboarding ?
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("Back to setup") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("Back to start page")
 			title: root.title
 
@@ -530,16 +540,21 @@ ProgressView {
 			animation: AuthModel.statusCodeAnimation
 			buttonIcon: AuthModel.resultViewButtonIcon
 			buttonText: root.startedByOnboarding ?
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("Back to setup") : AuthModel.resultViewButtonText
+			firstHintButtonText: AuthModel.statusHintActionText
+			firstHintText: AuthModel.statusHintText
+			firstHintTitle: AuthModel.statusHintTitle
 			header: AuthModel.resultHeader
-			hintButtonText: AuthModel.statusHintActionText
-			hintText: AuthModel.statusHintText
-			hintTitle: AuthModel.statusHintTitle
+			hintBoxesTitle: AuthModel.statusHintBoxesTitle
 			linkToOpen: AuthModel.resultViewButtonLink
 			mailButtonVisible: AuthModel.errorIsMasked
 			popupText: AuthModel.errorText
 			popupTitle: AuthModel.statusCodeDisplayString
+			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
+			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
+			secondHintText: Utils.getSecondPRSHintText(AuthModel.statusCode)
+			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			subheader: AuthModel.errorHeader
 			text: AuthModel.resultString
 			title: root.title
@@ -551,7 +566,7 @@ ProgressView {
 			}
 
 			onEmailButtonPressed: AuthModel.sendResultMail()
-			onHintClicked: AuthModel.invokeStatusHintAction()
+			onFirstHintClicked: AuthModel.invokeStatusHintAction()
 			onLeaveView: {
 				if (AuthModel.resultViewButtonLink !== "") {
 					Qt.openUrlExternally(AuthModel.resultViewButtonLink);

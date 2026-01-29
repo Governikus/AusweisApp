@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 import Governikus.Global
 import Governikus.TitleBar
@@ -31,26 +32,22 @@ ApplicationWindow {
 		feedback.close();
 	}
 
-	bottomPadding: footer.height
+	color: Style.color.background
 	flags: Qt.platform.os === "ios" ? Qt.Window | Qt.ExpandedClientAreaHint : Qt.Window
-	leftPadding: 0
-	rightPadding: 0
-	topPadding: menuBar.height
 	visible: true
 
-	background: Rectangle {
-		color: Style.color.background
-	}
 	footer: Navigation {
 		id: navigation
+
+		safeAreaBottomMargin: parent.SafeArea.margins.bottom
 
 		onResetContentArea: contentArea.reset()
 
 		anchors {
 			left: parent.left
-			leftMargin: UiPluginModel.safeAreaMargins.left
+			leftMargin: parent.SafeArea.margins.left
 			right: parent.right
-			rightMargin: UiPluginModel.safeAreaMargins.right
+			rightMargin: parent.SafeArea.margins.right
 		}
 	}
 	menuBar: TitleBar {
@@ -62,10 +59,18 @@ ApplicationWindow {
 		enableTileStyle: currentSectionPage ? currentSectionPage.enableTileStyle : false
 		navigationAction: currentSectionPage ? currentSectionPage.navigationAction : null
 		rightAction: currentSectionPage ? currentSectionPage.rightTitleBarAction : null
+		safeAreaTopMargin: parent.SafeArea.margins.top
 		showContent: currentSectionPage ? currentSectionPage.showTitleBarContent : true
 		showSeparator: currentSectionPage ? currentSectionPage.contentIsScrolled : false
 		smartEidUsed: currentSectionPage ? currentSectionPage.smartEidUsed : false
 		title: currentSectionPage ? currentSectionPage.title : ""
+
+		anchors {
+			left: parent.left
+			leftMargin: parent.SafeArea.margins.left
+			right: parent.right
+			rightMargin: parent.SafeArea.margins.right
+		}
 	}
 
 	Component.onCompleted: {
@@ -86,7 +91,7 @@ ApplicationWindow {
 					return;
 				}
 				d.lastCloseInvocation = currentTime;
-				//: INFO ANDROID IOS Hint that is shown if the users pressed the "back" button on the top-most navigation level for the first time (a second press closes the app).
+				//: MOBILE Hint that is shown if the users pressed the "back" button on the top-most navigation level for the first time (a second press closes the app).
 				ApplicationModel.showFeedback(qsTr("To close the app, tap the back button 2 times."));
 				return;
 			}
@@ -166,44 +171,37 @@ ApplicationWindow {
 
 		target: UiPluginModel
 	}
-	ContentArea {
-		id: contentArea
+	ColumnLayout {
+		anchors.fill: parent
+		spacing: 0
 
-		function reset() {
-			currentSectionPage.popAll();
+		ContentArea {
+			id: contentArea
+
+			function reset() {
+				currentSectionPage.popAll();
+			}
+
+			Layout.fillHeight: true
+			Layout.fillWidth: true
+			activeModule: navigation.activeModule
+
+			IosBackGestureMouseArea {
+				anchors.fill: parent
+				enabled: Style.is_layout_ios && titleBar.isBackAction
+
+				onBackGestureTriggered: titleBar.navigationAction.clicked()
+			}
 		}
+		GStagedProgressBar {
+			id: progressBar
 
-		activeModule: navigation.activeModule
+			readonly property var currentSectionPage: contentArea.currentSectionPage
 
-		anchors {
-			bottomMargin: (navigation.lockedAndHidden ? UiPluginModel.safeAreaMargins.bottom : 0) + progressBar.visibleHeight
-			fill: parent
-			leftMargin: UiPluginModel.safeAreaMargins.left
-			rightMargin: UiPluginModel.safeAreaMargins.right
+			Layout.fillWidth: true
+			progress: currentSectionPage ? currentSectionPage.progress : null
+			visible: progress !== null && progress.enabled
 		}
-	}
-	GStagedProgressBar {
-		id: progressBar
-
-		readonly property var currentSectionPage: contentArea.currentSectionPage
-		readonly property real visibleHeight: visible ? height : 0
-
-		progress: currentSectionPage ? currentSectionPage.progress : null
-		visible: progress !== null && progress.enabled
-
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			leftMargin: UiPluginModel.safeAreaMargins.left
-			right: parent.right
-			rightMargin: UiPluginModel.safeAreaMargins.right
-		}
-	}
-	IosBackGestureMouseArea {
-		anchors.fill: contentArea
-		visible: Style.is_layout_ios && titleBar.isBackAction
-
-		onBackGestureTriggered: titleBar.navigationAction.clicked()
 	}
 	Connections {
 		function onFireA11yFocusChanged(pItem) {

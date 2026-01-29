@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CVCertificate.h"
@@ -110,12 +110,24 @@ bool CVCertificate::isIssuedBy(const CVCertificate& pIssuer) const
 }
 
 
+bool CVCertificate::operator==(const cvcertificate_st& pOther) const
+{
+	return getRawBody() == pOther.getRawBody() && getRawSignature() == pOther.getRawSignature();
+}
+
+
+bool CVCertificate::operator!=(const cvcertificate_st& pOther) const
+{
+	return !(*this == pOther);
+}
+
+
 QDebug operator <<(QDebug pDbg, const governikus::CVCertificate& pCvc)
 {
 	QDebugStateSaver saver(pDbg);
 	pDbg.nospace().noquote() << pCvc.getBody().getCHAT().getAccessRole() << "("
-							 << pCvc.getBody().getCertificateHolderReference()
-							 << ", authority=" << pCvc.getBody().getCertificationAuthorityReference()
+							 << pCvc.getBody().getCertificateHolderReference().trimmed()
+							 << ", authority=" << pCvc.getBody().getCertificationAuthorityReference().trimmed()
 							 << ", " << pCvc.getBody().getCertificateEffectiveDate().toString(Qt::ISODate)
 							 << " - " << pCvc.getBody().getCertificateExpirationDate().toString(Qt::ISODate)
 							 << ", " << (pCvc.isValidOn(QDateTime::currentDateTime()) ? "valid" : "invalid")
@@ -129,7 +141,7 @@ QDebug operator<<(QDebug pDbg, const QSharedPointer<const governikus::CVCertific
 	if (pCvc == nullptr)
 	{
 		QDebugStateSaver saver(pDbg);
-		pDbg.nospace() << "false";
+		pDbg.nospace() << "0x0";
 		return pDbg;
 	}
 	else
@@ -144,7 +156,7 @@ QDebug operator<<(QDebug pDbg, const QList<QSharedPointer<const governikus::CVCe
 	QByteArrayList names;
 	for (const auto& cvc : pCvcs)
 	{
-		QByteArray holder = cvc->getBody().getCertificateHolderReference();
+		QByteArray holder = cvc->getBody().getCertificateHolderReference().trimmed();
 		if (cvc->isIssuedBy(*cvc))
 		{
 			holder.prepend("(Self Signed) ");

@@ -1,0 +1,140 @@
+From a6aca2b6fa4795aab359ab92c37dae7d00add414 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Mon, 20 Oct 2025 17:40:16 +0200
+Subject: a11y Android: Replace magic numbers of RangeType with java constants
+
+This also fixes that RANGE_TYPE_INTERMINATE is not available before
+apilevel 36.
+
+Task-number: QTBUG-139712
+Pick-to: 6.10 6.8
+Change-Id: Icb53204e0a7a369a161461b9e925436eb4e7c27b
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit 5f857a3f1e62809cd810f0f0e9072f3858051b95)
+---
+ .../android/androidjniaccessibility.cpp       | 34 ++++++++++++++++---
+ .../platforms/android/androidjnimain.cpp      |  6 ++++
+ .../platforms/android/androidjnimain.h        |  1 +
+ 3 files changed, 36 insertions(+), 5 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+index 058270edc6e4da14cad58bc57384c8290875e659..665b73b6fc0bb8f4797b8adc8a3b11e86139fd9c 100644
+--- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+@@ -64,6 +64,11 @@ namespace QtAndroidAccessibility
+         std::make_pair(QAccessible::TextBoundaryType::ParagraphBoundary, QJniObject::getStaticField<int>("android/view/accessibility/AccessibilityNodeInfo", "MOVEMENT_GRANULARITY_PARAGRAPH"))
+     };
+ 
++    static int RANGE_TYPE_INT = 0;
++    static int RANGE_TYPE_FLOAT = 0;
++    static int RANGE_TYPE_PERCENT = 0;
++    static int RANGE_TYPE_INDETERMINATE = 0;
++
+     static bool m_accessibilityActivated = false;
+ 
+     // This object is needed to schedule the execution of the code that
+@@ -712,7 +717,6 @@ namespace QtAndroidAccessibility
+             return QStringLiteral("android.widget.RadioButton");
+         case QAccessible::Role::ProgressBar:
+             return QStringLiteral("android.widget.ProgressBar");
+-            // Range information need to be filled to announce percentages
+         case QAccessible::Role::SpinBox:
+             return QStringLiteral("android.widget.NumberPicker");
+         case QAccessible::Role::WebDocument:
+@@ -963,14 +967,14 @@ namespace QtAndroidAccessibility
+ 
+         if (info.hasValue && m_setRangeInfoMethodID) {
+             int valueType = info.currentValue.typeId();
+-            jint rangeType = 3; // RANGE_TYPE_INDETERMINATE
++            jint rangeType = RANGE_TYPE_INDETERMINATE;
+             switch (valueType) {
+             case QMetaType::Float:
+             case QMetaType::Double:
+-                rangeType = 1; // RANGE_TYPE_FLOAT
++                rangeType = RANGE_TYPE_FLOAT;
+                 break;
+             case QMetaType::Int:
+-                rangeType = 0; // RANGE_TYPE_INT
++                rangeType = RANGE_TYPE_INT;
+                 break;
+             }
+ 
+@@ -978,7 +982,7 @@ namespace QtAndroidAccessibility
+             float max = info.maxValue.toFloat();
+             float current = info.currentValue.toFloat();
+             if (info.role == QAccessible::ProgressBar) {
+-                rangeType = 2; // RANGE_TYPE_PERCENT
++                rangeType = RANGE_TYPE_PERCENT;
+                 current = 100 * (current - min) / (max - min);
+                 min = 0.0f;
+                 max = 100.0f;
+@@ -1236,6 +1240,14 @@ namespace QtAndroidAccessibility
+         return false; \
+     }
+ 
++#define CHECK_AND_INIT_STATIC_FIELD(TYPE, VAR, CLASS, FIELD_NAME)             \
++    if (env.findStaticField<TYPE>(CLASS, FIELD_NAME) == nullptr) {            \
++        __android_log_print(ANDROID_LOG_FATAL, QtAndroid::qtTagText(),        \
++                            QtAndroid::staticFieldErrorMsgFmt(), FIELD_NAME); \
++        return false;                                                         \
++    }                                                                         \
++    VAR = QJniObject::getStaticField<TYPE>(CLASS, FIELD_NAME);
++
+     bool registerNatives(QJniEnvironment &env)
+     {
+         if (!env.registerNativeMethods("org/qtproject/qt/android/QtNativeAccessibility",
+@@ -1280,6 +1292,18 @@ namespace QtAndroidAccessibility
+         GET_AND_CHECK_STATIC_METHOD(m_setFromIndexEventMethodID, accessibilityEventClass, "setFromIndex", "(I)V");
+         GET_AND_CHECK_STATIC_METHOD(m_setToIndexEventMethodID, accessibilityEventClass, "setToIndex", "(I)V");
+ 
++        jclass rangeInfoClass =
++                env->FindClass("android/view/accessibility/AccessibilityNodeInfo$RangeInfo");
++        CHECK_AND_INIT_STATIC_FIELD(int, RANGE_TYPE_INT, rangeInfoClass, "RANGE_TYPE_INT");
++        CHECK_AND_INIT_STATIC_FIELD(int, RANGE_TYPE_FLOAT, rangeInfoClass, "RANGE_TYPE_FLOAT");
++        CHECK_AND_INIT_STATIC_FIELD(int, RANGE_TYPE_PERCENT, rangeInfoClass, "RANGE_TYPE_PERCENT");
++        if (QtAndroidPrivate::androidSdkVersion() >= 36) {
++            CHECK_AND_INIT_STATIC_FIELD(int, RANGE_TYPE_INDETERMINATE, rangeInfoClass,
++                                        "RANGE_TYPE_INDETERMINATE");
++        } else {
++            RANGE_TYPE_INDETERMINATE = RANGE_TYPE_FLOAT;
++        }
++
+         return true;
+     }
+ }
+diff --git x/qtbase/src/plugins/platforms/android/androidjnimain.cpp y/qtbase/src/plugins/platforms/android/androidjnimain.cpp
+index e2b2c9dcd93ee1c6910a6568e8fa7f2c5648e851..b53068863cd6d9c67627ad44a10c972ed4e5faa2 100644
+--- x/qtbase/src/plugins/platforms/android/androidjnimain.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjnimain.cpp
+@@ -92,6 +92,7 @@ static AndroidBackendRegister *m_backendRegister = nullptr;
+ static const char m_qtTag[] = "Qt";
+ static const char m_classErrorMsg[] = "Can't find class \"%s\"";
+ static const char m_methodErrorMsg[] = "Can't find method \"%s%s\"";
++static const char m_staticFieldErrorMsg[] = "Can't find static field \"%s\"";
+ 
+ Q_CONSTINIT static QBasicAtomicInt startQtAndroidPluginCalled = Q_BASIC_ATOMIC_INITIALIZER(0);
+ 
+@@ -342,6 +343,11 @@ namespace QtAndroid
+         return m_methodErrorMsg;
+     }
+ 
++    const char *staticFieldErrorMsgFmt()
++    {
++        return m_staticFieldErrorMsg;
++    }
++
+     const char *qtTagText()
+     {
+         return m_qtTag;
+diff --git x/qtbase/src/plugins/platforms/android/androidjnimain.h y/qtbase/src/plugins/platforms/android/androidjnimain.h
+index 5e224f26c8053b292d98d4f3a71e992ce0752299..ada2742e0c43b5edd9b0eaca2a8182ed57d9c7ab 100644
+--- x/qtbase/src/plugins/platforms/android/androidjnimain.h
++++ y/qtbase/src/plugins/platforms/android/androidjnimain.h
+@@ -68,6 +68,7 @@ namespace QtAndroid
+ 
+     const char *classErrorMsgFmt();
+     const char *methodErrorMsgFmt();
++    const char *staticFieldErrorMsgFmt();
+     const char *qtTagText();
+ 
+     QString deviceName();

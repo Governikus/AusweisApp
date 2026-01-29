@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQml
@@ -21,16 +21,21 @@ FlickableSectionPage {
 	property alias buttonIcon: button.icon.source
 	property alias buttonLayoutDirection: button.layoutDirection
 	property alias buttonText: button.text
-	default property alias data: resultContent.data
+	property string firstHintButtonLink
+	property alias firstHintButtonText: hintItem.buttonText
+	property alias firstHintText: hintItem.text
+	property alias firstHintTitle: hintItem.title
 	property alias header: resultHeader.text
-	property string hintButtonLink
-	property alias hintButtonText: hintItem.buttonText
-	property alias hintText: hintItem.text
-	property alias hintTitle: hintItem.title
+	property alias hintBoxesTitle: hintBoxesTitle.text
 	property string linkToOpen
 	property alias mailButtonVisible: mailButton.visible
 	property string popupText
 	property string popupTitle
+	default property alias resultData: resultContent.data
+	property string secondHintButtonLink
+	property alias secondHintButtonText: secondHintItem.buttonText
+	property alias secondHintText: secondHintItem.text
+	property alias secondHintTitle: secondHintItem.title
 	property alias showOkButton: button.visible
 	property alias subheader: subheader.text
 	property alias text: resultText.text
@@ -40,7 +45,8 @@ FlickableSectionPage {
 	signal cancelClicked
 	signal continueClicked
 	signal emailButtonPressed
-	signal hintClicked
+	signal firstHintClicked
+	signal secondHintClicked
 
 	function confirm() {
 		button.clicked();
@@ -89,7 +95,7 @@ FlickableSectionPage {
 
 			icon.source: "qrc:///images/email_icon.svg"
 			style: Style.color.controlOptional
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Send email")
 			tintIcon: true
 			visible: false
@@ -99,7 +105,7 @@ FlickableSectionPage {
 		GButton {
 			icon.source: "qrc:/images/desktop/save_icon.svg"
 			style: Style.color.controlOptional
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Save log")
 			tintIcon: true
 
@@ -112,10 +118,10 @@ FlickableSectionPage {
 				id: fileDialog
 
 				defaultSuffix: "log"
-				//: LABEL DESKTOP
+				//: DESKTOP
 				nameFilters: qsTr("Logfiles (*.log)")
 
-				//: LABEL DESKTOP
+				//: DESKTOP
 				title: qsTr("Save log")
 
 				onAccepted: logModel.saveLogFile(selectedFile, true)
@@ -138,7 +144,7 @@ FlickableSectionPage {
 
 			icon.source: "qrc:/images/info.svg"
 			style: Style.color.controlOptional
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("See details")
 			tintIcon: true
 			visible: root.popupTitle !== "" || root.popupText !== ""
@@ -157,16 +163,33 @@ FlickableSectionPage {
 	GSpacer {
 		Layout.fillHeight: true
 	}
+	GText {
+		id: hintBoxesTitle
+
+		textStyle: Style.text.subline
+		visible: text !== ""
+	}
 	Hint {
 		id: hintItem
 
 		Layout.fillWidth: true
-		linkToOpen: root.hintButtonLink
-		//: LABEL DESKTOP
+		linkToOpen: root.firstHintButtonLink
+		//: DESKTOP
 		title: qsTr("Hint")
 		visible: text !== ""
 
-		onClicked: root.hintClicked()
+		onClicked: root.firstHintClicked()
+	}
+	Hint {
+		id: secondHintItem
+
+		Layout.fillWidth: true
+		linkToOpen: root.secondHintButtonLink
+		//: DESKTOP
+		title: qsTr("Hint")
+		visible: text !== ""
+
+		onClicked: root.secondHintClicked()
 	}
 	GButton {
 		id: button

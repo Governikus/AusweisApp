@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MulticastLock.h"
@@ -57,11 +57,9 @@ void MulticastLock::invokeJniMethod(const char* const pMethodName) const
 			"(Landroid/content/Context;)V",
 			context.object<jobject>());
 
-	if (env->ExceptionCheck())
+	if (env.checkAndClearExceptions())
 	{
 		qCCritical(network) << "Cannot call MulticastLockJniBridgeUtil." << pMethodName << "()";
-		env->ExceptionDescribe();
-		env->ExceptionClear();
 	}
 #else
 	Q_UNUSED(pMethodName)

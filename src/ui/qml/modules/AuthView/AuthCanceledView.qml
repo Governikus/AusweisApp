@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -20,7 +20,7 @@ FlickableSectionPage {
 	spacing: Style.dimens.pane_spacing
 
 	Heading {
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("Authentication was canceled")
 		visible: text !== ""
 	}
@@ -32,19 +32,19 @@ FlickableSectionPage {
 	Subheading {
 		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("The authentication is being canceled at the provider (%1)").arg(CertificateDescriptionModel.subjectName)
 		visible: text !== ""
 	}
 	GText {
 		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("This may take a few moments.")
 		visible: text !== ""
 	}
 	GProgressBar {
-		//: LABEL ALL_PLATFORMS Name of an progress indicator during the cancellation of an authentication read by screen readers
+		//: ALL_PLATFORMS Name of an progress indicator during the cancellation of an authentication read by screen readers
 		Accessible.name: qsTr("Cancellation progress")
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
@@ -55,13 +55,13 @@ FlickableSectionPage {
 		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
 		text: root.isSelfAuth || AuthModel.currentState === "StateRedirectBrowser" ?
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		qsTr("The authentication was cancelled successfully.") + "<br>" +
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		(AuthModel.statusCode === GlobalStatusCode.Card_Cancellation_By_User ? qsTr("The cancellation was triggered on the card reader.") + "<br>" : "") + (Style.is_layout_desktop ?
-			//: LABEL DESKTOP
+			//: DESKTOP
 			qsTr("You may start a new authentication after clicking the button.") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("You may start a new authentication after tapping the button.")) : ""
 		visible: text !== ""
 	}
@@ -73,11 +73,11 @@ FlickableSectionPage {
 		enabled: root.isSelfAuth ? true : AuthModel.currentState === "StateRedirectBrowser"
 		icon.source: root.isSelfAuth ? "" : "qrc:///images/open_website.svg"
 		text: !root.isSelfAuth ?
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		qsTr("Back to provider") : root.startedByOnboarding ?
-		//: LABEL ALL_PLATFORM
+		//: ALL_PLATFORM
 		qsTr("Back to setup") :
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		qsTr("Back to start page")
 		tintIcon: true
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -23,7 +23,6 @@ Control {
 	Layout.minimumWidth: navigationRow.Layout.minimumWidth + leftPadding + rightPadding
 	Layout.preferredHeight: Math.ceil(implicitHeight)
 	Layout.preferredWidth: contentItem.Layout.preferredWidth + leftPadding + rightPadding
-	bottomInset: -UiPluginModel.safeAreaMargins.bottom
 	bottomPadding: Style.dimens.navigation_bar_bottom_padding
 	horizontalPadding: Style.dimens.navigation_bar_padding
 	topPadding: Style.dimens.navigation_bar_padding
@@ -31,7 +30,7 @@ Control {
 	background: RoundedRectangle {
 		bottomLeftCorner: false
 		bottomRightCorner: false
-		color: Style.color.pane.background.basic
+		color: Style.color.pane.background.basic_unchecked
 		layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 		radius: Style.dimens.pane_radius
 
@@ -57,12 +56,12 @@ Control {
 				required property int index
 				readonly property var mainViewSubViews: [UiModule.IDENTIFY, UiModule.SELF_AUTHENTICATION, UiModule.PINMANAGEMENT, UiModule.CHECK_ID_CARD, UiModule.SMART_EID]
 				required property int module
-				//: ANDROID IOS LABEL Relative position of current navigation tab in navigation view. %1 is replaced with the current tab's index, %2 with the total count of tabs
+				//: MOBILE Relative position of current navigation tab in navigation view. %1 is replaced with the current tab's index, %2 with the total count of tabs
 				readonly property string tabPositionA11y: qsTr("%1 of %2").arg(index + 1).arg(repeater.count)
 
 				Accessible.ignored: root.Accessible.ignored
 				Accessible.name: {
-					//: ANDROID IOS LABEL
+					//: MOBILE
 					var a11yName = [text, qsTr("Tab"), tabPositionA11y];
 					if (checked) {
 						if (Qt.platform.os === "ios") {

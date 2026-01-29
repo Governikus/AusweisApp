@@ -410,21 +410,6 @@
 		},
 		{
 			"shortName": {
-				"": "Bürgerantrag Bremen"
-			},
-			"longName": {
-				"": "Bürgerantrag Bremen"
-			},
-			"longDescription": {
-				"": "Mit der Online-Ausweisfunktion können Sie im Bundesland Bremen Bürgeranträge elektronisch mitzeichnen oder Unterschriften für Ihren eigenen Bürgerantrag sammeln. Mit nur 5.000 Mitzeichnerinnen und Mitzeichnern - egal ob online oder auf Papier - können Sie Anträge direkt in den Bremische Bürgerschaft (Landtag) einbringen. Für die Stadtbürgerschaft Bremen genügen sogar 4.000 Unterschriften."
-			},
-			"address": "https://www.buergerantrag.bremen.de",
-			"homepage": "https://www.bremische-buergerschaft.de",
-			"email": "webmaster@buergerschaft.bremen.de",
-			"category": "citizen"
-		},
-		{
-			"shortName": {
 				"": "Bürgerservice Online Stadt Memmingen"
 			},
 			"longName": {
@@ -1004,7 +989,7 @@
 			"longDescription": {
 				"": "Immer mehr öffentliche Dienstleistungen können Sie auch online erledigen. Hier finden Sie eine Übersicht. Ergänzend bietet die Stadt Leipzig Sprechstunden und VHS-Kurse zum digitalen Bürgerservice an."
 			},
-			"address": "https://www.leipzig.de/buergerservice-und-verwaltung/aemter-und-behoerdengaenge/behoerden-und-dienstleistungen#c248342",
+			"address": "https://www.leipzig.de/service-portal#c248342",
 			"homepage": "https://www.leipzig.de",
 			"phone": "+49 341 115",
 			"email": "info@leipzig.de",

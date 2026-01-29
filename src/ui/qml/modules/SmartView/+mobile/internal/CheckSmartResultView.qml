@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -42,10 +42,10 @@ CheckResultSuggestionView {
 
 		animationSymbol: Symbol.Type.ERROR
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		continueButtonText: qsTr("Back")
 		text: SmartModel.errorString
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Smart-eID check failed")
 
 		onContinueClicked: root.cancelClicked()
@@ -53,7 +53,7 @@ CheckResultSuggestionView {
 	SuggestionData {
 		id: empty
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Unknown result code: %1").arg(root.result)
 	}
 	SuggestionData {
@@ -61,10 +61,10 @@ CheckResultSuggestionView {
 
 		animationType: AnimationLoader.Type.HOURGLASS
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Please wait a moment.")
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Updating Smart-eID status...")
 	}
 	SuggestionData {
@@ -72,12 +72,12 @@ CheckResultSuggestionView {
 
 		animationSymbol: Symbol.Type.ERROR
 		continueButtonIcon: "qrc:///images/device_button.svg"
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		continueButtonText: qsTr("Check device and ID card")
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Your mobile device does not meet the technical requirements for Smart-eID.<br><br>You may check if your device and ID card are suitable to use the eID function.")
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Smart-eID not supported")
 
 		onContinueClicked: root.checkDevice()
@@ -86,23 +86,23 @@ CheckResultSuggestionView {
 		id: smartUnusableData
 
 		continueButtonIcon: "qrc:///images/identify.svg"
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: "<style>ul{-qt-list-indent: 0;}li{margin-top:1em;}</style>" +
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		qsTr("Your device meets the technical requirements for Smart-eID, however, the Smart-eID that was set up is invalid.") + "<br><br>" +
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		qsTr("Possible causes are:") + "<ul><li>" +
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		qsTr("The setup has not been completed.") + "</li><li>" +
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		qsTr("The Smart-eID PIN has been entered incorrectly 3 times.") + "</li><li>" +
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		qsTr("The %1 has been uninstalled temporarily.").arg(Qt.application.name) + "</li></ul>" + "<br>" +
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		qsTr("You may continue with the setup of the Smart-eID.")
 		textFormat: Text.RichText
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Smart-eID invalid")
 
 		onContinueClicked: root.runSmartSetup()
@@ -112,10 +112,10 @@ CheckResultSuggestionView {
 
 		continueButtonIcon: "qrc:///images/identify.svg"
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Your device meets the technical requirements for Smart-eID. You may now continue the setup process.")
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		title: qsTr("Smart-eID supported")
 
 		onContinueClicked: root.runSmartSetup()

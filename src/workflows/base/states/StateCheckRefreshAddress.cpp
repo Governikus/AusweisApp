@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckRefreshAddress.h"
@@ -441,7 +441,7 @@ void StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate(QNetworkR
 
 void StateCheckRefreshAddress::onEntry(QEvent* pEvent)
 {
-	//: INFO ALL_PLATFORMS Status message after the communication between card and server is completed, the result is being forwarded to the provider.
+	//: ALL_PLATFORMS Status message after the communication between card and server is completed, the result is being forwarded to the provider.
 	getContext()->setProgress(80, tr("Sending data to provider"));
 	AbstractState::onEntry(pEvent);
 }

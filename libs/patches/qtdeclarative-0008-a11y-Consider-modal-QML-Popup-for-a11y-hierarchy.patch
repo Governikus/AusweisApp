@@ -1,0 +1,52 @@
+From b0287626f1de05001f7159e67eabcbbcdafa6f2b Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Mon, 15 Sep 2025 13:31:26 +0200
+Subject: a11y: Consider modal QML Popup for a11y hierarchy
+
+This introduces generic filtering for QQuickItems that are modal and
+use the QAccessible::Dialog role. If such an Item exists, only this
+one will make up the a11y hierarchy and other elements are ignored
+to ensure the actual modality.
+
+Only the *first* Item with these properties will be considered.
+
+Fixes: QTBUG-140200
+Pick-to: 6.11
+Change-Id: Ic725f877d9fa877b2bf5404b53fe608cd0164bb1
+---
+ src/quick/accessible/qaccessiblequickitem.cpp             | 8 ++++++++
+ .../accessible/qaccessiblequickpopupitem.cpp              | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+index db2249ecd81a091d9f48cc5239b232099292777b..1bc956b1d50af51526b11e5e304b54f8c217c778 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+@@ -420,6 +420,14 @@ QList<QQuickItem *> accessibleUnignoredChildren(QQuickItem *item, bool paintOrde
+ {
+     QList<QQuickItem *> items;
+     unignoredChildren(item, &items, paintOrder);
++
++    auto it = std::find_if(items.rbegin(), items.rend(), [](QQuickItem *item) {
++        const QAccessibleInterface *iface = QAccessible::queryAccessibleInterface(item);
++        return iface && iface->state().modal && iface->role() == QAccessible::Dialog;
++    });
++    if (it != items.rend())
++        return { *it };
++
+     return items;
+ }
+ 
+diff --git x/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickpopupitem.cpp y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickpopupitem.cpp
+index ac0ea256d7818f5a80b945d9ada5f2658d637546..818cfec605d45459bbbcd9fa5f32d3c6e38d7855 100644
+--- x/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickpopupitem.cpp
++++ y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickpopupitem.cpp
+@@ -16,7 +16,7 @@ QAccessible::State QAccessibleQuickPopupItem::state() const
+ {
+     QAccessible::State state = QAccessibleQuickItem::state();
+ 
+-    QQuickPopup *popup = qobject_cast<QQuickPopup *>(object()->parent());
++    QQuickPopup *popup = static_cast<QQuickPopup *>(object()->parent());
+     if (popup)
+         state.modal = popup->isModal();
+ 

@@ -1,0 +1,40 @@
+From 9f9952916f8fccd8798458b720a1e35996f67973 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Thu, 6 Nov 2025 08:42:09 +0100
+Subject: a11y iOS: Inform VoiceOver about used language
+
+The property accessibilityLanguage is used by VoiceOver on iOS and
+allows to tell the screen reader which language package to use. This
+is helpful if the app's language is different from the OS language.
+Without this change english texts are read with a german accent if
+the OS language is set to German and the app language to English.
+
+On macOS VoiceOver does not evaluate this property and texts are
+always read with the OS language.
+
+Task-number: QTBUG-141701
+Change-Id: I469652ff44f9d788ce6e6bdfa6c34d1570f2e439
+---
+ src/plugins/platforms/ios/quiaccessibilityelement.mm | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+index a9f62e3feeadd810d212b04e66b04a5e91dbfc4e..8b16a903d6a3e3b8bb86365522a920f6fb254813 100644
+--- x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+@@ -424,6 +424,15 @@ struct RotorNameTranslator {
+     return !strict_vertical_outside;
+ }
+ 
++- (NSString *)accessibilityLanguage {
++    QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || !iface->isValid()) {
++      qWarning() << "invalid accessible interface for: " << self.axid;
++      return @"";
++    }
++    return iface->uiLanguage().toNSString();
++}
++
+ @end
+ 
+ #endif

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,7 +29,6 @@ class UiPluginModel
 	Q_PROPERTY(bool developerVersion READ isDeveloperVersion CONSTANT)
 	Q_PROPERTY(QString dominator READ getDominator NOTIFY fireDominatorChanged)
 	Q_PROPERTY(bool dominated READ isDominated NOTIFY fireDominatorChanged)
-	Q_PROPERTY(QVariantMap safeAreaMargins READ getSafeAreaMargins NOTIFY fireSafeAreaMarginsChanged)
 	Q_PROPERTY(bool highContrastEnabled READ isHighContrastEnabled NOTIFY fireHighContrastEnabledChanged)
 	Q_PROPERTY(bool darkModeEnabled READ isDarkModeEnabled NOTIFY fireDarkModeEnabledChanged)
 	Q_PROPERTY(QString fixedFontFamily READ getFixedFontFamily CONSTANT)
@@ -57,7 +56,6 @@ class UiPluginModel
 		[[nodiscard]] virtual bool isDeveloperVersion() const = 0;
 		[[nodiscard]] virtual QString getDominator() const = 0;
 		[[nodiscard]] virtual bool isDominated() const = 0;
-		[[nodiscard]] virtual QVariantMap getSafeAreaMargins() const = 0;
 		[[nodiscard]] virtual bool isHighContrastEnabled() const = 0;
 		[[nodiscard]] virtual bool isDarkModeEnabled() const = 0;
 		[[nodiscard]] virtual QString getFixedFontFamily() const = 0;
@@ -84,7 +82,6 @@ class UiPluginModel
 		void fireShowRequest(UiModule pModule);
 		void fireHideRequest();
 		void fireDominatorChanged();
-		void fireSafeAreaMarginsChanged();
 		void fireHighContrastEnabledChanged();
 		void fireDarkModeEnabledChanged();
 		void fireProxyAuthenticationRequired(ProxyCredentials* pProxyCredentials);

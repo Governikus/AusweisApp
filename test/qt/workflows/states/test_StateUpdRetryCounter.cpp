@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateUpdateRetryCounter.h"
@@ -66,7 +66,7 @@ class test_StateUpdateRetryCounter
 		{
 			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			StateUpdateRetryCounter counter(context);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QSharedPointer<MockCardCommand> command(new MockCardCommand(worker));
 			QSignalSpy spyContinue(&counter, &StateUpdateRetryCounter::fireContinue);
 			QSignalSpy spyAbort(&counter, &StateUpdateRetryCounter::fireAbort);

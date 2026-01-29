@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -26,7 +26,7 @@ RowLayout {
 		id: icon
 
 		sourceSize.width: Style.dimens.icon_size
-		tintColor: Style.color.textSubline.basic
+		tintColor: Style.color.textSubline.basic_unchecked
 	}
 	LabeledText {
 		id: labeledText

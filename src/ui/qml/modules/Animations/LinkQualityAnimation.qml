@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -18,9 +18,9 @@ Item {
 	property int size: Style.dimens.icon_size
 
 	Accessible.name: inactive ?
-	//: INFO ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	qsTr("Link quality unavailable.") :
-	//: INFO ALL_PLATFORMS %1 is replaced with a number between 0 and 100
+	//: ALL_PLATFORMS %1 is replaced with a number between 0 and 100
 	qsTr("%1% link quality.").arg(percent)
 	Accessible.role: Accessible.StaticText
 	implicitHeight: size
@@ -47,6 +47,6 @@ Item {
 		required property int threshold
 
 		sourceSize.height: root.size
-		tintColor: root.inactive || root.percent < (SettingsModel.useAnimations ? threshold : 20) ? Style.color.remoteIndicator.disabled : Style.color.remoteIndicator.basic
+		tintColor: root.inactive || root.percent < (SettingsModel.useAnimations ? threshold : 20) ? Style.color.remoteIndicator.disabled_unchecked : Style.color.remoteIndicator.basic_unchecked
 	}
 }

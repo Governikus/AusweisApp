@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LocalIfdClient.h"
@@ -35,7 +35,8 @@ INIT_FUNCTION([] {
 
 
 LocalIfdClient::LocalIfdClient()
-	: mPsk()
+	: IfdClientImpl()
+	, mPsk()
 	, mDevice()
 #ifdef Q_OS_ANDROID
 	, mServiceConnection()

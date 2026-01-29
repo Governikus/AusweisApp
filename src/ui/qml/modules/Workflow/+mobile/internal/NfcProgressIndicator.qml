@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -191,7 +191,7 @@ Item {
 			rotation: card.rotation
 			source: "qrc:///images/mobile/card.svg"
 			sourceSize.height: card.sourceSize.height
-			tintColor: Style.color.control.background.disabled
+			tintColor: Style.color.control.background.disabled_unchecked
 			visible: card.visible
 			x: card.x - fakephone.x
 			y: card.y - fakephone.y

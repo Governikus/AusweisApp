@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -112,7 +112,7 @@ GAbstractButton {
 	Keys.onSpacePressed: event => {
 		toggled();
 		if (Qt.platform.os === "windows" && checked) {
-			//: LABEL DESKTOP
+			//: DESKTOP
 			Accessible.announce(qsTr("checked"));
 		}
 		event.accepted = true;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -16,6 +16,8 @@ ColumnLayout {
 
 	signal continueOnboarding
 
+	spacing: Style.dimens.pane_spacing
+
 	Heading {
 		id: titleText
 
@@ -24,21 +26,18 @@ ColumnLayout {
 	}
 	AnimationLoader {
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Style.dimens.pane_spacing
 		animated: false
 		symbol: confirmationData.animationSymbol
 		type: confirmationData.animationType
 	}
 	Subheading {
-		Layout.topMargin: Style.dimens.pane_spacing
 		text: confirmationData.sublineText !== "" ? confirmationData.sublineText :
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		qsTr("Step %1 of %2 was successful").arg(root.progress.currentStage).arg(root.progress.stages)
 	}
 	GText {
 		id: descriptionText
 
-		Layout.topMargin: Style.dimens.text_spacing
 		text: confirmationData.descriptionText
 		textFormat: Text.StyledText
 	}
@@ -46,15 +45,12 @@ ColumnLayout {
 		id: hintItem
 
 		Layout.fillWidth: true
-		Layout.topMargin: Style.dimens.pane_spacing
 		text: confirmationData.hintText
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		title: qsTr("Hint")
 		visible: text !== ""
 	}
 	GContinueButton {
-		Layout.topMargin: Style.dimens.pane_spacing
-
 		onClicked: root.continueOnboarding()
 	}
 	OnboardingConfirmationViewData {

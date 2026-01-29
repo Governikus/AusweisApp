@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -9,6 +9,7 @@
 #include "UiLoader.h"
 #include "UiPluginQml.h"
 
+#include <QDesktopServices>
 #include <QFontDatabase>
 #include <QLoggingCategory>
 #include <QQmlContext>
@@ -31,6 +32,18 @@ class QmlTestRunner
 
 	private:
 		QSharedPointer<MockNetworkManager> mMockNetworkManager;
+
+	public:
+		Q_INVOKABLE void registerUrlScheme(const QString& pScheme)
+		{
+			QDesktopServices::setUrlHandler(pScheme, this, "urlInvoked");
+		}
+
+
+		Q_INVOKABLE void clearUrlScheme(const QString& pScheme)
+		{
+			QDesktopServices::unsetUrlHandler(pScheme);
+		}
 
 	public Q_SLOTS:
 		void applicationAvailable()
@@ -59,6 +72,7 @@ class QmlTestRunner
 		{
 			const auto& prefix = UiPluginQml::adjustQmlImportPath(pEngine);
 			pEngine->rootContext()->setContextProperty(QStringLiteral("importPrefix"), prefix);
+			pEngine->rootContext()->setContextProperty(QStringLiteral("testRunner"), this);
 
 			connect(pEngine, &QQmlEngine::warnings, this, [](const QList<QQmlError>& pWarnings){
 						bool fail = false;
@@ -78,6 +92,8 @@ class QmlTestRunner
 			Q_UNUSED(Env::getSingleton<UiLoader>()->load())
 		}
 
+	Q_SIGNALS:
+		void urlInvoked(const QUrl& pUrl);
 
 };
 

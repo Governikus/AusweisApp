@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -60,11 +60,11 @@ SectionPage {
 				Layout.fillWidth: true
 				containerPadding: Style.dimens.pane_padding
 				containerSpacing: Style.dimens.groupbox_spacing
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				title: qsTr("Filter")
 
 				Subheading {
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					text: qsTr("Level")
 				}
 				GridLayout {
@@ -89,7 +89,7 @@ SectionPage {
 					}
 				}
 				Subheading {
-					//: LABEL ANDROID IOS
+					//: MOBILE
 					text: qsTr("Category")
 				}
 				GridLayout {
@@ -142,7 +142,7 @@ SectionPage {
 			GText {
 				anchors.centerIn: parent
 				horizontalAlignment: Text.AlignHCenter
-				//: INFO ANDROID IOS No log entries, placeholder text.
+				//: MOBILE No log entries, placeholder text.
 				text: qsTr("Currently there are no log entries matching your filter.")
 				visible: logView.count === 0
 				width: parent.width - 2 * Style.dimens.pane_spacing

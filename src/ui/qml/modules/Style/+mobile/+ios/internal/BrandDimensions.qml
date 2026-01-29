@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -8,7 +8,7 @@ import QtQuick.Window
 import Governikus.Type
 
 QtObject {
-	readonly property int navigation_bar_bottom_padding: 1
+	readonly property int navigation_bar_bottom_padding: 10
 	// If this font size changes, it has to be changed in UiPluginModel, too.
 	readonly property real text: scaleText(15) * UiPluginModel.fontScaleFactor
 	readonly property real textHeadline: scaleText(26) * UiPluginModel.fontScaleFactor

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -17,7 +17,7 @@ ProgressBar {
 
 	Accessible.focusable: true
 
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	Accessible.name: qsTr("Progress")
 	Accessible.role: Accessible.ProgressBar
 	background: null
@@ -26,7 +26,7 @@ ProgressBar {
 
 	contentItem: Rectangle {
 		Accessible.ignored: true
-		border.color: Style.color.control.border.basic
+		border.color: Style.color.control.border.basic_unchecked
 		border.width: 2 * Style.dimens.border_width
 		color: Style.color.background
 		implicitHeight: 2 * (progressText.font.pixelSize + border.width)
@@ -54,10 +54,10 @@ ProgressBar {
 
 				property real mutableVisualPosition: SettingsModel.useAnimations || root.visualPosition === 1 ? root.visualPosition : 0.25
 
-				border.color: Style.color.control.border.basic
+				border.color: Style.color.control.border.basic_unchecked
 				border.width: Style.dimens.border_width
 				clip: true
-				color: Style.color.control.background.basic
+				color: Style.color.control.background.basic_unchecked
 				height: parent.height
 				radius: height / 2
 				width: parent.width * mutableVisualPosition
@@ -72,7 +72,7 @@ ProgressBar {
 
 				GText {
 					Accessible.ignored: true
-					color: Style.color.control.content.basic
+					color: Style.color.control.content.basic_unchecked
 					elide: Text.ElideMiddle
 					font.weight: Style.font.bold
 					maximumLineCount: 1

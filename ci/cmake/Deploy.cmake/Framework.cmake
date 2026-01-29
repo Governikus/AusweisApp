@@ -12,10 +12,10 @@ endif()
 
 set(MAIN master)
 
-step(git clone --depth 1 $ENV{GITHUB_REPOSITORY_FRAMEWORK} source)
+step(git clone --depth 1 $ENV{GITHUB_REPOSITORY_FRAMEWORK} repo)
 step(${CMAKE_COMMAND} -E make_directory target)
 step(${CMAKE_COMMAND} -E tar xf "${zipfile}" CHDIR target)
-step(${CMAKE_COMMAND} -E copy_directory source/.git target/.git)
+step(${CMAKE_COMMAND} -E copy_directory repo/.git target/.git)
 
 block()
 	include(Files)

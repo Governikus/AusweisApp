@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -8,9 +8,9 @@ import Governikus.Style
 SectionPage {
 	id: root
 
-	default property alias data: flickable.data
 	property bool fillWidth: false
 	property real margins: Style.dimens.pane_padding
+	default property alias pageData: flickable.layoutData
 	property alias spacing: flickable.spacing
 
 	function positionViewAtItem(pItem, pPositionItemAtMiddle = false) {

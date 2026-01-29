@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateChangeSmartPin.h"
 
+#include "VolatileSettings.h"
+
 #include "MockCardConnection.h"
 #include "MockCardConnectionWorker.h"
-#include "VolatileSettings.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
@@ -51,51 +53,44 @@ class test_StateChangeSmartPin
 
 		void test_RunWithNewPin()
 		{
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread workerThread;
 
 			{
-				const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-				worker->moveToThread(&workerThread);
-				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+				const auto& worker = MockCardConnectionWorker::create(&workerThread);
 				const QSharedPointer<PersonalizationContext> context(new PersonalizationContext(QString()));
 				context->setNewPin("123456"_L1);
-				context->setCardConnection(connection);
+				context->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 				StateChangeSmartPin state(context);
 
+				QSignalSpy spy(&state, &StateChangeSmartPin::fireAbort);
 				QTest::ignoreMessage(QtDebugMsg, "Invoke set Eid PIN command");
 				state.run();
 				QCOMPARE(state.mConnections.size(), 1);
+				QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			}
-
-			workerThread.quit();
-			workerThread.wait();
 		}
 
 
 		void test_RunWithoutNewPin()
 		{
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread workerThread;
 
 			{
-				const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-				worker->moveToThread(&workerThread);
-				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+				const auto& worker = MockCardConnectionWorker::create(&workerThread);
 				const QSharedPointer<PersonalizationContext> context(new PersonalizationContext(QString()));
-				context->setCardConnection(connection);
+				context->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 				StateChangeSmartPin state(context);
 
+				QSignalSpy spy(&state, &StateChangeSmartPin::fireAbort);
 				state.run();
 				QCOMPARE(state.mConnections.size(), 1);
+				QCOMPARE(spy.count(), 0); // clazy:exclude=qstring-allocations
 
 				QTest::ignoreMessage(QtDebugMsg, "Invoke set Eid PIN command");
 				context->setNewPin("123456"_L1);
 				QCOMPARE(state.mConnections.size(), 2);
+				QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			}
-
-			workerThread.quit();
-			workerThread.wait();
 		}
 
 
@@ -103,7 +98,7 @@ class test_StateChangeSmartPin
 		{
 			const QSharedPointer<PersonalizationContext> context(new PersonalizationContext(QString()));
 			StateChangeSmartPin state(context);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const auto& worker = MockCardConnectionWorker::create();
 			const QSharedPointer<MockEstablishPaceChannelCommand> command(new MockEstablishPaceChannelCommand(worker));
 			const ReaderInfo readerInfo("NFC"_L1, ReaderManagerPluginType::SMART);
 			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));

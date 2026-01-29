@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -36,7 +36,7 @@ Item {
 			control.pressed = data.pressed;
 			control.hovered = data.hovered;
 			control.checked = data.checked;
-			compare(colors.state, "disabled");
+			compare(colors.state, data.checked ? "disabled_checked" : "disabled_unchecked");
 		}
 		function test_disabled_data() {
 			return [
@@ -85,19 +85,19 @@ Item {
 					"tag": "1",
 					"checked": false,
 					"groupMember": false,
-					"state": "hovered"
+					"state": "hovered_unchecked"
 				},
 				{
 					"tag": "2",
 					"checked": true,
 					"groupMember": false,
-					"state": "hovered"
+					"state": "hovered_checked"
 				},
 				{
 					"tag": "3",
 					"checked": false,
 					"groupMember": true,
-					"state": "hovered"
+					"state": "hovered_unchecked"
 				},
 				{
 					"tag": "4",
@@ -122,35 +122,35 @@ Item {
 					"hovered": false,
 					"checked": false,
 					"groupMember": false,
-					"state": "pressed"
+					"state": "pressed_unchecked"
 				},
 				{
 					"tag": "2",
 					"hovered": true,
 					"checked": false,
 					"groupMember": false,
-					"state": "pressed"
+					"state": "pressed_unchecked"
 				},
 				{
 					"tag": "3",
 					"hovered": false,
 					"checked": true,
 					"groupMember": false,
-					"state": "pressed"
+					"state": "pressed_checked"
 				},
 				{
 					"tag": "4",
 					"hovered": false,
 					"checked": false,
 					"groupMember": true,
-					"state": "pressed"
+					"state": "pressed_unchecked"
 				},
 				{
 					"tag": "5",
 					"hovered": true,
 					"checked": false,
 					"groupMember": true,
-					"state": "pressed"
+					"state": "pressed_unchecked"
 				},
 				{
 					"tag": "6",

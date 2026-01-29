@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PinResetInformationModel.h"
@@ -63,33 +63,23 @@ QUrl PinResetInformationModel::getPinResetUrl() const
 }
 
 
-QString PinResetInformationModel::getNoPinAndNoPukHint() const
+QString PinResetInformationModel::getActivateOnlineFunctionForPRSHint() const
 {
-	return hasPinResetService() ?
-	       //: LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.
-		   tr("If you don't have the letter with your Transport PIN and PUK, you can use the PIN Reset Service to request a new PIN.") :
-	       //: LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.
-		   tr("If you don't have the letter with your Transport PIN and PUK, you may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
+	//: ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated
+	return tr("You may request a PIN Reset Letter with a new PIN and it's according activation code on the following website to activate the eID function.");
 }
 
 
-QString PinResetInformationModel::getRequestNewPinHint() const
+QString PinResetInformationModel::getActivateOnlineFunctionAtAuthorityHint() const
 {
-	return hasPinResetService() ?
-	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK
-		   tr("Request a new card PIN to be able to use the eID function again.") :
-	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK
-		   tr("You may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
+	//: ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated
+	return tr("You may turn to your competent authority to activate the eID function.");
 }
 
 
-QString PinResetInformationModel::getActivateOnlineFunctionHint() const
+QString PinResetInformationModel::getActivateOnlineFunctionActionText() const
 {
-	return hasPinResetService() ?
-	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated
-		   tr("You may request the activation of the eID function.") :
-	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated
-		   tr("You may turn to the competent authority to activate the eID function.") + authorityFinderSuffix();
+	return hasPinResetService() ? getResetPinWithPRSActionText() : getResetPinAtAuthorityActionText();
 }
 
 
@@ -99,65 +89,48 @@ QString PinResetInformationModel::getActivateOnlineFunctionDescription() const
 }
 
 
-QString PinResetInformationModel::getActivateOnlineFunctionActionText() const
+QString PinResetInformationModel::getResetPinWithPRSActionText() const
 {
-	return hasPinResetService() ?
-	       //: LABEL ALL_PLATFORMS
-		   tr("Go to Activation Service") :
-	       //: LABEL ALL_PLATFORMS
-		   tr("Find competent authority");
+	//: ALL_PLATFORMS
+	return tr("Request PIN Reset Letter");
 }
 
 
-QString PinResetInformationModel::getPinResetHintNoPin() const
+QString PinResetInformationModel::getResetPinAtAuthorityActionText() const
 {
-	return hasPinResetService() ?
-	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.
-		   tr("Request a new card PIN to be able to use the eID function.") :
-	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.
-		   tr("You may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
+	//: ALL_PLATFORMS
+	return tr("Find competent authority");
 }
 
 
-QString PinResetInformationModel::getPinResetHintTransportPin() const
+QString PinResetInformationModel::getResetPinWithPRSHintTitle() const
 {
-	return hasPinResetService() ?
-	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.
-		   tr("If you know neither your Transport PIN nor your ID card PIN, you can request a new PIN using the PIN Reset Service.") :
-	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.
-		   tr("If you know neither your Transport PIN nor your ID card PIN, you may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
+	//: ALL_PLATFORMS
+	return tr("Online via PIN Reset Service");
 }
 
 
-QString PinResetInformationModel::getPinResetHint() const
+QString PinResetInformationModel::getResetPinAtAuthorityHintTitle() const
 {
-	return hasPinResetService() ?
-	       //: LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.
-		   tr("If you have forgotten your ID card PIN, you can request a new PIN using the PIN Reset Service.") :
-	       //: LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.
-		   tr("If you don't know your ID card PIN, you may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
+	//: ALL_PLATFORMS
+	return tr("At your competent authority");
 }
 
 
-QString PinResetInformationModel::getPinResetActionText() const
+QString PinResetInformationModel::getResetPinWithPRSHint() const
 {
 	return hasPinResetService() ?
-	       //: LABEL ALL_PLATFORMS
-		   tr("Go to PIN Reset Service") :
-	       //: LABEL ALL_PLATFORMS
-		   tr("Find competent authority");
+	       //: ALL_PLATFORMS
+		   tr("You may request a PIN Reset Letter with a new PIN and it's according activation code on the following website.") :
+	       //This is required to hide the Hints if no PRS is available. Otherwise every caller has to do this.
+		   QString();
 }
 
 
-QString PinResetInformationModel::authorityFinderSuffix() const
+QString PinResetInformationModel::getResetPinAtAuthorityHint() const
 {
-	auto serviceSearchPage = QStringLiteral("https://servicesuche.bund.de");
-	if (LanguageLoader::getLocaleCode() != QLatin1String("de"))
-	{
-		serviceSearchPage += QStringLiteral("/#/en");
-	}
-	//: LABEL ALL_PLATFORMS %1 will be replaced with a link to a website.
-	return QStringLiteral("<br/> <br/>") + tr("To find your competent authority you may visit %1 .").arg(QStringLiteral("<a href=\"%1\">servicesuche.bund.de</a>").arg(serviceSearchPage));
+	//: ALL_PLATFORMS
+	return tr("You may turn to the competent authority and reset the ID card PIN there.");
 }
 
 

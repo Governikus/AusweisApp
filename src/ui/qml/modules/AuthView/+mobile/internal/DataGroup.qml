@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -27,7 +27,7 @@ Column {
 	PaneTitle {
 		id: dataTitle
 
-		color: root.writeAccess ? Style.color.textNormal.basic : textStyle.textColor
+		color: root.writeAccess ? Style.color.textNormal.basic_unchecked : textStyle.textColor
 		height: implicitHeight * 1.5
 		topPadding: Style.dimens.pane_padding
 		verticalAlignment: Text.AlignTop
@@ -84,7 +84,7 @@ Column {
 					GCheckBox {
 						id: checkBox
 
-						//: LABEL ANDROID IOS
+						//: MOBILE
 						Accessible.name: qsTr("%1, optional right, element %2 of %3").arg(text).arg(delegateLoader.index + 1).arg(repeater.count)
 						checked: delegateLoader.selected
 						horizontalPadding: Style.dimens.pane_padding
@@ -107,7 +107,7 @@ Column {
 					id: requiredDelegate
 
 					GText {
-						//: LABEL ANDROID IOS
+						//: MOBILE
 						Accessible.name: qsTr("%1, required right, element %2 of %3").arg(text).arg(delegateLoader.index + 1).arg(repeater.count)
 						bottomPadding: Style.dimens.text_spacing
 						leftPadding: Style.dimens.pane_padding

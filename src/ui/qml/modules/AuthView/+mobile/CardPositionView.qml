@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -15,29 +15,29 @@ ResultView {
 
 	animationSymbol: Symbol.Type.ERROR
 	animationType: AnimationLoader.Type.NFC_RESULT
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	buttonText: qsTr("Retry")
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	header: qsTr("Weak NFC signal")
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	subheader: qsTr("Connection between ID card and smartphone cannot be established")
 
 	ColumnLayout {
 		spacing: Style.dimens.text_spacing
 
 		GText {
-			//: INFO ANDROID IOS The NFC signal is weak, by repositioning the card the signal might improve.
+			//: MOBILE The NFC signal is weak, by repositioning the card the signal might improve.
 			text: qsTr("This is what you can do:")
 		}
 		Repeater {
 			model: [
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				qsTr("keep the ID card close to the device's backside"),
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				qsTr("change the position of the ID card until the connection is established"),
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				qsTr("remove any present mobile phone cases"),
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				qsTr("connect your smartphone to a charger and turn off battery saver mode if necessary")]
 
 			BulletPointText {

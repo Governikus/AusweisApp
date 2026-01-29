@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -18,7 +18,7 @@ ColumnLayout {
 		Layout.fillWidth: true
 		contentPadding: 0
 		contentSpacing: 0
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Developer options")
 
 		onFocusChanged: if (focus)
@@ -27,10 +27,10 @@ ColumnLayout {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.useSelfauthenticationTestUri
-			//: LABEL DESKTOP
+			//: DESKTOP
 			description: qsTr("Allow test sample card usage")
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Testmode for the self-authentication")
 
 			onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
@@ -41,9 +41,9 @@ ColumnLayout {
 			Layout.fillWidth: true
 			checked: SettingsModel.enableSimulator
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			description: qsTr("The internal card simulator allows to run an authentication in the test PKI without any ID card or card reader. Note that no other card reader can be used while the simulator is activated.")
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Internal card simulator")
 
 			onCheckedChanged: SettingsModel.enableSimulator = checked
@@ -54,10 +54,10 @@ ColumnLayout {
 			Layout.fillWidth: true
 			checked: SettingsModel.developerMode
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			description: qsTr("The developer mode deactivates some security checks and the authentication process will continue even if some errors occur. Skipped errors will be shown as notifications. The developer mode is only usable with the test PKI.")
 			drawBottomCorners: true
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Developer mode")
 
 			onCheckedChanged: SettingsModel.developerMode = checked
@@ -68,12 +68,12 @@ ColumnLayout {
 			Layout.fillWidth: true
 			checked: SettingsModel.showInAppNotifications
 
-			//: LABEL DESKTOP Only visible when the user activates the developer mode in the settings.
+			//: DESKTOP Only visible when the user activates the developer mode in the settings.
 			description: SettingsModel.developerMode ? qsTr("Using the developer mode forces the notifications to be enabled.") : ""
 			drawBottomCorners: true
 			enabled: !SettingsModel.developerMode
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Show notifications inside of %1").arg(Qt.application.name)
 
 			onCheckedChanged: SettingsModel.showInAppNotifications = checked
@@ -83,22 +83,22 @@ ColumnLayout {
 	}
 	GPane {
 		Layout.fillWidth: true
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Custom config.json")
 
 		onFocusChanged: if (focus)
 			Utils.positionViewAtItem(this)
 
 		GText {
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Place the config.json into the application folder to override the embedded config.")
 		}
 		GText {
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Application folder: %1").arg(ApplicationModel.customConfigPath)
 		}
 		GButton {
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Save config.json")
 
 			onClicked: {
@@ -111,10 +111,10 @@ ColumnLayout {
 
 				currentFolder: ApplicationModel.customConfigPath
 				defaultSuffix: "json"
-				//: LABEL DESKTOP
+				//: DESKTOP
 				nameFilters: qsTr("JSON config (*.json)")
 
-				//: LABEL DESKTOP
+				//: DESKTOP
 				title: qsTr("Save config.json")
 
 				onAccepted: ApplicationModel.saveEmbeddedConfig(selectedFile)

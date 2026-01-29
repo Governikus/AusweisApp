@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -15,7 +15,7 @@ FlickableSectionPage {
 	smartEidUsed: true
 	spacing: Style.dimens.pane_spacing
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Renew the Smart-eID")
 
 	navigationAction: NavigationAction {
@@ -39,14 +39,13 @@ FlickableSectionPage {
 		Layout.fillWidth: true
 
 		GText {
-
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("You are about to renew your Smart-eID. In order to proceed, you need your ID card, your 6-digit ID card PIN and an internet connection.")
 		}
 		GText {
 			font.weight: Style.font.bold
 
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Please note that your current Smart-eID is invalidated during the process and will not be usable until the update process is completed.")
 		}
 		PrivacyStatement {
@@ -57,12 +56,12 @@ FlickableSectionPage {
 		Layout.fillHeight: true
 	}
 	GButton {
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		Accessible.name: text + ". " + qsTr("Sample card required.")
 		Layout.alignment: Qt.AlignHCenter
-		buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.error : Style.color.control.background.basic
+		buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.error : Style.color.control.background.basic_unchecked
 		icon.source: "qrc:///images/identify.svg"
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Renew Smart-eID")
 
 		onClicked: PersonalizationModel.startWorkflow()

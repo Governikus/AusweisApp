@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -18,25 +18,25 @@ ProgressView {
 	headline: {
 		switch (workflowState) {
 		case PersonalizationController.WorkflowStates.CheckStatus:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Checking Smart-eID status");
 		case PersonalizationController.WorkflowStates.InstallApplet:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Smart-eID is being prepared");
 		case PersonalizationController.WorkflowStates.TcToken:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Acquiring provider certificate");
 		case PersonalizationController.WorkflowStates.ProcessingPhysicalEid:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Retrieving information from ID card");
 		case PersonalizationController.WorkflowStates.Personalization:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Smart-eID is created");
 		case PersonalizationController.WorkflowStates.Abort:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Aborting Smart-eID personalization");
 		default:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Waiting for start of workflow...");
 		}
 	}
@@ -48,23 +48,23 @@ ProgressView {
 		case PersonalizationController.WorkflowStates.CheckStatus:
 		case PersonalizationController.WorkflowStates.InstallApplet:
 		case PersonalizationController.WorkflowStates.TcToken:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Please wait a moment.");
 		case PersonalizationController.WorkflowStates.Abort:
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			return qsTr("Please wait a moment, the current process is being finished.");
 		case PersonalizationController.WorkflowStates.ProcessingPhysicalEid:
 			return PersonalizationModel.isBasicReader ?
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("Please do not move the ID card.") :
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			qsTr("Please observe the display of your card reader.");
 		default:
 			return "";
 		}
 	}
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Smart-eID")
 
 	navigationAction: NavigationAction {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/DidAuthenticateEAC2Command.h"
@@ -48,7 +48,7 @@ class test_DidAuthenticateEAC2Command
 			list << Converter::certificatefromHex(readFile("cvca-DETESTeID00004.hex"_L1));
 			list << Converter::certificatefromHex(readFile("cvdv-DEDVeIDDPST00035.hex"_L1));
 			list << Converter::certificatefromHex(readFile("cvat-DEDEMODEV00038.hex"_L1));
-			CVCertificateChainBuilder builder(list, false);
+			CVCertificateChainBuilder builder(list);
 			return builder.getChainStartingWith(list.first());
 		}
 
@@ -95,7 +95,7 @@ class test_DidAuthenticateEAC2Command
 
 		void init()
 		{
-			mWorker.reset(new MockCardConnectionWorker());
+			mWorker = MockCardConnectionWorker::create();
 		}
 
 
@@ -108,7 +108,7 @@ class test_DidAuthenticateEAC2Command
 		void test_PerformChipAuthentication()
 		{
 			QByteArray input("0000");
-			DidAuthenticateEAC2Command command(mWorker, CVCertificateChain(false), QByteArray(), QByteArray(), input, QByteArray());
+			DidAuthenticateEAC2Command command(mWorker, CVCertificateChain(), QByteArray(), QByteArray(), input, QByteArray());
 			QByteArray bytes = QByteArray::fromHex("30 12"
 												   "            06 0A 04007F00070202030202"
 												   "            02 01 02"
@@ -172,7 +172,7 @@ class test_DidAuthenticateEAC2Command
 		void test_PerformChipAuthenticationWithoutKeyId()
 		{
 			QByteArray input("0000");
-			DidAuthenticateEAC2Command command(mWorker, CVCertificateChain(false), QByteArray(), QByteArray(), input, QByteArray());
+			DidAuthenticateEAC2Command command(mWorker, CVCertificateChain(), QByteArray(), QByteArray(), input, QByteArray());
 			QByteArray bytes = QByteArray::fromHex("30 0F"
 												   "            06 0A 04007F00070202030202"
 												   "            02 01 02");

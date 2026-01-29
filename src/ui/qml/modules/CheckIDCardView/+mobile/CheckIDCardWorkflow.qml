@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -27,7 +27,7 @@ SectionPage {
 
 	contentIsScrolled: nfcWorkflow.visible && !nfcWorkflow.atYBeginning || progressView.visible && progressView.contentIsScrolled
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	title: qsTr("Check device and ID card")
 
 	navigationAction: NavigationAction {
@@ -169,9 +169,9 @@ SectionPage {
 
 		anchors.fill: parent
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		headline: qsTr("Checking ID card")
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		text: qsTr("Please do not move the ID card.")
 		title: root.title
 		visible: checkIDCardModel.result > CheckIDCardModel.Result.UNKNOWN_CARD_DETECTED

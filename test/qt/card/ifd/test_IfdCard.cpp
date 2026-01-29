@@ -1,10 +1,13 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdCard.h"
 
+#include "VolatileSettings.h"
+
 #include "MockIfdDispatcher.h"
+#include "TestHookThread.h"
 
 #include <QtTest>
 
@@ -18,17 +21,22 @@ class test_IfdCard
 	Q_OBJECT
 
 	private:
-		QThread mNetworkThread;
+		QScopedPointer<TestHookThread> mNetworkThread;
 		QSharedPointer<MockIfdDispatcher> mDispatcher;
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<VolatileSettings>(); // just init in MainThread because of QObject
+		}
+
+
 		void init()
 		{
-			mNetworkThread.setObjectName(QStringLiteral("NetworkThread"));
-			mNetworkThread.start();
+			mNetworkThread.reset(new TestHookThread(QStringLiteral("NetworkThread")));
 
-			mDispatcher.reset(new MockIfdDispatcher());
-			mDispatcher->moveToThread(&mNetworkThread);
+			mDispatcher.reset(new MockIfdDispatcher(), &MockIfdDispatcher::deleteLater);
+			mDispatcher->moveToThread(mNetworkThread->getThread());
 		}
 
 
@@ -36,8 +44,7 @@ class test_IfdCard
 		{
 			mDispatcher.reset();
 
-			mNetworkThread.quit();
-			mNetworkThread.wait();
+			mNetworkThread.reset();
 		}
 
 

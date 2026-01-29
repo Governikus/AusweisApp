@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -17,12 +17,12 @@ GText {
 
 	function copyTextToClipboard() {
 		ApplicationModel.setClipboardText(root.text);
-		//: INFO DESKTOP Toast message used to confirm the copy of a log entry.
+		//: DESKTOP Toast message used to confirm the copy of a log entry.
 		ApplicationModel.showFeedback(qsTr("The log entry was copied to the clipboard."));
 	}
 
 	Accessible.role: Utils.useSpecialAppleTabRole(Accessible.StaticText)
-	color: level === "C" ? Style.color.warning : (level === "W" ? Style.color.textSubline.basic : textStyle.textColor)
+	color: level === "C" ? Style.color.warning : (level === "W" ? Style.color.textSubline.basic_unchecked : textStyle.textColor)
 	focusFrameVisible: false
 	font.family: UiPluginModel.fixedFontFamily
 	font.weight: activeFocus ? Style.font.bold : Style.font.normal

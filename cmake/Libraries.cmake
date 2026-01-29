@@ -8,7 +8,7 @@ else()
 	if(DESKTOP)
 		set(MIN_QT_VERSION 6.8)
 	else()
-		set(MIN_QT_VERSION 6.9)
+		set(MIN_QT_VERSION 6.9.2)
 	endif()
 endif()
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -15,18 +15,18 @@ Rectangle {
 	property alias enableTileStyle: titlePane.visible
 	property NavigationAction navigationAction
 	property Component rightAction
+	required property real safeAreaTopMargin
 	property alias showContent: contentLayout.visible
 	property bool showSeparator: false
 	property bool smartEidUsed: false
 	property alias title: titleText.text
-	property var topSafeAreaMargin: UiPluginModel.safeAreaMargins.top
 
 	function setActiveFocus() {
 		titleText.forceActiveFocus(Qt.MouseFocusReason);
 	}
 
 	color: Style.color.background
-	height: Math.ceil((showContent ? contentLayout.implicitHeight : 0) + topSafeAreaMargin + titlePane.shadowHeight)
+	height: Math.ceil((showContent ? contentLayout.implicitHeight : 0) + safeAreaTopMargin + titlePane.shadowHeight)
 
 	onRightActionChanged: rightActionLoader.setRightAction(rightAction)
 
@@ -34,10 +34,10 @@ Rectangle {
 		anchors.fill: parent
 	}
 	Rectangle {
-		id: safeAreaBackground
+		id: statusBarBackground
 
 		color: root.smartEidUsed ? Style.color.card_smart : Style.color.background
-		height: root.topSafeAreaMargin
+		height: root.safeAreaTopMargin
 
 		Behavior on color {
 			ColorAnimation {
@@ -58,19 +58,18 @@ Rectangle {
 			bottom: parent.bottom
 			left: parent.left
 			right: parent.right
-			top: safeAreaBackground.bottom
+			top: statusBarBackground.bottom
 		}
 	}
 	ColumnLayout {
 		id: contentLayout
 
 		spacing: Style.dimens.text_spacing
-		width: Math.min(parent.width - 2 * Style.dimens.titlebar_padding - UiPluginModel.safeAreaMargins.left - UiPluginModel.safeAreaMargins.right, Style.dimens.max_text_width)
+		width: Math.min(parent.width - 2 * Style.dimens.titlebar_padding, Style.dimens.max_text_width)
 
 		anchors {
 			bottom: parent.bottom
 			horizontalCenter: parent.horizontalCenter
-			horizontalCenterOffset: (UiPluginModel.safeAreaMargins.left - UiPluginModel.safeAreaMargins.right) / 2
 		}
 		TitleBarNavigation {
 			id: leftAction

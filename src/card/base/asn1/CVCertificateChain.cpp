@@ -1,22 +1,23 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CVCertificateChain.h"
+
+#include "SecureStorage.h"
 
 
 using namespace governikus;
 
 
-CVCertificateChain::CVCertificateChain(bool pProductive)
-	: CVCertificateChain(QList<QSharedPointer<const CVCertificate>>(), pProductive)
+CVCertificateChain::CVCertificateChain()
+	: CVCertificateChain(QList<QSharedPointer<const CVCertificate>>())
 {
 }
 
 
-CVCertificateChain::CVCertificateChain(const QList<QSharedPointer<const CVCertificate>>& pCvcs, bool pProductive)
+CVCertificateChain::CVCertificateChain(const QList<QSharedPointer<const CVCertificate>>& pCvcs)
 	: QList<QSharedPointer<const CVCertificate>>(pCvcs)
-	, mProductive(pProductive)
 {
 	if (!isValid())
 	{
@@ -54,5 +55,11 @@ bool CVCertificateChain::isValid() const
 
 bool CVCertificateChain::isProductive() const
 {
-	return mProductive;
+	if (isEmpty())
+	{
+		return false;
+	}
+
+	const auto& prod = CVCertificate::fromRaw(Env::getSingleton<SecureStorage>()->getCVRootCertificates(true));
+	return prod.contains(at(0));
 }

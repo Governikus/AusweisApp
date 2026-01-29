@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdConnectorImpl.h"
@@ -12,6 +12,8 @@
 #include "SecureStorage.h"
 #include "TlsChecker.h"
 #include "messages/Discovery.h"
+
+#include "TestHookThread.h"
 
 #include <QWebSocket>
 #include <QWebSocketServer>
@@ -32,6 +34,7 @@ class test_IfdConnector
 	Q_OBJECT
 
 	private:
+		QScopedPointer<TestHookThread> mClientThread;
 		const KeyPair pair1 = KeyPair::generate();
 		const KeyPair pair2 = KeyPair::generate();
 		const KeyPair pair3 = KeyPair::generate();
@@ -144,19 +147,30 @@ class test_IfdConnector
 		{
 			ResourceLoader::getInstance().init();
 			qRegisterMetaType<QWebSocketProtocol::CloseCode>("QWebSocketProtocol::CloseCode");
+			Env::getSingleton<AppSettings>(); // just init in MainThread because of QObject
+			QSslSocket().setSocketDescriptor(0); // init Q_GLOBAL_STATIC(QSocks5BindStore, socks5BindStore)
+		}
+
+
+		void init()
+		{
+			mClientThread.reset(new TestHookThread());
+		}
+
+
+		void cleanup()
+		{
+			mClientThread.reset();
 		}
 
 
 		void requestWithNoDeviceNameIsRejected()
 		{
-			QThread clientThread;
+			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl(), &IfdConnectorImpl::deleteLater);
+			connector->moveToThread(mClientThread->getThread());
 
-			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl());
 			QSignalSpy spyError(connector.data(), &IfdConnector::fireDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &IfdConnector::fireDispatcherCreated);
-
-			connector->moveToThread(&clientThread);
-			clientThread.start();
 
 			// No device name.
 			Discovery discoveryMsg(QString(), QByteArrayLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::latest});
@@ -165,9 +179,6 @@ class test_IfdConnector
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(connector->mPendingRequests.size(), 0);
 
-			clientThread.exit();
-			QVERIFY(clientThread.wait());
-
 			verifyErrorSignal(spyError, {IfdErrorCode::INVALID_REQUEST}, discoveryMsg.getIfdId());
 			QCOMPARE(spySuccess.count(), 0);
 		}
@@ -175,14 +186,11 @@ class test_IfdConnector
 
 		void requestWithNoDeviceInfoIsRejected()
 		{
-			QThread clientThread;
+			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl(), &IfdConnectorImpl::deleteLater);
+			connector->moveToThread(mClientThread->getThread());
 
-			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl());
 			QSignalSpy spyError(connector.data(), &IfdConnector::fireDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &IfdConnector::fireDispatcherCreated);
-
-			connector->moveToThread(&clientThread);
-			clientThread.start();
 
 			// Device information is null.
 			Discovery discoveryMsg((QJsonObject()));
@@ -190,9 +198,6 @@ class test_IfdConnector
 			sendRequest(connector, Discovery(QJsonObject()), "secret");
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(connector->mPendingRequests.size(), 0);
-
-			clientThread.exit();
-			QVERIFY(clientThread.wait());
 
 			verifyErrorSignal(spyError, {IfdErrorCode::INVALID_REQUEST}, discoveryMsg.getIfdId(), true);
 			QCOMPARE(spySuccess.count(), 0);
@@ -203,40 +208,37 @@ class test_IfdConnector
 		{
 			QScopedPointer<RemoteWebSocketServer> server(Env::create<RemoteWebSocketServer*>());
 			server->listen("dummy"_L1);
-			QThread clientThread;
 
-			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl());
+			QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl(), &IfdConnectorImpl::deleteLater);
+			connector->moveToThread(mClientThread->getThread());
+
+			QSignalSpy spyDestroy(connector.data(), &IfdConnector::destroyed);
 			QSignalSpy spyError(connector.data(), &IfdConnector::fireDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &IfdConnector::fireDispatcherCreated);
-
-			connector->moveToThread(&clientThread);
-			clientThread.start();
 
 			// Password is empty.
 			const auto& discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), server->getServerPort());
 			QTest::ignoreMessage(QtMsgType::QtDebugMsg, "Request connection.");
+
 			sendRequest(connector, discoveryMsg, QByteArray());
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(connector->mPendingRequests.size(), 0);
 
-			clientThread.exit();
-			QVERIFY(clientThread.wait());
-
 			verifyErrorSignal(spyError, {IfdErrorCode::REMOTE_HOST_REFUSED_CONNECTION}, discoveryMsg.getIfdId());
 			QCOMPARE(spySuccess.count(), 0);
+
+			connector.reset();
+			QTRY_COMPARE(spyDestroy.size(), 1);
 		}
 
 
 		void requestWithUnsupportedApiLevelIsRejected()
 		{
-			QThread clientThread;
+			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl(), &IfdConnectorImpl::deleteLater);
+			connector->moveToThread(mClientThread->getThread());
 
-			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl());
 			QSignalSpy spyError(connector.data(), &IfdConnector::fireDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &IfdConnector::fireDispatcherCreated);
-
-			connector->moveToThread(&clientThread);
-			clientThread.start();
 
 			// Currently, only API level 1 is supported.
 			Discovery discoveryMsg(QStringLiteral("Smartphone1"), QByteArrayLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::Unknown});
@@ -245,9 +247,6 @@ class test_IfdConnector
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(connector->mPendingRequests.size(), 0);
 
-			clientThread.exit();
-			QVERIFY(clientThread.wait());
-
 			verifyErrorSignal(spyError, {IfdErrorCode::NO_SUPPORTED_API_LEVEL}, discoveryMsg.getIfdId());
 			QCOMPARE(spySuccess.count(), 0);
 		}
@@ -255,14 +254,11 @@ class test_IfdConnector
 
 		void noServerResponseCausesConnectionErrorOrTimeout()
 		{
-			QThread clientThread;
+			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl(2500), &IfdConnectorImpl::deleteLater);
+			connector->moveToThread(mClientThread->getThread());
 
-			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl(2500));
 			QSignalSpy spyError(connector.data(), &IfdConnector::fireDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &IfdConnector::fireDispatcherCreated);
-
-			connector->moveToThread(&clientThread);
-			clientThread.start();
 
 			// Correct request but no server is running.
 			const auto& discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), 2020);
@@ -270,9 +266,6 @@ class test_IfdConnector
 			sendRequest(connector, discoveryMsg, "dummy");
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(connector->mPendingRequests.size(), 0);
-
-			clientThread.exit();
-			QVERIFY(clientThread.wait());
 
 			verifyErrorSignal(spyError, {IfdErrorCode::CONNECTION_ERROR}, discoveryMsg.getIfdId());
 			QCOMPARE(spySuccess.count(), 0);
@@ -325,18 +318,14 @@ class test_IfdConnector
 			webSocketServer.listen(QHostAddress(QHostAddress::LocalHost));
 			const quint16 serverPort = webSocketServer.serverPort();
 
-			// Set up client thread.
-			QThread clientThread;
-
 			// Execute test in internal block so that all relevant smart pointers are released before stopping the client thread.
-			QSharedPointer<QSignalSpy> dispatcherDestructionSpy;
 			{
-				const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl());
+				QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl(), &IfdConnectorImpl::deleteLater);
+				connector->moveToThread(mClientThread->getThread());
+
+				QSignalSpy spyConnectorDestroyed(connector.data(), &IfdConnector::destroyed);
 				QSignalSpy spyConnectorError(connector.data(), &IfdConnector::fireDispatcherError);
 				QSignalSpy spyConnectorSuccess(connector.data(), &IfdConnector::fireDispatcherCreated);
-
-				connector->moveToThread(&clientThread);
-				clientThread.start();
 
 				// Send valid encrypted connect request.
 				const auto& discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
@@ -347,24 +336,20 @@ class test_IfdConnector
 				QCOMPARE(connector->mPendingRequests.size(), 0);
 				verifySuccessSignal(spyConnectorSuccess, discoveryMsg.getIfdId());
 
-				const QVariant dispatcherVariant = spyConnectorSuccess.first().at(1);
+				QVariant dispatcherVariant = spyConnectorSuccess.takeFirst().at(1);
 				QVERIFY(dispatcherVariant.canConvert<QSharedPointer<IfdDispatcherClient>>());
-				const QSharedPointer<IfdDispatcherClient> dispatcher = dispatcherVariant.value<QSharedPointer<IfdDispatcherClient>>();
-				dispatcherDestructionSpy.reset(new QSignalSpy(dispatcher.data(), &QObject::destroyed));
+				dispatcherVariant.clear();
+
+				connector.reset();
+				QTRY_COMPARE(spyConnectorDestroyed.size(), 1);
 			}
 
 			QCOMPARE(spySocketError.count(), 0);
 			QCOMPARE(spySocketSuccess.count(), 1);
 
-			QTRY_COMPARE(dispatcherDestructionSpy->count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(dispatcherDestructionSpy->count(), 1);
-
-			clientThread.exit();
-			QVERIFY(clientThread.wait());
-
-			// Make sure that no pending web socket events are in the event queue when the test completes.
-			// Pending events were occasionally delivered after the web socket had been destroyed, leading to a crash.
-			QCoreApplication::processEvents();
+			QSignalSpy spyClosed(&webSocketServer, &QWebSocketServer::closed);
+			webSocketServer.close();
+			QTRY_COMPARE(spyClosed.size(), 1);
 		}
 
 
@@ -387,15 +372,12 @@ class test_IfdConnector
 			webSocketServer.listen(QHostAddress(QHostAddress::LocalHost));
 			const quint16 serverPort = webSocketServer.serverPort();
 
-			// Set up client thread.
-			QThread clientThread;
+			QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl(), &IfdConnectorImpl::deleteLater);
+			connector->moveToThread(mClientThread->getThread());
 
-			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl());
+			QSignalSpy spyConnectorDestroyed(connector.data(), &IfdConnector::destroyed);
 			QSignalSpy spyConnectorError(connector.data(), &IfdConnector::fireDispatcherError);
 			QSignalSpy spyConnectorSuccess(connector.data(), &IfdConnector::fireDispatcherCreated);
-
-			connector->moveToThread(&clientThread);
-			clientThread.start();
 
 			// Send encrypted connect request with wrong psk.
 			const auto& discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
@@ -411,8 +393,8 @@ class test_IfdConnector
 			QCOMPARE(spySocketError.count(), 0);
 			QCOMPARE(spySocketSuccess.count(), 0);
 
-			clientThread.exit();
-			QVERIFY(clientThread.wait());
+			connector.reset();
+			QTRY_COMPARE(spyConnectorDestroyed.size(), 1);
 		}
 
 

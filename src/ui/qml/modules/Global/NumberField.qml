@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -62,16 +62,16 @@ Control {
 			id: grid
 
 			readonly property int markerWidth: Math.ceil(fontMetrics.averageCharacterWidth * 1.4)
-			//: LABEL ALL_PLATFORMS Screenreader text for the password field
+			//: ALL_PLATFORMS Screenreader text for the password field
 			readonly property string passwordState: qsTr("You entered %1 of %2 digits.").arg(root.number.length).arg(root.passwordLength)
 			readonly property var text: if (Qt.platform.os === "windows")
 				passwordState
 
 			Accessible.focusable: true
 			Accessible.name: (button.showNumber ?
-				//: LABEL ALL_PLATFORMS Screenreader text for the password field
+				//: ALL_PLATFORMS Screenreader text for the password field
 				qsTr("The number is visible. Digits entered so far: %1").arg(root.number.split("").join(" ")) :
-				//: LABEL ALL_PLATFORMS Screenreader text for the password field
+				//: ALL_PLATFORMS Screenreader text for the password field
 				qsTr("The number is hidden.")) + (text === undefined ? " " + passwordState : "")
 			Accessible.role: Accessible.EditableText
 			Layout.maximumWidth: Layout.preferredWidth
@@ -97,7 +97,7 @@ Control {
 					Layout.minimumWidth: Layout.preferredWidth
 					Layout.preferredHeight: fontMetrics.height + Style.dimens.text_spacing
 					Layout.preferredWidth: grid.markerWidth
-					color: Style.color.textNormal.basic
+					color: Style.color.textNormal.basic_unchecked
 					font: fontMetrics.font
 					horizontalAlignment: Text.AlignHCenter
 					text: button.showNumber ? root.number.substr(digit.index, 1) : ""
@@ -138,19 +138,19 @@ Control {
 			background: null
 			padding: Style.dimens.text_spacing / 2
 			text: (showNumber ? (Style.is_layout_desktop ?
-					//: LABEL DESKTOP Screenreader text for the eye icon to change the password visibility
+					//: DESKTOP Screenreader text for the eye icon to change the password visibility
 					qsTr("Click to hide the number") :
-					//: LABEL ANDROID IOS Screenreader text for the eye icon to change the password visibility
+					//: MOBILE Screenreader text for the eye icon to change the password visibility
 					qsTr("Tap to hide the number")) : (Style.is_layout_desktop ?
-					//: LABEL DESKTOP Screenreader text for the eye icon to change the password visibility
+					//: DESKTOP Screenreader text for the eye icon to change the password visibility
 					qsTr("Click to show the number") :
-					//: LABEL ANDROID IOS Screenreader text for the eye icon to change the password visibility
+					//: MOBILE Screenreader text for the eye icon to change the password visibility
 					qsTr("Tap to show the number")))
 
 			contentItem: TintableIcon {
 				source: button.showNumber ? "qrc:///images/eye_visibility_on.svg" : "qrc:///images/eye_visibility_off.svg"
 				sourceSize.height: Style.is_layout_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
-				tintColor: Style.color.textNormal.basic
+				tintColor: Style.color.textNormal.basic_unchecked
 			}
 
 			onClicked: showNumber = !showNumber

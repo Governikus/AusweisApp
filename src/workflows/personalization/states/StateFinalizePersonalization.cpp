@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateFinalizePersonalization.h"
@@ -28,7 +28,7 @@ void StateFinalizePersonalization::run()
 	const auto& context = getContext();
 	Q_ASSERT(context);
 
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	context->setProgress(90, tr("Finalizing the Smart-eID"));
 
 	const int finalizeStatus = context->getFinalizeStatus();

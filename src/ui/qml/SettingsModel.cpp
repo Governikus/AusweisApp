@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SettingsModel.h"
@@ -36,6 +36,7 @@ SettingsModel::SettingsModel()
 	connect(&generalSettings, &GeneralSettings::fireUseAnimationsChanged, this, &SettingsModel::fireUseAnimationsChanged);
 	connect(&generalSettings, &GeneralSettings::fireDarkModeChanged, this, &SettingsModel::fireDarkModeChanged);
 	connect(&generalSettings, &GeneralSettings::firePreferredTechnologyChanged, this, &SettingsModel::firePreferredTechnologyChanged);
+	connect(&generalSettings, &GeneralSettings::fireScreenPrivacyChanged, this, &SettingsModel::fireScreenPrivacyChanged);
 
 	connect(&generalSettings, &GeneralSettings::fireSettingsChanged, this, &SettingsModel::fireRemindUserOfAutoRedirectChanged);
 
@@ -609,6 +610,22 @@ void SettingsModel::setUseAnimations(bool pUseAnimations) const
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setUseAnimations(pUseAnimations);
+	}
+}
+
+
+bool SettingsModel::isScreenPrivacy() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isScreenPrivacy();
+}
+
+
+void SettingsModel::setScreenPrivacy(bool pEnable) const
+{
+	if (isScreenPrivacy() != pEnable)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setScreenPrivacy(pEnable);
 	}
 }
 

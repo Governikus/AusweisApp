@@ -1,16 +1,19 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateMaintainCardConnection.h"
 
 #include "MockCardConnectionWorker.h"
+#include "TestHookThread.h"
 #include "TestWorkflowContext.h"
 
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_StateMaintainCardConnection
 	: public QObject
@@ -18,12 +21,12 @@ class test_StateMaintainCardConnection
 	Q_OBJECT
 	QSharedPointer<StateMaintainCardConnection> mState;
 	QSharedPointer<WorkflowContext> mContext;
-	QThread workerThread;
+	QScopedPointer<TestHookThread> mWorkerThread;
 
 	private Q_SLOTS:
 		void init()
 		{
-			workerThread.start();
+			mWorkerThread.reset(new TestHookThread());
 			mContext.reset(new TestWorkflowContext());
 			mState.reset(new StateMaintainCardConnection(mContext));
 		}
@@ -33,8 +36,7 @@ class test_StateMaintainCardConnection
 		{
 			mContext.clear();
 			mState.reset();
-			workerThread.quit();
-			workerThread.wait();
+			mWorkerThread.reset();
 		}
 
 
@@ -93,10 +95,8 @@ class test_StateMaintainCardConnection
 			mState->run();
 			QCOMPARE(spyNoCardConnection.count(), 1);
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			mContext->setCardConnection(connection);
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 
 			QTest::ignoreMessage(QtDebugMsg, "Trigger retry counter update.");
 			mState->run();
@@ -127,8 +127,7 @@ class test_StateMaintainCardConnection
 			QSignalSpy spyNoCard(mState.data(), &StateMaintainCardConnection::fireNoCardConnection);
 			QSignalSpy spyAbort(mState.data(), &StateMaintainCardConnection::fireAbort);
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			mContext->setCardConnection(connection);
 			mContext->setLastPaceResult(code);
@@ -164,10 +163,8 @@ class test_StateMaintainCardConnection
 			mState->run();
 			QCOMPARE(spyNoCardConnection.count(), 1);
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&workerThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			mContext->setCardConnection(connection);
+			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
+			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 
 			QTest::ignoreMessage(QtDebugMsg, "Card connection is fine. Proceeding.");
 			mState->run();

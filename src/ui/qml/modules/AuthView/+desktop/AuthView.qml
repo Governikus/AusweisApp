@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -18,7 +18,7 @@ SectionPage {
 	signal backToStartPage(bool pWorkflowSuccess)
 	signal changeTransportPin
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("Identify")
 
 	Component {

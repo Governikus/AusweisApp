@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfigurationInfo.h"
@@ -10,7 +10,7 @@ using namespace governikus;
 
 
 ReaderConfigurationInfo::ReaderConfigurationInfo()
-//: LABEL ALL_PLATFORMS
+//: ALL_PLATFORMS
 	: ReaderConfigurationInfo(tr("Unknown reader"))
 {
 }

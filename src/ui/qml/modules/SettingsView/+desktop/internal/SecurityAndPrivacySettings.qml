@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -16,16 +16,16 @@ ColumnLayout {
 		Layout.fillWidth: true
 		contentPadding: 0
 		contentSpacing: 0
-		//: LABEL DESKTOP
+		//: DESKTOP
 		title: qsTr("Numeric keypad")
 
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.shuffleScreenKeyboard
-			//: LABEL DESKTOP
+			//: DESKTOP
 			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Shuffle keys")
 
 			onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
@@ -33,11 +33,11 @@ ColumnLayout {
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.visualPrivacy
-			//: LABEL DESKTOP
+			//: DESKTOP
 			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
 			drawBottomCorners: true
 
-			//: LABEL DESKTOP
+			//: DESKTOP
 			text: qsTr("Hide key animations")
 
 			onCheckedChanged: SettingsModel.visualPrivacy = checked

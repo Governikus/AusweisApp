@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -22,11 +22,11 @@ GFlickableColumnLayout {
 		id: technologyInfo
 
 		Layout.alignment: Qt.AlignHCenter
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		enableButtonText: qsTr("Continue")
 		showAdditionalContent: true
 
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		titleText: qsTr("Simulator")
 
 		progressIndicator: Item {
@@ -53,13 +53,13 @@ GFlickableColumnLayout {
 		}
 		GText {
 			Layout.alignment: Qt.AlignHCenter
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("Switch to:")
 		}
 		GButton {
 			Layout.alignment: Qt.AlignHCenter
 			style: Style.color.controlOptional
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("NFC")
 
 			onClicked: root.workflowModel.readerPluginType = ReaderManagerPluginType.NFC
@@ -67,7 +67,7 @@ GFlickableColumnLayout {
 		GButton {
 			Layout.alignment: Qt.AlignHCenter
 			style: Style.color.controlOptional
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("WiFi")
 
 			onClicked: root.workflowModel.readerPluginType = ReaderManagerPluginType.REMOTE_IFD
@@ -75,7 +75,7 @@ GFlickableColumnLayout {
 		GButton {
 			Layout.alignment: Qt.AlignHCenter
 			style: Style.color.controlOptional
-			//: LABEL ANDROID IOS
+			//: MOBILE
 			text: qsTr("SMART")
 			visible: ApplicationModel.smartSupported
 

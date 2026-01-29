@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateConnectCard.h"
@@ -8,12 +8,16 @@
 #include "ReaderManager.h"
 
 #include "MockCardConnectionWorker.h"
+#include "TestHookThread.h"
 #include "TestWorkflowContext.h"
 
+#include <QPointer>
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_StateConnectCard
 	: public QObject
@@ -24,16 +28,6 @@ class test_StateConnectCard
 	ReaderInfo mReaderInfo;
 
 	private:
-		QSharedPointer<CardConnection> createCardConnection(QThread& workerThread, const QString& readerName)
-		{
-			MockReader* reader = new MockReader();
-			reader->setReaderInfo(ReaderInfo(readerName, ReaderManagerPluginType::NFC, CardInfo(CardType::EID_CARD)));
-			QSharedPointer<MockCardConnectionWorker> connectionWorker(new MockCardConnectionWorker(reader));
-			connectionWorker->moveToThread(&workerThread);
-			return QSharedPointer<CardConnection>(new CardConnection(connectionWorker));
-		}
-
-
 		QSharedPointer<CreateCardConnectionCommand> createCardConnectionCommand(const QString& readerName, QSharedPointer<CardConnection> cardConnection = nullptr)
 		{
 			const QSharedPointer<CreateCardConnectionCommand> command(new CreateCardConnectionCommand(readerName, QPointer<ReaderManagerWorker>()));
@@ -49,7 +43,10 @@ class test_StateConnectCard
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			Env::getSingleton<ReaderManager>()->init();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
+			readerManager->init();
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -92,63 +89,73 @@ class test_StateConnectCard
 				mContext->setAcceptedEidTypes({AcceptedEidType::SE_ENDORSED});
 			}
 
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread workerThread;
 
-			const QString rName("reader name"_L1);
+			{
+				const QString rName("reader name"_L1);
 
-			QSignalSpy spyContinue(mState.data(), &StateConnectCard::fireContinue);
-			QSignalSpy spyAbort(mState.data(), &StateConnectCard::fireAbort);
+				QSignalSpy spyContinue(mState.data(), &StateConnectCard::fireContinue);
+				QSignalSpy spyAbort(mState.data(), &StateConnectCard::fireAbort);
 
-			QTest::ignoreMessage(QtDebugMsg, "Card connection command completed");
-			QTest::ignoreMessage(QtDebugMsg, "Card connection failed");
-			mState->onCommandDone(createCardConnectionCommand(rName));
-			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Connect_Card_Connection_Failed);
-			QVERIFY(!mState->getContext()->getCardInitiallyAppeared());
+				QTest::ignoreMessage(QtDebugMsg, "Card connection command completed");
+				QTest::ignoreMessage(QtDebugMsg, "Card connection failed");
+				mState->onCommandDone(createCardConnectionCommand(rName));
+				QCOMPARE(spyAbort.count(), 1);
+				QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Connect_Card_Connection_Failed);
+				QVERIFY(!mState->getContext()->getCardInitiallyAppeared());
 
-			QTest::ignoreMessage(QtDebugMsg, "Card connection command completed");
-			QTest::ignoreMessage(QtDebugMsg, "Card connection was successful");
-			const auto& cardConnection = createCardConnection(workerThread, rName);
-			mState->onCommandDone(createCardConnectionCommand(rName, cardConnection));
-			QCOMPARE(mContext->getCardConnection(), cardConnection);
-			QCOMPARE(spyContinue.count(), eidTypeMismatch ? 0 : 1);
-			QVERIFY(mState->getContext()->getCardInitiallyAppeared());
+				QTest::ignoreMessage(QtDebugMsg, "Card connection command completed");
+				QTest::ignoreMessage(QtDebugMsg, "Card connection was successful");
 
-			workerThread.quit();
-			workerThread.wait();
+				QPointer<MockReader> reader = new MockReader();
+				reader->setReaderInfo(ReaderInfo(rName, ReaderManagerPluginType::NFC, CardInfo(CardType::EID_CARD)));
+				auto connectionWorker = MockCardConnectionWorker::create(&workerThread, reader);
+				auto cardConnection = QSharedPointer<CardConnection>(new CardConnection(connectionWorker));
+
+				mState->onCommandDone(createCardConnectionCommand(rName, cardConnection));
+				QCOMPARE(mContext->getCardConnection(), cardConnection);
+				QCOMPARE(spyContinue.count(), eidTypeMismatch ? 0 : 1);
+				QVERIFY(mState->getContext()->getCardInitiallyAppeared());
+
+				mContext->resetCardConnection();
+				cardConnection.reset();
+			}
 		}
 
 
 		void test_onUnusableCardConnectionLost()
 		{
-			QThread workerThread;
-			workerThread.start();
+			TestHookThread workerThread;
 
-			const auto info = ReaderInfo(QStringLiteral("name"));
-			const auto cardConnection = createCardConnection(workerThread, info.getName());
+			{
+				const auto info = ReaderInfo(QStringLiteral("name"));
+				QPointer<MockReader> reader = new MockReader();
+				reader->setReaderInfo(ReaderInfo(info.getName(), ReaderManagerPluginType::NFC, CardInfo(CardType::EID_CARD)));
+				auto connectionWorker = MockCardConnectionWorker::create(&workerThread, reader);
+				auto cardConnection = QSharedPointer<CardConnection>(new CardConnection(connectionWorker));
 
-			QSignalSpy spy(mState.data(), &StateConnectCard::fireRetry);
+				QSignalSpy spy(mState.data(), &StateConnectCard::fireRetry);
 
-			mState->onUnusableCardConnectionLost(info);
-			QCOMPARE(spy.count(), 0);
+				mState->onUnusableCardConnectionLost(info);
+				QCOMPARE(spy.count(), 0);
 
-			mContext->setReaderName(info.getName());
-			mContext->setCardConnection(cardConnection);
+				mContext->setReaderName(info.getName());
+				mContext->setCardConnection(cardConnection);
 
-			mState->onUnusableCardConnectionLost(ReaderInfo(QStringLiteral("anotherReader")));
-			QCOMPARE(spy.count(), 0);
-			QCOMPARE(mContext->getReaderName(), info.getName());
-			QCOMPARE(mContext->getCardConnection(), cardConnection);
-			QVERIFY(!mState->getContext()->getCardInitiallyAppeared());
+				mState->onUnusableCardConnectionLost(ReaderInfo(QStringLiteral("anotherReader")));
+				QCOMPARE(spy.count(), 0);
+				QCOMPARE(mContext->getReaderName(), info.getName());
+				QCOMPARE(mContext->getCardConnection(), cardConnection);
+				QVERIFY(!mState->getContext()->getCardInitiallyAppeared());
 
-			mState->onUnusableCardConnectionLost(info);
-			QCOMPARE(spy.count(), 1);
-			QVERIFY(mContext->getReaderName().isEmpty());
-			QVERIFY(mContext->getCardConnection().isNull());
+				mState->onUnusableCardConnectionLost(info);
+				QCOMPARE(spy.count(), 1);
+				QVERIFY(mContext->getReaderName().isEmpty());
+				QVERIFY(mContext->getCardConnection().isNull());
 
-			workerThread.quit();
-			workerThread.wait();
+				mContext->resetCardConnection();
+				cardConnection.reset();
+			}
 		}
 
 

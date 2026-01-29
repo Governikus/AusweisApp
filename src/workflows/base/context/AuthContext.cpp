@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthContext.h"
@@ -56,8 +56,7 @@ AuthContext::AuthContext(const Action pAction, bool pActivateUi, const QUrl& pAc
 	, mAccessRightManager()
 	, mCertificates()
 	, mDvCvc()
-	, mCvcChainBuilderProd()
-	, mCvcChainBuilderTest()
+	, mCvcChainBuilder()
 	, mSslSession()
 	, mBrowserHandler(pHandler)
 {
@@ -145,18 +144,10 @@ QByteArray AuthContext::encodeEffectiveChat()
 
 CVCertificateChain AuthContext::getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const
 {
-	const auto& productionChain = mCvcChainBuilderProd.getChainStartingWith(pChainRoot);
-	if (productionChain.isValid())
+	const auto& chain = mCvcChainBuilder.getChainStartingWith(pChainRoot);
+	if (chain.isValid())
 	{
-		qDebug() << "Found chain within productive PKI.";
-		return productionChain;
-	}
-
-	const auto& testChain = mCvcChainBuilderTest.getChainStartingWith(pChainRoot);
-	if (testChain.isValid())
-	{
-		qDebug() << "Found chain within test PKI.";
-		return testChain;
+		return chain;
 	}
 
 	return CVCertificateChain();
@@ -171,13 +162,7 @@ bool AuthContext::hasChainForCertificationAuthority(const EstablishPaceChannelOu
 
 CVCertificateChain AuthContext::getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const
 {
-	const auto& productionChain = mCvcChainBuilderProd.getChainForCertificationAuthority(pPaceOutput);
-	if (productionChain.isValid())
-	{
-		return productionChain;
-	}
-
-	return mCvcChainBuilderTest.getChainForCertificationAuthority(pPaceOutput);
+	return mCvcChainBuilder.getChainForCertificationAuthority(pPaceOutput);
 }
 
 
@@ -188,11 +173,12 @@ void AuthContext::initCvcChainBuilder(const QList<QSharedPointer<const CVCertifi
 	qCDebug(card) << "Initialize ChainBuilder with certificates";
 
 	QList<QSharedPointer<const CVCertificate>> cvcs;
-	cvcs += logCertificates("PreVerification"_L1, CVCertificate::fromRaw(Env::getSingleton<AppSettings>()->getPreVerificationSettings().getLinkCertificates()));
-	cvcs += logCertificates("Eac1"_L1, getDidAuthenticateEac1()->getCvCertificates());
-	cvcs += logCertificates("Eac2"_L1, pAdditionalCertificates);
-
+	cvcs << logCertificates("PreVerification"_L1, CVCertificate::fromRaw(Env::getSingleton<AppSettings>()->getPreVerificationSettings().getLinkCertificates()));
+	cvcs << logCertificates("Eac1"_L1, getDidAuthenticateEac1()->getCvCertificates());
+	cvcs << logCertificates("Eac2"_L1, pAdditionalCertificates);
 	const auto* secureStorage = Env::getSingleton<SecureStorage>();
-	mCvcChainBuilderProd = CVCertificateChainBuilder(cvcs + logCertificates("Productive"_L1, CVCertificate::fromRaw(secureStorage->getCVRootCertificates(true))), true);
-	mCvcChainBuilderTest = CVCertificateChainBuilder(cvcs + logCertificates("Test"_L1, CVCertificate::fromRaw(secureStorage->getCVRootCertificates(false))), false);
+	cvcs << logCertificates("Productive"_L1, CVCertificate::fromRaw(secureStorage->getCVRootCertificates(true)));
+	cvcs << logCertificates("Test"_L1, CVCertificate::fromRaw(secureStorage->getCVRootCertificates(false)));
+
+	mCvcChainBuilder = CVCertificateChainBuilder(cvcs);
 }

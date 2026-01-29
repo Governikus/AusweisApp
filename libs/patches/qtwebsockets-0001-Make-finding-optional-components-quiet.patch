@@ -1,0 +1,44 @@
+From 3acce2d2e2de76473abc88461ecb87c38a4e245c Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Sat, 3 Jan 2026 11:38:53 +0100
+Subject: Make finding optional components quiet
+
+* Quick is considered in src/CMakeLists.txt.
+* QuickTest is only required by tests/auto/qml.
+  Add check for QuickTest for this folder.
+
+Pick-to: 6.11
+Change-Id: Ica1810baaa954f47cfbf7bfefb2d3cc28c5a0894
+Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
+Reviewed-by: Alexandru Croitor <alexandru.croitor@qt.io>
+(cherry picked from commit a5fb38a1954414a64318e47277c9f37d24ee3fad)
+---
+ CMakeLists.txt            | 2 +-
+ tests/auto/CMakeLists.txt | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git x/qtwebsockets/CMakeLists.txt y/qtwebsockets/CMakeLists.txt
+index a594ceac51c6b05e57e6b0c0e32c8936a9ec7ea1..46ca79506c47a7803c1b0bc28e4751eba12f4db9 100644
+--- x/qtwebsockets/CMakeLists.txt
++++ y/qtwebsockets/CMakeLists.txt
+@@ -17,7 +17,7 @@ project(QtWebSockets # special case
+ set(QT_USE_FIXED_QT_ADD_RESOURCE_BASE TRUE)
+ 
+ find_package(Qt6 ${PROJECT_VERSION} CONFIG REQUIRED COMPONENTS BuildInternals Core Network) # special case
+-find_package(Qt6 ${PROJECT_VERSION} CONFIG OPTIONAL_COMPONENTS Quick QuickTest) # special case
++find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Quick QuickTest) # special case
+ qt_internal_project_setup()
+ 
+ if(NOT TARGET Qt::Network)
+diff --git x/qtwebsockets/tests/auto/CMakeLists.txt y/qtwebsockets/tests/auto/CMakeLists.txt
+index ce0b7ab7e54726f78b9b288bb9a31fac8cb23de6..f68258443622bc1bdad6b26ad5598bb6d2804b46 100644
+--- x/qtwebsockets/tests/auto/CMakeLists.txt
++++ y/qtwebsockets/tests/auto/CMakeLists.txt
+@@ -3,6 +3,6 @@
+ 
+ add_subdirectory(cmake)
+ add_subdirectory(websockets)
+-if(TARGET Qt::Quick)
++if(TARGET Qt::Quick AND TARGET Qt::QuickTest)
+     add_subdirectory(qml)
+ endif()

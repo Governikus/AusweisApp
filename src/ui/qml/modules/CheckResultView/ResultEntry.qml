@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -48,7 +48,7 @@ RowLayout {
 			case ResultEntry.Type.IsSuccess:
 				return Style.color.success;
 			case ResultEntry.Type.IsInfo:
-				return Style.color.textNormal.basic;
+				return Style.color.textNormal.basic_unchecked;
 			case ResultEntry.Type.IsError:
 				return Style.color.warning;
 			}

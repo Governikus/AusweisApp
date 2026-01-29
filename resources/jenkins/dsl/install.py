@@ -7,12 +7,11 @@ if sys.version_info < (3, 1):
     sys.exit(1)
 
 import os
-import tempfile
-import urllib.request
-import subprocess
 import shutil
+import subprocess
+import tempfile
 import time
-
+import urllib.request
 
 if len(sys.argv) != 2:
     print('Please provide address of jenkins server')

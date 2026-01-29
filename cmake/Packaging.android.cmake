@@ -57,6 +57,12 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${QT_BUILD_GRADL
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${BUILD_GRADLE_APPEND}")
 
 file(READ "${QT_BUILD_GRADLE}" BUILD_GRADLE)
+if(DEFINED ENV{MIRROR_MAVEN})
+	string(REPLACE "mavenCentral()" "maven {url = uri(System.getenv(\"MIRROR_MAVEN\"))}" BUILD_GRADLE "${BUILD_GRADLE}")
+endif()
+if(DEFINED ENV{MIRROR_GOOGLE_MAVEN})
+	string(REPLACE "google()" "maven {url = uri(System.getenv(\"MIRROR_GOOGLE_MAVEN\"))}" BUILD_GRADLE "${BUILD_GRADLE}")
+endif()
 file(WRITE "${ANDROID_BUILD_DIR}/build.gradle" "${BUILD_GRADLE}")
 file(READ "${BUILD_GRADLE_APPEND}" BUILD_GRADLE)
 file(APPEND "${ANDROID_BUILD_DIR}/build.gradle" "${BUILD_GRADLE}")
@@ -159,6 +165,15 @@ else()
 					COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SOURCE_ANDROID_FILE}.idsig" "${DESTINATION_ANDROID_FILE}.idsig"
 					WORKING_DIRECTORY ${ANDROID_BUILD_DIR})
 	endif()
+
+	if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+		set(DEBUG_SYMBOLS "${ANDROID_BUILD_DIR}/build/outputs/native-debug-symbols/debug/native-debug-symbols.zip")
+	else()
+		set(DEBUG_SYMBOLS "${ANDROID_BUILD_DIR}/build/outputs/native-debug-symbols/release/native-debug-symbols.zip")
+	endif()
+	add_custom_command(TARGET apk POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different "${DEBUG_SYMBOLS}" "${DESTINATION_ANDROID_FILE}.native-debug-symbols.zip"
+		WORKING_DIRECTORY ${ANDROID_BUILD_DIR})
 endif()
 
 add_custom_command(TARGET ${ANDROID_FILE_EXT} POST_BUILD

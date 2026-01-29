@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -14,7 +14,7 @@ RoundedRectangle {
 
 	bottomLeftCorner: isLast || isOnlyElement
 	bottomRightCorner: isLast || isOnlyElement
-	color: Style.color.pane.background.basic
+	color: Style.color.pane.background.basic_unchecked
 	topLeftCorner: isFirst || isOnlyElement
 	topRightCorner: isFirst || isOnlyElement
 }

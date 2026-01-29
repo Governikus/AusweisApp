@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LocalIfdReaderManagerPlugin.h"
@@ -109,11 +109,11 @@ const
 
 #if defined(Q_OS_ANDROID)
 	const auto* secureStorage = Env::getSingleton<SecureStorage>();
-	const auto& aa2PackageName = secureStorage->getLocalIfdPackageName();
-	const auto& aa2MinVersion = VersionNumber(secureStorage->getLocalIfdMinVersion());
-	const auto& aa2CertificateHashes = secureStorage->getLocalIfdAllowedCertificateHashes();
+	const auto& aaPackageName = secureStorage->getLocalIfdPackageName();
+	const auto& aaMinVersion = VersionNumber(secureStorage->getLocalIfdMinVersion());
+	const auto& aaCertificateHashes = secureStorage->getLocalIfdAllowedCertificateHashes();
 
-	const auto& packageInfo = BuildHelper::getPackageInfo(aa2PackageName);
+	const auto& packageInfo = BuildHelper::getPackageInfo(aaPackageName);
 	if (!packageInfo.isValid())
 	{
 		qCWarning(ifd) << "Could not find installed AusweisApp";
@@ -123,16 +123,16 @@ const
 
 	const auto& versionName = packageInfo.getObjectField<jstring>("versionName").toString();
 	const auto& versionNumber = VersionNumber(versionName);
-	if (versionNumber < aa2MinVersion)
+	if (versionNumber < aaMinVersion)
 	{
-		qCWarning(ifd) << "Invalid AusweisApp:" << versionNumber << ", required version >=" << aa2MinVersion.getVersionNumber().toString();
+		qCWarning(ifd) << "Invalid AusweisApp:" << versionNumber << ", required version >=" << aaMinVersion.getVersionNumber().toString();
 		setState(LocalIfdState::INCOMPATIBLE_VERSION);
 		return false;
 	}
 
-	const auto& certificates = BuildHelper::getAppCertificates(aa2PackageName);
-	bool hasValidCertificate = std::any_of(certificates.begin(), certificates.end(), [aa2CertificateHashes](const auto& certificate){
-				return aa2CertificateHashes.contains(QCryptographicHash::hash(certificate, QCryptographicHash::Sha256));
+	const auto& certificates = BuildHelper::getAppCertificates(aaPackageName);
+	bool hasValidCertificate = std::any_of(certificates.begin(), certificates.end(), [aaCertificateHashes](const auto& certificate){
+				return aaCertificateHashes.contains(QCryptographicHash::hash(certificate, QCryptographicHash::Sha256));
 			});
 	if (!hasValidCertificate)
 	{

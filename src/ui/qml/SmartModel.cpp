@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SmartModel.h"
@@ -114,37 +114,37 @@ void SmartModel::onUpdateSupportInfoDone(const QVariant& pResult)
 		case EidServiceResult::WARN:
 		case EidServiceResult::ERROR:
 		case EidServiceResult::UNSUPPORTED:
-			//: ERROR ANDROID IOS The check for Smart-eID support failed without any specific reason.
+			//: MOBILE The check for Smart-eID support failed without any specific reason.
 			setErrorString(tr("The online check for the Smart-eID support on your device failed. Please note that this process requires an internet connection."));
 			break;
 
 		case EidServiceResult::OVERLOAD_PROTECTION:
-			//: ERROR ANDROID IOS The check for Smart-eID support failed because the server is overloaded.
+			//: MOBILE The check for Smart-eID support failed because the server is overloaded.
 			setErrorString(tr("The online check for the Smart-eID support on your device failed because the server is currently facing too many requests. Please try again later."));
 			break;
 
 		case EidServiceResult::UNDER_MAINTENANCE:
-			//: ERROR ANDROID IOS The check for Smart-eID support failed because the server is being maintained.
+			//: MOBILE The check for Smart-eID support failed because the server is being maintained.
 			setErrorString(tr("The online check for the Smart-eID support on your device failed because the server is currently under maintenance. Please try again later."));
 			break;
 
 		case EidServiceResult::NFC_NOT_ACTIVATED:
-			//: ERROR ANDROID IOS The check for Smart-eID support failed because the NFC functionality is not activated.
+			//: MOBILE The check for Smart-eID support failed because the NFC functionality is not activated.
 			setErrorString(tr("The online check for the Smart-eID support on your device failed. In order to access the necessary device storage, active NFC functionality is required. Please activate NFC and try again."));
 			break;
 
 		case EidServiceResult::INTEGRITY_CHECK_FAILED:
-			//: ERROR ANDROID IOS The check for Smart-eID support failed because Google Play Integrity Check failed.
+			//: MOBILE The check for Smart-eID support failed because Google Play Integrity Check failed.
 			setErrorString(tr("The online check for the Smart-eID support on your device failed. The Google Play Integrity Check failed."));
 			return;
 
 		case EidServiceResult::NOT_AUTHENTICATED:
-			//: ERROR ANDROID IOS The check for Smart-eID support failed because an authorization issue occurred.
+			//: MOBILE The check for Smart-eID support failed because an authorization issue occurred.
 			setErrorString(tr("The online check for the Smart-eID support on your device failed. An authentication issue occurred (e.g. a resource was accessed without authorization or an unauthorized app tried to access a security component)."));
 			break;
 
 		case EidServiceResult::NETWORK_CONNECTION_ERROR:
-			//: ERROR ANDROID IOS The check for Smart-eID support failed because a network connection error occurred.
+			//: MOBILE The check for Smart-eID support failed because a network connection error occurred.
 			setErrorString(tr("The online check for the Smart-eID support on your device failed. Please ensure that you have an internet connection and your antivirus software and firewall are not blocking the connection."));
 			break;
 
@@ -202,37 +202,37 @@ void SmartModel::onDeleteSmartDone(const QVariant& pResult) NO_SMART_CONST
 		case EidServiceResult::WARN:
 		case EidServiceResult::ERROR:
 		case EidServiceResult::UNSUPPORTED:
-			//: ERROR ANDROID IOS Deletion of the Smart-eID failed without a specific reason.
+			//: MOBILE Deletion of the Smart-eID failed without a specific reason.
 			setErrorString(tr("The Smart-eID data and provisioning could not be successfully deleted from your device. Please note that this process requires an internet connection."));
 			break;
 
 		case EidServiceResult::OVERLOAD_PROTECTION:
-			//: ERROR ANDROID IOS Deletion of the Smart-eID failed because the server is overloaded.
+			//: MOBILE Deletion of the Smart-eID failed because the server is overloaded.
 			setErrorString(tr("The Smart-eID data and provisioning could not be successfully deleted from your device because the server is currently facing too many requests. Please try again later."));
 			break;
 
 		case EidServiceResult::UNDER_MAINTENANCE:
-			//: ERROR ANDROID IOS Deletion of the Smart-eID failed because the server is being maintained.
+			//: MOBILE Deletion of the Smart-eID failed because the server is being maintained.
 			setErrorString(tr("The Smart-eID data and provisioning could not be successfully deleted from your device because the server is currently under maintenance. Please try again later."));
 			break;
 
 		case EidServiceResult::NFC_NOT_ACTIVATED:
-			//: ERROR ANDROID IOS Deletion of the Smart-eID failed because NFC is not activated.
+			//: MOBILE Deletion of the Smart-eID failed because NFC is not activated.
 			setErrorString(tr("The Smart-eID data and provisioning could not be successfully deleted from your device. In order to access the necessary device storage, active NFC functionality is required. Please activate NFC and restart the process."));
 			break;
 
 		case EidServiceResult::INTEGRITY_CHECK_FAILED:
-			//: ERROR ANDROID IOS Deletion of the Smart-eID failed because the Google Play Integrity Check failed.
+			//: MOBILE Deletion of the Smart-eID failed because the Google Play Integrity Check failed.
 			setErrorString(tr("The Smart-eID data and provisioning could not be successfully deleted from your device. The Google Play Integrity Check failed."));
 			break;
 
 		case EidServiceResult::NOT_AUTHENTICATED:
-			//: ERROR ANDROID IOS Deletion of the Smart-eID failed because an authorization issue occurred.
+			//: MOBILE Deletion of the Smart-eID failed because an authorization issue occurred.
 			setErrorString(tr("The Smart-eID data and provisioning could not be successfully deleted from your device. An authentication issue occurred (e.g. a resource was accessed without authorization or an unauthorized app tried to access a security component)."));
 			break;
 
 		case EidServiceResult::NETWORK_CONNECTION_ERROR:
-			//: ERROR ANDROID IOS Deletion of the Smart-eID failed because a network connection error occurred.
+			//: MOBILE Deletion of the Smart-eID failed because a network connection error occurred.
 			setErrorString(tr("The Smart-eID data and provisioning could not be successfully deleted from your device. Please ensure that you have an internet connection and your antivirus software and firewall are not blocking the connection."));
 			break;
 

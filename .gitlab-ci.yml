@@ -19,9 +19,9 @@ variables:
 workflow:
   name: '$PIPELINE_NAME'
   rules:
-    - if: '$REVIEWBOARD_REVIEW_ID != null'
+    - if: '$REVIEWBOARD_REVIEW_REQUEST != null'
       variables:
-        PIPELINE_NAME: '${REVIEWBOARD_REVIEW_ID} / ${REVIEWBOARD_DIFF_REVISION}'
+        PIPELINE_NAME: '${REVIEWBOARD_REVIEW_REQUEST} / ${REVIEWBOARD_DIFF_REVISION}'
     - if: '$PATCH_IDENTIFIER != null'
       variables:
         PIPELINE_NAME: 'Rev: $[[ inputs.revision ]] | Patch: ${PATCH_IDENTIFIER}'
@@ -44,6 +44,10 @@ Bootstrap:
     VIRTUAL_ENV: $CI_PROJECT_DIR/venv
   before_script:
     - env
+    - |
+      if [ -n "$MIRROR_ALPINE" ]; then
+        sed -i "s|https://[^/]*/alpine/|$MIRROR_ALPINE/|g" /etc/apk/repositories
+      fi
     - apk add mercurial cmake uv
     - uv venv $VIRTUAL_ENV
     - source $VIRTUAL_ENV/bin/activate

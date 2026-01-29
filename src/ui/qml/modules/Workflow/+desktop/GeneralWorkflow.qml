@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -124,16 +124,16 @@ SectionPage {
 					return AuthModel.eidTypeMismatchError;
 				}
 				if (ApplicationModel.extendedLengthApdusUnsupported) {
-					//: ERROR DESKTOP
+					//: DESKTOP
 					return qsTr("The used card reader does not meet the technical requirements (Extended Length not supported).");
 				}
 				return d.foundSelectedReader ?
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("Read out ID card with connected device") :
-				//: LABEL DESKTOP
+				//: DESKTOP
 				qsTr("Connect USB card reader or smartphone");
 			case Workflow.WaitingFor.Password:
-				//: LABEL DESKTOP
+				//: DESKTOP
 				return qsTr("Information");
 			default:
 				return "";
@@ -153,14 +153,14 @@ SectionPage {
 
 		readonly property string requestCardText: {
 			if (d.foundPCSCReader && !d.foundRemoteReader) {
-				//: INFO DESKTOP The AA is waiting for an ID card to be inserted into the card reader.
+				//: DESKTOP The AA is waiting for an ID card to be inserted into the card reader.
 				return qsTr("No ID card detected. Please ensure that your ID card is placed on the card reader.");
 			} else if (!d.foundPCSCReader && d.foundRemoteReader) {
-				//: INFO DESKTOP The AA is waiting for the smartphone to be placed on the id.
+				//: DESKTOP The AA is waiting for the smartphone to be placed on the id.
 				return qsTr("No ID card detected. Please follow the instructions on your smartphone (connected to %1) to use it as card reader.").arg(RemoteServiceModel.connectedServerDeviceNames);
 			}
 
-			//: INFO DESKTOP The AA is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).
+			//: DESKTOP The AA is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).
 			return qsTr("Please follow the instructions on your smartphone (connected to %1) or put the ID card on the card reader.").arg(RemoteServiceModel.connectedServerDeviceNames);
 		}
 
@@ -168,10 +168,10 @@ SectionPage {
 		text: {
 			switch (root.waitingFor) {
 			case Workflow.WaitingFor.Reader:
-				//: INFO DESKTOP AA is waiting for the card reader or the ID card.
+				//: DESKTOP AA is waiting for the card reader or the ID card.
 				return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Connect an USB card reader or set up a smartphone as a card reader.");
 			case Workflow.WaitingFor.Password:
-				//: INFO DESKTOP The card reader is a comfort reader with its own display, the user is requested to pay attention to that display (instead of the AA).
+				//: DESKTOP The card reader is a comfort reader with its own display, the user is requested to pay attention to that display (instead of the AA).
 				return qsTr("Please observe the display of your card reader.");
 			default:
 				return "";
@@ -190,7 +190,7 @@ SectionPage {
 	GButton {
 		id: readerSettingsLink
 
-		//: INFO DESKTOP
+		//: DESKTOP
 		text: qsTr("Set up card reader")
 		visible: root.waitingFor === Workflow.WaitingFor.Reader && !d.foundSelectedReader
 
@@ -210,7 +210,7 @@ SectionPage {
 
 			animationSymbol: Symbol.Type.ERROR
 			animationType: AnimationLoader.Type.SAC_RESULT
-			//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
+			//: DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
 			text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
 			title: root.title
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthModel.h"
@@ -88,17 +88,17 @@ QString AuthModel::getResultHeader() const
 
 	if (mContext->getStatus().getStatusCode() == GlobalStatus::Code::Workflow_Browser_Transmission_Error)
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("Redirect failed");
 	}
 
 	if (mContext->getStatus().isError())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("Authentication failed");
 	}
 
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	return tr("Authentication successful");
 }
 
@@ -112,12 +112,13 @@ QString AuthModel::getErrorHeader() const
 
 	if (getStatusCode() == GlobalStatus::Code::Workflow_Card_Removed)
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("Connection to ID card lost");
 	}
 
 	const auto& tcTokenUrl = mContext->getTcTokenUrl();
-	return tcTokenUrl.scheme() + QStringLiteral("://") + tcTokenUrl.authority();
+	//: ALL_PLATFORMS
+	return QStringLiteral("%1: %2").arg(tr("Provider"), tcTokenUrl.scheme() + QStringLiteral("://") + tcTokenUrl.authority());
 }
 
 
@@ -140,7 +141,7 @@ QString AuthModel::getErrorText() const
 	if (const auto& failureCode = mContext->getFailureCode();
 			failureCode.has_value())
 	{
-		//: INFO ALL_PLATFORMS Failure code (string) of current workflow error.
+		//: ALL_PLATFORMS Failure code (string) of current workflow error.
 		errorDescription += QStringLiteral("<br/><br/>%1<br/>%2").arg(tr("Reason:"), failureCode.value().toString());
 	}
 
@@ -151,6 +152,11 @@ QString AuthModel::getErrorText() const
 QString AuthModel::getResultViewButtonIcon() const
 {
 	if (!mContext)
+	{
+		return QString();
+	}
+
+	if (getRefreshUrl().isEmpty())
 	{
 		return QString();
 	}
@@ -170,13 +176,13 @@ QString AuthModel::getResultViewButtonText() const
 	{
 		return QString();
 	}
-	if (mContext.objectCast<SelfAuthContext>())
+	if (mContext.objectCast<SelfAuthContext>() || getRefreshUrl().isEmpty())
 	{
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		return tr("Back to start page");
 	}
-	//: LABEL ALL_PLATFORMS
-	return tr("Return to provider");
+	//: ALL_PLATFORMS
+	return tr("Back to provider");
 }
 
 

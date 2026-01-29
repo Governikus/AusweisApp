@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AccessRoleAndRight.h"
@@ -130,133 +130,133 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 		case AccessRight::WRITE_DG22:
 		case AccessRight::READ_DG21:
 		case AccessRight::WRITE_DG21:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Optional data");
 
 		case AccessRight::READ_DG20:
 		case AccessRight::WRITE_DG20:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Residence permit II");
 
 		case AccessRight::READ_DG19:
 		case AccessRight::WRITE_DG19:
 			// "Auxiliary conditions" are replaced with "Residence permit I" in agreement with the BMI
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Residence permit I");
 
 		case AccessRight::READ_DG18:
 		case AccessRight::WRITE_DG18:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Community-ID");
 
 		case AccessRight::READ_DG17:
 		case AccessRight::WRITE_DG17:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Address");
 
 		case AccessRight::READ_DG16:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("RFU");
 
 		case AccessRight::READ_DG15:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("RFU");
 
 		case AccessRight::READ_DG14:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("RFU");
 
 		case AccessRight::READ_DG13:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Birth name");
 
 		case AccessRight::READ_DG12:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Optional data");
 
 		case AccessRight::READ_DG11:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Gender");
 
 		case AccessRight::READ_DG10:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Nationality");
 
 		case AccessRight::READ_DG09:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Place of birth");
 
 		case AccessRight::READ_DG08:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Date of birth");
 
 		case AccessRight::READ_DG07:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Doctoral degree");
 
 		case AccessRight::READ_DG06:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Religious / artistic name");
 
 		case AccessRight::READ_DG05:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Family name");
 
 		case AccessRight::READ_DG04:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Given name(s)");
 
 		case AccessRight::READ_DG03:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Valid until");
 
 		case AccessRight::READ_DG02:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Issuing country");
 
 		case AccessRight::READ_DG01:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Document type");
 
 		case AccessRight::INSTALL_QUAL_CERT:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Installation of qualified signature certificates");
 
 		case AccessRight::INSTALL_CERT:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Installation of signature certificates");
 
 		case AccessRight::PIN_MANAGEMENT:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("PIN Management");
 
 		case AccessRight::CAN_ALLOWED:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("CAN allowed");
 
 		case AccessRight::PRIVILEGED_TERMINAL:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Privileged terminal");
 
 		case AccessRight::PSA:
 		case AccessRight::RESTRICTED_IDENTIFICATION:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Pseudonym");
 
 		case AccessRight::COMMUNITY_ID_VERIFICATION:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Address verification");
 
 		case AccessRight::AGE_VERIFICATION:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Age verification");
 
 		case AccessRight::RFU:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return tr("Unknown (reserved)");
 	}
 
-	//: LABEL ALL_PLATFORMS
+	//: ALL_PLATFORMS
 	return tr("Unknown");
 }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdateDataModel.h"
@@ -47,19 +47,19 @@ QString AppUpdateDataModel::errorFromStatusCode(GlobalStatus::Code pCode) const
 			return QString();
 
 		case GlobalStatus::Code::Downloader_Data_Corrupted:
-			//: INFO DESKTOP Text of the popup that is shown when the app download failed because of a wrong checksum.
+			//: DESKTOP Text of the popup that is shown when the app download failed because of a wrong checksum.
 			return tr("The received data is broken. Check your network connection and try to restart the update.");
 
 		case GlobalStatus::Code::Update_Execution_Failed:
 		{
 			const auto& a_start = QStringLiteral("<a href=\"%1\">").arg(getDownloadFolder());
 			const auto& a_end = QStringLiteral("</a>");
-			//: INFO DESKTOP Text of the popup that is shown when the execution of the update failed (1/2).
+			//: DESKTOP Text of the popup that is shown when the execution of the update failed (1/2).
 			return tr("The update could not be started automatically after a successful download. Please try to do a manual update. You can find the downloaded file %1here%2.").arg(a_start, a_end);
 		}
 
 		default:
-			//: INFO DESKTOP Generic text of the popup that is shown when the app download failed.
+			//: DESKTOP Generic text of the popup that is shown when the app download failed.
 			return tr("An unknown network error occurred. Check your network connection and try to restart the update.");
 
 	}
@@ -73,7 +73,7 @@ QString AppUpdateDataModel::supportInfoFromStatusCode(GlobalStatus::Code pCode) 
 		const auto& language = Env::getSingleton<SettingsModel>()->getLanguage();
 		const auto& a_start = QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(language);
 		const auto& a_end = QStringLiteral("</a>");
-		//: INFO DESKTOP Text of the popup that is shown when the execution of the update failed (2/2).
+		//: DESKTOP Text of the popup that is shown when the execution of the update failed (2/2).
 		return tr("If this does not help, contact our %1support%2.").arg(a_start, a_end);
 	}
 	return QString();
@@ -189,7 +189,7 @@ QString AppUpdateDataModel::getAppcastStatus() const
 {
 	if (isAppcastRunning())
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		return tr("Searching for software updates...");
 	}
 
@@ -202,27 +202,27 @@ QString AppUpdateDataModel::getAppcastStatus() const
 	{
 		if (mUpdateAvailable)
 		{
-			//: LABEL DESKTOP An update is available, the new version is supplied to the user.
+			//: DESKTOP An update is available, the new version is supplied to the user.
 			return tr("An update is available (version %1).").arg(getVersion());
 		}
 
-		//: LABEL DESKTOP %1 is replaced with the version number of the software and %2 is replaced with the application name.
+		//: DESKTOP %1 is replaced with the version number of the software and %2 is replaced with the application name.
 		return tr("Your version %1 of %2 is up to date.").arg(QCoreApplication::applicationVersion(), QCoreApplication::applicationName());
 	}
 
 	if (mMissingPlatform)
 	{
-		//: LABEL DESKTOP
+		//: DESKTOP
 		return tr("An update information for your platform is not available.");
 	}
 
 	if (mUpdateAvailable)
 	{
-		//: LABEL DESKTOP The updater found an update but not all required update information are valid, this should be a very rare case.
+		//: DESKTOP The updater found an update but not all required update information are valid, this should be a very rare case.
 		return tr("An update is available but retrieving the information failed.");
 	}
 
-	//: LABEL DESKTOP
+	//: DESKTOP
 	return tr("The update information could not be retrieved. Please check your network connection.");
 }
 

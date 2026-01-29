@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -58,6 +58,12 @@ ProgressView {
 		}
 	}
 	function displaySuccessView(pPasswordType) {
+		if (d.lastInputSuccessType === pPasswordType) {
+			continueWorkflowIfComfortReader();
+			return;
+		}
+
+		d.lastInputSuccessType = pPasswordType;
 		push(inputSuccessView, {
 			passwordType: pPasswordType
 		});
@@ -159,26 +165,26 @@ ProgressView {
 		}
 	}
 
-	//: LABEL DESKTOP Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
+	//: DESKTOP Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
 	headline: workflowState === ChangePinController.WorkflowStates.NewPin ? qsTr("Setting new ID card PIN") :
-	//: LABEL DESKTOP Processing screen label while the card communication is running after the PIN has been entered during PIN check process.
+	//: DESKTOP Processing screen label while the card communication is running after the PIN has been entered during PIN check process.
 	ChangePinModel.onlyCheckPin ? qsTr("Check ID card PIN") :
-	//: LABEL DESKTOP Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
+	//: DESKTOP Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
 	qsTr("Change ID card PIN")
 	progress: progressTracker
 	text: {
 		if (ChangePinModel.isBasicReader) {
-			//: INFO DESKTOP Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
+			//: DESKTOP Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
 			return qsTr("Please do not move the ID card.");
 		}
 		if (workflowState === ChangePinController.WorkflowStates.Update || workflowState === ChangePinController.WorkflowStates.Password || workflowState === ChangePinController.WorkflowStates.NewPin) {
-			//: INFO DESKTOP Either an comfort card reader or smartphone-as-card-reader is used, the user needs to react to request on that device.
+			//: DESKTOP Either an comfort card reader or smartphone-as-card-reader is used, the user needs to react to request on that device.
 			return qsTr("Please observe the display of your card reader.");
 		}
-		//: INFO DESKTOP Generic progress message during PIN change process.
+		//: DESKTOP Generic progress message during PIN change process.
 		return qsTr("Please wait a moment.");
 	}
-	//: LABEL DESKTOP
+	//: DESKTOP
 	title: qsTr("Change PIN")
 	titleBarSettings: cancelNavigation
 
@@ -199,6 +205,7 @@ ProgressView {
 	QtObject {
 		id: d
 
+		property int lastInputSuccessType: -1
 		property int workflowProgress: 0
 
 		function setWorkflowProgress(pProgress) {
@@ -368,9 +375,9 @@ ProgressView {
 			animationSymbol: Symbol.Type.ERROR
 			progress: progressTracker
 			text: ChangePinModel.isRemoteReader ?
-			//: INFO DESKTOP The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
+			//: DESKTOP The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
 			qsTr("Weak NFC signal. Please\n change the card position\n remove the mobile phone case (if present)\n connect the smartphone with a charging cable") :
-			//: INFO DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.
+			//: DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.
 			qsTr("Weak NFC signal. Please\n make sure the card is positioned correctly on the reader\n do note move the card while it is being accessed")
 			title: root.title
 			titleBarSettings: cancelNavigation
@@ -388,13 +395,18 @@ ProgressView {
 			id: pinResultView
 
 			animation: ChangePinModel.statusCodeAnimation
-			//: LABEL DESKTOP
+			//: DESKTOP
 			buttonText: qsTr("Back to start page")
-			hintButtonText: ChangePinModel.statusHintActionText
-			hintText: ChangePinModel.statusHintText
-			hintTitle: ChangePinModel.statusHintTitle
+			firstHintButtonText: ChangePinModel.statusHintActionText
+			firstHintText: ChangePinModel.statusHintText
+			firstHintTitle: ChangePinModel.statusHintTitle
+			hintBoxesTitle: ChangePinModel.statusHintBoxesTitle
 			mailButtonVisible: ChangePinModel.errorIsMasked
 			progress: progressTracker
+			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
+			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
+			secondHintText: Utils.getSecondPRSHintText(ChangePinModel.statusCode)
+			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			text: ChangePinModel.resultString
 			title: root.title
 
@@ -405,7 +417,7 @@ ProgressView {
 			}
 
 			onEmailButtonPressed: ChangePinModel.sendResultMail()
-			onHintClicked: ChangePinModel.invokeStatusHintAction()
+			onFirstHintClicked: ChangePinModel.invokeStatusHintAction()
 			onLeaveView: {
 				ChangePinModel.continueWorkflow();
 				pop(root);

@@ -1,0 +1,80 @@
+From 14e42d6da1f0c9a973eb5487e45c2f95e6d81980 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Sat, 3 Jan 2026 11:54:30 +0100
+Subject: Add feature for QML Type for Qt WebSockets
+
+Disabeling the QML Type can be useful for QML
+applications using Qt Websockets only in C++ core.
+
+Pick-to: 6.11
+Change-Id: I8f689656e12106e7556f0e48cae1008c38c50fcd
+Reviewed-by: Alexandru Croitor <alexandru.croitor@qt.io>
+Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
+(cherry picked from commit d735e19dd9b8b43b791f3369a9f689335aa3ac89)
+---
+ qt_cmdline.cmake               |  4 ++++
+ src/CMakeLists.txt             |  4 +---
+ src/websockets/configure.cmake | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 33 insertions(+), 3 deletions(-)
+ create mode 100644 qt_cmdline.cmake
+ create mode 100644 src/websockets/configure.cmake
+
+diff --git x/qtwebsockets/qt_cmdline.cmake y/qtwebsockets/qt_cmdline.cmake
+new file mode 100644
+index 0000000000000000000000000000000000000000..8616e9c931bc8529531fdae1a3b59746ccb770f2
+--- /dev/null
++++ y/qtwebsockets/qt_cmdline.cmake
+@@ -0,0 +1,4 @@
++# Copyright (C) 2026 The Qt Company Ltd.
++# SPDX-License-Identifier: BSD-3-Clause
++
++qt_commandline_subconfig(src/websockets)
+diff --git x/qtwebsockets/src/CMakeLists.txt y/qtwebsockets/src/CMakeLists.txt
+index 21b5bdb778428b64ee0d1f578bcc0e6278774542..98bd2e2ecbc8cfeabc28171f78e4a89e2d6b4f5e 100644
+--- x/qtwebsockets/src/CMakeLists.txt
++++ y/qtwebsockets/src/CMakeLists.txt
+@@ -1,9 +1,7 @@
+ # Copyright (C) 2022 The Qt Company Ltd.
+ # SPDX-License-Identifier: BSD-3-Clause
+ 
+-# Generated from src.pro.
+-
+ add_subdirectory(websockets)
+-if(TARGET Qt::Quick)
++if(QT_FEATURE_websockets_qml)
+     add_subdirectory(imports)
+ endif()
+diff --git x/qtwebsockets/src/websockets/configure.cmake y/qtwebsockets/src/websockets/configure.cmake
+new file mode 100644
+index 0000000000000000000000000000000000000000..87f8be17710b01e545d434f13ae5450f66d90cdc
+--- /dev/null
++++ y/qtwebsockets/src/websockets/configure.cmake
+@@ -0,0 +1,28 @@
++# Copyright (C) 2026 The Qt Company Ltd.
++# SPDX-License-Identifier: BSD-3-Clause
++
++
++
++#### Inputs
++
++
++
++#### Libraries
++
++
++
++#### Tests
++
++
++
++#### Features
++
++qt_feature("websockets-qml" PUBLIC
++    LABEL "WebSocket QML Type"
++    PURPOSE "Provides QML Type for Qt WebSockets."
++    CONDITION TARGET Qt::Quick
++)
++
++qt_configure_add_summary_section(NAME "Qt WebSockets")
++qt_configure_add_summary_entry(ARGS "websockets-qml")
++qt_configure_end_summary_section() # end of "Qt WebSockets" section

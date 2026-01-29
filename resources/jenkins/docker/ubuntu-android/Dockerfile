@@ -10,7 +10,7 @@ ENV ANDROID_SDK_ROOT=/opt/android-sdk
 ENV ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION
 
 RUN apt-get update && \
-    apt-get -y install g++ make ccache ninja-build perl unzip gradle patch openjdk-17-jdk-headless curl && \
+    apt-get -y install g++ make ccache ninja-build perl unzip gradle patch openjdk-17-jdk-headless curl xsltproc && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE/cmake-$CMAKE-Linux-x86_64.sh -O /tmp/cmake.sh && \

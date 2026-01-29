@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateUnfortunateCardPosition.h"
@@ -34,7 +34,7 @@ void StateUnfortunateCardPosition::onEntry(QEvent* pEvent)
 #if defined(Q_OS_IOS)
 	if (getContext()->getReaderPluginTypes().contains(ReaderManagerPluginType::NFC))
 	{
-		//: INFO The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.
+		//: The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.
 		const auto& errorMessage = tr("Weak NFC signal");
 		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::NFC, errorMessage);
 	}

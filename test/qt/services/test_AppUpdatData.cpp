@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdateData.h"
@@ -72,27 +72,27 @@ class test_AppUpdatData
 									  R"(			"platform": "mac",)"
 									  R"(			"minimum_platform": "0.0",)"
 									  R"(			"version": "1.22.0",)"
-									  R"(			"url": "https://www.example.com/aa2.zip",)"
+									  R"(			"url": "https://www.example.com/aa.zip",)"
 									  R"(			"size": 1337,)"
-									  R"(			"checksum": "https://www.example.com/aa2.zip.sha256")"
+									  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"
 									  R"(		})"
 									  R"(,		{)"
 									  R"(			"date": "2017-10-25T15:20:25",)"
 									  R"(			"platform": "win",)"
 									  R"(			"minimum_platform": "0.0",)"
 									  R"(			"version": "1.22.0",)"
-									  R"(			"url": "https://www.example.com/aa2.zip",)"
+									  R"(			"url": "https://www.example.com/aa.zip",)"
 									  R"(			"size": 1337,)"
-									  R"(			"checksum": "https://www.example.com/aa2.zip.sha256")"
+									  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"
 									  R"(		})"
 									  R"(,		{)"
 									  R"(			"date": "2017-10-25T15:20:25",)"
 									  R"(			"platform": "src",)"
 									  R"(			"minimum_platform": "0.0",)"
 									  R"(			"version": "1.22.0",)"
-									  R"(			"url": "https://www.example.com/aa2.zip",)"
+									  R"(			"url": "https://www.example.com/aa.zip",)"
 									  R"(			"size": 1337,)"
-									  R"(			"checksum": "https://www.example.com/aa2.zip.sha256")"
+									  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"
 									  R"(		})"
 									  R"(	])"
 									  R"(})");
@@ -103,9 +103,9 @@ class test_AppUpdatData
 			QCOMPARE(data.isCompatible(), true);
 			QCOMPARE(data.getDate(), QDateTime(QDate(2017, 10, 25), QTime(15, 20, 25)));
 			QCOMPARE(data.getVersion(), QStringLiteral("1.22.0"));
-			QCOMPARE(data.getUrl(), QUrl(QStringLiteral("https://www.example.com/aa2.zip")));
+			QCOMPARE(data.getUrl(), QUrl(QStringLiteral("https://www.example.com/aa.zip")));
 			QCOMPARE(data.getSize(), 1337);
-			QCOMPARE(data.getChecksumUrl(), QUrl(QStringLiteral("https://www.example.com/aa2.zip.sha256")));
+			QCOMPARE(data.getChecksumUrl(), QUrl(QStringLiteral("https://www.example.com/aa.zip.sha256")));
 		}
 
 
@@ -119,27 +119,27 @@ class test_AppUpdatData
 									  R"(			"platform": "mac",)"
 									  R"(			"minimum_platform": "999.0",)"
 									  R"(			"version": "1.22.0",)"
-									  R"(			"url": "https://www.example.com/aa2.zip",)"
+									  R"(			"url": "https://www.example.com/aa.zip",)"
 									  R"(			"size": 1337,)"
-									  R"(			"checksum": "https://www.example.com/aa2.zip.sha256")"
+									  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"
 									  R"(		})"
 									  R"(,		{)"
 									  R"(			"date": "2017-10-25T15:20:25",)"
 									  R"(			"platform": "win",)"
 									  R"(			"minimum_platform": "999.0",)"
 									  R"(			"version": "1.22.0",)"
-									  R"(			"url": "https://www.example.com/aa2.zip",)"
+									  R"(			"url": "https://www.example.com/aa.zip",)"
 									  R"(			"size": 1337,)"
-									  R"(			"checksum": "https://www.example.com/aa2.zip.sha256")"
+									  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"
 									  R"(		})"
 									  R"(,		{)"
 									  R"(			"date": "2017-10-25T15:20:25",)"
 									  R"(			"platform": "src",)"
 									  R"(			"minimum_platform": "999.0",)"
 									  R"(			"version": "1.22.0",)"
-									  R"(			"url": "https://www.example.com/aa2.zip",)"
+									  R"(			"url": "https://www.example.com/aa.zip",)"
 									  R"(			"size": 1337,)"
-									  R"(			"checksum": "https://www.example.com/aa2.zip.sha256")"
+									  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"
 									  R"(		})"
 									  R"(	])"
 									  R"(})");
@@ -167,9 +167,9 @@ class test_AppUpdatData
 													  R"(	"date": "2017-10-25T15:20:25",)"
 													  R"(	"platform": "mac",)"
 													  R"(	"version": "1.22.0",)"
-													  R"(	"url": "https://www.example.com/aa2.zip",)"
+													  R"(	"url": "https://www.example.com/aa.zip",)"
 													  R"(	"size": 1337,)"
-													  R"(	"checksum": "https://www.example.com/aa2.zip.sha256")"
+													  R"(	"checksum": "https://www.example.com/aa.zip.sha256")"
 													  R"(})") << GlobalStatus::Code::Downloader_Data_Corrupted;
 			QTest::newRow("corrupted5") << QByteArray(R"({)"
 													  R"(	"items":)"
@@ -177,9 +177,9 @@ class test_AppUpdatData
 													  R"(		"date": "2017-10-25T15:20:25",)"
 													  R"(		"platform": "mac",)"
 													  R"(		"version": "1.22.0",)"
-													  R"(		"url": "https://www.example.com/aa2.zip",)"
+													  R"(		"url": "https://www.example.com/aa.zip",)"
 													  R"(		"size": 1337,)"
-													  R"(		"checksum": "https://www.example.com/aa2.zip.sha256")"
+													  R"(		"checksum": "https://www.example.com/aa.zip.sha256")"
 													  R"(	})"
 													  R"(})") << GlobalStatus::Code::Downloader_Data_Corrupted;
 			QTest::newRow("corrupted6") << QByteArray(R"({)"
@@ -194,9 +194,9 @@ class test_AppUpdatData
 													  R"(			"date": "2017-10-25T15:20:25",)"
 													  R"(			"platform": "foo",)"
 													  R"(			"version": "1.22.0",)"
-													  R"(			"url": "https://www.example.com/aa2.zip",)"
+													  R"(			"url": "https://www.example.com/aa.zip",)"
 													  R"(			"size": 1337,)"
-													  R"(			"checksum": "https://www.example.com/aa2.zip.sha256")"
+													  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"
 													  R"(		})"
 													  R"(	])"
 													  R"(})") << GlobalStatus::Code::Downloader_Missing_Platform;

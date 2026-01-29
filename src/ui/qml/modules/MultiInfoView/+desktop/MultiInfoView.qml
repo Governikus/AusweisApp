@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -15,14 +15,19 @@ import Governikus.View
 FlickableSectionPage {
 	id: root
 
-	readonly property url buttonLink: infoContent.buttonLink
 	readonly property list<MultiInfoContentBlock> contentList: infoContent.contentList
 	property string continueButtonText
-	readonly property string hint: infoContent.hint
-	readonly property string hintButtonText: infoContent.hintButtonText
-	readonly property string hintTitle: infoContent.hintTitle
+	readonly property string firstHint: infoContent.firstHint
+	readonly property url firstHintButtonLink: infoContent.firstHintButtonLink
+	readonly property string firstHintButtonText: infoContent.firstHintButtonText
+	readonly property string firstHintTitle: infoContent.firstHintTitle
+	readonly property string hintBoxesTitle: infoContent.hintBoxesTitle
 	property MultiInfoData infoContent: MultiInfoData {
 	}
+	readonly property url secondHintButtonLink: infoContent.secondHintButtonLink
+	readonly property string secondHintButtonText: infoContent.secondHintButtonText
+	readonly property string secondHintText: infoContent.secondHintText
+	readonly property string secondHintTitle: infoContent.secondHintTitle
 
 	signal abortCurrentWorkflow
 	signal continueClicked
@@ -89,15 +94,32 @@ FlickableSectionPage {
 	GSpacer {
 		Layout.fillHeight: true
 	}
+	GText {
+		text: root.hintBoxesTitle
+		textStyle: Style.text.subline
+		visible: text !== ""
+	}
 	Hint {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		buttonText: root.hintButtonText
-		buttonTooltip: root.buttonLink
-		linkToOpen: root.buttonLink
-		text: root.hint
-		//: LABEL DESKTOP
-		title: root.hintTitle !== "" ? root.hintTitle : qsTr("Hint")
+		buttonText: root.firstHintButtonText
+		buttonTooltip: root.firstHintButtonLink
+		linkToOpen: root.firstHintButtonLink
+		text: root.firstHint
+		//: DESKTOP
+		title: root.firstHintTitle !== "" ? root.firstHintTitle : qsTr("Hint")
+		visible: text !== ""
+
+		onLinkAboutToOpen: root.abortCurrentWorkflow()
+	}
+	Hint {
+		Layout.alignment: Qt.AlignHCenter
+		Layout.fillWidth: true
+		buttonText: root.secondHintButtonText
+		linkToOpen: root.secondHintButtonLink
+		text: root.secondHintText
+		//: DESKTOP
+		title: root.secondHintTitle !== "" ? root.secondHintTitle : qsTr("Hint")
 		visible: text !== ""
 
 		onLinkAboutToOpen: root.abortCurrentWorkflow()

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateInstallApplet.h"
@@ -33,11 +33,11 @@ void StateInstallApplet::run()
 				const int initialProgress = context->getProgressValue();
 				const auto& progressHandler = [this, &context, &initialProgress](int pProgress) {
 							QMetaObject::invokeMethod(this, [pProgress, &context, &initialProgress]{
-										//: LABEL ANDROID IOS
+										//: MOBILE
 										context->setProgress(pProgress, tr("Installing Smart-eID"), initialProgress);
 									}, Qt::QueuedConnection);
 						};
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				context->setProgress(initialProgress, tr("Installing Smart-eID"));
 				return QVariant::fromValue(smartManager->installSmart(progressHandler));
 			};

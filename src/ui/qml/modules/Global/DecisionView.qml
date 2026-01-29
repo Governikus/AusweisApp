@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -11,32 +11,26 @@ import Governikus.View
 FlickableSectionPage {
 	id: root
 
-	readonly property alias agreeButton: agreeButton
-	property alias agreeButtonColor: agreeButton.buttonColor
-	property alias agreeButtonIcon: agreeButton.icon.source
-	property alias agreeButtonText: agreeButton.text
 	property alias customContentSourceComponent: customContentLoader.sourceComponent
 	property alias descriptionTextsModel: descriptionTexts.model
-	readonly property alias disagreeButton: disagreeButton
-	property bool disagreeButtonHighlighted: true
-	property alias disagreeButtonText: disagreeButton.text
 	property alias headlineText: headline.text
 	property alias iconSourceComponent: iconLoader.sourceComponent
+	property alias primaryButton: primaryButton
+	property alias secondaryButton: secondaryButton
 	property alias subtitleText: subtitle.text
-	property alias tintAgreeButtonIcon: agreeButton.tintIcon
 
-	signal agreeClicked
-	signal disagreeClicked
+	signal primaryButtonClicked
+	signal secondaryButtonClicked
 
 	QtObject {
 		id: d
 
-		readonly property real buttonWidth: Math.max(agreeButton.implicitWidth, disagreeButton.implicitWidth)
+		readonly property real buttonWidth: Math.max(primaryButton.implicitWidth, secondaryButton.implicitWidth)
 	}
 	Heading {
 		id: headline
 
-		visible: headline.text !== ""
+		visible: root.headlineText !== ""
 		wrapMode: Text.WordWrap
 	}
 	Loader {
@@ -65,30 +59,29 @@ FlickableSectionPage {
 
 		Layout.fillWidth: true
 		Layout.topMargin: Style.dimens.pane_spacing
-		visible: sourceComponent !== undefined
+		visible: status === Loader.Ready
 	}
 	GButton {
-		id: agreeButton
+		id: secondaryButton
 
 		Layout.alignment: Qt.AlignHCenter
 		Layout.maximumWidth: d.buttonWidth
 		Layout.preferredWidth: d.buttonWidth
 		Layout.topMargin: Style.dimens.pane_spacing
-		style: root.disagreeButtonHighlighted ? Style.color.controlOptional : Style.color.control
+		style: Style.color.controlOptional
 		visible: text !== ""
 
-		onClicked: root.agreeClicked()
+		onClicked: root.secondaryButtonClicked()
 	}
 	GButton {
-		id: disagreeButton
+		id: primaryButton
 
 		Layout.alignment: Qt.AlignHCenter
 		Layout.maximumWidth: d.buttonWidth
 		Layout.preferredWidth: d.buttonWidth
-		Layout.topMargin: Style.dimens.text_spacing
-		style: root.disagreeButtonHighlighted ? Style.color.control : Style.color.controlOptional
+		Layout.topMargin: secondaryButton.visible ? Style.dimens.text_spacing : Style.dimens.pane_spacing
 		visible: text !== ""
 
-		onClicked: root.disagreeClicked()
+		onClicked: root.primaryButtonClicked()
 	}
 }

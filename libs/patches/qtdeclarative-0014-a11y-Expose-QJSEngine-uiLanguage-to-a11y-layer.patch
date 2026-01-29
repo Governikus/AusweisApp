@@ -1,0 +1,92 @@
+From 65a142dec7fb9ab2dff5c30c26a69b94dc30e890 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Wed, 5 Nov 2025 14:32:23 +0100
+Subject: a11y: Expose QJSEngine::uiLanguage to a11y layer
+
+This allows the a11y platform plugins to correctly inform the screen
+reader about the app language as it might differ from the OS language.
+
+Task-number: QTBUG-141701
+Change-Id: I258dc8ad022c9a998d5441c25cde49a1e7c32d16
+---
+ src/quick/accessible/qaccessiblequickitem.cpp | 7 +++++++
+ src/quick/accessible/qaccessiblequickitem_p.h | 1 +
+ src/quick/accessible/qaccessiblequickview.cpp | 8 ++++++++
+ src/quick/accessible/qaccessiblequickview_p.h | 1 +
+ 4 files changed, 17 insertions(+)
+
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+index fb7c3237d2d8db37a553e67dd68d06e115b80141..cf0c5ed9e95a7796e5e59832a018aa654df1f766 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+@@ -15,6 +15,7 @@
+ #include "QtQuick/private/qquickaccessibleattached_p.h"
+ #include "QtQuick/qquicktextdocument.h"
+ #include "QtQuick/qquickrendercontrol.h"
++#include <QJSEngine>
+ QT_BEGIN_NAMESPACE
+ 
+ #if QT_CONFIG(accessibility)
+@@ -644,6 +645,12 @@ void QAccessibleQuickItem::setText(QAccessible::Text textType, const QString &te
+         object()->setProperty(textPropertyName, text);
+ }
+ 
++QString QAccessibleQuickItem::uiLanguage() const
++{
++    QJSEngine *engine = qjsEngine(object());
++    return engine ? engine->uiLanguage() : QString();
++}
++
+ void *QAccessibleQuickItem::interface_cast(QAccessible::InterfaceType t)
+ {
+     QAccessible::Role r = role();
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h
+index ea9d1c2ac1e7097ba0e1f52cc63481217e92fea8..eb940a9e3af30cdb40222d11c9182212984c416b 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h
+@@ -54,6 +54,7 @@ public:
+     QAccessible::Role role() const override;
+     QString text(QAccessible::Text) const override;
+     void setText(QAccessible::Text, const QString &text) override;
++    QString uiLanguage() const override;
+ 
+     bool isAccessible() const;
+ 
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickview.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickview.cpp
+index 7b9bd1858205891ae042ad374a7ad919e39ef5ab..145400c1261bbf4f3976431b028bf69720c4a5b9 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickview.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickview.cpp
+@@ -10,6 +10,8 @@
+ 
+ #include "qaccessiblequickitem_p.h"
+ 
++#include <QJSEngine>
++
+ #if QT_CONFIG(accessibility)
+ 
+ QT_BEGIN_NAMESPACE
+@@ -79,6 +81,12 @@ QRect QAccessibleQuickWindow::rect() const
+     return QRect(window()->x(), window()->y(), window()->width(), window()->height());
+ }
+ 
++QString QAccessibleQuickWindow::uiLanguage() const
++{
++    QJSEngine *engine = qjsEngine(object());
++    return engine ? engine->uiLanguage() : QString();
++}
++
+ QString QAccessibleQuickWindow::text(QAccessible::Text text) const
+ {
+     if (!window())
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickview_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequickview_p.h
+index b4abb764e8613e3bff7f9bc3d368ad927ab8474c..7c6b53609dde1e8eed5cacfebbba3b530194b165 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickview_p.h
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickview_p.h
+@@ -35,6 +35,7 @@ public:
+     QAccessible::Role role() const override;
+     QAccessible::State state() const override;
+     QRect rect() const override;
++    QString uiLanguage() const override;
+ 
+     int childCount() const override;
+     int indexOfChild(const QAccessibleInterface *iface) const override;

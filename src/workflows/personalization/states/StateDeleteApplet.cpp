@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateDeleteApplet.h"
@@ -32,11 +32,11 @@ void StateDeleteApplet::run()
 				const int initialProgress = context->getProgressValue();
 				const auto& progressHandler = [this, &context, &initialProgress](int pProgress) {
 							QMetaObject::invokeMethod(this, [pProgress, &context, &initialProgress]{
-										//: LABEL ANDROID IOS
+										//: MOBILE
 										context->setProgress(pProgress, tr("Cleaning up old Smart-eID"), initialProgress, 50);
 									}, Qt::QueuedConnection);
 						};
-				//: LABEL ANDROID IOS
+				//: MOBILE
 				context->setProgress(initialProgress, tr("Cleaning up old Smart-eID"));
 				return QVariant::fromValue(smartManager->deleteSmart(progressHandler));
 			};

@@ -1,0 +1,34 @@
+From 730e492082ebd1e8accd1be033b70784d615ea6c Mon Sep 17 00:00:00 2001
+From: Jens Trillmann <jens.trillmann@governikus.de>
+Date: Fri, 22 Aug 2025 09:09:57 +0200
+Subject: Replicate focusability of a11y elements for UIFocus
+
+When navigating elements using a screen reader all elements with a name/
+description can be focused. When using Full Keyboard Access only
+interactive elements can be focused. By making every QMacAccessibilityElement
+focusable by the UIFocus API Full Keyboard Access can focus the same elements
+as VoiceOver.
+
+Pick-to: 6.10
+Fixes: QTBUG-139613
+Change-Id: Id3999dc4c3243833c605998209bcba0da5450f4c
+---
+ src/plugins/platforms/ios/quiaccessibilityelement.mm | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+index e58990510230431d8e530ab75683aa9b93f04417..69faf63e56c9141fedff5260f009325ed8219299 100644
+--- x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+@@ -393,6 +393,11 @@ struct RotorNameTranslator {
+     actionInterface->doAction(QAccessibleActionInterface::setFocusAction());
+ }
+ 
++- (BOOL)canBecomeFocused
++{
++    return YES;
++}
++
+ @end
+ 
+ #endif

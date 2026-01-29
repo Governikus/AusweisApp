@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -34,7 +34,7 @@ Item {
 		id: buttonLayout
 
 		Accessible.focusable: true
-		//: LABEL ANDROID IOS
+		//: MOBILE
 		Accessible.name: qsTr("Number pad")
 		Accessible.role: Accessible.Grouping
 		activeFocusOnTab: true
@@ -90,9 +90,9 @@ Item {
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 
-			//: LABEL ANDROID IOS A11y text for the "delete" button text when the button is disabled.
+			//: MOBILE A11y text for the "delete" button text when the button is disabled.
 			a11yDisabledText: qsTr("Delete last digit, disabled until input is present.")
-			//: LABEL ANDROID IOS A11y text for the "delete" button image.
+			//: MOBILE A11y text for the "delete" button image.
 			a11yText: qsTr("Delete last digit")
 			enabled: root.deleteEnabled
 			icon.source: "qrc:///images/material_backspace.svg"
@@ -114,9 +114,9 @@ Item {
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 
-			//: LABEL ANDROID IOS A11y text, appended onto the "submit" button text when the button is disabled.
+			//: MOBILE A11y text, appended onto the "submit" button text when the button is disabled.
 			a11yDisabledText: a11yText + qsTr(", disabled until input is complete.")
-			//: LABEL ANDROID IOS A11y text for the "submit" button image.
+			//: MOBILE A11y text for the "submit" button image.
 			a11yText: qsTr("Submit")
 			enabled: root.submitEnabled
 			icon.source: "qrc:///images/material_check.svg"

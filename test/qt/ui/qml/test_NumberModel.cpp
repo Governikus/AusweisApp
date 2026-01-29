@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -14,10 +14,13 @@
 #include "MockCardConnectionWorker.h"
 #include "ReaderManager.h"
 #include "RemoteIfdServer.h"
+#include "TestHookThread.h"
 #include "TestWorkflowContext.h"
 
 #include <QDebug>
+#include <QPointer>
 #include <QtTest>
+
 
 using namespace governikus;
 
@@ -31,6 +34,7 @@ class test_NumberModel
 	Q_OBJECT
 
 	private:
+		QScopedPointer<TestHookThread> connectionThread;
 		NumberModel* mModel = nullptr;
 
 		static EstablishPaceChannel createDataToParse(const PacePasswordId& pinId)
@@ -47,21 +51,23 @@ class test_NumberModel
 		}
 
 	private Q_SLOTS:
-		void init()
+		void initTestCase()
 		{
 			mModel = Env::getSingleton<NumberModel>();
+		}
+
+
+		void init()
+		{
+			connectionThread.reset(new TestHookThread());
+
 		}
 
 
 		void cleanup()
 		{
 			mModel->resetContext();
-		}
-
-
-		void cleanupTestCase()
-		{
-			mModel->deleteLater();
+			connectionThread.reset();
 		}
 
 
@@ -268,9 +274,6 @@ class test_NumberModel
 
 		void test_Error()
 		{
-			QThread connectionThread;
-			connectionThread.start();
-
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
 			QCOMPARE(mModel->getInputError(), QString());
@@ -285,9 +288,8 @@ class test_NumberModel
 			context->setLastPaceResult(CardReturnCode::CANCELLATION_BY_USER);
 			QCOMPARE(mModel->getInputError(), QString());
 
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&connectionThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			auto worker = MockCardConnectionWorker::create(connectionThread.data());
+			QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			context->setCardConnection(connection);
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
@@ -333,17 +335,15 @@ class test_NumberModel
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN 3 times, your <b>Transport PIN is now blocked</b>. "
 												 "To remove the block, the<b> 10-digit PUK</b> must be entered first."));
 
-			connectionThread.quit();
-			connectionThread.wait();
+			mModel->resetContext();
+			context.reset();
+			connection.reset();
 		}
 
 
 		void test_GetRetryCounter()
 		{
-			QThread connectionThread;
-			connectionThread.start();
-
-			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
 			QCOMPARE(mModel->getRetryCounter(), -1);
 
@@ -353,16 +353,16 @@ class test_NumberModel
 			const QString name = QStringLiteral("name");
 			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(),
 					3, true, false);
-			MockReader reader(name);
-			reader.setInfoCardInfo(cardInfo);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
-			worker->moveToThread(&connectionThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			QPointer<MockReader> reader = new MockReader(name);
+			reader->setInfoCardInfo(cardInfo);
+			auto worker = MockCardConnectionWorker::create(connectionThread.data(), reader);
+			QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			context->setCardConnection(connection);
 			QCOMPARE(mModel->getRetryCounter(), 3);
 
-			connectionThread.quit();
-			connectionThread.wait();
+			mModel->resetContext();
+			context.reset();
+			connection.reset();
 		}
 
 
@@ -466,15 +466,11 @@ class test_NumberModel
 
 		void test_OnCardConnectionChanged()
 		{
-			QThread connectionThread;
-			connectionThread.start();
-
-			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
 			mModel->resetContext(context);
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&connectionThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			auto worker = MockCardConnectionWorker::create(connectionThread.data());
+			QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			context->setCardConnection(connection);
 			QSignalSpy spy(mModel, &NumberModel::fireReaderInfoChanged);
 
@@ -482,8 +478,9 @@ class test_NumberModel
 			Q_EMIT connection->fireReaderInfoChanged(ReaderInfo());
 			QCOMPARE(spy.count(), 3);
 
-			connectionThread.quit();
-			connectionThread.wait();
+			mModel->resetContext();
+			context.reset();
+			connection.reset();
 		}
 
 
@@ -549,12 +546,9 @@ class test_NumberModel
 
 		void test_resetInputError()
 		{
-			QThread connectionThread;
-			connectionThread.start();
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
-			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			worker->moveToThread(&connectionThread);
-			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			auto worker = MockCardConnectionWorker::create(connectionThread.data());
+			QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			context->setCardConnection(connection);
 
 			mModel->resetContext(context);
@@ -570,8 +564,9 @@ class test_NumberModel
 			QVERIFY(!mModel->getPin().isEmpty());
 			QVERIFY(mModel->getInputError().isEmpty());
 
-			connectionThread.quit();
-			connectionThread.wait();
+			mModel->resetContext();
+			context.reset();
+			connection.reset();
 		}
 
 

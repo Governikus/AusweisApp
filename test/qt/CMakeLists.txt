@@ -88,6 +88,7 @@ function(SHOULD_SKIP_TEST _out filename)
 	string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" test "${sourcefile}")
 
 	if(NOT USE_SMARTEID AND (test MATCHES "card/smart"
+			OR test MATCHES "external/smartID"
 			OR test MATCHES "ui/qml/smart"
 			OR test MATCHES "workflows/personalization"
 			OR test MATCHES "ui/json/test_MsgHandlerPersonalization"))

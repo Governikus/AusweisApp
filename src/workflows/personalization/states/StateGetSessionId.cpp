@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetSessionId.h"
@@ -31,7 +31,7 @@ void StateGetSessionId::setProgress() const
 {
 	const auto& context = getContext();
 	Q_ASSERT(context);
-	//: LABEL ANDROID IOS
+	//: MOBILE
 	context->setProgress(100, tr("Getting results from server"));
 }
 

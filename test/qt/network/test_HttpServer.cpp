@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpServer.h"
@@ -170,8 +170,13 @@ class test_HttpServer
 			QVERIFY(socket->bytesAvailable() > 0); // check rollbackTransaction
 			const auto& requestData = socket->readAll();
 			QVERIFY(requestData.contains("GET / HTTP/1.1"));
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 1))
+			QVERIFY(requestData.contains("Connection: upgrade"));
+			QVERIFY(requestData.contains("Upgrade: websocket"));
+#else
 			QVERIFY(requestData.contains("connection: upgrade"));
 			QVERIFY(requestData.contains("upgrade: websocket"));
+#endif
 			QVERIFY(requestData.contains("\r\n\r\n"));
 
 			param = logSpy.takeLast();

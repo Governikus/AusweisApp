@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -7,6 +7,7 @@
 #include "ReaderInfo.h"
 
 #include <QObject>
+#include <QTimer>
 #include <QtQml/qqmlregistration.h>
 
 
@@ -43,7 +44,7 @@ class CheckIDCardModel
 		};
 		Q_ENUM(Result)
 
-		explicit CheckIDCardModel(QObject* pParent = nullptr);
+		explicit CheckIDCardModel(QObject* pParent = nullptr, int pReaderConnectionTimeout = 3000);
 		~CheckIDCardModel() override;
 
 		Q_INVOKABLE void startScan(ReaderManagerPluginType pPluginType);
@@ -57,6 +58,7 @@ class CheckIDCardModel
 		Result mResult;
 		ReaderManagerPluginType mPluginType;
 		QString mReaderWithCard;
+		QTimer mReaderConnectionWait;
 
 	private Q_SLOTS:
 		void onCardInserted(const ReaderInfo& pInfo);
@@ -64,6 +66,8 @@ class CheckIDCardModel
 		void onReaderAdded(const ReaderInfo& pInfo);
 		void onReaderRemoved(const ReaderInfo& pInfo);
 		void onReaderPropertiesUpdated(const ReaderInfo& pInfo);
+
+		void onReaderConnectionWaitEnded();
 
 		void stopScanWithResult(Result result);
 

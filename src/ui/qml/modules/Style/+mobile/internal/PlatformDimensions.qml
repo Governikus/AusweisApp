@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQml
@@ -34,7 +34,7 @@ BrandDimensions {
 	readonly property int pane_padding: 20
 	readonly property int pane_radius: 22
 	readonly property int pane_spacing: 20
-	readonly property int popup_border: 0
+	readonly property int popup_border: 1
 	property int screenHeight: 0
 	readonly property int scrollbar_padding_horizontal: 0
 	readonly property int scrollbar_padding_vertical: 5

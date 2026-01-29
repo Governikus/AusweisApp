@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -54,7 +54,7 @@ GAbstractButton {
 
 			Accessible.ignored: true
 			sourceSize.height: Style.dimens.medium_icon_size
-			tintColor: Style.color.textTitle.checked
+			tintColor: Style.color.textTitle.basic_checked
 		}
 		GText {
 			id: text

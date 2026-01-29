@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -19,7 +19,7 @@ BaseOnboardingView {
 		readonly property int numberOfPrompts: Style.is_layout_desktop ? (SettingsModel.autoStartAvailable && !SettingsModel.autoStartSetByAdmin ? 2 : 1) : 0
 	}
 	Heading {
-		//: LABEL ALL_PLATFORMS
+		//: ALL_PLATFORMS
 		text: qsTr("Requirements not met")
 	}
 	TintableIcon {
@@ -31,28 +31,28 @@ BaseOnboardingView {
 	}
 	Subheading {
 		Layout.topMargin: Style.dimens.pane_spacing
-		//: LABEL ALL_PLATFORMS %1 is replaced with the name "AusweisApp".
+		//: ALL_PLATFORMS %1 is replaced with the name "AusweisApp".
 		text: qsTr("You cannot use the %1").arg(Qt.application.name)
 	}
 	GText {
 		Layout.topMargin: Style.dimens.text_spacing
-		//: LABEL ALL_PLATFORMS %1 is replaced with the name "AusweisApp".
+		//: ALL_PLATFORMS %1 is replaced with the name "AusweisApp".
 		text: qsTr("Unfortunately you do not meet all the requirements necessary to use the %1.").arg(Qt.application.name)
 	}
 	GText {
 		readonly property string abortText: switch (d.numberOfPrompts) {
 		case 0:
-			//: LABEL ALL_PLATFORMS
+			//: ALL_PLATFORMS
 			return qsTr("The setup will now be aborted.");
 		case 1:
-			//: LABEL DESKTOP %1 and %2 are replaced with bold emphasis, %3 with the name "AusweisApp".
+			//: DESKTOP %1 and %2 are replaced with bold emphasis, %3 with the name "AusweisApp".
 			return qsTr("The setup will now be aborted - afterwards %1one prompt regarding personalized settings in the %3%2 will follow.").arg("<b>").arg("</b>").arg(Qt.application.name);
 		default:
-			//: LABEL DESKTOP %1 and %2 are replaced with bold emphasis, %3 with the name "AusweisApp".
+			//: DESKTOP %1 and %2 are replaced with bold emphasis, %3 with the name "AusweisApp".
 			return qsTr("The setup will now be aborted - afterwards %1two prompts regarding personalized settings in the %3%2 will follow.").arg("<b>").arg("</b>").arg(Qt.application.name);
 		}
 
-		//: LABEL ALL_PLATFORMS %1 and %2 are replaced with bold emphasis.
+		//: ALL_PLATFORMS %1 and %2 are replaced with bold emphasis.
 		readonly property string restartOnboardingText: qsTr("You may restart the setup anytime under %1Help > Setup%2.").arg("<b>").arg("</b>")
 
 		Layout.topMargin: Style.dimens.text_spacing
@@ -60,10 +60,12 @@ BaseOnboardingView {
 	}
 	GSpacer {
 		Layout.fillHeight: true
+		visible: Style.is_layout_desktop
 	}
 	GButton {
 		Layout.alignment: Qt.AlignHCenter
-		//LABEL ANDROID IOS
+		Layout.topMargin: Style.dimens.pane_spacing
+		//: MOBILE
 		text: qsTr("Abort setup")
 		visible: !d.continuesToAutoStart
 
