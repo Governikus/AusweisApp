@@ -2,6 +2,8 @@
  * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
+pragma ComponentBehavior: Bound
+
 import QtQml
 
 import Governikus.Animations
@@ -11,16 +13,13 @@ import Governikus.Type
 QtObject {
 	enum Type {
 		PIN,
-		SMART_PIN,
 		CHOOSE_PIN,
-		CHOOSE_SMART_PIN,
 		TRANSPORT_PIN,
 		TRANSPORT_PIN_NOT_WORKING,
 		PUK,
 		CAN,
 		CAN_ALLOWED,
 		CHANGE_PIN,
-		SMART_BLOCKING_CODE,
 		NO_PIN,
 		ONBOARDING_SETUP_DESKTOP,
 		ONBOARDING_SETUP_MOBILE,
@@ -37,19 +36,11 @@ QtObject {
 		MultiInfoContent {
 			id: pinInfo
 
-			firstHintButtonLink: PinResetInformationModel.pinResetUrl
-			firstHintButtonText: PinResetInformationModel.resetPinWithPRSActionText
-			firstHintText: PinResetInformationModel.resetPinWithPRSHint
-			firstHintTitle: PinResetInformationModel.resetPinWithPRSHintTitle
 			//: ALL_PLATFORMS
 			hintBoxesTitle: qsTr("I can't recall my card PIN. How do I set a new card PIN?")
 
 			//: ALL_PLATFORMS
 			linkText: qsTr("What is the card PIN?")
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: PinResetInformationModel.resetPinAtAuthorityHint
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			//: ALL_PLATFORMS
 			title: qsTr("What is the card PIN?")
 
@@ -65,57 +56,22 @@ QtObject {
 				MultiInfoContentBlock {
 					//: ALL_PLATFORMS
 					blockTitle: qsTr("Where can I find the card PIN?")
-					paragraphList: {
-						if (ApplicationModel.smartSupported) {
-							//: ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' (%1 is replaced with the application name)
-							return [qsTr("You set the card PIN either directly when you picked up your ID card at the citizens' office (Bürgeramt) or later in %1 using the 5-digit Transport PIN. Only when you have set a 6-digit PIN of your own choice can you use the eID function and set up a Smart-eID.").arg(Qt.application.name)];
-						}
-						return [
-							//: ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' - Intro
-							qsTr("The card PIN was %1either%2...").arg("<b>").arg("</b>"),
-							//: ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' - Parapgraph 1/3
-							"  • %1".arg(qsTr("set by you when picking up the ID card %1at the citiziens' office%2").arg("<b>").arg("</b>")),
-							//: ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' - Parapgraph 2/3
-							"  • %1".arg(qsTr("set %1in the %3 using%2 the 5-digit %1Transport PIN%2").arg("<b>").arg("</b>").arg(Qt.application.name)),
-							//: ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' - Parapgraph 3/3
-							"  • %1".arg(qsTr("requested using the %1PIN Reset Service%2 - you may continue using the 6-digit card PIN from the letter or change it via \"Change PIN\" to a self chosen card PIN").arg("<b>").arg("</b>"))];
-					}
+					paragraphList: [
+						//: ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' - Intro
+						qsTr("The card PIN was %1either%2...").arg("<b>").arg("</b>"),
+						//: ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' - Parapgraph 1/3
+						"  • %1".arg(qsTr("set by you when picking up the ID card %1at the citiziens' office%2").arg("<b>").arg("</b>")),
+						//: ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' - Parapgraph 2/3
+						"  • %1".arg(qsTr("set %1in the %3 using%2 the 5-digit %1Transport PIN%2").arg("<b>").arg("</b>").arg(Qt.application.name)),
+						//: ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' - Parapgraph 3/3
+						"  • %1".arg(qsTr("requested using the %1PIN Reset Service%2 - you may continue using the 6-digit card PIN from the letter or change it via \"Change PIN\" to a self chosen card PIN").arg("<b>").arg("</b>"))]
 				},
 				MultiInfoContentBlock {
 					//: ALL_PLATFORMS
 					blockTitle: qsTr("I just have a 5-digit Transport PIN")
 					paragraphList: [
-						//: ALL_PLATFORMS Explanation if only the Transport PIN is at hand
-						qsTr("You need to change the%1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN > Transport PIN%2 from the startpage to do so.").arg("<b>").arg("</b>")]
-				}
-			]
-		},
-		MultiInfoContent {
-			id: smartPinInfo
-
-			firstHintButtonLink: PinResetInformationModel.pinResetUrl
-
-			//: ALL_PLATFORMS Hint text for PIN but it is unknown.
-			firstHintText: qsTr("If you have forgotten your Smart-eID PIN, you can renew your Smart-eID and thereby set a new PIN.")
-			//: ALL_PLATFORMS
-			linkText: qsTr("What is the Smart-eID PIN?")
-			//: ALL_PLATFORMS
-			title: qsTr("PIN information")
-
-			contentList: [
-				MultiInfoContentBlock {
-					//: ALL_PLATFORMS
-					blockTitle: qsTr("What is the Smart-eID PIN?")
-					paragraphList: [
-						//: ALL_PLATFORMS Answer to the question 'what is the Smart-eID pin?'
-						qsTr("The Smart-eID PIN is a 6-digit PIN that you set yourself. You always need this PIN if you want to use your Smart-eID.")]
-				},
-				MultiInfoContentBlock {
-					//: ALL_PLATFORMS
-					blockTitle: qsTr("Where can I find the Smart-eID PIN?")
-					paragraphList: [
-						//: ALL_PLATFORMS Answer to the question 'Where can I find the Smart-eID PIN?'
-						qsTr("You have set the Smart-eID PIN while setting up the Smart-eID.")]
+						//: ALL_PLATFORMS Explanation if only the Transport PIN is at hand. The text between %1 and %2 will be emphasized.
+						qsTr("You need to change the%1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN%2 from the startpage to do so.").arg("<b>").arg("</b>")]
 				}
 			]
 		},
@@ -144,51 +100,13 @@ QtObject {
 			]
 		},
 		MultiInfoContent {
-			id: chooseSmartPinInfo
-
-			//: ALL_PLATFORMS
-			linkText: qsTr("What is the Smart-eID PIN?")
-
-			//: ALL_PLATFORMS
-			title: qsTr("Set up Smart-eID")
-
-			contentList: [
-				MultiInfoContentBlock {
-					//: ALL_PLATFORMS
-					blockTitle: qsTr("What is the Smart-eID PIN?")
-					paragraphList: [
-						//: ALL_PLATFORMS Answer to the question 'what is the Smart-eID pin?'
-						qsTr("The Smart-eID PIN is a 6-digit PIN that you set yourself. You always need this PIN if you want to use your Smart-eID.")]
-				},
-				MultiInfoContentBlock {
-					//: ALL_PLATFORMS
-					blockTitle: qsTr("How do I choose a secure PIN?")
-					paragraphList: [
-						//: ALL_PLATFORMS Answer to the question 'How do I choose a secure (Smart-eID) PIN?' paragraph 1/3
-						qsTr("For your 6-digit Smart-eID PIN, choose a combination of numbers that cannot be guessed - i.e. neither \"123456\", nor your date of birth, nor any other numbers printed on your ID card."),
-						//: ALL_PLATFORMS Answer to the question 'How do I choose a secure (Smart-eID) PIN?' paragraph 2/3
-						qsTr("You can change your 6-digit Smart-eID PIN at any time and an unlimited number of times as long as you know your valid Smart-eID PIN."),
-						//: ALL_PLATFORMS Answer to the question 'How do I choose a secure (Smart-eID) PIN?' paragraph 3/3
-						qsTr("Keep your PIN secret and change it if another person becomes aware of it.")]
-				}
-			]
-		},
-		MultiInfoContent {
 			id: transportPinInfo
 
-			firstHintButtonLink: PinResetInformationModel.pinResetUrl
-			firstHintButtonText: PinResetInformationModel.resetPinWithPRSActionText
-			firstHintText: PinResetInformationModel.resetPinWithPRSHint
-			firstHintTitle: PinResetInformationModel.resetPinWithPRSHintTitle
 			//: ALL_PLATFORMS
 			hintBoxesTitle: qsTr("I can't recall neither my card PIN nor my transport PIN. How do I set a new card PIN?")
 
 			//: ALL_PLATFORMS
 			linkText: qsTr("What is the Transport PIN?")
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: PinResetInformationModel.resetPinAtAuthorityHint
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			//: ALL_PLATFORMS
 			title: qsTr("What is the Transport PIN?")
 
@@ -214,17 +132,8 @@ QtObject {
 		MultiInfoContent {
 			id: transportPinNotWorkingInfo
 
-			firstHintButtonLink: PinResetInformationModel.pinResetUrl
-			firstHintButtonText: PinResetInformationModel.resetPinWithPRSActionText
-			firstHintText: PinResetInformationModel.resetPinWithPRSHint
-			firstHintTitle: PinResetInformationModel.resetPinWithPRSHintTitle
-
 			//: ALL_PLATFORMS
 			linkText: qsTr("My Transport PIN does not work")
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: PinResetInformationModel.resetPinAtAuthorityHint
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			//: ALL_PLATFORMS
 			title: qsTr("My Transport PIN does not work")
 
@@ -250,19 +159,10 @@ QtObject {
 		MultiInfoContent {
 			id: pukInfo
 
-			firstHintButtonLink: PinResetInformationModel.pinResetUrl
-			firstHintButtonText: PinResetInformationModel.resetPinWithPRSActionText
-			firstHintText: PinResetInformationModel.resetPinWithPRSHint
-			firstHintTitle: PinResetInformationModel.resetPinWithPRSHintTitle
-
 			//: ALL_PLATFORMS
 			hintBoxesTitle: qsTr("I can't recall my PUK. How do I set a new card PIN?")
 			//: ALL_PLATFORMS
 			linkText: qsTr("Where do I find the PUK?")
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: PinResetInformationModel.resetPinAtAuthorityHint
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			//: ALL_PLATFORMS
 			title: qsTr("Where do I find the PUK?")
 
@@ -347,19 +247,10 @@ QtObject {
 		MultiInfoContent {
 			id: changePinInfo
 
-			firstHintButtonLink: PinResetInformationModel.pinResetUrl
-			firstHintButtonText: PinResetInformationModel.resetPinWithPRSActionText
-			firstHintText: PinResetInformationModel.resetPinWithPRSHint
-			firstHintTitle: PinResetInformationModel.resetPinWithPRSHintTitle
-
 			//: ALL_PLATFORMS
 			hintBoxesTitle: qsTr("How do I set a new card PIN?")
 			//: ALL_PLATFORMS
 			linkText: qsTr("How do the PIN types differ?")
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: PinResetInformationModel.resetPinAtAuthorityHint
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			//: ALL_PLATFORMS
 			title: qsTr("How do the PIN types differ?")
 
@@ -383,17 +274,7 @@ QtObject {
 					blockHeaderAnimation: AnimationLoader.Type.PIN
 					//: ALL_PLATFORMS
 					blockTitle: qsTr("6-digit PIN")
-					paragraphList: ApplicationModel.smartSupported ? [
-
-						//: ALL_PLATFORMS Description text explaining the PINs 4/7
-						qsTr("The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your%1 5-digit Transport PIN%2.").arg("<b>").arg("</b>"),
-						//: ALL_PLATFORMS Description text explaining the PINs 5/7
-						qsTr("The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time."),
-						//: ALL_PLATFORMS Description text explaining the PINs 6/7
-						qsTr("With this 6-digit PIN you prove online that the ID card or Smart-eID belongs to you. No one can use the eID function without this PIN."),
-						//: ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7
-						qsTr("You can change your card PIN and your Smart-eID PIN at any time in %1.").arg(Qt.application.name)] : [
-
+					paragraphList: [
 						//: ALL_PLATFORMS Description text explaining the PINs 4/7
 						qsTr("The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your%1 5-digit Transport PIN%2.").arg("<b>").arg("</b>"),
 						//: ALL_PLATFORMS Description text explaining the PINs 6/7
@@ -404,37 +285,10 @@ QtObject {
 			]
 		},
 		MultiInfoContent {
-			id: smartBlockingCodeInfo
-
-			//: MOBILE
-			title: qsTr("Smart-eID blocking code")
-
-			contentList: [
-				MultiInfoContentBlock {
-					//: ALL_PLATFORMS
-					blockTitle: qsTr("Smart-eID blocking code")
-					paragraphList: [
-						//: MOBILE Description text of Smart-eID PIN
-						qsTr("Just like the physical ID card, the Smart-eID stored on your Smartphone can be blocked. This might be required if you ever lose your device."),
-						//: MOBILE Description text of Smart-eID PIN
-						qsTr("To revoke an active Smart-eID, a blocking code is required. The blocking code will be displayed after successfully creating the Smart-eID. Furthermore, it is contained in the letter you will receive after creation.")]
-				}
-			]
-		},
-		MultiInfoContent {
 			id: noPin
-
-			firstHintButtonLink: PinResetInformationModel.pinResetUrl
-			firstHintButtonText: PinResetInformationModel.resetPinWithPRSActionText
-			firstHintText: PinResetInformationModel.resetPinWithPRSHint
-			firstHintTitle: PinResetInformationModel.resetPinWithPRSHintTitle
 
 			//: ALL_PLATFORMS
 			hintBoxesTitle: qsTr("How do I set a new card PIN?")
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: PinResetInformationModel.resetPinAtAuthorityHint
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 			//: ALL_PLATFORMS
 			title: qsTr("No PIN known")
 
@@ -516,14 +370,6 @@ QtObject {
 		MultiInfoContent {
 			id: noSacFound
 
-			firstHintButtonLink: "mailto:support@ausweisapp.de"
-			//: ALL_PLATFORMS
-			firstHintButtonText: qsTr("Send mail")
-
-			//: ALL_PLATFORMS
-			firstHintText: qsTr("If you require assistance with this, please contact our support team.")
-			//: ALL_PLATFORMS
-			firstHintTitle: qsTr("Support")
 			//: ALL_PLATFORMS
 			title: qsTr("My smartphone does not show up")
 
@@ -575,25 +421,26 @@ QtObject {
 						qsTr("You may be using security software that prevents pairing.")]
 				}
 			]
+			multiInfoHintContent: MultiInfoHintContent {
+				//: ALL_PLATFORMS
+				buttonText: qsTr("Send mail")
+				linkToOpen: "mailto:support@ausweisapp.de"
+				//: ALL_PLATFORMS
+				text: qsTr("If you require assistance with this, please contact our support team.")
+				//: ALL_PLATFORMS
+				title: qsTr("Support")
+			}
 		}
 	]
 	readonly property var contentList: infoContent.contentList
 	property int contentType
-	readonly property string firstHint: infoContent.firstHintText
-	readonly property url firstHintButtonLink: infoContent.firstHintButtonLink
-	readonly property string firstHintButtonText: infoContent.firstHintButtonText
-	readonly property string firstHintTitle: infoContent.firstHintTitle
 	readonly property string hintBoxesTitle: infoContent.hintBoxesTitle
 	readonly property MultiInfoContent infoContent: {
 		switch (contentType) {
 		case MultiInfoData.Type.PIN:
 			return pinInfo;
-		case MultiInfoData.Type.SMART_PIN:
-			return smartPinInfo;
 		case MultiInfoData.Type.CHOOSE_PIN:
 			return choosePinInfo;
-		case MultiInfoData.Type.CHOOSE_SMART_PIN:
-			return chooseSmartPinInfo;
 		case MultiInfoData.Type.TRANSPORT_PIN:
 			return transportPinInfo;
 		case MultiInfoData.Type.TRANSPORT_PIN_NOT_WORKING:
@@ -606,8 +453,6 @@ QtObject {
 			return canAllowedInfo;
 		case MultiInfoData.Type.CHANGE_PIN:
 			return changePinInfo;
-		case MultiInfoData.Type.SMART_BLOCKING_CODE:
-			return smartBlockingCodeInfo;
 		case MultiInfoData.Type.NO_PIN:
 			return noPin;
 		case MultiInfoData.Type.ONBOARDING_SETUP_DESKTOP:
@@ -623,33 +468,22 @@ QtObject {
 		}
 	}
 	readonly property string linkText: infoContent.linkText
-	readonly property url secondHintButtonLink: infoContent.secondHintButtonLink
-	readonly property string secondHintButtonText: infoContent.secondHintButtonText
-	readonly property string secondHintText: infoContent.secondHintText
-	readonly property string secondHintTitle: infoContent.secondHintTitle
 	readonly property string title: infoContent.title
 
 	function fromPasswordType(pPasswordType, pIsCanAllowedMode = false) {
 		switch (pPasswordType) {
 		case NumberModel.PasswordType.PIN:
 			return MultiInfoData.Type.PIN;
-		case NumberModel.PasswordType.SMART_PIN:
-			return MultiInfoData.Type.SMART_PIN;
 		case NumberModel.PasswordType.CAN:
 			return pIsCanAllowedMode ? MultiInfoData.Type.CAN_ALLOWED : MultiInfoData.Type.CAN;
 		case NumberModel.PasswordType.PUK:
 			return MultiInfoData.Type.PUK;
 		case NumberModel.PasswordType.NEW_PIN:
 			return MultiInfoData.Type.CHOOSE_PIN;
-		case NumberModel.PasswordType.NEW_SMART_PIN:
-			return MultiInfoData.Type.CHOOSE_SMART_PIN;
 		case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
-		case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
 			return MultiInfoData.Type.EMPTY;
 		case NumberModel.PasswordType.TRANSPORT_PIN:
 			return MultiInfoData.Type.TRANSPORT_PIN;
-		case NumberModel.PasswordType.SMART_BLOCKING_CODE:
-			return MultiInfoData.Type.SMART_BLOCKING_CODE;
 		default:
 			return MultiInfoData.Type.PIN;
 		}

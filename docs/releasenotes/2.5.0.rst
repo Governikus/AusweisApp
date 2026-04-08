@@ -1,0 +1,34 @@
+AusweisApp 2.5.0
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 8. April 2026
+
+
+Anwender
+""""""""
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- macOS Ventura 13 wird nicht mehr unterstützt.
+
+- iOS 16 wird nicht mehr unterstützt.
+
+
+Entwickler
+""""""""""
+- Die Bibliothek http_parser wurde durch llhttp ersetzt.
+
+- Ein Compiler mit C++20-Support ist erforderlich.
+
+- Aktualisierung von Qt auf die Version 6.10.2.
+
+- Aktualisierung von OpenSSL auf die Version 3.6.1.
+
+- Aktualisierung vom Android NDK auf r29 (29.0.14206865).
+
+- Aktualisierung der Android SDK Platform auf Android 16 (API-Level 36).
+
+- Gekoppelte Smartphones-als-Kartenleser einer installierten
+  AusweisApp sind auf Android nun über das SDK als Leser verfügbar.
+
+- Der Zugriff für Webbrowser auf das teil-integrierte SDK ist standardmäßig
+  deaktiviert und kann bei Bedarf freigeschaltet werden.

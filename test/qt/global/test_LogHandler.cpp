@@ -68,6 +68,7 @@ class test_LogHandler
 			Env::getSingleton<LogHandler>()->resetBacklog();
 			Env::getSingleton<LogHandler>()->setUseHandler(true);
 			Env::getSingleton<LogHandler>()->setLogFile(true);
+			qApp->processEvents();
 		}
 
 
@@ -109,7 +110,7 @@ class test_LogHandler
 			qDebug() << "hallo";
 			qDebug() << "test nachricht";
 
-			QCOMPARE(logSpy.count(), 2);
+			QTRY_COMPARE(logSpy.count(), 2);
 			auto param1 = logSpy.takeFirst();
 			auto param2 = logSpy.takeLast();
 
@@ -142,7 +143,7 @@ class test_LogHandler
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << *Env::getSingleton<LogHandler>();
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains(Env::getSingleton<LogHandler>()->mLogFile->fileName()));
 		}
@@ -204,7 +205,7 @@ class test_LogHandler
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << "dummy";
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			const auto& backlog = Env::getSingleton<LogHandler>()->getBacklog();
 			QVERIFY(!backlog.isEmpty());
 			logSpy.clear();
@@ -212,13 +213,13 @@ class test_LogHandler
 			Env::getSingleton<LogHandler>()->reset();
 			QVERIFY(!Env::getSingleton<LogHandler>()->isInstalled());
 			qDebug() << "dummy";
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 			QCOMPARE(Env::getSingleton<LogHandler>()->getBacklog(), backlog);
 
 			Env::getSingleton<LogHandler>()->init();
 			QVERIFY(Env::getSingleton<LogHandler>()->isInstalled());
 			qDebug() << "dummy";
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(Env::getSingleton<LogHandler>()->getBacklog().size() > backlog.size());
 		}
 
@@ -342,6 +343,7 @@ class test_LogHandler
 			const auto& logger = Env::getSingleton<LogHandler>();
 
 			logger->handleMessage(QtMsgType::QtDebugMsg, ctx, msg);
+			QTRY_VERIFY(!logSpy.isEmpty());
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains(result));
 		}
 
@@ -365,11 +367,12 @@ class test_LogHandler
 			tmp2.fileName(); // touch it
 
 			const auto& filesWithMock = logger->getOtherLogFiles();
-			QVERIFY(filesWithMock.size() > initialFiles.size());
+			QVERIFY(filesWithMock.size() == initialFiles.size() + 2);
 
 			fakeLastModifiedAndLastAccessTime(tmp1.fileName());
 			fakeLastModifiedAndLastAccessTime(tmp2.fileName());
 			logger->init();
+
 			QTRY_COMPARE(logger->getOtherLogFiles().size(), initialFiles.size()); // clazy:exclude=qstring-allocations
 			QVERIFY(!QFile::exists(tmp1.fileName()));
 			QVERIFY(!QFile::exists(tmp2.fileName()));

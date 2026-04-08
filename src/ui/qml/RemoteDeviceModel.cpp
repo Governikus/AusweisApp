@@ -5,7 +5,6 @@
 #include "RemoteDeviceModel.h"
 
 #include "AppSettings.h"
-#include "ApplicationModel.h"
 #include "LanguageLoader.h"
 #include "RemoteIfdClient.h"
 
@@ -19,9 +18,9 @@ RemoteDeviceModel::RemoteDeviceModel(QObject* pParent)
 	, mAllRemoteReaders()
 	, mTimer()
 	, mIsDetectingRemoteDevices(false)
-#if defined(Q_OS_IOS)
-	, mRemoteDetectionWasRunning(false)
-#endif
+	, mRemoteIfdManager([this]() {
+				return mIsDetectingRemoteDevices;
+			})
 {
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	connect(&settings, &RemoteServiceSettings::fireTrustedRemoteInfosChanged, this, &RemoteDeviceModel::onKnownRemoteReadersChanged);
@@ -32,9 +31,6 @@ RemoteDeviceModel::RemoteDeviceModel(QObject* pParent)
 	connect(ifdClient, &IfdClient::fireDeviceUpdated, this, &RemoteDeviceModel::onUpdateReaderList);
 	connect(ifdClient, &IfdClient::fireDeviceVanished, this, &RemoteDeviceModel::onUpdateReaderList);
 	connect(ifdClient, &IfdClient::fireDispatcherDestroyed, this, &RemoteDeviceModel::onUpdateReaderList);
-
-	const auto* applicationModel = Env::getSingleton<ApplicationModel>();
-	connect(applicationModel, &ApplicationModel::fireApplicationStateChanged, this, &RemoteDeviceModel::onApplicationStateChanged);
 }
 
 
@@ -427,36 +423,6 @@ void RemoteDeviceModel::onKnownRemoteReadersChanged()
 	}
 
 	onUpdateReaderList();
-}
-
-
-void RemoteDeviceModel::onApplicationStateChanged(bool pIsAppInForeground)
-#ifndef Q_OS_IOS
-const
-#endif
-{
-	if (!mIsDetectingRemoteDevices)
-	{
-		return;
-	}
-
-#if defined(Q_OS_IOS)
-	if (pIsAppInForeground)
-	{
-		if (mRemoteDetectionWasRunning)
-		{
-			Env::getSingleton<RemoteIfdClient>()->startDetection();
-			mRemoteDetectionWasRunning = false;
-		}
-	}
-	else
-	{
-		mRemoteDetectionWasRunning = Env::getSingleton<RemoteIfdClient>()->isDetecting();
-		Env::getSingleton<RemoteIfdClient>()->stopDetection();
-	}
-#else
-	Q_UNUSED(pIsAppInForeground)
-#endif
 }
 
 

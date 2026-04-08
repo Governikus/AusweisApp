@@ -26,7 +26,7 @@ template<> LocalWebSocketServer* createNewObject<LocalWebSocketServer*>()
 LocalWebSocketServerImpl::LocalWebSocketServerImpl()
 	: LocalWebSocketServer()
 	, mLocalTlsServer(QSharedPointer<LocalTlsServer>::create())
-	, mWebSocketServer(mLocalTlsServer, {ReaderManagerPluginType::SMART, ReaderManagerPluginType::UNKNOWN})
+	, mWebSocketServer(mLocalTlsServer, {ReaderManagerPluginType::REMOTE_IFD, ReaderManagerPluginType::UNKNOWN})
 {
 	connect(&mWebSocketServer, &WebSocketServer::fireNewConnection, this, &LocalWebSocketServerImpl::fireNewConnection);
 	connect(&mWebSocketServer, &WebSocketServer::fireConnectedChanged, this, &LocalWebSocketServerImpl::fireConnectedChanged);

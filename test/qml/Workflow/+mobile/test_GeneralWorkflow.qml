@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtTest
 import Governikus.Global
@@ -21,8 +22,7 @@ TestCase {
 				GeneralWorkflow {
 					workflowModel: Item {
 						property var readerPluginType: ReaderManagerPluginType.NFC
-						property bool isCurrentSmartCardAllowed: false
-						property var supportedPluginTypes: [ReaderManagerPluginType.NFC, ReaderManagerPluginType.REMOTE_IFD, ReaderManagerPluginType.SMART]
+						property var supportedPluginTypes: [ReaderManagerPluginType.NFC, ReaderManagerPluginType.REMOTE_IFD]
 					}
 				}
 			}

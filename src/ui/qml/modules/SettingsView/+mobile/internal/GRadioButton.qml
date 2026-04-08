@@ -21,7 +21,6 @@ GAbstractButton {
 	Accessible.description: desc
 	Accessible.name: name
 	Accessible.role: Accessible.RadioButton
-	Layout.fillWidth: true
 	autoExclusive: true
 	checkable: true
 	horizontalPadding: Style.dimens.pane_spacing * 2

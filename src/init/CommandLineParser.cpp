@@ -4,6 +4,7 @@
 
 #include "CommandLineParser.h"
 
+#include "AppController.h"
 #include "Env.h"
 #include "HttpServer.h"
 #include "LogHandler.h"
@@ -11,7 +12,6 @@
 #include "PortFile.h"
 #include "SingletonHelper.h"
 #include "UiLoader.h"
-#include "controller/AppController.h"
 
 #include <QCoreApplication>
 

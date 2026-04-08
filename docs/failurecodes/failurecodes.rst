@@ -216,12 +216,6 @@ List of possible failure codes:
       at the citizens' office (Bürgeramt) or activate it with the CAN at
       https://www.pin-ruecksetzbrief-bestellen.de.
 
-  - | **Prepace_Pace_Smart_Eid_Invalidated**
-    | The attempt to establish a connection with a PIN to a Smart-eID failed, because all
-      PIN-attempts have been used.
-    | **Possible Solutions:** The PIN is permanently disabled after 3 failed attempts. Please set up
-      your Smart-eID again.
-
   - | **Establish_Pace_Channel_Basic_Reader_No_Pin**
     | An attempt was made to establish a PACE-channel with a basic reader. However the PIN, CAN, or
       PUK could not be taken over after the user-input.
@@ -484,10 +478,6 @@ List of possible failure codes:
       unknown, or unexpected.
     | **Possible Solutions:** :ref:`failure_code_card_position`.
 
-  - | **Change_Pin_Card_New_Pin_Mismatch**
-    | Like Change_Pin_New_Pin_Mismatch but at a higher protocol level.
-    | **Possible Solutions:** Confirm the new PIN correctly.
-
   - | **Change_Pin_Card_User_Cancelled**
     | Like Change_Pin_User_Cancelled but at a higher log level.
     | **Possible Solutions:** Carry out the PIN change without abortion.
@@ -525,149 +515,5 @@ List of possible failure codes:
     | Occurs when the user has canceled entering the new PIN during a PIN change on a smartphone
       acting as a card reader with keyboard mode enabled.
     | **Possible Solutions:** :ref:`failure_code_contact_support`.
-
-  - | **Check_Status_Unavailable**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Check_Applet_Internal_Error**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Install_Smart_User_Cancelled**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Smart_User_Cancelled**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Personalization_User_Cancelled**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_User_Cancelled**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Install_Smart_Service_Response_Fail**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Install_Smart_Service_Response_Unsupported**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Install_Smart_Service_Response_Overload**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Install_Smart_Service_Response_Maintenance**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Install_Smart_Service_Response_Nfc_Disabled**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Install_Smart_Service_Response_Integrity_Check_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Install_Smart_Service_Response_Not_Authenticated**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Install_Smart_Service_Response_Network_Connection_Error**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_Call_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_Service_Response_Fail**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_Service_Response_Unsupported**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_Service_Response_Overload**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_Service_Response_Maintenance**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_Service_Response_Nfc_Disabled**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_Service_Response_Integrity_Check_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_Service_Response_Not_Authenticated**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Update_Support_Info_Service_Response_Network_Connection_Error**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Smart_Service_Response_Fail**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Smart_Service_Response_Unsupported**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Smart_Service_Response_Overload**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Smart_Service_Response_Maintenance**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Smart_Service_Response_Nfc_Disabled**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Smart_Service_Response_Integrity_Check_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Smart_Service_Response_Not_Authenticated**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Smart_Service_Response_Network_Connection_Error**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Delete_Personalization_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Get_Session_Id_Invalid**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Smart_ServiceInformation_Query_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Get_Challenge_Invalid**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Initialize_Personalization_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Smart_PrePersonalization_Wrong_Status**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Smart_PrePersonalization_Incomplete_Information**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Transmit_Personalization_Size_Mismatch**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Start_Paos_Response_Personalization_Empty**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Start_Paos_Response_Personalization_Invalid**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Finalize_Personalization_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Insert_Card_No_SmartReader**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Insert_Card_Multiple_SmartReader**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Insert_Card_Unknown_Eid_Type**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Insert_Card_Invalid_SmartReader**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Insert_Card_Missing_Card**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Change_Smart_Pin_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
 
 .. _failure_code_solutions:

@@ -24,8 +24,6 @@ GFlickableColumnLayout {
 	spacing: Style.dimens.pane_spacing
 
 	Heading {
-		id: pinDescWhatType
-
 		Layout.topMargin: root.titleTopMargin
 
 		//: ALL_PLATFORMS

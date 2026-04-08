@@ -75,7 +75,7 @@ function(PANDOC_RST_TO_PDF DOCS_DIR _target)
 
 	# Convert index to final pdf
 	set(TARGET_NAME "${_target}.latex.pdf")
-	set(OUTPUT_PATH "${BUILD_OUTPUT_DIR}/${PROJECT_NAME}-${VERSION_DVCS}-${PANDOC_RST_TO_PDF_OUTPUT_NAME}.pdf")
+	set(OUTPUT_PATH "${BUILD_OUTPUT_DIR}/${ARTIFACT_FILENAME}-${PANDOC_RST_TO_PDF_OUTPUT_NAME}.pdf")
 	add_custom_command(
 		OUTPUT "${OUTPUT_PATH}"
 		COMMAND

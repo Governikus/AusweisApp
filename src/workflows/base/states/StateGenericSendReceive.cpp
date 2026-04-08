@@ -24,13 +24,11 @@ using namespace governikus;
 StateGenericSendReceive::StateGenericSendReceive(
 	const QSharedPointer<WorkflowContext>& pContext,
 	PaosType pExpectedResponseType,
-	const QList<PaosType>& pOtherResponseTypes,
-	bool pPersonalization)
+	const QList<PaosType>& pOtherResponseTypes)
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 	, mExpectedResponseType(pExpectedResponseType)
 	, mOtherResponseTypes(pOtherResponseTypes)
-	, mPersonalization(pPersonalization)
 	, mReply()
 {
 }
@@ -279,11 +277,6 @@ void StateGenericSendReceive::run()
 	Q_ASSERT(!token.isNull());
 
 	QUrl serverAddress = token->getServerAddress();
-	if (mPersonalization)
-	{
-		serverAddress.setPath(QStringLiteral("/personalization"));
-		qCDebug(network) << "Using generated serverAddress for personalization:" << serverAddress;
-	}
 
 	QNetworkRequest request(serverAddress);
 	const QByteArray& data = getAsCreator()->marshall();

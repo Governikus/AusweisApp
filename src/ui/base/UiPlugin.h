@@ -33,8 +33,7 @@ defineEnumTypeQmlExposed(UiModule,
 
 		// Mobile only
 		REMOTE_SERVICE,
-		CHECK_ID_CARD,
-		SMART_EID
+		CHECK_ID_CARD
 		)
 
 class UiPlugin

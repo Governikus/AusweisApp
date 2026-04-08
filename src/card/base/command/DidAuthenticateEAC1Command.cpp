@@ -25,22 +25,22 @@ DidAuthenticateEAC1Command::DidAuthenticateEAC1Command(QSharedPointer<CardConnec
 void DidAuthenticateEAC1Command::internalExecute()
 {
 	auto [returnCode, response] = [this] {
-				if (getCardConnectionWorker()->getReaderInfo().isSoftwareSmartEid())
-				{
-					return getCardConnectionWorker()->getChallenge();
-				}
-				else
-				{
-					CommandApdu cmdApdu(Ins::GET_CHALLENGE, CommandApdu::IMPLICIT, CommandApdu::IMPLICIT, QByteArray(), 8);
-					return getCardConnectionWorker()->transmit(cmdApdu);
-				}
+				CommandApdu cmdApdu(Ins::GET_CHALLENGE, CommandApdu::IMPLICIT, CommandApdu::IMPLICIT, QByteArray(), 8);
+				return getCardConnectionWorker()->transmit(cmdApdu);
 			}
 				();
 	setReturnCode(returnCode);
 
+	if (returnCode != CardReturnCode::OK)
+	{
+		qCWarning(card) << "GetChallenge failed:" << returnCode;
+		return;
+	}
+
 	if (response.getStatusCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "GetChallenge failed";
+		qCWarning(card) << "Unexpected StatusCode in GetChallenge:" << response.getStatusCode();
+		setReturnCode(CardReturnCode::PROTOCOL_ERROR);
 		return;
 	}
 

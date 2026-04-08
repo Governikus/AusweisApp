@@ -13,6 +13,10 @@ indent-width = 4
 select = [
     "I",
     "UP032",
+    "UP015",
+    "A001",
+    "PLR1722",
+    "UP031",
 ]
 
 [format]

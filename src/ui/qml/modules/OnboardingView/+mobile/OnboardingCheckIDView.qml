@@ -163,8 +163,6 @@ BaseOnboardingView {
 		type: AnimationLoader.Type.WAIT_FOR_CARD_SAC
 	}
 	GText {
-		id: subText
-
 		Layout.alignment: Text.AlignHCenter
 		//: MOBILE
 		text: root.connectedDeviceNamesEmpty ? "" : qsTr("Connected to %1. Please follow the instructions on your smartphone.").arg(RemoteServiceModel.connectedServerDeviceNames)

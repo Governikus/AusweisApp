@@ -34,6 +34,7 @@ ApplicationWindow {
 
 	color: Style.color.background
 	flags: Qt.platform.os === "ios" ? Qt.Window | Qt.ExpandedClientAreaHint : Qt.Window
+	locale: Qt.locale(SettingsModel.language)
 	visible: true
 
 	footer: Navigation {
@@ -62,7 +63,6 @@ ApplicationWindow {
 		safeAreaTopMargin: parent.SafeArea.margins.top
 		showContent: currentSectionPage ? currentSectionPage.showTitleBarContent : true
 		showSeparator: currentSectionPage ? currentSectionPage.contentIsScrolled : false
-		smartEidUsed: currentSectionPage ? currentSectionPage.smartEidUsed : false
 		title: currentSectionPage ? currentSectionPage.title : ""
 
 		anchors {
@@ -83,7 +83,7 @@ ApplicationWindow {
 		// back button pressed
 		pClose.accepted = false;
 		if (contentArea.visibleItem) {
-			if (contentArea.activeModule === UiModule.DEFAULT && Style.is_layout_android) {
+			if (contentArea.activeModule === UiModule.DEFAULT && Qt.platform.os === "android") {
 				let currentTime = new Date();
 				if (currentTime - d.lastCloseInvocation < 1000) {
 					UiPluginModel.fireQuitApplicationRequest();
@@ -142,16 +142,12 @@ ApplicationWindow {
 					return;
 				}
 				break;
-			case ApplicationModel.Workflow.SMART:
 			case ApplicationModel.Workflow.NONE:
 				break;
 			}
 
 			switch (pModule) {
 			case UiModule.CURRENT:
-				break;
-			case UiModule.UPDATEINFORMATION:
-				navigation.show(UiModule.DEFAULT);
 				break;
 			case UiModule.ONBOARDING:
 				navigation.show(UiModule.HELP);
@@ -188,20 +184,25 @@ ApplicationWindow {
 
 			IosBackGestureMouseArea {
 				anchors.fill: parent
-				enabled: Style.is_layout_ios && titleBar.isBackAction
+				enabled: Qt.platform.os === "ios" && titleBar.isBackAction
 
 				onBackGestureTriggered: titleBar.navigationAction.clicked()
 			}
 		}
 		GStagedProgressBar {
-			id: progressBar
-
 			readonly property var currentSectionPage: contentArea.currentSectionPage
 
 			Layout.fillWidth: true
 			progress: currentSectionPage ? currentSectionPage.progress : null
 			visible: progress !== null && progress.enabled
 		}
+	}
+	ScreenshotPreventer {
+		readonly property var currentSectionPage: contentArea.currentSectionPage
+
+		preventScreenshots: currentSectionPage ? currentSectionPage.preventScreenshots : false
+
+		onCurrentSectionPageChanged: Qt.callLater(notifyScreenRecording)
 	}
 	Connections {
 		function onFireA11yFocusChanged(pItem) {

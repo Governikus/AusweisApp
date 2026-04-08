@@ -1,4 +1,4 @@
-find_program(JSONSCHEMA_BIN NAMES check-jsonschema CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(JSONSCHEMA_BIN NAMES check-jsonschema)
 
 if(JSONSCHEMA_BIN)
 	set(JSON_FILES updatable-files/supported-providers.json updatable-files/supported-readers.json)

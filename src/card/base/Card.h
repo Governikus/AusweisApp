@@ -96,10 +96,8 @@ class Card
 		/*!
 		 * Combines the message and progressvalue depending on the environment.
 		 */
-		static QString generateProgressMessage(const QString& pMessage, int pProgress = -1);
+		static QString generateProgressMessage(const QString& pMessage, int pProgress = -1, bool pForwardSdkMessages = false);
 		static QString generateErrorMessage(const QString& pMessage);
-
-		virtual EstablishPaceChannelOutput prepareIdentification(const QByteArray& pChat);
 
 		virtual ResponseApduResult getChallenge();
 

@@ -24,14 +24,10 @@ CardConnectionWorker::CardConnectionWorker(Reader* pReader)
 	, QEnableSharedFromThis()
 	, mReader(pReader)
 	, mSecureMessaging()
-	, mKeepAliveTimer()
 {
 	connect(mReader.data(), &Reader::fireCardInserted, this, &CardConnectionWorker::fireReaderInfoChanged);
 	connect(mReader.data(), &Reader::fireCardRemoved, this, &CardConnectionWorker::fireReaderInfoChanged);
 	connect(mReader.data(), &Reader::fireCardInfoChanged, this, &CardConnectionWorker::fireReaderInfoChanged);
-
-	mKeepAliveTimer.setInterval(150000);
-	connect(&mKeepAliveTimer, &QTimer::timeout, this, &CardConnectionWorker::onKeepAliveTimeout);
 }
 
 
@@ -132,33 +128,6 @@ void CardConnectionWorker::stopSecureMessaging()
 }
 
 
-void CardConnectionWorker::onKeepAliveTimeout()
-{
-	if (!mReader || !mReader->getCard())
-	{
-		qCDebug(card) << "Keep alive stopped because of targetLost";
-		mKeepAliveTimer.stop();
-		return;
-	}
-
-	if (mReader->getReaderInfo().getCardInfo().getCardType() != CardType::SMART_EID)
-	{
-		qCDebug(card) << "No Smart-eID - Skipping keep alive";
-		return;
-	}
-
-	FileCommand command(FileRef::efCardAccess());
-	const auto& result = transmit(command);
-	if (result.mReturnCode == CardReturnCode::OK)
-	{
-		qCDebug(card) << "Keep alive successful";
-		return;
-	}
-
-	qCDebug(card) << "Keep alive failed";
-}
-
-
 ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApdu)
 {
 	if (mSecureMessaging && pCommandApdu.isSecureMessaging())
@@ -184,6 +153,10 @@ ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApd
 	}
 
 	ResponseApduResult result = card->transmit(commandApdu);
+	if (result.mReturnCode == CardReturnCode::OK && result.mResponseApdu.isEmpty())
+	{
+		return {CardReturnCode::COMMAND_FAILED};
+	}
 	if (result.mResponseApdu.getStatusCode() == StatusCode::WRONG_LENGTH)
 	{
 		return {CardReturnCode::WRONG_LENGTH};
@@ -250,23 +223,11 @@ CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArra
 				return CardReturnCode::OK;
 
 			default:
-				return CardReturnCode::COMMAND_FAILED;
+				return CardReturnCode::PROTOCOL_ERROR;
 		}
 	}
 
 	return CardReturnCode::COMMAND_FAILED;
-}
-
-
-void CardConnectionWorker::setKeepAlive(bool pEnabled)
-{
-	if (pEnabled)
-	{
-		mKeepAliveTimer.start();
-		return;
-	}
-
-	mKeepAliveTimer.stop();
 }
 
 
@@ -444,21 +405,6 @@ ResponseApduResult CardConnectionWorker::setEidPin(const QByteArray& pNewPin, qu
 	}
 
 	return result;
-}
-
-
-EstablishPaceChannelOutput CardConnectionWorker::prepareIdentification(const QByteArray& pChat) const
-{
-	const auto card = mReader ? mReader->getCard() : nullptr;
-	if (!card)
-	{
-		return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
-	}
-
-	const auto& output = card->prepareIdentification(pChat);
-	qCInfo(support) << "Finished perform user authentication with result" << output.getPaceReturnCode();
-
-	return output;
 }
 
 

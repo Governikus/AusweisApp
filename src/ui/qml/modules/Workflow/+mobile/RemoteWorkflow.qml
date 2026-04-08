@@ -33,8 +33,6 @@ GFlickableColumnLayout {
 		target: RemoteServiceModel
 	}
 	TechnologyInfo {
-		id: techInfo
-
 		Layout.alignment: Qt.AlignHCenter
 		enableButtonText: {
 			if (!root.wifiEnabled) {

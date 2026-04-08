@@ -21,22 +21,19 @@ FlickableSectionPage {
 	property alias buttonIcon: button.icon.source
 	property alias buttonLayoutDirection: button.layoutDirection
 	property alias buttonText: button.text
-	property string firstHintButtonLink
-	property alias firstHintButtonText: hintItem.buttonText
-	property alias firstHintText: hintItem.text
-	property alias firstHintTitle: hintItem.title
 	property alias header: resultHeader.text
-	property alias hintBoxesTitle: hintBoxesTitle.text
+	property alias hintBoxesTitle: pinResetHints.title
+	property string hintButtonLink
+	property alias hintButtonText: hintItem.buttonText
+	property alias hintText: hintItem.text
+	property alias hintTitle: hintItem.title
 	property string linkToOpen
 	property alias mailButtonVisible: mailButton.visible
 	property string popupText
 	property string popupTitle
 	default property alias resultData: resultContent.data
-	property string secondHintButtonLink
-	property alias secondHintButtonText: secondHintItem.buttonText
-	property alias secondHintText: secondHintItem.text
-	property alias secondHintTitle: secondHintItem.title
 	property alias showOkButton: button.visible
+	property alias statusCode: pinResetHints.statusCode
 	property alias subheader: subheader.text
 	property alias text: resultText.text
 	property alias textColor: resultText.color
@@ -45,8 +42,7 @@ FlickableSectionPage {
 	signal cancelClicked
 	signal continueClicked
 	signal emailButtonPressed
-	signal firstHintClicked
-	signal secondHintClicked
+	signal linkAboutToOpen
 
 	function confirm() {
 		button.clicked();
@@ -68,33 +64,33 @@ FlickableSectionPage {
 	Subheading {
 		id: subheader
 
-		Layout.alignment: Qt.AlignHCenter
-		horizontalAlignment: Text.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
+		horizontalAlignment: Style.scanPatternAlignment
 		visible: text !== ""
 	}
 	GText {
 		id: resultText
 
-		Layout.alignment: Qt.AlignHCenter
-		horizontalAlignment: Text.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
+		horizontalAlignment: Style.scanPatternAlignment
 		visible: text !== ""
 	}
 	ColumnLayout {
 		id: resultContent
 
-		Layout.alignment: Qt.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
+		visible: children.length !== 0
 	}
 	RowLayout {
-		Layout.alignment: Qt.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
 		Layout.fillWidth: true
 		spacing: Style.dimens.pane_spacing
 		visible: root.popupTitle !== "" || root.popupText !== ""
 
-		GButton {
+		SecondaryButton {
 			id: mailButton
 
 			icon.source: "qrc:///images/email_icon.svg"
-			style: Style.color.controlOptional
 			//: DESKTOP
 			text: qsTr("Send email")
 			tintIcon: true
@@ -102,9 +98,8 @@ FlickableSectionPage {
 
 			onClicked: root.emailButtonPressed()
 		}
-		GButton {
+		SecondaryButton {
 			icon.source: "qrc:/images/desktop/save_icon.svg"
-			style: Style.color.controlOptional
 			//: DESKTOP
 			text: qsTr("Save log")
 			tintIcon: true
@@ -131,7 +126,7 @@ FlickableSectionPage {
 
 			}
 		}
-		GButton {
+		SecondaryButton {
 			property ConfirmationPopup popup: null
 
 			function destroyPopup() {
@@ -143,7 +138,6 @@ FlickableSectionPage {
 			}
 
 			icon.source: "qrc:/images/info.svg"
-			style: Style.color.controlOptional
 			//: DESKTOP
 			text: qsTr("See details")
 			tintIcon: true
@@ -160,36 +154,21 @@ FlickableSectionPage {
 			onVisibleChanged: destroyPopup()
 		}
 	}
-	GSpacer {
-		Layout.fillHeight: true
-	}
-	GText {
-		id: hintBoxesTitle
-
-		textStyle: Style.text.subline
-		visible: text !== ""
-	}
 	Hint {
 		id: hintItem
 
 		Layout.fillWidth: true
-		linkToOpen: root.firstHintButtonLink
+		linkToOpen: root.hintButtonLink
 		//: DESKTOP
 		title: qsTr("Hint")
 		visible: text !== ""
 
-		onClicked: root.firstHintClicked()
+		onLinkAboutToOpen: root.linkAboutToOpen()
 	}
-	Hint {
-		id: secondHintItem
+	PinResetHints {
+		id: pinResetHints
 
-		Layout.fillWidth: true
-		linkToOpen: root.secondHintButtonLink
-		//: DESKTOP
-		title: qsTr("Hint")
-		visible: text !== ""
-
-		onClicked: root.secondHintClicked()
+		onLinkAboutToOpen: root.linkAboutToOpen()
 	}
 	GButton {
 		id: button
@@ -198,7 +177,7 @@ FlickableSectionPage {
 
 		Accessible.description: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, Accessible.name) : ""
 		Accessible.role: hasLink ? Accessible.Link : Accessible.Button
-		Layout.alignment: Qt.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
 		Layout.preferredHeight: height
 		Layout.preferredWidth: width
 		enabledTooltipText: hasLink ? root.linkToOpen : ""

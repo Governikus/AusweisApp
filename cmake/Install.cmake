@@ -93,18 +93,16 @@ if(WIN32)
 	list(APPEND LIBS ${openSslBackend})
 
 	FETCH_TARGET_LOCATION(pluginSvg "${Qt}::QSvgPlugin")
-	FETCH_TARGET_LOCATION(pluginGif "${Qt}::QGifPlugin")
 	FETCH_TARGET_LOCATION(pluginJpeg "${Qt}::QJpegPlugin")
 	FETCH_TARGET_LOCATION(platformWin "${Qt}::QWindowsIntegrationPlugin")
 	FETCH_TARGET_LOCATION(styleWin "${Qt}::QModernWindowsStylePlugin")
 
 	install(TARGETS AusweisAppBinary DESTINATION . COMPONENT Application)
 	install(FILES ${pluginSvg} DESTINATION imageformats COMPONENT Runtime)
-	install(FILES ${pluginGif} DESTINATION imageformats COMPONENT Runtime)
 	install(FILES ${pluginJpeg} DESTINATION imageformats COMPONENT Runtime)
 	install(FILES ${platformWin} DESTINATION platforms COMPONENT Runtime)
 	install(FILES ${styleWin} DESTINATION styles COMPONENT Runtime)
-	list(APPEND LIBS ${pluginSvg} ${pluginGif} ${pluginJpeg} ${platformWin} ${styleWin})
+	list(APPEND LIBS ${pluginSvg} ${pluginJpeg} ${platformWin} ${styleWin})
 
 	install(CODE
 		"
@@ -143,7 +141,7 @@ elseif(MAC)
 
 	set(plugins ${Qt}::QCocoaIntegrationPlugin ${Qt}::QTlsBackendOpenSSLPlugin)
 	if(NOT INTEGRATED_SDK)
-		list(APPEND plugins ${Qt}::QTuioTouchPlugin ${Qt}::QSvgIconPlugin ${Qt}::QGifPlugin ${Qt}::QICNSPlugin ${Qt}::QICOPlugin ${Qt}::QJpegPlugin ${Qt}::QMacHeifPlugin ${Qt}::QMacJp2Plugin ${Qt}::QSvgPlugin ${Qt}::QMacStylePlugin)
+		list(APPEND plugins ${Qt}::QTuioTouchPlugin ${Qt}::QSvgIconPlugin ${Qt}::QJpegPlugin ${Qt}::QSvgPlugin ${Qt}::QMacStylePlugin)
 	endif()
 	install_mac_plugins("${plugins}")
 

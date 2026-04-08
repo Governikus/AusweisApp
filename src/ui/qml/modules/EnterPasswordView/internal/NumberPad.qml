@@ -72,8 +72,6 @@ Item {
 			}
 		}
 		Repeater {
-			id: numberRepeater
-
 			model: 9
 
 			NumberPadButton {

@@ -104,7 +104,6 @@ Bei Android ist zu beachten, dass ein CMAKE_TOOLCHAIN_FILE angegeben werden muss
    $ cd build
    $ cmake -DCMAKE_PREFIX_PATH=/home/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp/cmake/android.toolchain.cmake ../AusweisApp
    $ make
-   $ make install
    $ make apk
 
 Unter dem Ordner "./dist/bin" ist nun ein "AusweisApp...apk" erstellt worden.
@@ -179,9 +178,8 @@ der Buildumgebung und den Build der externen Bibliotheken beschreibt.
 Anhand dieser Anleitung können Sie nachvollziehen, wie unser internes Buildsystem aufgebaut ist und
 welche Compiler bzw. Compiler-Versionen wir verwenden.
 
-Im Unterordner ``./resources/jenkins/`` ist es möglich, unsere Konfiguration des CI-Servers einzusehen.
-Die Konfiguration besteht aus mehreren Dockerfiles und JobDSL-Dateien.
-
+Im Unterordner ``./ci/`` und den ``.gitlab-ci.yml`` Dateien ist es möglich, unsere Konfiguration des
+CI-Servers einzusehen.
 Anhand dieser Skripte ist es möglich, den Build der AusweisApp zu reproduzieren.
 Ein Unterschied zum offiziellen Binary sollte lediglich in eventuellen Pfaden,
 einem Datum bzw. Zeitstempel und Signaturen bestehen.

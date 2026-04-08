@@ -1,0 +1,54 @@
+From cadfe5d51999466fc0b3553536615143a476a250 Mon Sep 17 00:00:00 2001
+From: Andreas Belke <andreas.belke@governikus.de>
+Date: Thu, 22 Jan 2026 13:19:03 +0100
+Subject: Take item z order into account for a11y hit testing
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+With changing the stacking order of the menuBar/header/footer to match
+the tab navigation to the visual order (see df2c402), the menuBar and
+header could no longer be focused on Android when TalkBack was enabled.
+
+The ApplicationWindowContentControl is stacked above the menuBar and
+header and takes up all the available space in the window. However, it
+has a lower z value.
+
+QtAndroidAccessibility::hitTest_helper always returns the
+ApplicationWindowContentControl when touching the header and menuBar
+because the drawing order is not evaluated.
+
+With this change, the paint order is taken into account by using the
+existing function accessibleUnignoredChildren(*item, paintOrder).
+
+Pick-to: 6.11 6.10
+Task-number: QTBUG-137823
+Change-Id: I8aad6684b1e2f555fc0d46a3a51dc1fd5bf89350
+Reviewed-by: Lars Schmertmann <SmallLars@t-online.de>
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+Reviewed-by: Mitch Curtis <mitch.curtis@qt.io>
+(cherry picked from commit 292896c799dc3f2352bfc1d498e45470bcf6ba5d)
+---
+ src/quick/accessible/qaccessiblequickview.cpp | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickview.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickview.cpp
+index 813755d840132872dc12830df58002746a826efb..62c4766084adc1e61b68d34e15b0241970d3c19d 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickview.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickview.cpp
+@@ -98,8 +98,13 @@ QString QAccessibleQuickWindow::text(QAccessible::Text text) const
+ QAccessibleInterface *QAccessibleQuickWindow::childAt(int x, int y) const
+ {
+     Q_ASSERT(window());
+-    for (int i = childCount() - 1; i >= 0; --i) {
+-        QAccessibleInterface *childIface = child(i);
++
++    if (!window()->contentItem())
++        return nullptr;
++
++    const QList<QQuickItem *> kids = accessibleUnignoredChildren(window()->contentItem(), true);
++    for (int i = kids.size() - 1; i >= 0; --i) {
++        QAccessibleInterface *childIface = QAccessible::queryAccessibleInterface(kids.at(i));
+         if (childIface && !childIface->state().invisible) {
+             if (QAccessibleInterface *iface = childIface->childAt(x, y))
+                 return iface;

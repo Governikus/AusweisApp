@@ -13,7 +13,6 @@
 
 
 class test_StateChangePinIfd;
-class test_StateChangeSmartPin;
 class test_StateEstablishPaceChannelIfd;
 class test_StateProcessIfdMessages;
 class test_StateChangePin;
@@ -32,7 +31,6 @@ class AbstractState
 {
 	Q_OBJECT
 	friend class ::test_StateChangePinIfd;
-	friend class ::test_StateChangeSmartPin;
 	friend class ::test_StateEstablishPaceChannelIfd;
 	friend class ::test_StateProcessIfdMessages;
 	friend class ::test_StateChangePin;
@@ -41,14 +39,12 @@ class AbstractState
 	friend class ::test_StateDidAuthenticateEac2;
 	friend class ::test_StateGetTcToken;
 	friend class ::test_StateTransmit;
-	friend class ::test_StateChangeSmartPin;
 
 	private:
 		const QSharedPointer<WorkflowContext> mContext;
 		QList<QMetaObject::Connection> mConnections;
 		bool mAbortOnCardRemoved;
 		bool mHandleNfcStop;
-		bool mKeepCardConnectionAlive;
 
 		virtual void run() = 0;
 
@@ -57,7 +53,6 @@ class AbstractState
 
 		void setAbortOnCardRemoved();
 		void setHandleNfcStop();
-		void setKeepCardConnectionAlive();
 
 		void onEntry(QEvent* pEvent) override;
 		void onExit(QEvent* pEvent) override;

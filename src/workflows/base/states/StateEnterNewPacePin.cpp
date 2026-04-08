@@ -12,7 +12,6 @@ StateEnterNewPacePin::StateEnterNewPacePin(const QSharedPointer<WorkflowContext>
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
-	setKeepCardConnectionAlive();
 	setHandleNfcStop();
 }
 

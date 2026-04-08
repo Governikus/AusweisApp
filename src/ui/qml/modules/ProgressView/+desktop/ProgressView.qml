@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import Governikus.Animations
 import Governikus.Global

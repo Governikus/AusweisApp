@@ -65,6 +65,7 @@ class PinResetInformationModel
 		[[nodiscard]] QString getResetPinAtAuthorityHintTitle() const;
 
 		[[nodiscard]] QString getResetPinWithPRSHint() const;
+		[[nodiscard]] Q_INVOKABLE QString getResetPinWithPRSHint(bool pHasPRS) const;
 		[[nodiscard]] QString getResetPinAtAuthorityHint() const;
 
 	public Q_SLOTS:

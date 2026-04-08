@@ -4,6 +4,7 @@
 
 #include "UiLoader.h"
 
+#include "HttpServer.h"
 #include "UiPluginProxy.h"
 
 #include <QSignalSpy>
@@ -19,6 +20,12 @@ class test_UiLoader
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			HttpServer::cPort = 0;
+		}
+
+
 		void isLoaded()
 		{
 			UiLoader loader;

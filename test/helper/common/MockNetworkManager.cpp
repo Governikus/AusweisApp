@@ -5,7 +5,7 @@
 #include "MockNetworkManager.h"
 
 #include <QTest>
-#include <http_parser.h>
+#include <llhttp.h>
 
 using namespace governikus;
 

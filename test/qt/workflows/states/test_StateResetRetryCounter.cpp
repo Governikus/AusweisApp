@@ -5,8 +5,8 @@
 #include "states/StateResetRetryCounter.h"
 
 #include "FailureCode.h"
-#include "MockCardConnection.h"
 #include "MockCardConnectionWorker.h"
+#include "TestHookThread.h"
 #include "TestWorkflowContext.h"
 
 #include <QSharedPointer>
@@ -17,32 +17,6 @@
 
 using namespace governikus;
 
-
-class MockCardCommand
-	: public BaseCardCommand
-{
-	Q_OBJECT
-
-	public:
-		explicit MockCardCommand(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
-			: BaseCardCommand(pCardConnectionWorker)
-		{
-		}
-
-
-		void setMockReturnCode(CardReturnCode pReturnCode)
-		{
-			setReturnCode(pReturnCode);
-		}
-
-
-		void internalExecute() override
-		{
-			setReturnCode(getCardConnectionWorker()->updateRetryCounter());
-		}
-
-
-};
 
 class test_StateResetRetryCounter
 	: public QObject
@@ -59,7 +33,7 @@ class test_StateResetRetryCounter
 			QSignalSpy spyAbort(&state, &StateResetRetryCounter::fireAbort);
 			QSignalSpy spyNoCardConnection(&state, &StateResetRetryCounter::fireNoCardConnection);
 
-			QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
+			QTest::ignoreMessage(QtDebugMsg, "No card connection available");
 			state.run();
 			QCOMPARE(spyContinue.count(), 0);
 			QCOMPARE(spyAbort.count(), 0);
@@ -71,42 +45,72 @@ class test_StateResetRetryCounter
 		void test_ResetRetryCounterDone_data()
 		{
 			QTest::addColumn<CardReturnCode>("returnCode");
+			QTest::addColumn<StatusCode>("statusCode");
+			QTest::addColumn<QByteArray>("logMessage");
 			QTest::addColumn<std::optional<FailureCode>>("failureCode");
 
-			QTest::addRow("OK") << CardReturnCode::OK << std::optional<FailureCode>();
-			QTest::addRow("PUK inoperative") << CardReturnCode::PUK_INOPERATIVE << std::optional<FailureCode>(FailureCode::Reason::Establish_Pace_Channel_Puk_Inoperative);
-			QTest::addRow("Error case") << CardReturnCode::INVALID_PUK << std::optional<FailureCode>();
+			QTest::addRow("OK") << CardReturnCode::OK << StatusCode::SUCCESS << QByteArray()
+								<< std::optional<FailureCode>();
+			QTest::addRow("PUK inoperative") << CardReturnCode::OK << StatusCode::ACCESS_DENIED << QByteArray()
+											 << std::optional<FailureCode>(FailureCode::Reason::Establish_Pace_Channel_Puk_Inoperative);
+			QTest::addRow("Unexpected statusCode") << CardReturnCode::OK << StatusCode::COMMAND_NOT_ALLOWED
+												   << QByteArray("Received an unexpected StatusCode (COMMAND_NOT_ALLOWED), cannot reset retry counter")
+												   << std::optional<FailureCode>();
+			QTest::addRow("Response empty") << CardReturnCode::RESPONSE_EMPTY << StatusCode::UNKNOWN
+											<< QByteArray("An error (RESPONSE_EMPTY) occurred while communicating with the card reader")
+											<< std::optional<FailureCode>();
+			QTest::addRow("Command failed") << CardReturnCode::COMMAND_FAILED << StatusCode::UNKNOWN
+											<< QByteArray("An error (COMMAND_FAILED) occurred while communicating with the card reader")
+											<< std::optional<FailureCode>();
 		}
 
 
 		void test_ResetRetryCounterDone()
 		{
-			QFETCH(CardReturnCode, returnCode);
-			QFETCH(std::optional<FailureCode>, failureCode);
+			TestHookThread workerThread;
 
-			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
-			StateResetRetryCounter state(context);
-			const auto& worker = MockCardConnectionWorker::create();
-			const QSharedPointer<MockCardCommand> command(new MockCardCommand(worker));
-			QSignalSpy spyContinue(&state, &StateResetRetryCounter::fireContinue);
-			QSignalSpy spyAbort(&state, &StateResetRetryCounter::fireAbort);
-			QSignalSpy spyNoCardConnection(&state, &StateResetRetryCounter::fireNoCardConnection);
-			command->setMockReturnCode(returnCode);
-			context->setCardConnection(QSharedPointer<MockCardConnection>::create());
-			state.onResetRetryCounterDone(command);
-			if (returnCode == CardReturnCode::OK || returnCode == CardReturnCode::PUK_INOPERATIVE)
 			{
-				QCOMPARE(spyNoCardConnection.count(), 0);
-				QCOMPARE(spyContinue.count(), failureCode.has_value() ? 0 : 1);
-				QCOMPARE(spyAbort.count(), failureCode.has_value() ? 1 : 0);
+				QFETCH(CardReturnCode, returnCode);
+				QFETCH(StatusCode, statusCode);
+				QFETCH(QByteArray, logMessage);
+				QFETCH(std::optional<FailureCode>, failureCode);
+
+				const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+				StateResetRetryCounter state(context);
+				auto worker = MockCardConnectionWorker::create(&workerThread);
+				context->setCardConnection(QSharedPointer<CardConnection>::create(worker));
+				worker->addResponse(returnCode, statusCode == StatusCode::UNKNOWN ? ResponseApdu() : ResponseApdu(statusCode));
+
+				QSignalSpy spyContinue(&state, &StateResetRetryCounter::fireContinue);
+				QSignalSpy spyAbort(&state, &StateResetRetryCounter::fireAbort);
+				QSignalSpy spyNoCardConnection(&state, &StateResetRetryCounter::fireNoCardConnection);
+				if (!logMessage.isNull())
+				{
+					QTest::ignoreMessage(QtCriticalMsg, logMessage.data());
+				}
+				state.run();
+				if (returnCode == CardReturnCode::OK && (statusCode == StatusCode::SUCCESS || statusCode == StatusCode::ACCESS_DENIED))
+				{
+					if (failureCode.has_value())
+					{
+						QTRY_COMPARE(spyAbort.count(), 1);
+						QCOMPARE(spyContinue.count(), 0);
+					}
+					else
+					{
+						QTRY_COMPARE(spyContinue.count(), 1);
+						QCOMPARE(spyAbort.count(), 0);
+					}
+					QCOMPARE(spyNoCardConnection.count(), 0);
+				}
+				else
+				{
+					QTRY_COMPARE(spyNoCardConnection.count(), 1);
+					QCOMPARE(spyContinue.count(), 0);
+					QCOMPARE(spyAbort.count(), 0);
+				}
+				QCOMPARE(context->getFailureCode(), failureCode);
 			}
-			else
-			{
-				QCOMPARE(spyNoCardConnection.count(), 1);
-				QCOMPARE(spyContinue.count(), 0);
-				QCOMPARE(spyAbort.count(), 0);
-			}
-			QCOMPARE(context->getFailureCode(), failureCode);
 		}
 
 

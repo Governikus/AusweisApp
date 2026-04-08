@@ -228,7 +228,7 @@ QPointer<Reader> ReaderManagerWorker::getReader(const QString& pReaderName) cons
 }
 
 
-void ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName, const std::function<QSharedPointer<CardConnectionWorker>(const QSharedPointer<CardConnectionWorker>&)>& pInitWorker)
+QSharedPointer<CardConnectionWorker> ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName, const std::function<QSharedPointer<CardConnectionWorker>(const QSharedPointer<CardConnectionWorker>&)>& pInitWorker)
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
@@ -241,5 +241,5 @@ void ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName,
 			worker = pInitWorker(worker);
 		}
 	}
-	Q_EMIT fireCardConnectionWorkerCreated(worker);
+	return worker;
 }

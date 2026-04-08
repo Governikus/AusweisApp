@@ -14,6 +14,9 @@ with the |AppName| SDK.
 
 WebSocket
 ---------
+.. versionadded:: 2.5.0
+   Variable "AUSWEISAPP_WEBSOCKET_ORIGIN" added.
+
 The |AppName| uses the same default port as defined in TR-03124-1.
 Your application can connect to ``ws://localhost:24727/eID-Kernel`` to
 establish a bidirectional connection.
@@ -25,6 +28,12 @@ If the WebSocket handshake was successful your application can send :doc:`comman
 and receive :doc:`messages`.
 The |AppName| will send an HTTP error 503 "Service Unavailable" if the WebSocket
 is disabled.
+
+By default access to the WebSocket is not permitted using a web browser.
+The |AppName| will send an HTTP error 403 "Forbidden" in this case.
+You can allow access from specific origins by setting the ``AUSWEISAPP_WEBSOCKET_ORIGIN``
+environment variable. This supports regular expressions for pattern-based matching.
+
 
 .. seealso::
 

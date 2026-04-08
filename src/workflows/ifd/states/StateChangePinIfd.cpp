@@ -43,6 +43,8 @@ void StateChangePinIfd::run()
 	PinModify pinModify(modifyPinMessage->getInputData());
 	const quint8 timeoutSeconds = pinModify.getTimeoutSeconds();
 
+	Q_ASSERT(!context->getNewPin().isEmpty() || !cardConnection->getReaderInfo().isBasicReader());
+
 	*this << cardConnection->callSetEidPinCommand(this,
 			&StateChangePinIfd::onChangePinDone,
 			context->getNewPin().toLatin1(),

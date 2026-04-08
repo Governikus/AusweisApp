@@ -33,14 +33,6 @@ if(MAC)
 	target_link_libraries(AusweisAppUiQml PUBLIC ${OSX_USERNOTIFICATIONS})
 endif()
 
-if(TARGET AusweisAppWorkflowsPersonalization)
-	if((ANDROID OR IOS) AND NOT INTEGRATED_SDK)
-		target_link_libraries(AusweisAppUiQml PUBLIC AusweisAppWorkflowsPersonalization)
-	else()
-		target_link_libraries(AusweisAppUiQml PUBLIC debug AusweisAppWorkflowsPersonalization)
-	endif()
-endif()
-
 target_compile_definitions(AusweisAppUiQml PRIVATE QT_STATICPLUGIN)
 
 

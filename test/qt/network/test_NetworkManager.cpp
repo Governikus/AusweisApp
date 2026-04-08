@@ -80,9 +80,7 @@ class test_NetworkManager
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 0);
 			const auto cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
-			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-CBC-SHA256"_L1)));
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-GCM-SHA256"_L1)));
-			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES256-CBC-SHA384"_L1)));
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES256-GCM-SHA384"_L1)));
 		}
 

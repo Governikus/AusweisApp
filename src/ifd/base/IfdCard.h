@@ -41,6 +41,7 @@ class IfdCard
 		bool mConnected;
 		QString mProgressMessage;
 		bool mCardRemoved;
+		bool mForwardSdkMessages;
 
 		bool sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdMessageType pExpectedAnswer, unsigned long pExtraTimeout = 0);
 
@@ -52,7 +53,7 @@ class IfdCard
 		void fireCardRemoved();
 
 	public:
-		IfdCard(const QSharedPointer<IfdDispatcherClient>& pDispatcher, const QString& pReaderName);
+		IfdCard(const QSharedPointer<IfdDispatcherClient>& pDispatcher, const QString& pReaderName, bool pForwardSdkMessages = false);
 		~IfdCard() override;
 
 		CardReturnCode establishConnection() override;

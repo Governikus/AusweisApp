@@ -27,6 +27,6 @@ void StateEACAdditionalInputType::run()
 		QSharedPointer<DIDAuthenticateResponseEAC2> response(getContext()->getDidAuthenticateResponseEacAdditionalInputType());
 		response->setChallenge(getContext()->getDidAuthenticateResponseEac1()->getChallenge());
 
-		Q_EMIT fireSendDidAuthenticatResponse();
+		Q_EMIT fireSendDidAuthenticateResponse();
 	}
 }

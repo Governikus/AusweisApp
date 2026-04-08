@@ -140,7 +140,6 @@ class UiPluginQml
 		void onTrayIconEnabledChanged();
 		void onAppConfigChanged();
 		void onReaderStatusChanged(const ReaderManagerPluginInfo& pInfo) const;
-		void onLanguageChanged() const;
 };
 
 } // namespace governikus

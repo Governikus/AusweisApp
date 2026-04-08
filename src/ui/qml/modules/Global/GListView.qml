@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Controls
 import Governikus.Global
@@ -14,10 +15,6 @@ ListView {
 	property alias scrollBarColor: scrollBar.color
 	property real scrollBarTopPadding: 0
 
-	function firstIndexInView() {
-		const firstIndex = indexAt(0, contentY);
-		return firstIndex === -1 ? 0 : firstIndex;
-	}
 	function handleItemFocused(pIndex) {
 		positionViewAtIndex(pIndex, ListView.Center);
 		currentIndex = pIndex;
@@ -55,10 +52,6 @@ ListView {
 	}
 	function isListElementEmptyFunc(pItem) {
 		return false;
-	}
-	function lastIndexInView() {
-		const lastIndex = indexAt(0, height + contentY);
-		return lastIndex === -1 ? count - 1 : lastIndex;
 	}
 	function scrollPageDown() {
 		scrollBar.increase();
@@ -114,7 +107,7 @@ ListView {
 	Keys.onUpPressed: {
 		do {
 			root.decrementCurrentIndex();
-		} while (isListElementEmptyFunc(currentItem) && root.currentIndex > 1)
+		} while (isListElementEmptyFunc(currentItem) && root.currentIndex > 0)
 	}
 	onVisibleChanged: if (visible)
 		highlightScrollbar()

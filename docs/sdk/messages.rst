@@ -673,6 +673,20 @@ increased for **incompatible** changes.
 
     - **Specification-Version**: Version of specification.
 
+  - **AusweisApp**: Indicates the state of the connection to
+    the AusweisApp for integrated SDK (**Android only**).
+    The following states are possible.
+
+    - **CONNECTED**: The SDK is connected.
+
+    - **DISCONNECTED**: The SDK is not connected.
+
+    - **INVALID_CERTIFICATE**: The certificate of LocalIfd is not valid.
+
+    - **INCOMPATIBLE_VERSION**: The version of LocalIfd is not compatible.
+
+    - **UNKNOWN**: The state could not be recognized.
+
 .. code-block:: json
 
   {
@@ -686,7 +700,8 @@ increased for **incompatible** changes.
                    "Specification-Title": "TR-03124-1",
                    "Specification-Vendor": "Federal Office for Information Security",
                    "Specification-Version": "1.4"
-                  }
+                  },
+     "AusweisApp": "CONNECTED"
   }
 
 

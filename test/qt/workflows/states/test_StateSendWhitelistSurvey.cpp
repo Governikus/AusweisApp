@@ -161,6 +161,7 @@ class test_StateSendWhitelistSurvey
 					message = logSpy.at(i).at(0).toString();
 					break;
 				}
+				qApp->processEvents();
 			}
 
 			QVERIFY(surveySent);

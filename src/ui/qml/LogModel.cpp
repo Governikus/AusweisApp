@@ -175,10 +175,10 @@ bool LogModel::saveLogFile(const QUrl& pFilename, bool pShowFeedback) const
 		success = Env::getSingleton<LogHandler>()->copyOther(mLogFilePath, pFilename.toLocalFile());
 	}
 
-	if (pShowFeedback)
+	if (pShowFeedback && !success)
 	{
 		auto* applicationModel = Env::getSingleton<ApplicationModel>();
-		applicationModel->showFeedback((success ? tr("Successfully saved logfile to \"%1\"") : tr("Error while saving logfile to \"%1\"")).arg(pFilename.toLocalFile()));
+		applicationModel->showFeedback(tr("Error while saving logfile to \"%1\"").arg(pFilename.toLocalFile()));
 	}
 
 	return success;

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtTest
 
 TestCase {

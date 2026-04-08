@@ -164,7 +164,7 @@ SectionPage {
 			return qsTr("Please follow the instructions on your smartphone (connected to %1) or put the ID card on the card reader.").arg(RemoteServiceModel.connectedServerDeviceNames);
 		}
 
-		horizontalAlignment: Text.AlignHCenter
+		horizontalAlignment: Style.scanPatternAlignment
 		text: {
 			switch (root.waitingFor) {
 			case Workflow.WaitingFor.Reader:
@@ -188,8 +188,6 @@ SectionPage {
 		}
 	}
 	GButton {
-		id: readerSettingsLink
-
 		//: DESKTOP
 		text: qsTr("Set up card reader")
 		visible: root.waitingFor === Workflow.WaitingFor.Reader && !d.foundSelectedReader

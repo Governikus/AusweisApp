@@ -105,7 +105,6 @@ class test_Survey
 			QTest::addRow("PCSC") << false << true << ReaderManagerPluginType::PCSC << CardInfo::TagType::NFC_4A << 9999 << true << false << "U" << 0.;
 			QTest::addRow("REMOTE IFD") << false << true << ReaderManagerPluginType::REMOTE_IFD << CardInfo::TagType::NFC_4A << 9999 << true << false << "U" << 0.;
 			QTest::addRow("LOCAL IFD") << false << true << ReaderManagerPluginType::LOCAL_IFD << CardInfo::TagType::NFC_4A << 9999 << true << false << "U" << 0.;
-			QTest::addRow("SMART") << false << true << ReaderManagerPluginType::SMART << CardInfo::TagType::NFC_4A << 9999 << true << false << "U" << 0.;
 
 			QTest::addRow("Auth Error") << false << true << ReaderManagerPluginType::NFC << CardInfo::TagType::NFC_4A << 9999 << false << false << "A" << 9999.;
 		}

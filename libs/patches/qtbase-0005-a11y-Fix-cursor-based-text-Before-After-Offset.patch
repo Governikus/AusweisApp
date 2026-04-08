@@ -1,0 +1,125 @@
+From 7ea23325fadbc0d4487c9d4ddab92e2dd02d18a4 Mon Sep 17 00:00:00 2001
+From: Michael Weghorn <m.weghorn@posteo.de>
+Date: Tue, 23 Sep 2025 12:48:46 +0200
+Subject: a11y: Fix cursor-based text{Before,After}Offset
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+So far, qt_accTextBeforeOffsetHelper and
+qt_accTextAfterOffsetHelper (used by
+QAccessibleTextWidget and QAccessibleQuickItem)
+were not consistently returning text items of
+the given boundary type that is completely
+*before* or *after* the given index, but
+could e.g. return the word in whose
+middle the offset is when using
+QAccessible::WordBoundary.
+
+This could for example break an assistive technology
+feature of navigating through a text by word
+if it relies on those methods.
+
+Adjust the implementations to prevent that
+from happening, by calling
+QAccessible::qAccessibleTextBoundaryHelper
+again with an index moved by one character
+until either a result before/after the given
+index is returned or the start/end of the text
+has been reached.
+
+Extend the existing QTextEdit a11y test
+by a few cases that would previously fail.
+
+(Note: Depending on the text granularity used,
+not every character in the text is necessarily
+considered part of any text item: E.g., when using
+QAccessible::WordBoundary, space characters in between
+words are not, at least not for the QTextCursor logic
+as used in QTextEdit or qtdeclarative's QQuickTextEdit).
+
+Fixes: QTBUG-140504
+Task-number: QTBUG-139943
+Change-Id: Ie6f0f2b2579237f42964d2498c818d1f02bf4bb8
+Reviewed-by: Morten Johan Sørvig <morten.sorvig@qt.io>
+(cherry picked from commit 5aa53df448f78470497e77ab5b8938de56f064cd)
+---
+ src/gui/accessible/qaccessiblehelper.cpp      | 22 +++++++++++++++----
+ .../qaccessibility/tst_qaccessibility.cpp     | 14 ++++++++++++
+ 2 files changed, 32 insertions(+), 4 deletions(-)
+
+diff --git x/qtbase/src/gui/accessible/qaccessiblehelper.cpp y/qtbase/src/gui/accessible/qaccessiblehelper.cpp
+index 40421ef329ade2b32cb9a6f94c9a3989c9c9bf84..9ea72b1f6c9aa12f56ec5eb83349dfefe507d097 100644
+--- x/qtbase/src/gui/accessible/qaccessiblehelper.cpp
++++ y/qtbase/src/gui/accessible/qaccessiblehelper.cpp
+@@ -57,13 +57,20 @@ QString qt_accTextBeforeOffsetHelper(const QAccessibleTextInterface &textInterfa
+ {
+     Q_ASSERT(startOffset);
+     Q_ASSERT(endOffset);
++    *startOffset = *endOffset = -1;
+ 
+     QTextCursor cursor = textCursor;
+     cursor.setPosition(offset);
+     std::pair<int, int> boundaries =
+             QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
+-    cursor.setPosition(boundaries.first - 1);
+-    boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
++    if (boundaries.second > offset) {
++        cursor.setPosition(boundaries.first);
++        while (boundaries.second > offset) {
++            if (!cursor.movePosition(QTextCursor::PreviousCharacter))
++                return QString();
++            boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
++        }
++    }
+ 
+     *startOffset = boundaries.first;
+     *endOffset = boundaries.second;
+@@ -78,13 +85,20 @@ QString qt_accTextAfterOffsetHelper(const QAccessibleTextInterface &textInterfac
+ {
+     Q_ASSERT(startOffset);
+     Q_ASSERT(endOffset);
++    *startOffset = *endOffset = -1;
+ 
+     QTextCursor cursor = textCursor;
+     cursor.setPosition(offset);
+     std::pair<int, int> boundaries =
+             QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
+-    cursor.setPosition(boundaries.second);
+-    boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
++    if (boundaries.first <= offset) {
++        cursor.setPosition(boundaries.second);
++        while (boundaries.first <= offset) {
++            if (!cursor.movePosition(QTextCursor::NextCharacter))
++                return QString();
++            boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
++        }
++    }
+ 
+     *startOffset = boundaries.first;
+     *endOffset = boundaries.second;
+diff --git x/qtbase/tests/auto/other/qaccessibility/tst_qaccessibility.cpp y/qtbase/tests/auto/other/qaccessibility/tst_qaccessibility.cpp
+index 3e74a8b4bac4ccea195b89e69f145922477f026a..5d3f715143a5e7c2525943487a654a9a33f85de1 100644
+--- x/qtbase/tests/auto/other/qaccessibility/tst_qaccessibility.cpp
++++ y/qtbase/tests/auto/other/qaccessibility/tst_qaccessibility.cpp
+@@ -1893,6 +1893,20 @@ void tst_QAccessibility::textEditTest()
+         QCOMPARE(textIface->textAtOffset(15, QAccessible::LineBoundary, &startOffset, &endOffset), QString("How are you today?"));
+         QCOMPARE(startOffset, 13);
+         QCOMPARE(endOffset, 31);
++
++        QCOMPARE(textIface->textAfterOffset(3, QAccessible::WordBoundary, &startOffset, &endOffset),
++                 QString("world"));
++        QCOMPARE(
++                textIface->textBeforeOffset(8, QAccessible::WordBoundary, &startOffset, &endOffset),
++                QString("hello"));
++        // no more word before or after the last one
++        QCOMPARE(
++                textIface->textBeforeOffset(1, QAccessible::WordBoundary, &startOffset, &endOffset),
++                QString());
++        QCOMPARE(textIface->textAfterOffset(textIface->characterCount() - 1,
++                                            QAccessible::WordBoundary, &startOffset, &endOffset),
++                 QString());
++
+         QCOMPARE(textIface->characterCount(), 48);
+         QFontMetrics fm(edit.document()->defaultFont());
+         QCOMPARE(textIface->characterRect(0).size(), QSize(fm.horizontalAdvance("h"), fm.height()));

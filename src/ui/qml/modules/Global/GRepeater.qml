@@ -1,12 +1,11 @@
 /**
  * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQml
 import QtQuick
 
 Repeater {
-	id: root
-
 	property bool autoConsiderItems: true
 	property list<Item> consideredItems
 	readonly property real maxItemWidth: {

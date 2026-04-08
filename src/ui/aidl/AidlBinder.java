@@ -98,7 +98,14 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 	}
 
 
+	@Deprecated
 	public synchronized boolean send(String pSessionId, String pMessageFromClient)
+	{
+		return transmit(pSessionId, pMessageFromClient.toCharArray());
+	}
+
+
+	public synchronized boolean transmit(String pSessionId, char[] pMessageFromClient)
 	{
 		LogHandler.getLogger().info("Android service: Received JSON from client");
 
@@ -157,5 +164,5 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 
 	private native String resetValidSessionID();
 	private native boolean startReaderManagerScans();
-	private native void aidlSend(String pMessageFromClient);
+	private native void aidlSend(char[] pMessageFromClient);
 }

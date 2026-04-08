@@ -14,10 +14,6 @@
 #include "states/StateEnterPacePassword.h"
 #include "states/StateSelectReader.h"
 
-#if __has_include("context/PersonalizationContext.h")
-	#include "context/PersonalizationContext.h"
-#endif
-
 #include "TestAuthContext.h"
 #include "TestWorkflowContext.h"
 
@@ -104,17 +100,6 @@ class test_MsgHandlerStatus
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::CHANGE_PIN);
 			QCOMPARE(dispatcher.processCommand(cmd), QByteArray(R"({"msg":"STATUS","progress":0,"state":null,"workflow":"CHANGE_PIN"})"));
-		}
-
-
-		void personalizationWorkflow()
-		{
-#if __has_include("context/PersonalizationContext.h")
-			const auto& context = QSharedPointer<PersonalizationContext>::create(QString());
-			MessageDispatcher dispatcher;
-			QCOMPARE(dispatcher.init(context), MsgType::PERSONALIZATION);
-			QCOMPARE(dispatcher.processCommand(cmd), QByteArray(R"({"msg":"STATUS","progress":0,"state":null,"workflow":"PERSONALIZATION"})"));
-#endif
 		}
 
 
@@ -222,11 +207,10 @@ class test_MsgHandlerStatus
 
 			QTest::newRow("AUTH") << Action::AUTH << QStringLiteral("AUTH");
 			QTest::newRow("PIN") << Action::CHANGE_PIN << QStringLiteral("CHANGE_PIN");
-			QTest::newRow("PERSONALIZATION") << Action::PERSONALIZATION << QStringLiteral("PERSONALIZATION");
 			QTest::newRow("SELF") << Action::SELF_AUTH << QStringLiteral("UNKNOWN");
 			QTest::newRow("REMOTE_SERVICE") << Action::REMOTE_SERVICE << QStringLiteral("UNKNOWN");
 
-			QCOMPARE(Enum<Action>::getCount(), 5);
+			QCOMPARE(Enum<Action>::getCount(), 4);
 		}
 
 

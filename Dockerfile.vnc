@@ -4,7 +4,7 @@ FROM alpine:$ALPINE_VERSION AS builder
 # Install development stuff
 RUN apk --no-cache upgrade -a && \
     apk --no-cache add patch cmake ccache make ninja g++ pkgconf pcsc-lite-dev binutils-gold eudev-libs \
-        http-parser-dev openssl-dev \
+        llhttp-dev openssl-dev \
         qt6-qtbase-dev qt6-qtsvg-dev qt6-qtwebsockets-dev qt6-qttools-dev qt6-qtdeclarative-dev qt6-qtscxml-dev qt6-qtconnectivity-dev qt6-qtimageformats-dev qt6-qtimageformats
 
 # Use optional remote ccache
@@ -48,7 +48,7 @@ COPY --from=builder /usr/local/bin/AusweisApp /usr/local/bin/AusweisApp
 
 RUN apk --no-cache upgrade -a && \
     apk --no-cache add tini pcsc-lite-libs eudev-libs doas ttf-freefont \
-        http-parser qt6-qtbase qt6-qtsvg qt6-qtwebsockets qt6-qtdeclarative qt6-qtscxml qt6-qtconnectivity qt6-qtimageformats && \
+        llhttp qt6-qtbase qt6-qtsvg qt6-qtwebsockets qt6-qtdeclarative qt6-qtscxml qt6-qtconnectivity qt6-qtimageformats && \
     echo 'permit nopass :wheel' > /etc/doas.d/wheel.conf && \
     adduser ausweisapp -G wheel -s /bin/sh -D && \
     chmod 0700 /home/ausweisapp && mkdir -p /home/ausweisapp/.config && chown ausweisapp: /home/ausweisapp/.config

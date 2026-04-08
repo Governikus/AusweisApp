@@ -57,19 +57,11 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 			switch (command->getResponseApdu().getStatusCode())
 			{
 				case StatusCode::SUCCESS:
-					if (context->isSmartCardUsed())
-					{
-						//: ALL_PLATFORMS The Smart-eID PIN was changed successfully.
-						context->setSuccessMessage(tr("You have successfully changed your Smart-eID PIN."));
-					}
-					else
-					{
-						context->setSuccessMessage(
-								//: ALL_PLATFORMS The ID card PIN was changed successfully (1/2).
-								tr("You have successfully changed your ID card PIN.") + QStringLiteral("<br>") +
-								//: ALL_PLATFORMS The ID card PIN was changed successfully (2/2).
-								tr("You may now remove your ID card from the device."));
-					}
+					context->setSuccessMessage(
+							//: ALL_PLATFORMS The ID card PIN was changed successfully (1/2).
+							tr("You have successfully changed your ID card PIN.") + QStringLiteral("<br>") +
+							//: ALL_PLATFORMS The ID card PIN was changed successfully (2/2).
+							tr("You may now remove your ID card from the device."));
 					Q_EMIT fireContinue();
 					return;
 
@@ -103,11 +95,6 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 		case CardReturnCode::CANCELLATION_BY_USER:
 			updateStatus(CardReturnCodeUtil::toGlobalStatus(cardReturnCode));
 			Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_Card_User_Cancelled);
-			break;
-
-		case CardReturnCode::NEW_PIN_MISMATCH:
-			updateStatus(CardReturnCodeUtil::toGlobalStatus(cardReturnCode));
-			Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_Card_New_Pin_Mismatch);
 			break;
 
 		case CardReturnCode::CARD_NOT_FOUND:

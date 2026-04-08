@@ -313,12 +313,6 @@ if((WIN32 AND NOT WINDOWS_STORE) OR LINUX OR MAC OR CYGWIN OR BSD)
 endif()
 
 
-if(NOT COMMAND FIND_HOST_PACKAGE)
-	macro(FIND_HOST_PACKAGE)
-		find_package(${ARGN})
-	endmacro()
-endif()
-
 function(FETCH_TARGET_LOCATION _destination _target)
 	set(options NAME)
 	set(oneValueArgs)

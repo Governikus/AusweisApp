@@ -23,7 +23,7 @@ cmake_minimum_required(VERSION 3.25)
 # changesets to it. It will be exported with "generate".
 # If you need to remove patches, just delete the changesets or the whole clone.
 #
-# - Upgrade Qt or OpenSSL
+# - Upgrade Qt or OpenSSL or llhttp
 # 1. Apply all patches with this script and do the following on each repository.
 #    The version is an example and should be adjusted!
 # 2. git checkout ausweisapp_6.4.3
@@ -102,6 +102,8 @@ function(git_clone prefix)
 
 		if(prefix STREQUAL "openssl")
 			execute(clone "https://github.com/openssl/openssl" "${prefix}")
+		elseif(prefix STREQUAL "llhttp")
+			execute(clone "https://github.com/nodejs/llhttp" "${prefix}")
 		elseif(prefix MATCHES "qt")
 			set(QT_GIT_HOOKS_URL "https://code.qt.io/cgit/qt/qtrepotools.git/plain/git-hooks")
 			execute(clone "https://code.qt.io/qt/${prefix}.git" "${prefix}")
@@ -135,6 +137,9 @@ function(get_version_branch prefix _version _branch)
 	if(prefix STREQUAL "openssl")
 		set(version openssl-${OPENSSL})
 		set(tmp_branch ${tmp_branch}_${OPENSSL})
+	elseif(prefix STREQUAL "llhttp")
+		set(version release/v${LLHTTP})
+		set(tmp_branch ${tmp_branch}_${LLHTTP})
 	elseif(prefix MATCHES "qt")
 		set(version v${QT})
 		set(tmp_branch ${tmp_branch}_${QT})
@@ -158,7 +163,7 @@ function(apply_patches)
 		list(APPEND prefixes "${prefix}")
 		list(APPEND "${prefix}" "${patch}")
 
-		if(NOT (prefix STREQUAL "openssl" OR prefix MATCHES "qt"))
+		if(NOT (prefix STREQUAL "openssl" OR prefix STREQUAL "llhttp" OR prefix MATCHES "qt"))
 			message(FATAL_ERROR "Prefix unknown: ${prefix}")
 		endif()
 	endforeach()
@@ -170,7 +175,7 @@ function(apply_patches)
 		git_checkout(${prefix})
 
 		foreach(patch ${${prefix}})
-			if(prefix STREQUAL "openssl" OR prefix STREQUAL "qt5")
+			if(prefix STREQUAL "openssl" OR prefix STREQUAL "llhttp" OR prefix STREQUAL "qt5")
 				set(p 1)
 			elseif(prefix MATCHES "qt")
 				set(p 2)
@@ -232,7 +237,7 @@ function(generate_patches)
 		file(REMOVE ${PATCHES})
 	endif()
 
-	list(APPEND prefixes openssl qt)
+	list(APPEND prefixes llhttp openssl qt)
 	foreach(prefix ${prefixes})
 		file(GLOB REPOS "${REPOSITORY_DIR}/${prefix}*")
 		foreach(repo ${REPOS})
@@ -248,7 +253,7 @@ function(generate_patches)
 				get_latest_tag(latesttag "${repo}")
 				message(STATUS "Generate patches of ${dirname} since tag ${latesttag}")
 
-				if(dirname STREQUAL "openssl" OR dirname STREQUAL "qt5")
+				if(dirname STREQUAL "openssl" OR dirname STREQUAL "llhttp" OR dirname STREQUAL "qt5")
 					set(component "")
 				else()
 					set(component "${dirname}/")

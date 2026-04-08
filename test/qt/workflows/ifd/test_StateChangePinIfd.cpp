@@ -60,6 +60,7 @@ class test_StateChangePinIfd
 				context->setModifyPinMessage(message);
 
 				QSignalSpy spyContinue(&state, &StateChangePinIfd::fireContinue);
+				context->setNewPin(QStringLiteral("111111"));
 				state.run();
 				QCOMPARE(context->getModifyPinMessageResponseApdu().getStatusCode(), StatusCode::UNKNOWN);
 				QCOMPARE(spyContinue.count(), 1);

@@ -1,10 +1,10 @@
 if(COVERAGE)
 	# gcovr (http://gcovr.com/)
-	find_program(GCOVR_BIN gcovr CMAKE_FIND_ROOT_PATH_BOTH)
+	find_program(GCOVR_BIN gcovr)
 	if(GCOVR_BIN)
 		set(GCOVR_FILE "${PROJECT_BINARY_DIR}/gcovr.xml")
 		set(GCOVR_SONAR_FILE "${PROJECT_BINARY_DIR}/gcovr_sonarqube.xml")
-		set(GCOVR_OPTIONS --gcov-ignore-parse-errors --exclude="${PROJECT_SOURCE_DIR}/utils" --exclude="${PROJECT_SOURCE_DIR}/src/external" --exclude="${PROJECT_SOURCE_DIR}/test" -r ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
+		set(GCOVR_OPTIONS --gcov-ignore-parse-errors --exclude="${PROJECT_SOURCE_DIR}/utils" --exclude="${PROJECT_SOURCE_DIR}/test" -r ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
 
 		add_custom_command(OUTPUT ${GCOVR_FILE} COMMAND ${GCOVR_BIN} -x -o ${GCOVR_FILE} ${GCOVR_OPTIONS})
 		add_custom_command(OUTPUT ${GCOVR_SONAR_FILE} COMMAND ${GCOVR_BIN} --sonarqube ${GCOVR_SONAR_FILE} ${GCOVR_OPTIONS})
@@ -14,7 +14,7 @@ if(COVERAGE)
 endif()
 
 # CppCheck (http://cppcheck.sourceforge.net)
-find_program(CPPCHECK_BIN cppcheck CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(CPPCHECK_BIN cppcheck)
 if(CPPCHECK_BIN)
 	set(XML_FILE "${PROJECT_BINARY_DIR}/cppcheck.xml")
 	set(XML_FILE_TESTS "${PROJECT_BINARY_DIR}/cppcheck.tests.xml")
@@ -38,7 +38,7 @@ if(CPPCHECK_BIN)
 	add_custom_target(cppcheck.report DEPENDS ${XML_FILE} ${XML_FILE_TESTS})
 endif()
 
-find_program(CLOC_BIN cloc CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(CLOC_BIN cloc)
 if(CLOC_BIN)
 	set(CLOC_FILE "${PROJECT_BINARY_DIR}/cloc.xml")
 	set(CLOC_CMD ${CLOC_BIN} ${CMAKE_SOURCE_DIR})
@@ -50,7 +50,7 @@ endif()
 
 add_custom_target(format)
 
-find_program(UNCRUSTIFY uncrustify CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(UNCRUSTIFY uncrustify)
 if(UNCRUSTIFY)
 	execute_process(COMMAND ${UNCRUSTIFY} --version OUTPUT_VARIABLE UNCRUSTIFY_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 	string(REPLACE "uncrustify " "" UNCRUSTIFY_VERSION ${UNCRUSTIFY_VERSION})
@@ -72,10 +72,8 @@ if(UNCRUSTIFY)
 
 		file(WRITE ${FORMATTING_FILE} "")
 		foreach(file ${FILES})
-			if(NOT "${file}" MATCHES "/external/")
-				file(APPEND ${FORMATTING_FILE} ${file})
-				file(APPEND ${FORMATTING_FILE} "\n")
-			endif()
+			file(APPEND ${FORMATTING_FILE} ${file})
+			file(APPEND ${FORMATTING_FILE} "\n")
 		endforeach()
 
 		set(UNCRUSTIFY_CFG ${PROJECT_SOURCE_DIR}/uncrustify.cfg)
@@ -85,7 +83,7 @@ if(UNCRUSTIFY)
 	endif()
 endif()
 
-find_program(DOS2UNIX dos2unix CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(DOS2UNIX dos2unix)
 if(DOS2UNIX)
 	list(APPEND GLOB_DOS2UNIX ${PROJECT_SOURCE_DIR}/*.cpp)
 	list(APPEND GLOB_DOS2UNIX ${PROJECT_SOURCE_DIR}/*.h)
@@ -104,7 +102,7 @@ if(DOS2UNIX)
 	add_dependencies(format format.dos2unix)
 endif()
 
-find_program(WIX wix CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(WIX wix)
 if(WIX AND WIN32)
 	list(APPEND GLOB_WIX ${PROJECT_SOURCE_DIR}/*.wxs)
 	list(APPEND GLOB_WIX ${PROJECT_SOURCE_DIR}/*.wxl)
@@ -134,6 +132,10 @@ if(Python_FOUND)
 	add_dependencies(format format.json)
 
 	if(EXISTS "${CMAKE_SOURCE_DIR}/utils")
+		set(COPYRIGHT_PY ${CMAKE_SOURCE_DIR}/utils/copyright.py)
+		add_custom_target(format.copyright COMMAND ${Python_EXECUTABLE} ${COPYRIGHT_PY} . WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+		add_dependencies(format format.copyright)
+
 		set(QRCODE_GENERATOR ${CMAKE_SOURCE_DIR}/utils/qrcodeGenerator/main.py)
 		set(LANGUAGES de en uk ru)
 		foreach(LANGUAGE ${LANGUAGES})
@@ -143,7 +145,7 @@ if(Python_FOUND)
 	endif()
 endif()
 
-find_program(RUFF ruff CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(RUFF ruff)
 if(RUFF)
 	list(APPEND GLOB_PY ${PROJECT_SOURCE_DIR}/*.py)
 	file(GLOB_RECURSE PY_FILES ${GLOB_PY})
@@ -153,7 +155,7 @@ if(RUFF)
 	add_dependencies(format format.ruff)
 endif()
 
-find_program(YAMLFMT yamlfmt CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(YAMLFMT yamlfmt)
 if(YAMLFMT)
 	list(APPEND GLOB_YML ${PROJECT_SOURCE_DIR}/*.yml)
 	list(APPEND GLOB_YML ${PROJECT_SOURCE_DIR}/*.yaml)
@@ -165,7 +167,7 @@ if(YAMLFMT)
 endif()
 
 # doc8 (https://pypi.python.org/pypi/doc8)
-find_program(DOC8_BIN doc8 CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(DOC8_BIN doc8)
 function(CREATE_DOC8_TARGET _dir _name)
 	if(DOC8_BIN)
 		add_custom_target(doc8.${_name} COMMAND ${DOC8_BIN} --config ${PROJECT_SOURCE_DIR}/docs/doc8.ini WORKING_DIRECTORY ${_dir})
@@ -176,7 +178,7 @@ function(CREATE_DOC8_TARGET _dir _name)
 	endif()
 endfunction()
 
-find_program(INKSCAPE inkscape CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(INKSCAPE inkscape)
 if(INKSCAPE)
 	set(BACKGROUND_COLOR "#ffffff")
 
@@ -186,7 +188,6 @@ if(INKSCAPE)
 
 	add_custom_target(npaicons.android.playstore
 		COMMAND ${INKSCAPE} playstore_release.svg -w 512 -h 512 -y 0 -o playstore_release.png
-		COMMAND ${INKSCAPE} playstore_preview.svg -w 512 -h 512 -y 0 -o playstore_preview.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
 
 	add_custom_target(npaicons.android.adaptive.background
@@ -216,15 +217,6 @@ if(INKSCAPE)
 		COMMAND ${INKSCAPE} adaptive_foreground_beta.svg -d 640 -y 0 -o xxxhdpi/foreground_npa_beta.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
 
-	add_custom_target(npaicons.android.adaptive.foreground.preview
-		COMMAND ${INKSCAPE} adaptive_foreground_preview.svg -d 120 -y 0 -o ldpi/foreground_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_foreground_preview.svg -d 160 -y 0 -o mdpi/foreground_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_foreground_preview.svg -d 240 -y 0 -o hdpi/foreground_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_foreground_preview.svg -d 320 -y 0 -o xhdpi/foreground_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_foreground_preview.svg -d 480 -y 0 -o xxhdpi/foreground_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_foreground_preview.svg -d 640 -y 0 -o xxxhdpi/foreground_npa_preview.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
-
 	add_custom_target(npaicons.android.adaptive.monochrome
 		COMMAND ${INKSCAPE} adaptive_monochrome_release.svg -d 120 -y 0 -o ldpi/monochrome_npa.png
 		COMMAND ${INKSCAPE} adaptive_monochrome_release.svg -d 160 -y 0 -o mdpi/monochrome_npa.png
@@ -243,15 +235,6 @@ if(INKSCAPE)
 		COMMAND ${INKSCAPE} adaptive_monochrome_beta.svg -d 640 -y 0 -o xxxhdpi/monochrome_npa_beta.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
 
-	add_custom_target(npaicons.android.adaptive.monochrome.preview
-		COMMAND ${INKSCAPE} adaptive_monochrome_preview.svg -d 120 -y 0 -o ldpi/monochrome_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_monochrome_preview.svg -d 160 -y 0 -o mdpi/monochrome_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_monochrome_preview.svg -d 240 -y 0 -o hdpi/monochrome_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_monochrome_preview.svg -d 320 -y 0 -o xhdpi/monochrome_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_monochrome_preview.svg -d 480 -y 0 -o xxhdpi/monochrome_npa_preview.png
-		COMMAND ${INKSCAPE} adaptive_monochrome_preview.svg -d 640 -y 0 -o xxxhdpi/monochrome_npa_preview.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
-
 	add_custom_target(npaicons.android.launchimage
 		COMMAND ${INKSCAPE} npa_release.svg -w 120 -h 120 -y 0 -o android/ldpi/splash_npa.png
 		COMMAND ${INKSCAPE} npa_release.svg -w 180 -h 180 -y 0 -o android/mdpi/splash_npa.png
@@ -268,15 +251,6 @@ if(INKSCAPE)
 		COMMAND ${INKSCAPE} npa_beta.svg -w 360 -h 360 -y 0 -o android/xhdpi/splash_npa_beta.png
 		COMMAND ${INKSCAPE} npa_beta.svg -w 540 -h 540 -y 0 -o android/xxhdpi/splash_npa_beta.png
 		COMMAND ${INKSCAPE} npa_beta.svg -w 720 -h 720 -y 0 -o android/xxxhdpi/splash_npa_beta.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
-
-	add_custom_target(npaicons.android.launchimage.preview
-		COMMAND ${INKSCAPE} npa_preview.svg -w 120 -h 120 -y 0 -o android/ldpi/splash_npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -w 180 -h 180 -y 0 -o android/mdpi/splash_npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -w 270 -h 270 -y 0 -o android/hdpi/splash_npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -w 360 -h 360 -y 0 -o android/xhdpi/splash_npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -w 540 -h 540 -y 0 -o android/xxhdpi/splash_npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -w 720 -h 720 -y 0 -o android/xxxhdpi/splash_npa_preview.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	add_custom_target(npaicons.ios.launchimage
@@ -333,13 +307,10 @@ if(INKSCAPE)
 			npaicons.android.adaptive.background
 			npaicons.android.adaptive.foreground
 			npaicons.android.adaptive.foreground.beta
-			npaicons.android.adaptive.foreground.preview
 			npaicons.android.adaptive.monochrome
 			npaicons.android.adaptive.monochrome.beta
-			npaicons.android.adaptive.monochrome.preview
 			npaicons.android.launchimage
 			npaicons.android.launchimage.beta
-			npaicons.android.launchimage.preview
 			npaicons.ios.launchimage
 			npaicons.ios.launchimage.beta
 			npaicons.ios
@@ -352,7 +323,7 @@ if(INKSCAPE)
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/src)
 endif()
 
-find_program(PNGQUANT pngquant CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(PNGQUANT pngquant)
 if(PNGQUANT)
 	set(PNGQUANT_CMD pngquant -f -o)
 
@@ -387,15 +358,6 @@ if(PNGQUANT)
 		COMMAND ${PNGQUANT_CMD} xxxhdpi/foreground_npa_beta.png -- xxxhdpi/foreground_npa_beta.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
 
-	add_custom_target(pngquant.android.adaptive.foreground.preview
-		COMMAND ${PNGQUANT_CMD} ldpi/foreground_npa_preview.png -- ldpi/foreground_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} mdpi/foreground_npa_preview.png -- mdpi/foreground_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} hdpi/foreground_npa_preview.png -- hdpi/foreground_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xhdpi/foreground_npa_preview.png -- xhdpi/foreground_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xxhdpi/foreground_npa_preview.png -- xxhdpi/foreground_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xxxhdpi/foreground_npa_preview.png -- xxxhdpi/foreground_npa_preview.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
-
 	add_custom_target(pngquant.android.adaptive.monochrome
 		COMMAND ${PNGQUANT_CMD} ldpi/monochrome_npa.png -- ldpi/monochrome_npa.png
 		COMMAND ${PNGQUANT_CMD} mdpi/monochrome_npa.png -- mdpi/monochrome_npa.png
@@ -414,15 +376,6 @@ if(PNGQUANT)
 		COMMAND ${PNGQUANT_CMD} xxxhdpi/monochrome_npa_beta.png -- xxxhdpi/monochrome_npa_beta.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
 
-	add_custom_target(pngquant.android.adaptive.monochrome.preview
-		COMMAND ${PNGQUANT_CMD} ldpi/monochrome_npa_preview.png -- ldpi/monochrome_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} mdpi/monochrome_npa_preview.png -- mdpi/monochrome_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} hdpi/monochrome_npa_preview.png -- hdpi/monochrome_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xhdpi/monochrome_npa_preview.png -- xhdpi/monochrome_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xxhdpi/monochrome_npa_preview.png -- xxhdpi/monochrome_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xxxhdpi/monochrome_npa_preview.png -- xxxhdpi/monochrome_npa_preview.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
-
 	add_custom_target(pngquant.android.launchimage
 		COMMAND ${PNGQUANT_CMD} ldpi/splash_npa.png -- ldpi/splash_npa.png
 		COMMAND ${PNGQUANT_CMD} mdpi/splash_npa.png -- mdpi/splash_npa.png
@@ -439,15 +392,6 @@ if(PNGQUANT)
 		COMMAND ${PNGQUANT_CMD} xhdpi/splash_npa_beta.png -- xhdpi/splash_npa_beta.png
 		COMMAND ${PNGQUANT_CMD} xxhdpi/splash_npa_beta.png -- xxhdpi/splash_npa_beta.png
 		COMMAND ${PNGQUANT_CMD} xxxhdpi/splash_npa_beta.png -- xxxhdpi/splash_npa_beta.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
-
-	add_custom_target(pngquant.android.launchimage.preview
-		COMMAND ${PNGQUANT_CMD} ldpi/splash_npa_preview.png -- ldpi/splash_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} mdpi/splash_npa_preview.png -- mdpi/splash_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} hdpi/splash_npa_preview.png -- hdpi/splash_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xhdpi/splash_npa_preview.png -- xhdpi/splash_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xxhdpi/splash_npa_preview.png -- xxhdpi/splash_npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xxxhdpi/splash_npa_preview.png -- xxxhdpi/splash_npa_preview.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
 
 	add_custom_target(pngquant.ios.launchimage
@@ -503,13 +447,10 @@ if(PNGQUANT)
 			pngquant.android.adaptive.background
 			pngquant.android.adaptive.foreground
 			pngquant.android.adaptive.foreground.beta
-			pngquant.android.adaptive.foreground.preview
 			pngquant.android.adaptive.monochrome
 			pngquant.android.adaptive.monochrome.beta
-			pngquant.android.adaptive.monochrome.preview
 			pngquant.android.launchimage
 			pngquant.android.launchimage.beta
-			pngquant.android.launchimage.preview
 			pngquant.ios.launchimage
 			pngquant.ios.launchimage.beta
 			pngquant.ios
@@ -522,7 +463,7 @@ if(PNGQUANT)
 		WORKING_DIRECTORY ${RESOURCES_DIR}/updatable-files/reader)
 endif()
 
-find_program(CONVERT convert CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(CONVERT convert)
 if(CONVERT)
 	add_custom_target(npaicons.win
 		COMMAND ${CONVERT} -background transparent -define icon:auto-resize=256,96,64,48,40,32,24,20,16 npa.svg desktop/npa.ico
@@ -574,7 +515,7 @@ if(PLANTUML)
 	add_custom_target(uml.statemachines COMMAND ./statemachine.sh WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 endif()
 
-find_program(DOT dot CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(DOT dot)
 if(DOT)
 	set(architecture_file Architecture)
 	set(ARCHI_PDF_DEPENDS)
@@ -582,7 +523,7 @@ if(DOT)
 	add_custom_target(architecture.graphviz ${CMAKE_COMMAND} --graphviz=${architecture_file} . WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 	list(APPEND ARCHI_PDF_DEPENDS architecture.graphviz)
 
-	find_program(SED sed CMAKE_FIND_ROOT_PATH_BOTH)
+	find_program(SED sed)
 	if(SED)
 		# 1. Strip line of plugins as it is misleading
 		# 2. Strip "AusweisApp" prefix
@@ -604,7 +545,7 @@ if(DOT)
 		WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 endif()
 
-find_program(PANDOC_BIN NAMES pandoc CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(PANDOC_BIN NAMES pandoc)
 find_package(Python)
 if(PANDOC_BIN AND Python_FOUND)
 	include(Pandoc)

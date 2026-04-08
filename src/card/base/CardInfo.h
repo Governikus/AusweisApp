@@ -35,13 +35,12 @@ class CardInfo
 		int mRetryCounter;
 		bool mPinDeactivated;
 		bool mPukInoperative;
-		bool mPinInitial;
 		TagType mTagType;
 		static const int UNDEFINED_RETRY_COUNTER;
 
 	public:
 		explicit CardInfo(CardType pCardType, const FileRef& pApplication = FileRef(), const QSharedPointer<const EFCardAccess>& = QSharedPointer<const EFCardAccess>(),
-				int pRetryCounter = UNDEFINED_RETRY_COUNTER, bool pPinDeactivated = false, bool pPukInoperative = false, bool pPinInitial = false);
+				int pRetryCounter = UNDEFINED_RETRY_COUNTER, bool pPinDeactivated = false, bool pPukInoperative = false);
 
 		void setCardType(CardType pCardType);
 		[[nodiscard]] CardType getCardType() const;
@@ -70,8 +69,6 @@ class CardInfo
 		 * The PUK is inoperative. User is not able to unblock the PIN anymore.
 		 */
 		[[nodiscard]] bool isPukInoperative() const;
-
-		[[nodiscard]] bool isPinInitial() const;
 };
 
 QDebug operator<<(QDebug pDbg, const CardInfo& pCardInfo);

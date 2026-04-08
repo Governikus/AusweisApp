@@ -19,7 +19,6 @@ Controller {
 
 	readonly property bool editRightsShown: root.stackView.currentItem instanceof EditRights
 	readonly property bool enterPasswordShown: root.stackView.currentItem instanceof EnterPasswordView
-	readonly property bool isSmartWorkflow: RemoteServiceModel.readerPluginType === ReaderManagerPluginType.SMART
 	readonly property bool workflowShown: root.stackView.currentItem instanceof GeneralWorkflow
 
 	function processStateChange(pState) {
@@ -97,8 +96,6 @@ Controller {
 
 		EditRights {
 			//: MOBILE
-			actionText: qsTr("You are about to identify yourself towards the following provider using the device \"%1\":").arg(RemoteServiceModel.connectedClientName)
-			//: MOBILE
 			title: qsTr("Card reader")
 			workflowModel: RemoteServiceModel
 
@@ -123,7 +120,6 @@ Controller {
 
 		GeneralWorkflow {
 			cardInitiallyAppeared: RemoteServiceModel.cardInitiallyAppeared
-			smartEidUsed: RemoteServiceModel.readerPluginType === ReaderManagerPluginType.SMART
 			workflowModel: RemoteServiceModel
 			//: MOBILE
 			workflowTitle: qsTr("Card reader")
@@ -163,7 +159,6 @@ Controller {
 
 			enableTransportPinLink: RemoteServiceModel.enableTransportPinLink
 			moreInformationText: infoData.linkText
-			smartEidUsed: root.isSmartWorkflow
 			//: MOBILE
 			title: qsTr("Card reader")
 
@@ -183,11 +178,9 @@ Controller {
 			onPasswordEntered: pPasswordType => {
 				switch (pPasswordType) {
 				case NumberModel.PasswordType.NEW_PIN:
-				case NumberModel.PasswordType.NEW_SMART_PIN:
 					root.processStateChange(RemoteServiceModel.currentState);
 					break;
 				case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
-				case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
 					if (NumberModel.commitNewPin()) {
 						root.popAll();
 						RemoteServiceModel.startScanExplicitly();

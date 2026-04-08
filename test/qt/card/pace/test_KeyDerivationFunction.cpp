@@ -54,7 +54,7 @@ class test_KeyDerivationFunction
 			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_3DES_CBC_CBC);
 			KeyDerivationFunction kdf(securityProtocol);
 
-			QVERIFY(logSpy.count() > 0);
+			QTRY_VERIFY(logSpy.count() > 0);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("3DES not supported")));
 			QVERIFY(!kdf.isInitialized());
 		}

@@ -43,7 +43,7 @@ class SimulatorFileSystem
 
 		[[nodiscard]] QByteArray getEfCardAccess() const;
 		[[nodiscard]] QByteArray getPassword(PacePasswordId pPasswordId) const;
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
 		[[nodiscard]] QSharedPointer<EVP_PKEY> getKey(int pKeyId) const;
 #else
 		[[nodiscard]] QSharedPointer<EC_KEY> getKey(int pKeyId) const;

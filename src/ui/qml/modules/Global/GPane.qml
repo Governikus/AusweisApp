@@ -50,7 +50,7 @@ GPaneBackground {
 			Layout.leftMargin: root.contentPadding
 			Layout.maximumWidth: Number.POSITIVE_INFINITY
 			Layout.rightMargin: root.contentPadding
-			Layout.topMargin: titleText.visible ? Style.dimens.pane_spacing : root.contentPadding
+			Layout.topMargin: titleText.text !== "" ? Style.dimens.pane_spacing : root.contentPadding
 			spacing: Style.dimens.pane_spacing
 		}
 	}

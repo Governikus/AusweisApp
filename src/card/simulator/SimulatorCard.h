@@ -39,7 +39,7 @@ class SimulatorCard
 		int mPaceKeyId;
 		QByteArray mPaceNonce;
 		QByteArray mPaceTerminalKey;
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
 		QSharedPointer<EVP_PKEY> mCardKey;
 #else
 		QSharedPointer<EC_KEY> mCardKey;

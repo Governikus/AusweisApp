@@ -52,7 +52,7 @@ class test_IfdTransmitResponse
 			IfdTransmitResponse msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), v0Supported ? 9 : 8);
+			QTRY_COMPARE(logSpy.count(), v0Supported ? 9 : 8);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"msg\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"ContextHandle\"")));
@@ -179,7 +179,7 @@ class test_IfdTransmitResponse
 			QVERIFY(!ifdTransmitResponse.resultHasError());
 			QCOMPARE(ifdTransmitResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
+			QTRY_COMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
 			{
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"ResponseAPDU\""_L1));
@@ -226,7 +226,7 @@ class test_IfdTransmitResponse
 				QVERIFY(!ifdTransmitResponse.isIncomplete());
 				QCOMPARE(ifdTransmitResponse.getType(), IfdMessageType::IFDTransmitResponse);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -236,14 +236,14 @@ class test_IfdTransmitResponse
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"UNDEFINED\"")));
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDTransmitResponse")));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDTransmitResponse")));
 		}
 
@@ -274,7 +274,7 @@ class test_IfdTransmitResponse
 			QVERIFY(!ifdTransmitResponse.resultHasError());
 			QCOMPARE(ifdTransmitResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), v0Supported ? 3 : 2);
+			QTRY_COMPARE(logSpy.count(), v0Supported ? 3 : 2);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"SlotHandle\" should be of type \"string\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"ResponseAPDU\" should be of type \"string\"")));
 			if (v0Supported)
@@ -315,7 +315,7 @@ class test_IfdTransmitResponse
 			QVERIFY(!ifdTransmitResponse.resultHasError());
 			QCOMPARE(ifdTransmitResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"ResponseAPDUs\" should be of type \"string array\"")));
 		}
 
@@ -352,7 +352,7 @@ class test_IfdTransmitResponse
 			QVERIFY(!ifdTransmitResponse.resultHasError());
 			QCOMPARE(ifdTransmitResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Only using the first ResponseAPDU. Command chaining is not supported yet")));
 		}
 

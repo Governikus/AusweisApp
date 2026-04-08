@@ -36,7 +36,7 @@ class test_IfdDisconnectResponse
 			IfdDisconnectResponse msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 7);
+			QTRY_COMPARE(logSpy.count(), 7);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
@@ -109,7 +109,7 @@ class test_IfdDisconnectResponse
 			QVERIFY(!ifdDisconnectResponse.resultHasError());
 			QCOMPARE(ifdDisconnectResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -146,7 +146,7 @@ class test_IfdDisconnectResponse
 				QVERIFY(!ifdDisconnectResponse.isIncomplete());
 				QCOMPARE(ifdDisconnectResponse.getType(), IfdMessageType::IFDDisconnectResponse);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -156,14 +156,14 @@ class test_IfdDisconnectResponse
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
 				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDDisconnectResponse"_L1));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDDisconnectResponse"_L1));
 		}
 
@@ -189,7 +189,7 @@ class test_IfdDisconnectResponse
 			QVERIFY(!ifdDisconnectResponse.resultHasError());
 			QCOMPARE(ifdDisconnectResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SlotHandle\" should be of type \"string\""_L1));
 		}
 

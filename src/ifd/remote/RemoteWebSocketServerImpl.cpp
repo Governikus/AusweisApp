@@ -38,7 +38,7 @@ void RemoteWebSocketServerImpl::onNewConnection(QSharedPointer<QWebSocket> pSock
 RemoteWebSocketServerImpl::RemoteWebSocketServerImpl()
 	: RemoteWebSocketServer()
 	, mRemoteTlsServer(QSharedPointer<RemoteTlsServer>::create())
-	, mWebSocketServer(mRemoteTlsServer, {ReaderManagerPluginType::NFC, ReaderManagerPluginType::SMART, ReaderManagerPluginType::UNKNOWN})
+	, mWebSocketServer(mRemoteTlsServer, {ReaderManagerPluginType::NFC, ReaderManagerPluginType::UNKNOWN})
 	, mPairingConnection(false)
 {
 	connect(mRemoteTlsServer.data(), &RemoteTlsServer::firePairingCompleted, this, &RemoteWebSocketServer::firePairingCompleted);

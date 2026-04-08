@@ -1,4 +1,4 @@
-From 8b487bea10fa0098847a6713995f8468c0a44f4b Mon Sep 17 00:00:00 2001
+From 04b838e3abb9dd8a7f2aae7b1f26bc62845f139b Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Tue, 19 Jan 2021 17:07:51 +0100
 Subject: android shlib_variant
@@ -8,10 +8,10 @@ Subject: android shlib_variant
  1 file changed, 4 insertions(+)
 
 diff --git x/Configurations/15-android.conf y/Configurations/15-android.conf
-index 1de6b7a91571d7ec22f8549effc5867819663164..3aa2fcdf15ab6b41cdbdceca0778fbdce9c7de6b 100644
+index 26d9d6508f582808fe3a91f924322e280a57b929..2d78accc6ede44472e8a2b74add760d990ec08e1 100644
 --- x/Configurations/15-android.conf
 +++ y/Configurations/15-android.conf
-@@ -226,12 +226,14 @@ my %targets = (
+@@ -226,6 +226,7 @@ my %targets = (
          bn_ops           => add("RC4_CHAR"),
          asm_arch         => 'armv4',
          perlasm_scheme   => "void",
@@ -19,14 +19,15 @@ index 1de6b7a91571d7ec22f8549effc5867819663164..3aa2fcdf15ab6b41cdbdceca0778fbdc
      },
      "android-arm64" => {
          inherit_from     => [ "android" ],
-         bn_ops           => add("RC4_CHAR"),
+@@ -233,6 +234,7 @@ my %targets = (
          asm_arch         => 'aarch64',
          perlasm_scheme   => "linux64",
+         shared_ldflag    => add("-Wl,-z,max-page-size=16384"),
 +        shlib_variant    => '_arm64-v8a',
      },
  
      "android-mips" => {
-@@ -263,12 +265,14 @@ my %targets = (
+@@ -264,6 +266,7 @@ my %targets = (
          asm_arch         => 'x86',
          perlasm_scheme   => "android",
          ex_libs          => add(threads("-latomic")),
@@ -34,9 +35,10 @@ index 1de6b7a91571d7ec22f8549effc5867819663164..3aa2fcdf15ab6b41cdbdceca0778fbdc
      },
      "android-x86_64" => {
          inherit_from     => [ "android" ],
-         bn_ops           => add("RC4_INT"),
+@@ -271,6 +274,7 @@ my %targets = (
          asm_arch         => 'x86_64',
          perlasm_scheme   => "elf",
+         shared_ldflag    => add("-Wl,-z,max-page-size=16384"),
 +        shlib_variant    => '_x86_64',
      },
  

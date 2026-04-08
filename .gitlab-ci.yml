@@ -52,9 +52,8 @@ Bootstrap:
     - uv venv $VIRTUAL_ENV
     - source $VIRTUAL_ENV/bin/activate
   script:
-    - hg clone -U ${REPOSITORY} source
-    - hg update -r $[[ inputs.revision ]] -R source
-    - cmake -DSPLIT=OFF -DRELEASE="$[[ inputs.release ]]" -DREV="$[[ inputs.revision ]]" -P source/ci.cmake
+    - hg clone --stream ${REPOSITORY} -u $[[ inputs.revision ]] source
+    - cmake -DSPLIT=OFF -DRELEASE="$[[ inputs.release ]]" -P source/ci.cmake
   artifacts:
     paths:
       - gitlab-ci-child.yml

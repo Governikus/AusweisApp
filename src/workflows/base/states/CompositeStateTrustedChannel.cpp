@@ -40,7 +40,7 @@ CompositeStateTrustedChannel::CompositeStateTrustedChannel(const QSharedPointer<
 	auto* sDidAuthenticateEac1 = StateBuilder::createState<StateDidAuthenticateEac1>(mContext);
 	auto* sSendDidAuthenticateResponseEac1 = StateBuilder::createState<StateSendDIDAuthenticateResponseEAC1>(mContext);
 	auto* sEacAdditionalInputType = StateBuilder::createState<StateEACAdditionalInputType>(mContext);
-	auto* sSendDidAuthenticatResponseEacAdditionalInput = StateBuilder::createState<StateSendDIDAuthenticateResponseEACAdditionalInputType>(mContext);
+	auto* sSendDidAuthenticateResponseEacAdditionalInput = StateBuilder::createState<StateSendDIDAuthenticateResponseEACAdditionalInputType>(mContext);
 	auto* sProcessCertificatesFromEac2 = StateBuilder::createState<StateProcessCertificatesFromEac2>(mContext);
 	auto* sDidAuthenticateEac2 = StateBuilder::createState<StateDidAuthenticateEac2>(mContext);
 	auto* sSendDidAuthenticateResponseEac2 = StateBuilder::createState<StateSendDIDAuthenticateResponseEAC2>(mContext);
@@ -62,7 +62,7 @@ CompositeStateTrustedChannel::CompositeStateTrustedChannel(const QSharedPointer<
 	sDidAuthenticateEac1->setParent(this);
 	sSendDidAuthenticateResponseEac1->setParent(this);
 	sEacAdditionalInputType->setParent(this);
-	sSendDidAuthenticatResponseEacAdditionalInput->setParent(this);
+	sSendDidAuthenticateResponseEacAdditionalInput->setParent(this);
 	sProcessCertificatesFromEac2->setParent(this);
 	sDidAuthenticateEac2->setParent(this);
 	sSendDidAuthenticateResponseEac2->setParent(this);
@@ -109,12 +109,12 @@ CompositeStateTrustedChannel::CompositeStateTrustedChannel(const QSharedPointer<
 	sSendDidAuthenticateResponseEac1->addTransition(sSendDidAuthenticateResponseEac1, &StateSendDIDAuthenticateResponseEAC1::fireReceivedStartPaosResponse, sDestroyPace);
 
 	sEacAdditionalInputType->addTransition(sEacAdditionalInputType, &AbstractState::fireContinue, sProcessCertificatesFromEac2);
-	sEacAdditionalInputType->addTransition(sEacAdditionalInputType, &AbstractState::fireAbort, sSendDidAuthenticatResponseEacAdditionalInput);
-	sEacAdditionalInputType->addTransition(sEacAdditionalInputType, &StateEACAdditionalInputType::fireSendDidAuthenticatResponse, sSendDidAuthenticatResponseEacAdditionalInput);
+	sEacAdditionalInputType->addTransition(sEacAdditionalInputType, &AbstractState::fireAbort, sSendDidAuthenticateResponseEacAdditionalInput);
+	sEacAdditionalInputType->addTransition(sEacAdditionalInputType, &StateEACAdditionalInputType::fireSendDidAuthenticateResponse, sSendDidAuthenticateResponseEacAdditionalInput);
 
-	sSendDidAuthenticatResponseEacAdditionalInput->addTransition(sSendDidAuthenticatResponseEacAdditionalInput, &AbstractState::fireContinue, sProcessCertificatesFromEac2);
-	sSendDidAuthenticatResponseEacAdditionalInput->addTransition(sSendDidAuthenticatResponseEacAdditionalInput, &AbstractState::fireAbort, sDestroyPace);
-	sSendDidAuthenticatResponseEacAdditionalInput->addTransition(sSendDidAuthenticatResponseEacAdditionalInput, &StateSendDIDAuthenticateResponseEACAdditionalInputType::fireReceivedStartPaosResponse, sDestroyPace);
+	sSendDidAuthenticateResponseEacAdditionalInput->addTransition(sSendDidAuthenticateResponseEacAdditionalInput, &AbstractState::fireContinue, sProcessCertificatesFromEac2);
+	sSendDidAuthenticateResponseEacAdditionalInput->addTransition(sSendDidAuthenticateResponseEacAdditionalInput, &AbstractState::fireAbort, sDestroyPace);
+	sSendDidAuthenticateResponseEacAdditionalInput->addTransition(sSendDidAuthenticateResponseEacAdditionalInput, &StateSendDIDAuthenticateResponseEACAdditionalInputType::fireReceivedStartPaosResponse, sDestroyPace);
 
 	sProcessCertificatesFromEac2->addTransition(sProcessCertificatesFromEac2, &AbstractState::fireContinue, sDidAuthenticateEac2);
 	sProcessCertificatesFromEac2->addTransition(sProcessCertificatesFromEac2, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac2);

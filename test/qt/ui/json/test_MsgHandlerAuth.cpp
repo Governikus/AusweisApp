@@ -4,6 +4,7 @@
 
 #include "messages/MsgHandlerAuth.h"
 
+#include "AppController.h"
 #include "AppSettings.h"
 #include "LanguageLoader.h"
 #include "MessageDispatcher.h"
@@ -11,7 +12,6 @@
 #include "UiPluginJson.h"
 #include "VolatileSettings.h"
 #include "WorkflowRequest.h"
-#include "controller/AppController.h"
 #include "states/StateGetTcToken.h"
 
 #include "TestWorkflowContext.h"

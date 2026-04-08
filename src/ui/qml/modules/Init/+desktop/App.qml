@@ -9,6 +9,7 @@ import Governikus.Global
 import Governikus.Style
 import Governikus.TitleBar
 import Governikus.Type
+import Governikus.UpdateView
 import Governikus.View
 
 import QtQml
@@ -40,24 +41,10 @@ ApplicationWindow {
 		contentItem: (contentArea.currentItem as SectionPage)
 		showPane: contentArea.depth > 1
 
-		onShowUpdate: contentArea.setUiModule(UiModule.UPDATEINFORMATION)
+		onShowUpdate: contentArea.push(updateView)
 		onStartClicked: contentArea.pop(null)
 	}
 
-	Component.onCompleted: titleBar.forceActiveFocus(Qt.MouseFocusReason)
-	onActiveChanged: {
-		if (root.active && contentArea.activeModule === UiModule.DEFAULT) {
-			switch (root.visibility) {
-			case ApplicationWindow.Windowed:
-			case ApplicationWindow.Maximized:
-			case ApplicationWindow.FullScreen:
-				UiPluginModel.showUpdateInformationIfPending();
-			// fall through
-			default:
-				break;
-			}
-		}
-	}
 	onClosing: close => {
 		ApplicationModel.fireAppAboutToQuit();
 		close.accepted = closeHandler.handle();
@@ -270,20 +257,10 @@ ApplicationWindow {
 				}
 				break;
 			case ApplicationModel.Workflow.REMOTE_SERVICE:
-			case ApplicationModel.Workflow.SMART:
 			case ApplicationModel.Workflow.NONE:
 				break;
 			}
 			contentArea.setUiModule(pModule);
-		}
-		function onIsUpdatePendingChanged() {
-			if (!UiPluginModel.isUpdatePending) {
-				return;
-			}
-
-			if (root.active && contentArea.activeModule === UiModule.DEFAULT) {
-				UiPluginModel.showUpdateInformationIfPending();
-			}
 		}
 
 		target: UiPluginModel
@@ -304,6 +281,13 @@ ApplicationWindow {
 	ProxyCredentialsPopup {
 		id: proxyCredentials
 
+	}
+	Component {
+		id: updateView
+
+		UpdateView {
+			onLeaveView: contentArea.pop()
+		}
 	}
 	Component {
 		id: detachedLogViewWindow

@@ -73,10 +73,13 @@ WebSocketChannel::~WebSocketChannel()
 
 void WebSocketChannel::send(const QByteArray& pDataBlock)
 {
-	if (mConnection)
+	if (!mConnection || mConnection->state() == QAbstractSocket::UnconnectedState)
 	{
-		mConnection->sendTextMessage(QString::fromUtf8(pDataBlock));
+		qCWarning(ifd) << "Trying to send on a disconnected socket. Scheduling related IfdDispatcher for removal.";
+		Q_EMIT fireClosed(GlobalStatusCode::IfdConnector_ConnectionError);
+		return;
 	}
+	mConnection->sendTextMessage(QString::fromUtf8(pDataBlock));
 }
 
 

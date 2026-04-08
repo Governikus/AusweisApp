@@ -66,8 +66,8 @@ BaseOnboardingView {
 	GText {
 		Layout.bottomMargin: Style.dimens.pane_spacing
 
-		//: MOBILE
-		text: qsTr("Now follow the instruction for the setup on your PC/Mac. If the setup does not start automatically, you may find it under Help > Setup.")
+		//: MOBILE The text between %1 and %2 will be emphasized.
+		text: qsTr("Now follow the instruction for the setup on your PC/Mac. If the setup does not start automatically, you may find it under %1Help%2.").arg("<b>").arg("</b>")
 	}
 	GContinueButton {
 		//: MOBILE

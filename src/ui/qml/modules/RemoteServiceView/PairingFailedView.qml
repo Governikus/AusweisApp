@@ -6,8 +6,6 @@ import Governikus.Animations
 import Governikus.ResultView
 
 ResultView {
-	id: root
-
 	required property string deviceName
 	required property string errorMessage
 

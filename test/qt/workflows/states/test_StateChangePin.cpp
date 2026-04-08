@@ -125,11 +125,8 @@ class test_StateChangePin
 			//Should abort
 			QTest::newRow("INPUT_TIME_OUT") << CardReturnCode::INPUT_TIME_OUT << QByteArray() << GlobalStatus::Code::Card_Input_TimeOut << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
 			QTest::newRow("CANCELLATION_BY_USER") << CardReturnCode::CANCELLATION_BY_USER << QByteArray() << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Card_User_Cancelled);
-			QTest::newRow("NEW_PIN_MISMATCH") << CardReturnCode::NEW_PIN_MISMATCH << QByteArray() << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Card_New_Pin_Mismatch);
 			QTest::newRow("PROTOCOL_ERROR") << CardReturnCode::PROTOCOL_ERROR << QByteArray() << GlobalStatus::Code::Card_Protocol_Error << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
-			QTest::newRow("NEW_PIN_INVALID_LENGTH") << CardReturnCode::NEW_PIN_INVALID_LENGTH << QByteArray() << GlobalStatus::Code::Card_NewPin_Invalid_Length << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
 			QTest::newRow("COMMAND_FAILED") << CardReturnCode::COMMAND_FAILED << QByteArray() << GlobalStatus::Code::Card_Communication_Error << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
-			QTest::newRow("PIN_BLOCKED") << CardReturnCode::PIN_BLOCKED << QByteArray() << GlobalStatus::Code::Card_Pin_Blocked << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
 		}
 
 
@@ -168,40 +165,6 @@ class test_StateChangePin
 			QCOMPARE(spyAbort.count(), fireAbort);
 			QCOMPARE(spyRetry.count(), fireRetry);
 			QCOMPARE(context->getFailureCode(), failureCode);
-		}
-
-
-		void test_OnSetSmartEidPinDone_data()
-		{
-			QTest::addColumn<ReaderManagerPluginType>("type");
-
-			const auto& readerTypes = Enum<ReaderManagerPluginType>::getList();
-			for (const auto& type : readerTypes)
-			{
-				QTest::newRow(getEnumName(type).data()) << type;
-			}
-		}
-
-
-		void test_OnSetSmartEidPinDone()
-		{
-			QFETCH(ReaderManagerPluginType, type);
-
-			const QSharedPointer<ChangePinContext> context(new ChangePinContext());
-			StateChangePin state(context);
-			const auto& worker = MockCardConnectionWorker::create();
-			const QSharedPointer<MockSetEidPinCommand> command(new MockSetEidPinCommand(worker));
-			const ReaderInfo readerInfo("SMART"_L1, type, CardInfo(CardType::SMART_EID));
-			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));
-			context->setCardConnection(connection);
-
-			QSignalSpy spyContinue(&state, &StateChangePin::fireContinue);
-
-			command->setMockReturnCode(CardReturnCode::OK);
-			command->setData(QByteArray::fromHex("9000"));
-			state.onSetEidPinDone(command);
-			QCOMPARE(context->getSuccessMessage(), tr("You have successfully changed your Smart-eID PIN."));
-			QCOMPARE(spyContinue.count(), 1);
 		}
 
 

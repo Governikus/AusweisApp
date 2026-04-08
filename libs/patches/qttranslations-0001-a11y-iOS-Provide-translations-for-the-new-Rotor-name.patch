@@ -1,4 +1,4 @@
-From cf0f72ecd2c0466544fd937b01a536a81b5cc914 Mon Sep 17 00:00:00 2001
+From 8415cc5cd3b62814186f32bd70244206164b6001 Mon Sep 17 00:00:00 2001
 From: Timon Sassor <timon.sassor@governikus.de>
 Date: Thu, 18 Sep 2025 15:23:44 +0200
 Subject: a11y iOS: Provide translations for the new Rotor names for TextEdit
@@ -18,10 +18,10 @@ Change-Id: Idba7c540939638f34bda5115bc273008aa98afad
  1 file changed, 12 insertions(+)
 
 diff --git x/qttranslations/translations/qtbase_de.ts y/qttranslations/translations/qtbase_de.ts
-index 48e999acdad9dab7737b1d582164531db9393eb7..479ccc84f86d39b65f055d28a431626970a18681 100644
+index bd7c6292a09c60976b4f5c35e4a3112ebf5613da..e2faca6a9517d90cf970569345116ae004ef93e2 100644
 --- x/qttranslations/translations/qtbase_de.ts
 +++ y/qttranslations/translations/qtbase_de.ts
-@@ -7564,6 +7564,18 @@ Die minimal erforderliche Version von Direct2D ist %1 Die auf diesem System inst
+@@ -7578,6 +7578,18 @@ Die minimal erforderliche Version von Direct2D ist %1 Die auf diesem System inst
          <source>unchecked</source>
          <translation>nicht markiert</translation>
      </message>

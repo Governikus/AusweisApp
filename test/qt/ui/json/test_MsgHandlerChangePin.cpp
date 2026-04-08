@@ -4,12 +4,12 @@
 
 #include "messages/MsgHandlerChangePin.h"
 
+#include "AppController.h"
 #include "Env.h"
 #include "MessageDispatcher.h"
 #include "UiLoader.h"
 #include "UiPluginJson.h"
 #include "VolatileSettings.h"
-#include "controller/AppController.h"
 
 #include "TestWorkflowContext.h"
 

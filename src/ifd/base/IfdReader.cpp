@@ -79,7 +79,7 @@ void IfdReader::updateStatus(const IfdStatus& pIfdStatus)
 
 	if (pIfdStatus.getCardAvailable())
 	{
-		mCard.reset(new IfdCard(mDispatcher, getName()));
+		mCard.reset(new IfdCard(mDispatcher, getName(), getReaderInfo().getPluginType() == ReaderManagerPluginType::REMOTE_IFD));
 		fetchCardInfo();
 
 		qCInfo(card_remote) << "Card inserted:" << getReaderInfo().getCardInfo();

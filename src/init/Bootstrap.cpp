@@ -4,12 +4,12 @@
 
 #include "Bootstrap.h"
 
+#include "AppController.h"
 #include "BuildHelper.h"
 #include "CommandLineParser.h"
 #include "Env.h"
 #include "LogHandler.h"
 #include "SignalHandler.h"
-#include "controller/AppController.h"
 
 #include <openssl/crypto.h>
 

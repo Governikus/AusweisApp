@@ -216,34 +216,6 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ALL_PLATFORMS A server has responded with an HTTP error code 4xx.
 			return tr("The service reported an error while processing a client request.");
 
-		case Code::Workflow_Smart_eID_Unavailable:
-			//: ALL_PLATFORMS The device does not support the Smart-eID function
-			return tr("The device does not support Smart-eID.");
-
-		case Code::Workflow_Smart_eID_Applet_Preparation_Failed:
-			//: ANDROID The preparation of the Smart-eID Applet failed
-			return tr("The preparation of the Smart-eID failed.");
-
-		case Code::Workflow_Smart_eID_Authentication_Failed:
-			//: ALL_PLATFORMS No sessionID, required for a personalization, was received
-			return tr("The authentication to the personalization service failed.");
-
-		case Code::Workflow_Smart_eID_ServiceInformation_Query_Failed:
-			//: ALL_PLATFORMS Failed to get the ServiceInformation of the Smart-eID
-			return tr("Failed to get the ServiceInformation of the Smart-eID.");
-
-		case Code::Workflow_Smart_eID_PrePersonalization_Failed:
-			//: ALL_PLATFORMS Initialization of Personalization failed
-			return tr("Initialization of Personalization of Smart-eID failed.");
-
-		case Code::Workflow_Smart_eID_Personalization_Failed:
-			//: ALL_PLATFORMS Personalization of Smart-eID failed
-			return tr("Personalization of Smart-eID failed.");
-
-		case Code::Workflow_Smart_eID_Personalization_Denied:
-			//: ALL_PLATFORMS Personalization of Smart-eID is not allowed, no remaining attempts are left.
-			return tr("You have reached the allowed amount of Smart-eID setups for the current period. You may set up another Smart-eID with your ID card on %1.").arg(getExternalInfo(ExternalInformation::PERSONALIZATION_RESTRICTION_DATE));
-
 		case Code::Network_TimeOut:
 		case Code::Workflow_TrustedChannel_TimeOut:
 			//: ALL_PLATFORMS Technical error description.
@@ -308,7 +280,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Workflow_Cancellation_By_User:
 			//: ALL_PLATFORMS The user cancelled the authentication in the UI.
-			return tr("The process has been cancelled.");
+			return tr("You have canceled the process.");
 
 		case Code::Workflow_InternalError_BeforeTcToken:
 			//: ALL_PLATFORMS An internal error occurred before fetching TcToken.
@@ -365,10 +337,6 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ALL_PLATFORMS The ID card declined the PUK.
 			return tr("The given PUK is not correct.");
 
-		case Code::Card_Pin_Blocked:
-			//: ALL_PLATFORMS The ID card refused the PIN since the PIN feature is blocked after too many wrong attempts.
-			return tr("The PIN was blocked after too many unsuccessful attempts.");
-
 		case Code::Card_Pin_Not_Blocked:
 			//: ALL_PLATFORMS It was attempted to unlock the ID card via PUK even though it was not locked in the first place. This scenario is avoided in the UI by hiding the respective UI elements.
 			return tr("The PIN is not blocked.");
@@ -388,10 +356,6 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Card_ValidityVerificationFailed:
 			//: ALL_PLATFORMS The validity verification of the card failed.
 			return tr("The validity verification of the card failed.");
-
-		case Code::Card_Smart_Invalid:
-			//: ALL_PLATFORMS The existing Smart-eID was invalidated.
-			return tr("The Smart-eID is no longer ready for use. This might have been caused by entering the wrong Smart-eID PIN 3 times. You may personalize a new Smart-eID to resolve the issue.");
 
 		case Code::RemoteReader_CloseCode_AbnormalClose:
 			//: ALL_PLATFORMS The connection to the smartphone card reader (SaK) was lost.

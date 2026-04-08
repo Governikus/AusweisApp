@@ -3,6 +3,7 @@
  */
 
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import Governikus.Global
@@ -56,13 +57,30 @@ Rectangle {
 				onClicked: root.startClicked()
 			}
 			GLink {
-				anchors.bottom: parent.bottom
-				anchors.right: rightTitleBarActions.left
+				id: updateButton
+
+				Accessible.name: text + (enabled ? "" : ". " + toolTip.text)
+				enabled: ApplicationModel.currentWorkflow === ApplicationModel.Workflow.NONE
 				font.underline: true
-				text: qsTr("Update available") + " (%1)".arg(SettingsModel.appUpdateData.version)
+				//: DESKTOP %1 will be replaced with an application version number
+				text: qsTr("Update available (version %1)").arg(SettingsModel.appUpdateData.version)
 				visible: SettingsModel.appUpdateData.updateAvailable && !(root.contentItem instanceof UpdateView)
 
 				onClicked: root.showUpdate()
+
+				anchors {
+					right: rightTitleBarActions.left
+					top: rootAction.top
+					topMargin: rootAction.baselineOffset - baselineOffset
+				}
+				ToolTip {
+					id: toolTip
+
+					delay: Style.toolTipDelay
+					//: DESKTOP
+					text: qsTr("The update can only be performed after the current operation has been completed.")
+					visible: !updateButton.enabled && updateButton.hovered
+				}
 			}
 			Row {
 				id: rightTitleBarActions
@@ -131,8 +149,6 @@ Rectangle {
 			width: parent.width
 
 			NavigationAction {
-				id: backAction
-
 				Layout.fillHeight: true
 				Layout.leftMargin: Style.dimens.pane_padding
 				enabled: root.currentSettings.navigationEnabled

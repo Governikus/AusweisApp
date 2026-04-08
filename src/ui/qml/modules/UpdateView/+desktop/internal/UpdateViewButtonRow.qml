@@ -33,7 +33,6 @@ ColumnLayout {
 
 		//: DESKTOP Name of an progress indicator during a download read by screen readers
 		Accessible.name: qsTr("Download progress")
-		Layout.fillWidth: true
 		text: "%1 %".arg(Math.floor(bar.value))
 		value: root.downloadProgressKB * 100 / root.downloadTotalKB
 		visible: root.downloadInProgress

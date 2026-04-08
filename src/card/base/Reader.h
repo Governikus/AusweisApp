@@ -43,7 +43,6 @@ class Reader
 			CardReturnCode cardReturnCode = CardReturnCode::COMMAND_FAILED;
 			int retryCounter = -1;
 			bool pinDeactivated = false;
-			bool pinInitial = false;
 		};
 		RetryCounterResult getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 

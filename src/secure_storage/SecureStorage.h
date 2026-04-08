@@ -43,10 +43,6 @@ class SecureStorage
 		QUrl mWhitelistServerBaseUrl;
 		QUrl mAppcastUpdateUrl;
 		QUrl mAppcastBetaUpdateUrl;
-		QString mSmartPersonalizationUrl;
-		QString mSmartPersonalizationTestUrl;
-		QString mSmartServiceId;
-		QString mSmartSsdAid;
 		QString mLocalIfdPackageName;
 		QString mLocalIfdMinVersion;
 		QByteArrayList mLocalIfdAllowedCertificateHashes;
@@ -91,9 +87,6 @@ class SecureStorage
 		[[nodiscard]] const QUrl& getWhitelistServerBaseUrl() const;
 		[[nodiscard]] const QUrl& getAppcastUpdateUrl() const;
 		[[nodiscard]] const QUrl& getAppcastBetaUpdateUrl() const;
-		[[nodiscard]] const QString& getSmartPersonalizationUrl(bool pTest = false) const;
-		[[nodiscard]] const QString& getSmartServiceId() const;
-		[[nodiscard]] const QString& getSmartSsdAid() const;
 		[[nodiscard]] const QString& getLocalIfdPackageName() const;
 		[[nodiscard]] const QString& getLocalIfdMinVersion() const;
 		[[nodiscard]] const QByteArrayList& getLocalIfdAllowedCertificateHashes() const;

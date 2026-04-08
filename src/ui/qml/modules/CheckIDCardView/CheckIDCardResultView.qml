@@ -64,7 +64,7 @@ CheckResultView {
 
 	GText {
 		font.weight: Style.font.bold
-		horizontalAlignment: Text.AlignHCenter
+		horizontalAlignment: Style.scanPatternAlignment
 		text: (d.successNfc && !root.usedInOnboarding) ? (Style.is_layout_desktop ?
 			//: DESKTOP
 			qsTr("You may now try the function: \"See my personal data\". Click the \"%1\" button to do so now.") :

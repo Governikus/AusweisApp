@@ -4,11 +4,13 @@
 
 #include "RemoteIfdClient.h"
 
+#include "AppSettings.h"
 #include "DatagramHandler.h"
 #include "Env.h"
 #include "IfdListImpl.h"
 #include "LogHandler.h"
 #include "TestFileHelper.h"
+#include "VolatileSettings.h"
 #include "messages/Discovery.h"
 #include "messages/IfdEstablishContext.h"
 
@@ -91,6 +93,7 @@ class test_RemoteIfdClient
 		void initTestCase()
 		{
 			Env::getSingleton<LogHandler>()->init();
+			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 		}
 
 
@@ -115,11 +118,14 @@ class test_RemoteIfdClient
 
 		void cleanup()
 		{
+			Env::getSingleton<AppSettings>()->getGeneralSettings().clearIfdServiceToken();
 			QVERIFY(Env::getCounter<DatagramHandler*>() <= 2);
 			Env::clear();
 			QVERIFY(mDatagramHandlerMock.isNull());
 			QVERIFY(mIfdList.isNull());
 			QVERIFY(mRemoteConnectorMock.isNull());
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -136,12 +142,35 @@ class test_RemoteIfdClient
 			client.stopDetection();
 			QVERIFY(mDatagramHandlerMock.isNull());
 
+			Env::getSingleton<AppSettings>()->getGeneralSettings().generateIfdServiceToken();
+			client.startDetection();
+			QCOMPARE(Env::getCounter<DatagramHandler*>(), 1);
+			QVERIFY(mDatagramHandlerMock.isNull());
+
+			Env::getSingleton<AppSettings>()->getGeneralSettings().clearIfdServiceToken();
 			client.startDetection();
 			QCOMPARE(Env::getCounter<DatagramHandler*>(), 2);
 			QVERIFY(!mDatagramHandlerMock.isNull());
 
 			client.stopDetection();
 			QVERIFY(mDatagramHandlerMock.isNull());
+		}
+
+
+		void testEnableLocalIfdDetection()
+		{
+			QVERIFY(Env::getSingleton<AppSettings>()->getGeneralSettings().getIfdServiceToken().isNull());
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+
+			RemoteIfdClient client;
+			QVERIFY(!client.enableLocalIfdDetection(true));
+			QTRY_COMPARE(logSpy.size(), 1);
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Local IFD workflow is not running"_L1));
+
+			Env::getSingleton<AppSettings>()->getGeneralSettings().generateIfdServiceToken();
+			QVERIFY(client.enableLocalIfdDetection(true));
+			QTRY_COMPARE(logSpy.size(), 2);
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Generate IFD Service token"_L1));
 		}
 
 
@@ -227,6 +256,7 @@ class test_RemoteIfdClient
 			QFETCH(QByteArray, discovery);
 			QFETCH(QHostAddress, sender);
 			QFETCH(QList<QLatin1String>, logging);
+			logging << "Local IFD workflow is not running"_L1;
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
@@ -236,8 +266,8 @@ class test_RemoteIfdClient
 			QVERIFY(!mDatagramHandlerMock.isNull());
 
 			Q_EMIT mDatagramHandlerMock->fireNewMessage(discovery, sender);
-			QCOMPARE(logSpy.count(), logging.size());
-			for (const auto& log : logging)
+			QTRY_COMPARE(logSpy.count(), logging.size());
+			for (const auto& log : std::as_const(logging))
 			{
 				QVERIFY(TestFileHelper::containsLog(logSpy, log));
 			}
@@ -262,9 +292,9 @@ class test_RemoteIfdClient
 
 			const auto& json = IfdEstablishContext(IfdVersion::Version::latest, DeviceInfo::getName()).toByteArray(IfdVersion::Version::latest, QStringLiteral("TestContext"));
 			Q_EMIT mDatagramHandlerMock->fireNewMessage(json, QHostAddress("192.168.1.88"_L1));
-			QCOMPARE(logSpy.count(), 6);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be REMOTE_IFD"_L1));
-			QVERIFY(logSpy.at(5).at(0).toString().contains("Discarding unparsable message"_L1));
+			QTRY_COMPARE(logSpy.count(), 7);
+			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be REMOTE_IFD"_L1));
+			QVERIFY(logSpy.at(6).at(0).toString().contains("Discarding unparsable message"_L1));
 		}
 
 

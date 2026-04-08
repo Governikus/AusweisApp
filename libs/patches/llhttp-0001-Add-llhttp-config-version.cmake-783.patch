@@ -1,0 +1,41 @@
+From 2e81db59c594797e39b4975d4a5fa34b4effc1f4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Tue, 24 Feb 2026 09:53:59 +0100
+Subject: Add llhttp-config-version.cmake (#783)
+
+This allows CMake to use find_package with a compatible version of
+llhttp.
+
+find_package(llhttp 9.0.0 REQUIRED)
+
+-- The following REQUIRED packages have been found:
+
+ * llhttp (required version >= 9.0.0)
+
+(cherry picked from commit 068dab8950dc34599020c00d8ff7eef10dac7716)
+---
+ CMakeLists.txt | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git x/CMakeLists.txt y/CMakeLists.txt
+index 6398043145c87980f584a7468f03b902f5b2e466..ea2f20aa71a0e4ec5d91f6b7b9327881ec2c70a0 100644
+--- x/CMakeLists.txt
++++ y/CMakeLists.txt
+@@ -78,6 +78,17 @@ function(config_library target)
+     NAMESPACE llhttp::
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llhttp
+   )
++
++  include(CMakePackageConfigHelpers)
++  write_basic_package_version_file(
++    ${CMAKE_CURRENT_BINARY_DIR}/llhttp-config-version.cmake
++    COMPATIBILITY AnyNewerVersion
++  )
++  install(FILES
++    ${CMAKE_CURRENT_BINARY_DIR}/llhttp-config-version.cmake
++    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llhttp
++  )
++
+ endfunction(config_library target)
+ 
+ if(LLHTTP_BUILD_SHARED_LIBS)

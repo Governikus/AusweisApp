@@ -10,8 +10,6 @@ import Governikus.Type
 import Governikus.Style
 
 ColumnLayout {
-	id: root
-
 	spacing: Style.dimens.pane_spacing
 
 	GPane {
@@ -25,7 +23,6 @@ ColumnLayout {
 			Utils.positionViewAtItem(this)
 
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.useSelfauthenticationTestUri
 			//: DESKTOP
 			description: qsTr("Allow test sample card usage")
@@ -38,7 +35,6 @@ ColumnLayout {
 				Utils.positionViewAtItem(this)
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.enableSimulator
 
 			//: DESKTOP
@@ -51,7 +47,6 @@ ColumnLayout {
 				Utils.positionViewAtItem(this)
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.developerMode
 
 			//: DESKTOP
@@ -65,7 +60,6 @@ ColumnLayout {
 				Utils.positionViewAtItem(this)
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.showInAppNotifications
 
 			//: DESKTOP Only visible when the user activates the developer mode in the settings.

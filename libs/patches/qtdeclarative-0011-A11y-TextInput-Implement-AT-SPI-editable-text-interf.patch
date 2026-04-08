@@ -1,0 +1,175 @@
+From b0ed54e6ce7dd0359b4709d12c1270b5f63e860c Mon Sep 17 00:00:00 2001
+From: MohammadHossein Qanbari <mohammad.qanbari@qt.io>
+Date: Wed, 14 Jan 2026 16:33:29 +0100
+Subject: A11y TextInput: Implement AT-SPI editable text interface
+
+Previously, AT-SPI clients could not modify a TextInput's text content
+because the editable text interface was not implemented.
+
+This patch adds support for the AT-SPI editable text interface,
+enabling accessibility clients to edit the text content of TextInput
+elements. Since TextField inherits from TextInput, this change also
+applies to TextField.
+
+Fixes: QTBUG-142132
+Pick-to: 6.11 6.10 6.8
+Change-Id: Id5e8f5a4c4947e6fb0819b3b70768b38b2ad10b4
+(cherry-picked from: 007960c48aeb5f8ae9226a12a9097fa24fdbe9a2)
+---
+ .../accessible/qaccessiblequicktextinput.cpp  | 26 +++++++
+ .../accessible/qaccessiblequicktextinput_p.h  | 11 ++-
+ .../qquickaccessible/tst_qquickaccessible.cpp | 68 ++++++++++++++++++-
+ 3 files changed, 103 insertions(+), 2 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequicktextinput.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequicktextinput.cpp
+index 23132e0cedc2e11d8f658bc6b61de0a71332d5b7..bf069e4e5acac78741e06114a4c3033257691a63 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequicktextinput.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequicktextinput.cpp
+@@ -26,6 +26,32 @@ void QAccessibleQuickTextInput::setSelection(int selectionIndex, int startOffset
+         textInput()->select(startOffset, endOffset);
+ }
+ 
++void *QAccessibleQuickTextInput::interface_cast(QAccessible::InterfaceType type)
++{
++    // Expose EditableTextInterface based on actual text input's editability.
++    // Base class QAccessibleQuickItem::interface_cast() handles TextInterface
++    // automatically for role() == EditableText|StaticText|Heading.
++    if ((type == QAccessible::EditableTextInterface) && !textInput()->isReadOnly())
++        return static_cast<QAccessibleEditableTextInterface*>(this);
++    return QAccessibleQuickItem::interface_cast(type);
++}
++
++void QAccessibleQuickTextInput::deleteText(int startOffset, int endOffset)
++{
++    textInput()->remove(startOffset, endOffset);
++}
++
++void QAccessibleQuickTextInput::insertText(int offset, const QString &text)
++{
++    textInput()->insert(offset, text);
++}
++
++void QAccessibleQuickTextInput::replaceText(int startOffset, int endOffset, const QString &text)
++{
++    textInput()->remove(startOffset, endOffset);
++    textInput()->insert(startOffset, text);
++}
++
+ #endif // accessibility
+ 
+ QT_END_NAMESPACE
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequicktextinput_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequicktextinput_p.h
+index 1ba46f0f601d087b839e320b480f2fd5379b9ec8..5225f8ad7be166dd2fd96a39f4313130d9273841 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequicktextinput_p.h
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequicktextinput_p.h
+@@ -23,7 +23,8 @@ QT_BEGIN_NAMESPACE
+ 
+ #if QT_CONFIG(accessibility)
+ 
+-class Q_QUICK_EXPORT QAccessibleQuickTextInput : public QAccessibleQuickItem
++class Q_QUICK_EXPORT QAccessibleQuickTextInput : public QAccessibleQuickItem,
++                                                 public QAccessibleEditableTextInterface
+ {
+ public:
+     QAccessibleQuickTextInput(QQuickTextInput *textEdit);
+@@ -31,6 +32,14 @@ public:
+     void removeSelection(int selectionIndex) override;
+     void setSelection(int selectionIndex, int startOffset, int endOffset) override;
+ 
++    // QAccessibleInterface interface
++    void *interface_cast(QAccessible::InterfaceType) override;
++
++    // QAccessibleEditableTextInterface interface
++    void deleteText(int startOffset, int endOffset) override;
++    void insertText(int offset, const QString &text) override;
++    void replaceText(int startOffset, int endOffset, const QString &text) override;
++
+ private:
+     QQuickTextInput *textInput() const { return static_cast<QQuickTextInput *>(item()); }
+ };
+diff --git x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+index 5bbefa3db572dd439f77e1a34622d2c2268b324f..60439ea08557ab8b03fc7a925c2cc23a4f93b9eb 100644
+--- x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
++++ y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+@@ -542,7 +542,6 @@ void tst_QQuickAccessible::basicPropertiesTest()
+     auto textInterface = textInput->textInterface();
+     QVERIFY(textInterface);
+     auto editableTextInterface = textInput->editableTextInterface();
+-    QEXPECT_FAIL("", "EditableTextInterface is not implemented", Continue);
+     QVERIFY(editableTextInterface);
+     auto newText = QString("a new text");
+     textInput->setText(QAccessible::Value, newText);
+@@ -943,6 +942,73 @@ void tst_QQuickAccessible::relations()
+     QVERIFY(!otherRelations.isEmpty());
+ }
+ 
++void tst_QQuickAccessible::editableTextInterface_data()
++{
++    QTest::addColumn<QString>("objectName");
++    QTest::addColumn<bool>("editable");
++    QTest::addColumn<bool>("readOnly");
++
++    QTest::newRow("Label") << "label" << false << true;
++    QTest::newRow("TextInput") << "textInput" << true << false;
++    QTest::newRow("TextInput_readOnly") << "textInput" << true << true;
++    QTest::newRow("TextField") << "textField" << true << false;
++    QTest::newRow("TextField_readOnly") << "textField" << true << true;
++    QTest::newRow("TextEdit") << "textEdit" << true << false;
++    QTest::newRow("TextEdit_readOnly") << "textEdit" << true << true;
++    QTest::newRow("TextArea") << "textArea" << true << false;
++    QTest::newRow("TextArea_readOnly") << "textArea" << true << true;
++}
++
++void tst_QQuickAccessible::editableTextInterface()
++{
++    QFETCH(QString, objectName);
++    QFETCH(bool, editable);
++    QFETCH(bool, readOnly);
++
++    auto clearEvents = qScopeGuard([]{ QTestAccessibility::clearEvents(); });
++
++    auto window = std::make_unique<QQuickView>();
++    window->setSource(testFileUrl("textInterfaces.qml"));
++    window->show();
++    QVERIFY(QTest::qWaitForWindowActive(window.get()));
++
++    QQuickItem *item = window->findChild<QQuickItem *>(objectName);
++    QVERIFY(item);
++
++    QAccessibleInterface *itemIface = QAccessible::queryAccessibleInterface(item);
++    QVERIFY(itemIface);
++
++    QAccessibleQuickItem *accessibleQuickItem = static_cast<QAccessibleQuickItem *>(itemIface);
++    QVERIFY(accessibleQuickItem);
++
++    QAccessibleTextInterface *textIface = itemIface->textInterface();
++    QVERIFY(textIface);
++
++    // The read-only text items does not have editable text interface.
++    // But they could be editable, for example a read-only TextEdit.
++    if (editable)
++        QVERIFY2(item->setProperty("readOnly", readOnly), "Failed to set readOnly property");
++
++    QAccessibleEditableTextInterface *editableIface = itemIface->editableTextInterface();
++    if (!editable || readOnly) {
++        QVERIFY(editableIface == nullptr);
++    } else {
++        QVERIFY(editableIface != nullptr);
++
++        itemIface->setText(QAccessible::Value, QString("This is a text"));
++        QCOMPARE(accessibleQuickItem->text(QAccessible::Value), QString("This is a text"));
++
++        editableIface->replaceText(10, 14, "test");
++        QCOMPARE(accessibleQuickItem->text(QAccessible::Value), QString("This is a test"));
++
++        editableIface->insertText(9, " new");
++        QCOMPARE(accessibleQuickItem->text(QAccessible::Value), QString("This is a new test"));
++
++        editableIface->deleteText(9, 13);
++        QCOMPARE(accessibleQuickItem->text(QAccessible::Value), QString("This is a test"));
++    }
++}
++
+ QTEST_MAIN(tst_QQuickAccessible)
+ 
+ #include "tst_qquickaccessible.moc"

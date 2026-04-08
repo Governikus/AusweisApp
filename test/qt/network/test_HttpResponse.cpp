@@ -28,7 +28,7 @@ class test_HttpResponse
 			response.setStatus(HTTP_STATUS_NON_AUTHORITATIVE_INFORMATION);
 			const auto& msg = response.getMessage();
 
-			QVERIFY(msg.contains("HTTP/1.0 203 Non-Authoritative Information"));
+			QVERIFY(msg.contains("HTTP/1.0 203 NON_AUTHORITATIVE_INFORMATION"));
 			QVERIFY(msg.contains("Content-Length: 0"));
 			QVERIFY(msg.contains("Date: "));
 			QVERIFY(msg.contains("Server: AusweisApp2/1.2 (TR-03124-1/1.4)"));

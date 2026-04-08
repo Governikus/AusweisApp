@@ -7,8 +7,6 @@ import QtQuick
 import Governikus.Style
 
 Rectangle {
-	id: root
-
 	property bool bottomLeftCorner: true
 	property bool bottomRightCorner: true
 	property bool topLeftCorner: true

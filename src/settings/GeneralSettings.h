@@ -97,6 +97,11 @@ class GeneralSettings
 		[[nodiscard]] bool autoUpdateCheckIsSetByAdmin() const;
 		void setAutoUpdateCheck(bool pAutoUpdateCheck);
 
+		[[nodiscard]] QDateTime lastAppcastDate() const;
+		void setLastAppcastDate(const QDateTime& pDate);
+		[[nodiscard]] QString lastAppcastVersion() const;
+		void setLastAppcastVersion(const QString& pVersion);
+
 		[[nodiscard]] bool isVisualPrivacy() const;
 		void setVisualPrivacy(bool pVisualPrivacy);
 
@@ -137,11 +142,10 @@ class GeneralSettings
 		[[nodiscard]] bool isScreenPrivacy() const;
 		void setScreenPrivacy(bool pEnable);
 
-		[[nodiscard]] QString getIfdServiceToken();
 
-		[[nodiscard]] bool doSmartUpdate() const;
-		[[nodiscard]] bool isSmartAvailable() const;
-		void setSmartAvailable(bool pSmartAvailable);
+		void clearIfdServiceToken();
+		void generateIfdServiceToken();
+		[[nodiscard]] QString getIfdServiceToken();
 
 		[[nodiscard]] static constexpr bool autoStartDefault() noexcept
 		{
@@ -182,7 +186,6 @@ class GeneralSettings
 		void fireUseAnimationsChanged();
 		void fireDarkModeChanged();
 		void fireScreenPrivacyChanged();
-		void fireSmartAvailableChanged(bool pSmartAvailable);
 };
 
 

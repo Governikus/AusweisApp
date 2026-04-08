@@ -8,8 +8,6 @@ der |AppName| unterstützt.
 
 Betriebssysteme
 """""""""""""""
-- macOS 13
-
 - macOS 14
 
 - macOS 15
@@ -30,7 +28,7 @@ Betriebssysteme
 
 - Android 9 und höher (armeabi-v7a, arm64-v8a, x86_64)
 
-- iOS 16 und höher
+- iOS 17 und höher
 
 - ChromeOS 140 und höher
 
@@ -60,11 +58,11 @@ getestet.
 
 - Chrome 144
 
-- Firefox 147
+- Firefox 149
 
-- Safari 26 (macOS)
+- Safari 26.2 (macOS)
 
-- Edge 144
+- Edge 146
 
 
 

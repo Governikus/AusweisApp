@@ -112,7 +112,7 @@ void RemoteServiceSettings::setDeviceName(const QString& pName)
 	{
 		mStore->setValue(SETTINGS_NAME_DEVICE_NAME(), serverName);
 	}
-	save(mStore);
+	sync(mStore);
 }
 
 
@@ -125,7 +125,7 @@ bool RemoteServiceSettings::getPinPadMode() const
 void RemoteServiceSettings::setPinPadMode(bool pPinPadMode)
 {
 	mStore->setValue(SETTINGS_NAME_PIN_PAD_MODE(), pPinPadMode);
-	save(mStore);
+	sync(mStore);
 }
 
 
@@ -138,7 +138,7 @@ bool RemoteServiceSettings::getShowAccessRights() const
 void RemoteServiceSettings::setShowAccessRights(bool pShowAccessRights)
 {
 	mStore->setValue(SETTINGS_NAME_SHOW_ACCESS_RIGHTS(), pShowAccessRights);
-	save(mStore);
+	sync(mStore);
 }
 
 
@@ -239,7 +239,7 @@ void RemoteServiceSettings::setCertificates(const QList<QSslCertificate>& pCertC
 		data << cert.toPem();
 	}
 	mStore->setValue(SETTINGS_NAME_CERTIFICATE(), data.join());
-	save(mStore);
+	sync(mStore);
 }
 
 
@@ -262,7 +262,7 @@ QSslKey RemoteServiceSettings::getKey() const
 void RemoteServiceSettings::setKey(const QSslKey& pKey) const
 {
 	mStore->setValue(SETTINGS_NAME_KEY(), pKey.toPem());
-	save(mStore);
+	sync(mStore);
 }
 
 
@@ -316,7 +316,7 @@ void RemoteServiceSettings::setRemoteInfos(const QList<RemoteInfo>& pInfos)
 	}
 
 	mStore->setValue(SETTINGS_NAME_TRUSTED_REMOTE_INFO(), QJsonDocument(array).toJson(QJsonDocument::Compact));
-	save(mStore);
+	sync(mStore);
 	Q_EMIT fireTrustedRemoteInfosChanged();
 }
 

@@ -71,7 +71,7 @@ void TrayIcon::create()
 
 	mTrayIcon = new QSystemTrayIcon(mIcon);
 	connect(mTrayIcon, &QSystemTrayIcon::activated, this, &TrayIcon::onActivated);
-	connect(mTrayIcon, &QSystemTrayIcon::messageClicked, this, &TrayIcon::fireShow);
+	connect(mTrayIcon, &QSystemTrayIcon::messageClicked, this, &TrayIcon::fireMessageClicked);
 
 	updateMenu();
 

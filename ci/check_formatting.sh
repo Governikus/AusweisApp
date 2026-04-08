@@ -44,7 +44,7 @@ echo "Rollback to ${REVISION_CURRENT}"
 hg update -C -r "$REVISION_CURRENT"
 
 # Apply patch on the current repository state
-if ! hg --config patch.eol=auto --config phases.new-commit=secret import -m 'jenkins patch formatting' -d 'today' -u 'CI' "$PATCH"; then
+if ! hg --config patch.eol=auto --config phases.new-commit=secret import -m 'CI patch formatting' -d 'today' -u 'CI' "$PATCH"; then
   echo 'FORMATTING FAILED: Patch cannot be applied'
   exit 0
 fi
@@ -69,7 +69,7 @@ fi
 hg update -C -r "$REVISION_FORMATTED"
 
 # Apply patch on the formatted repository state
-if ! hg --config patch.eol=auto --config phases.new-commit=secret import -m 'jenkins patch formatting' -d 'today' -u 'CI' "$PATCH"; then
+if ! hg --config patch.eol=auto --config phases.new-commit=secret import -m 'CI patch formatting' -d 'today' -u 'CI' "$PATCH"; then
   echo 'FORMATTING FAILED: Patch cannot be applied, because the current repository state is unformatted and the patch conflicts with the formatted repository state without fixing the formatting!'
   exit 0
 fi

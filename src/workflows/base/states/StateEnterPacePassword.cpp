@@ -14,7 +14,6 @@ StateEnterPacePassword::StateEnterPacePassword(const QSharedPointer<WorkflowCont
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
-	setKeepCardConnectionAlive();
 	setHandleNfcStop();
 }
 

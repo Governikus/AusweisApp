@@ -9,8 +9,6 @@ import Governikus.Style
 import Governikus.Type
 
 MouseArea {
-	id: root
-
 	Accessible.ignored: true
 
 	onClicked: {

@@ -48,9 +48,6 @@ BaseOnboardingView {
 		enablePaneOptic: false
 		showHint: false
 	}
-	GSpacer {
-		Layout.fillHeight: true
-	}
 	GContinueButton {
 		enabled: readerView.hasConnectedReader
 

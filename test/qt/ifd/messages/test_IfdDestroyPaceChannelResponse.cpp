@@ -51,7 +51,7 @@ class test_IfdDestroyPaceChannelResponse
 			IfdDestroyPaceChannelResponse msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 7);
+			QTRY_COMPARE(logSpy.count(), 7);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"msg\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"ContextHandle\"")));
@@ -169,7 +169,7 @@ class test_IfdDestroyPaceChannelResponse
 				QVERIFY(!ifdDestroyPaceChannelResponse.isIncomplete());
 				QCOMPARE(ifdDestroyPaceChannelResponse.getType(), IfdMessageType::IFDDestroyPACEChannelResponse);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -179,14 +179,14 @@ class test_IfdDestroyPaceChannelResponse
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"UNDEFINED\"")));
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDDestroyPACEChannelResponse")));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDDestroyPACEChannelResponse")));
 		}
 

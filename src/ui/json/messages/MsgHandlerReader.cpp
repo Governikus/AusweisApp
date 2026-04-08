@@ -65,9 +65,6 @@ QJsonObject MsgHandlerReader::createReaderInfo(const ReaderInfo& pInfo, const Ms
 			QJsonObject card;
 			if (pInfo.hasEid())
 			{
-#if __has_include("SmartManager.h")
-				card[QLatin1String("eidType")] = Enum<AcceptedEidType>::getName(static_cast<AcceptedEidType>(pInfo.getCardInfo().getMobileEidType()));
-#endif
 				card[QLatin1String("deactivated")] = pInfo.isPinDeactivated();
 				card[QLatin1String("inoperative")] = pInfo.isPukInoperative();
 				card[QLatin1String("retryCounter")] = pInfo.getRetryCounter();

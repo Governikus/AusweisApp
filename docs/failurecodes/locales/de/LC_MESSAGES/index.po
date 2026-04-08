@@ -23,7 +23,7 @@ msgstr ""
 msgid "AusweisApp"
 msgstr ""
 
-msgid ".. image:: ../sdk/AusweisApp_Logo.svg"
+msgid ".. image:: ../sdk/ausweisapp_logo_en.svg"
 msgstr ""
 
 msgid "Table of contents"

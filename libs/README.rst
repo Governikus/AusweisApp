@@ -4,13 +4,13 @@ Libraries
 Um die AusweisApp zu bauen ist eine Toolchain erforderlich, die die
 Abhängigkeiten und die Compilertools beinhaltet.
 
-Unterstützte C++17 Compiler:
+Unterstützte C++20 Compiler:
 
 - MinGW / GCC >= 13.1
 
-- Clang >= 5.0
+- Clang >= 14.0
 
-- MSVC >= 2019
+- MSVC >= 2022
 
 
 Notwendige Bibliotheken:
@@ -85,7 +85,7 @@ Beispiel: Innerhalb von /Users/governikus/AusweisApp befindet sich der Quellcode
    $ cd /Users/governikus
    $ mkdir build
    $ cd build
-   $ cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp/libs
+   $ cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE=../AusweisApp/cmake/macOS.toolchain.cmake ../AusweisApp/libs
    $ make
 
 

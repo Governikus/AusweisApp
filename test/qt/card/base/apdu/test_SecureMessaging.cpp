@@ -386,7 +386,7 @@ class test_SecureMessaging
 
 			QCOMPARE(mSecureMessagingCard->decrypt(encryptedApdu), apdu);
 
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 			Env::getSingleton<LogHandler>()->reset();
 		}
 

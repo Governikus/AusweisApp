@@ -22,11 +22,6 @@ FlickableSectionPage {
 	signal primaryButtonClicked
 	signal secondaryButtonClicked
 
-	QtObject {
-		id: d
-
-		readonly property real buttonWidth: Math.max(primaryButton.implicitWidth, secondaryButton.implicitWidth)
-	}
 	Heading {
 		id: headline
 
@@ -58,30 +53,29 @@ FlickableSectionPage {
 		id: customContentLoader
 
 		Layout.fillWidth: true
-		Layout.topMargin: Style.dimens.pane_spacing
+		Layout.topMargin: (item as Item)?.visible ? Style.dimens.pane_spacing : 0
 		visible: status === Loader.Ready
 	}
-	GButton {
-		id: secondaryButton
+	ButtonBox {
+		id: buttonBox
 
-		Layout.alignment: Qt.AlignHCenter
-		Layout.maximumWidth: d.buttonWidth
-		Layout.preferredWidth: d.buttonWidth
-		Layout.topMargin: Style.dimens.pane_spacing
-		style: Style.color.controlOptional
-		visible: text !== ""
+		SecondaryButton {
+			id: secondaryButton
 
-		onClicked: root.secondaryButtonClicked()
-	}
-	GButton {
-		id: primaryButton
+			Layout.maximumWidth: buttonBox.uniformButtonWidth
+			Layout.preferredWidth: buttonBox.uniformButtonWidth
+			visible: text !== ""
 
-		Layout.alignment: Qt.AlignHCenter
-		Layout.maximumWidth: d.buttonWidth
-		Layout.preferredWidth: d.buttonWidth
-		Layout.topMargin: secondaryButton.visible ? Style.dimens.text_spacing : Style.dimens.pane_spacing
-		visible: text !== ""
+			onClicked: root.secondaryButtonClicked()
+		}
+		GButton {
+			id: primaryButton
 
-		onClicked: root.primaryButtonClicked()
+			Layout.maximumWidth: buttonBox.uniformButtonWidth
+			Layout.preferredWidth: buttonBox.uniformButtonWidth
+			visible: text !== ""
+
+			onClicked: root.primaryButtonClicked()
+		}
 	}
 }

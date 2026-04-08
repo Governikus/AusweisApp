@@ -1,0 +1,36 @@
+include(Utils)
+
+file(GLOB zipfile "${WORKSPACE}/*.zip")
+cmake_path(GET zipfile FILENAME file)
+
+find_program(CURL curl REQUIRED)
+list(APPEND CURL --fail --header "Authorization: Bearer $ENV{CENTRAL_TOKEN}")
+step(${CURL} --form bundle=@${zipfile} "https://central.sonatype.com/api/v1/publisher/upload?name=${file}&publishingType=USER_MANAGED" OUTPUT deploymentId)
+message(STATUS "Deployment ID: ${deploymentId}")
+
+while(TRUE)
+	step(${CURL} --request POST "https://central.sonatype.com/api/v1/publisher/status?id=${deploymentId}" OUTPUT output)
+	string(JSON deploymentState GET "${output}" deploymentState)
+
+	if(deploymentState STREQUAL "VALIDATED" OR deploymentState STREQUAL "PUBLISHED")
+		message(STATUS "Deployment succeeded: ${deploymentState}")
+		break()
+	elseif(deploymentState STREQUAL "FAILED")
+		string(JSON errors GET "${output}" errors)
+		message(STATUS "Deployment failed: ${errors}")
+		set(FAILED ON)
+		break()
+	else()
+		message(STATUS "Deployment processing: ${deploymentState}")
+		step(${CMAKE_COMMAND} -E sleep 5)
+	endif()
+endwhile()
+
+check_beta_version(${zipfile} RESULT is_beta)
+if(is_beta OR FAILED)
+	step(${CURL} --request DELETE "https://central.sonatype.com/api/v1/publisher/deployment/${deploymentId}")
+endif()
+
+if(FAILED)
+	message(FATAL_ERROR "Deployment failed")
+endif()

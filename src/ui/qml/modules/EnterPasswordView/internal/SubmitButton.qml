@@ -3,8 +3,6 @@
  */
 
 NumberPadButton {
-	id: root
-
 	colors.paneBackground: colors.controlBackground
 	colors.paneBorder: colors.controlBorder
 	colors.textHeadline: colors.controlContent

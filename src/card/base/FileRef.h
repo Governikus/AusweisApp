@@ -57,16 +57,6 @@ inline bool operator==(const FileRef& pFileRefA, const FileRef& pFileRefB)
 }
 
 
-#if __cplusplus < 202002L
-inline bool operator!=(const FileRef& pFileRefA, const FileRef& pFileRefB)
-{
-	return !(pFileRefA == pFileRefB);
-}
-
-
-#endif
-
-
 inline QDebug operator<<(QDebug pDbg, const FileRef& pFileRef)
 {
 	QDebugStateSaver saver(pDbg);

@@ -7,7 +7,7 @@
 using namespace governikus;
 
 
-MockNetworkReply::MockNetworkReply(const QByteArray& pData, http_status pStatusCode, QObject* pParent)
+MockNetworkReply::MockNetworkReply(const QByteArray& pData, llhttp_status pStatusCode, QObject* pParent)
 	: QNetworkReply(pParent)
 	, mSocket()
 {

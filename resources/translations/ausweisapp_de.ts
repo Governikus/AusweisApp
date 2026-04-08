@@ -573,27 +573,7 @@ MOBILE</extracomment>
     </message>
 </context>
 <context>
-    <name>CertificateDescriptionPage</name>
-    <message>
-        <source>Provider Information</source>
-        <extracomment>DESKTOP
-----------
-MOBILE</extracomment>
-        <translation>Anbieterinformationen</translation>
-    </message>
-</context>
-<context>
     <name>ChangePinController</name>
-    <message>
-        <source>Setting new Smart-eID PIN</source>
-        <extracomment>MOBILE Processing screen label while the card communication is running after the new Smart-eID PIN has been entered during PIN change process.</extracomment>
-        <translation>Neue Smart-eID-PIN wird gesetzt</translation>
-    </message>
-    <message>
-        <source>Change Smart-eID PIN</source>
-        <extracomment>MOBILE Processing screen label while the card communication is running before the new ID card PIN has been entered during PIN change process.</extracomment>
-        <translation>Smart-eID-PIN ändern</translation>
-    </message>
     <message>
         <source>Setting new ID card PIN</source>
         <extracomment>DESKTOP Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
@@ -610,9 +590,7 @@ MOBILE Processing screen label while the card communication is running before th
     </message>
     <message>
         <source>Please wait a moment.</source>
-        <extracomment>DESKTOP Generic progress message during PIN change process.
-----------
-MOBILE Generic progress message during PIN change process.</extracomment>
+        <extracomment>DESKTOP Generic progress message during PIN change process.</extracomment>
         <translation>Bitte warten Sie einen Moment.</translation>
     </message>
     <message>
@@ -801,9 +779,9 @@ MOBILE</extracomment>
         <translation>Möchten Sie die %1 auf diesem Gerät nutzen, können Sie ein %2NFC-fähiges Smartphone%3 als Kartenleser %2koppeln%3.</translation>
     </message>
     <message>
-        <source>We recommend that you set up your ID card on another smartphone. You can call the setup again at any time under %1Help &gt; Setup%2.</source>
+        <source>We recommend that you set up your ID card on another smartphone. You can call the setup again at any time under %1Help%2.</source>
         <extracomment>MOBILE The text between %1 and %2 will be emphasized.</extracomment>
-        <translation>Wir empfehlen Ihnen, stattdessen die Einrichtung Ihres Ausweises auf einem anderen Smartphone durchzuführen. Sie können die Einrichtung jederzeit unter %1Hilfe &gt; Einrichtung%2 wieder aufrufen.</translation>
+        <translation>Wir empfehlen Ihnen, stattdessen die Einrichtung Ihres Ausweises auf einem anderen Smartphone durchzuführen. Sie können die Einrichtung jederzeit unter %1Hilfe%2 wieder aufrufen.</translation>
     </message>
     <message>
         <source>Alternatively you may use the %1 with an %2USB card reader%3 on your %2PC%3.</source>
@@ -1088,94 +1066,6 @@ ALL_PLATFORMS Sentence 2 of 3 of PUK explanation</extracomment>
     </message>
 </context>
 <context>
-    <name>CheckSmartResultView</name>
-    <message>
-        <source>Unknown result code: %1</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Unbekannter Ergebniscode: %1</translation>
-    </message>
-    <message>
-        <source>Please wait a moment.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bitte warten Sie einen Moment.</translation>
-    </message>
-    <message>
-        <source>Updating Smart-eID status...</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Status der Smart-eID wird aktualisiert...</translation>
-    </message>
-    <message>
-        <source>Check device and ID card</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Gerät und Ausweis prüfen</translation>
-    </message>
-    <message>
-        <source>Your mobile device does not meet the technical requirements for Smart-eID.&lt;br&gt;&lt;br&gt;You may check if your device and ID card are suitable to use the eID function.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen für die Smart-eID.&lt;br&gt;&lt;br&gt;Sie können stattdessen prüfen, ob Ihr Gerät und Ihr Ausweis für die Online-Ausweisfunktion geeignet sind.</translation>
-    </message>
-    <message>
-        <source>Smart-eID not supported</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID nicht unterstützt</translation>
-    </message>
-    <message>
-        <source>Possible causes are:</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Mögliche Ursachen hierfür sind:</translation>
-    </message>
-    <message>
-        <source>The setup has not been completed.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Die Einrichtung wurde nicht vollständig abgeschlossen.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID PIN has been entered incorrectly 3 times.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Die Smart-eID-PIN wurde 3 Mal falsch eingegeben.</translation>
-    </message>
-    <message>
-        <source>The %1 has been uninstalled temporarily.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Die %1 wurde zwischenzeitlich deinstalliert.</translation>
-    </message>
-    <message>
-        <source>You may continue with the setup of the Smart-eID.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie können mit der Einrichtung der Smart-eID fortfahren.</translation>
-    </message>
-    <message>
-        <source>Your device meets the technical requirements for Smart-eID. You may now continue the setup process.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Ihr Gerät erfüllt die technischen Voraussetzung für die Smart-eID. Sie können mit der Einrichtung fortfahren.</translation>
-    </message>
-    <message>
-        <source>Smart-eID supported</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID unterstützt</translation>
-    </message>
-    <message>
-        <source>Your device meets the technical requirements for Smart-eID, however, the Smart-eID that was set up is invalid.</source>
-        <extracomment>MOBILE MOBILE</extracomment>
-        <translation>Ihr Gerät erfüllt die technischen Voraussetzungen für die Smart-eID, allerdings ist die eingerichtete Smart-eID ungültig.</translation>
-    </message>
-    <message>
-        <source>Smart-eID invalid</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID ungültig</translation>
-    </message>
-    <message>
-        <source>Smart-eID check failed</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID-Prüfung fehlgeschlagen</translation>
-    </message>
-    <message>
-        <source>Back</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Zurück</translation>
-    </message>
-</context>
-<context>
     <name>ChooseReaderType</name>
     <message>
         <source>How would you like to read your ID card?</source>
@@ -1316,7 +1206,7 @@ ALL_PLATFORMS Sentence 2 of 3 of PUK explanation</extracomment>
     </message>
 </context>
 <context>
-    <name>DataGroup</name>
+    <name>DataGroupDelegate</name>
     <message>
         <source>%1, optional right, element %2 of %3</source>
         <extracomment>DESKTOP
@@ -1610,49 +1500,9 @@ MOBILE</extracomment>
         <translation>Mit Eingabe Ihrer PIN gewähren Sie dem oben genannten Anbieter folgende Datenzugriffe auf Ihren Ausweis:</translation>
     </message>
     <message>
-        <source>Transactional information</source>
-        <extracomment>DESKTOP
-----------
-MOBILE</extracomment>
-        <translation>Transaktionsinformationen</translation>
-    </message>
-    <message>
-        <source>The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.</source>
-        <extracomment>DESKTOP
-----------
-MOBILE</extracomment>
-        <translation>Der oben genannte Anbieter benötigt keine Daten von Ihrem Ausweis. Dieser möchte lediglich sicherstellen, dass Sie im Besitz eines gültigen Ausweises sind.</translation>
-    </message>
-    <message>
-        <source>Write access (update)</source>
-        <extracomment>DESKTOP
-----------
-MOBILE</extracomment>
-        <translation>Schreibzugriff (Aktualisierung)</translation>
-    </message>
-    <message>
-        <source>Read access</source>
-        <extracomment>DESKTOP
-----------
-MOBILE</extracomment>
-        <translation>Lesezugriff</translation>
-    </message>
-    <message>
-        <source>Read access (optional)</source>
-        <extracomment>DESKTOP
-----------
-MOBILE</extracomment>
-        <translation>Lesezugriff (optional)</translation>
-    </message>
-    <message>
         <source>Identify</source>
         <extracomment>MOBILE</extracomment>
         <translation>Ausweisen</translation>
-    </message>
-    <message>
-        <source>You are about to identify yourself towards the following provider:</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie möchten sich bei folgendem Anbieter ausweisen:</translation>
     </message>
 </context>
 <context>
@@ -1723,54 +1573,14 @@ MOBILE</extracomment>
         <translation>Haben Sie eine 5-stellige Transport-PIN?</translation>
     </message>
     <message>
-        <source>Enter Smart-eID PIN</source>
-        <extracomment>ALL_PLATFORMS This is the large main text below the icon.</extracomment>
-        <translation>Smart-eID-PIN eingeben</translation>
-    </message>
-    <message>
-        <source>Choose new Smart-eID PIN</source>
-        <extracomment>ALL_PLATFORMS This is the large main text below the icon.</extracomment>
-        <translation>Neue Smart-eID-PIN wählen</translation>
-    </message>
-    <message>
-        <source>Confirm new Smart-eID PIN</source>
-        <extracomment>ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
-        <translation>Neue Smart-eID-PIN bestätigen</translation>
-    </message>
-    <message>
-        <source>The PIN is going to be tied to your Smart-eID. It always stays the same regardless of the service you want to use your Smart-eID with.</source>
-        <extracomment>ALL_PLATFORMS The new Smart-eID PIN needs to be confirmed. This is the description for the main text.</extracomment>
-        <translation>Die Smart-eID-PIN wird mit Ihrer Smart-eID verknüpft. Sie bleibt gleich, egal für welchen Dienst Sie Ihre Smart-eID nutzen.</translation>
-    </message>
-    <message>
-        <source>You will enter this 6-digit PIN every time you want to use your Smart-eID.</source>
-        <extracomment>ALL_PLATFORMS A new 6-digit Smart-eID PIN needs to be supplied. This is the description for the main text.</extracomment>
-        <translation>Diese 6-stellige PIN geben Sie jedes Mal ein, wenn Sie Ihre Smart-eID benutzen.</translation>
-    </message>
-    <message>
         <source>Enter the pairing code shown on the device you want to pair.</source>
         <extracomment>MOBILE The pairing code for the smartphone is required. This is the description for the main text.</extracomment>
         <translation>Geben Sie den Kopplungscode ein, der auf dem zu koppelnden Smartphone angezeigt wird.</translation>
     </message>
     <message>
-        <source>Please enter your current 6-digit Smart-eID PIN.</source>
-        <extracomment>ALL_PLATFORMS The AA expects the current Smart-eID PIN with six digits in a PIN change. This is the description for the main text.</extracomment>
-        <translation>Bitte geben Sie Ihre aktuelle 6-stellige Smart-eID-PIN ein.</translation>
-    </message>
-    <message>
-        <source>Please enter your 6-digit Smart-eID PIN.</source>
-        <extracomment>ALL_PLATFORMS The AA expects a Smart-eID PIN with six digits in an authentication. This is the description for the main text.</extracomment>
-        <translation>Bitte geben Sie Ihre 6-stellige Smart-eID-PIN ein.</translation>
-    </message>
-    <message>
         <source>Do you have a 6-digit ID card PIN?</source>
         <extracomment>ALL_PLATFORMS Button to switch to a 6-digit ID card PIN.</extracomment>
         <translation>Haben Sie eine 6-stellige Karten-PIN?</translation>
-    </message>
-    <message>
-        <source>You have entered an incorrect, 6-digit Smart-eID PIN 2 times. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
-        <extracomment>ALL_PLATFORMS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
-        <translation>Sie haben 2 Mal eine falsche, 6-stellige Smart-eID-PIN eingegeben. Nach dem nächsten Fehlversuch können Sie Ihre Smart-eID nicht mehr einsetzen und müssen diese neu einrichten.</translation>
     </message>
     <message>
         <source>Send CAN</source>
@@ -1798,16 +1608,6 @@ MOBILE</extracomment>
         <translation>Transport-PIN senden</translation>
     </message>
     <message>
-        <source>Send Smart-eID PIN</source>
-        <extracomment>ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
-        <translation>Smart-eID-PIN senden</translation>
-    </message>
-    <message>
-        <source>Send new Smart-eID PIN</source>
-        <extracomment>ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
-        <translation>Neue Smart-eID-PIN senden</translation>
-    </message>
-    <message>
         <source>Send ID card PIN</source>
         <extracomment>ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Karten-PIN senden</translation>
@@ -1831,11 +1631,6 @@ MOBILE</extracomment>
         <source>Confirm ID card PIN</source>
         <extracomment>ALL_PLATFORMS This is the large main text below the icon.</extracomment>
         <translation>Karten-PIN bestätigen</translation>
-    </message>
-    <message>
-        <source>Confirm Smart-eID PIN</source>
-        <extracomment>ALL_PLATFORMS This is the large main text below the icon.</extracomment>
-        <translation>Smart-eID-PIN bestätigen</translation>
     </message>
 </context>
 <context>
@@ -1977,31 +1772,6 @@ MOBILE</extracomment>
         <extracomment>WINDOWS Text for attaching the AA to the system tray</extracomment>
         <translation>%1 im Infobereich anheften (empfohlen)</translation>
     </message>
-    <message>
-        <source>Automatically check for software updates at program start (recommended)</source>
-        <extracomment>DESKTOP</extracomment>
-        <translation>Automatisch nach Software-Aktualisierungen suchen (empfohlen)</translation>
-    </message>
-    <message>
-        <source>Show update</source>
-        <extracomment>DESKTOP</extracomment>
-        <translation>Aktualisierung anzeigen</translation>
-    </message>
-    <message>
-        <source>Start manual search for software update</source>
-        <extracomment>DESKTOP</extracomment>
-        <translation>Manuelle Suche nach Software-Aktualisierung starten</translation>
-    </message>
-    <message>
-        <source>Abort search</source>
-        <extracomment>DESKTOP</extracomment>
-        <translation>Suche abbrechen</translation>
-    </message>
-    <message>
-        <source>When you start %1, it automatically checks for updates. Updates are not performed automatically. If this option is disabled, you have to manually check for updates in the settings.</source>
-        <extracomment>DESKTOP %1 is replaced with the application name</extracomment>
-        <translation>Beim Starten der %1 wird automatisch nach Updates gesucht. Eine automatische Ausführung der Aktualisierung findet nicht statt. Ist diese Option ausgeschaltet, müssen mögliche Aktualisierungen manuell in den Einstellungen gesucht werden.</translation>
-    </message>
 </context>
 <context>
     <name>GeneralWorkflow</name>
@@ -2085,11 +1855,6 @@ MOBILE The paired smartphone was removed since it did not respond to connection 
         <translation>Falsche Transport-PIN</translation>
     </message>
     <message>
-        <source>Wrong Smart-eID PIN</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Falsche Smart-eID-PIN</translation>
-    </message>
-    <message>
         <source>Wrong ID card PIN</source>
         <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Falsche Karten-PIN</translation>
@@ -2098,11 +1863,6 @@ MOBILE The paired smartphone was removed since it did not respond to connection 
         <source>Wrong new ID card PIN confirmation</source>
         <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Falsche Bestätigung der neuen Karten-PIN</translation>
-    </message>
-    <message>
-        <source>Wrong new Smart-eID PIN confirmation</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Falsche Bestätigung der neuen Smart-eID-PIN</translation>
     </message>
 </context>
 <context>
@@ -2383,11 +2143,6 @@ MOBILE Toast message used to confirm the copy of a log entry.</extracomment>
         <translation>Meine Daten einsehen</translation>
     </message>
     <message>
-        <source>Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
-    <message>
         <source>Two finger swipe to scroll.</source>
         <translation>Mit zwei Fingern wischen zum Scrollen.</translation>
     </message>
@@ -2614,9 +2369,7 @@ MOBILE</extracomment>
     </message>
     <message>
         <source>Keep your PIN secret and change it if another person becomes aware of it.</source>
-        <extracomment>ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 3/3
-----------
-ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-eID) PIN?&apos; paragraph 3/3</extracomment>
+        <extracomment>ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 3/3</extracomment>
         <translation>Halten Sie Ihre PIN geheim und ändern Sie diese, wenn eine andere Person hiervon Kenntnis erlangt.</translation>
     </message>
     <message>
@@ -2717,23 +2470,6 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <translation>Die Zugangsnummer (CAN) ermöglicht den Zugriff auf die auf dem Ausweis gespeicherten Daten. Die CAN ist eine 6-stellige Zahl, die auf der Vorderseite des Ausweises unten rechts zu finden ist (auf Abbildung markiert).</translation>
     </message>
     <message>
-        <source>Smart-eID blocking code</source>
-        <extracomment>MOBILE
-----------
-ALL_PLATFORMS</extracomment>
-        <translation>Smart-eID Sperrkennwort</translation>
-    </message>
-    <message>
-        <source>Just like the physical ID card, the Smart-eID stored on your Smartphone can be blocked. This might be required if you ever lose your device.</source>
-        <extracomment>MOBILE Description text of Smart-eID PIN</extracomment>
-        <translation>Genau wie der physische Ausweis kann auch die auf Ihrem Smartphone gespeicherte Smart-eID gesperrt werden. Dies kann erforderlich sein, wenn Sie Ihr Gerät einmal verlieren.</translation>
-    </message>
-    <message>
-        <source>To revoke an active Smart-eID, a blocking code is required. The blocking code will be displayed after successfully creating the Smart-eID. Furthermore, it is contained in the letter you will receive after creation.</source>
-        <extracomment>MOBILE Description text of Smart-eID PIN</extracomment>
-        <translation>Um eine aktive Smart-eID zu sperren, ist ein Sperrkennwort erforderlich. Das Sperrkennwort wird nach erfolgreicher Erstellung der Smart-eID angezeigt. Darüber hinaus ist es in dem Schreiben enthalten, das Sie nach der Erstellung erhalten.</translation>
-    </message>
-    <message>
         <source>No PIN known</source>
         <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Keine PIN bekannt</translation>
@@ -2779,59 +2515,14 @@ ALL_PLATFORMS</extracomment>
         <translation>Die 5-stellige Transport-PIN ist eine %1Einmal-PIN%2, die Sie bei Beantragung des Online-Ausweises per %1Brief%2 erhalten haben.</translation>
     </message>
     <message>
-        <source>What is the Smart-eID PIN?</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Was ist die Smart-eID-PIN?</translation>
-    </message>
-    <message>
-        <source>Set up Smart-eID</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Smart-eID einrichten</translation>
-    </message>
-    <message>
-        <source>The Smart-eID PIN is a 6-digit PIN that you set yourself. You always need this PIN if you want to use your Smart-eID.</source>
-        <extracomment>ALL_PLATFORMS Answer to the question &apos;what is the Smart-eID pin?&apos;</extracomment>
-        <translation>Die Smart-eID-PIN ist eine 6-stellige PIN, die Sie selbst setzen. Diese PIN brauchen Sie immer, wenn Sie die Smart-eID nutzen möchten.</translation>
-    </message>
-    <message>
-        <source>For your 6-digit Smart-eID PIN, choose a combination of numbers that cannot be guessed - i.e. neither &quot;123456&quot;, nor your date of birth, nor any other numbers printed on your ID card.</source>
-        <extracomment>ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-eID) PIN?&apos; paragraph 1/3</extracomment>
-        <translation>Wählen Sie für Ihre 6-stellige Smart-eID-Pin eine Zahlenkombination, die nicht leicht zu erraten ist - also weder „123456“, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.</translation>
-    </message>
-    <message>
-        <source>You can change your 6-digit Smart-eID PIN at any time and an unlimited number of times as long as you know your valid Smart-eID PIN.</source>
-        <extracomment>ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-eID) PIN?&apos; paragraph 2/3</extracomment>
-        <translation>Sie können Ihre 6-stellige Smart-eID-PIN jederzeit und unbegrenzt oft ändern, solange Ihnen Ihre gültige Smart-eID-PIN bekannt ist.</translation>
-    </message>
-    <message>
         <source>The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your%1 5-digit Transport PIN%2.</source>
         <extracomment>ALL_PLATFORMS Description text explaining the PINs 4/7</extracomment>
         <translation>Die 6-stellige Karten-PIN ist %1eine Geheimnummer, die Sie selbst wählen%2, wenn Sie Ihren Online-Ausweis zum ersten Mal einrichten. Sie %1ersetzt%2 Ihre%1 5-stellige Transport-PIN%2.</translation>
     </message>
     <message>
-        <source>The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time.</source>
-        <extracomment>ALL_PLATFORMS Description text explaining the PINs 5/7</extracomment>
-        <translation>Auch die Smart-eID-PIN ist 6-stellig. Sie vergeben auch diese PIN selbst, wenn Sie die Smart-eID zum 1. Mal einrichten.</translation>
-    </message>
-    <message>
-        <source>You can change your card PIN and your Smart-eID PIN at any time in %1.</source>
-        <extracomment>ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
-        <translation>Sie können die Karten-PIN und die Smart-eID-PIN jederzeit in der %1 ändern.</translation>
-    </message>
-    <message>
-        <source>With this 6-digit PIN you prove online that the ID card or Smart-eID belongs to you. No one can use the eID function without this PIN.</source>
-        <extracomment>ALL_PLATFORMS Description text explaining the PINs 6/7</extracomment>
-        <translation>Mit der 6-stelligen PIN weisen Sie online nach, dass der Ausweis bzw. die Smart-eID Ihnen gehören. Keiner kann die Online-Ausweisfunktion benutzen ohne diese PIN.</translation>
-    </message>
-    <message>
         <source>The card PIN is a 6-digit PIN that you set yourself. You always need this %1PIN%2 if you want to use the %1eID function%2.</source>
         <extracomment>ALL_PLATFORMS Answer to the question &apos;what is the card pin?&apos;</extracomment>
         <translation>Die Karten-PIN ist eine 6-stellige PIN, die Sie selbst gewählt haben. Diese %1PIN%2 brauchen Sie immer, wenn Sie die %1Online-Ausweisfunktion%2 nutzen möchten.</translation>
-    </message>
-    <message>
-        <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in %1 using the 5-digit Transport PIN. Only when you have set a 6-digit PIN of your own choice can you use the eID function and set up a Smart-eID.</source>
-        <extracomment>ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos; (%1 is replaced with the application name)</extracomment>
-        <translation>Sie haben die Karten-PIN entweder direkt bei der Abholung des Ausweises im Bürgeramt oder später in der %1 mithilfe der 5-stelligen Transport-PIN gesetzt. Erst wenn Sie eine selbstgewählte, 6-stellige PIN gesetzt haben, können Sie die Online-Ausweisfunktion nutzen und eine Smart-eID einrichten.</translation>
     </message>
     <message>
         <source>The card PIN was %1either%2...</source>
@@ -2859,24 +2550,9 @@ ALL_PLATFORMS</extracomment>
         <translation>Ich habe nur eine 5-stellige Transport-PIN</translation>
     </message>
     <message>
-        <source>You need to change the%1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN &gt; Transport PIN%2 from the startpage to do so.</source>
-        <extracomment>ALL_PLATFORMS Explanation if only the Transport PIN is at hand</extracomment>
-        <translation>Die%1 5-stellige Transport-PIN%2 müssen Sie durch Ihre persönliche Karten-PIN ersetzen. Wählen Sie hierfür auf der Startseite %1PIN ändern &gt; Transport-PIN%2.</translation>
-    </message>
-    <message>
-        <source>If you have forgotten your Smart-eID PIN, you can renew your Smart-eID and thereby set a new PIN.</source>
-        <extracomment>ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
-        <translation>Wenn Sie Ihre Smart-eID-PIN vergessen haben, können Sie Ihre Smart-eID erneuern und hierbei eine neue PIN setzen.</translation>
-    </message>
-    <message>
-        <source>Where can I find the Smart-eID PIN?</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Wo finde ich die Smart-eID-PIN?</translation>
-    </message>
-    <message>
-        <source>You have set the Smart-eID PIN while setting up the Smart-eID.</source>
-        <extracomment>ALL_PLATFORMS Answer to the question &apos;Where can I find the Smart-eID PIN?&apos;</extracomment>
-        <translation>Sie haben die Smart-eID-PIN bei der Einrichtung der Smart-eID gesetzt.</translation>
+        <source>You need to change the%1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN%2 from the startpage to do so.</source>
+        <extracomment>ALL_PLATFORMS Explanation if only the Transport PIN is at hand. The text between %1 and %2 will be emphasized.</extracomment>
+        <translation>Die%1 5-stellige Transport-PIN%2 müssen Sie durch Ihre persönliche Karten-PIN ersetzen. Wählen Sie hierfür auf der Startseite %1PIN ändern%2.</translation>
     </message>
     <message>
         <source>With this 6-digit PIN you prove online that the ID card belongs to you. %1No one can use the eID function without this PIN%2.</source>
@@ -3065,12 +2741,10 @@ ALL_PLATFORMS</extracomment>
     </message>
 </context>
 <context>
-    <name>MultiInfoView</name>
+    <name>MultiInfoHintContent</name>
     <message>
         <source>Hint</source>
-        <extracomment>DESKTOP
-----------
-MOBILE</extracomment>
+        <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Tipp</translation>
     </message>
 </context>
@@ -3609,9 +3283,9 @@ MOBILE</extracomment>
         <translation>Leider erfüllen Sie nicht alle Anforderungen, um die %1 zu nutzen.</translation>
     </message>
     <message>
-        <source>You may restart the setup anytime under %1Help &gt; Setup%2.</source>
+        <source>You may restart the setup anytime under %1Help%2.</source>
         <extracomment>ALL_PLATFORMS %1 and %2 are replaced with bold emphasis.</extracomment>
-        <translation>Sie können die Einrichtung jederzeit unter %1Hilfe &gt; Einrichtung%2 erneut ausführen.</translation>
+        <translation>Sie können die Einrichtung jederzeit unter %1Hilfe%2 erneut ausführen.</translation>
     </message>
     <message>
         <source>The setup will now be aborted - afterwards %1one prompt regarding personalized settings in the %3%2 will follow.</source>
@@ -3766,44 +3440,44 @@ MOBILE</extracomment>
         <translation>Richten Sie die Online-Ausweisfunktion ein</translation>
     </message>
     <message>
-        <source>What can I do with it?</source>
+        <source>Securely identify yourself online with the %1</source>
+        <extracomment>ALL_PLATFORMS %1 is replaced with &quot;AusweisApp&quot;</extracomment>
+        <translation>Sicher online ausweisen mit der %1</translation>
+    </message>
+    <message>
+        <source>The eID function allows you to handle administrative or business matters easily and securely online.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Was kann ich damit machen?</translation>
+        <translation>Die Online-Ausweisfunktion ermöglicht Ihnen, Behördengänge oder geschäftliche Angelegenheiten einfach und sicher online zu erledigen.</translation>
     </message>
     <message>
-        <source>All you need is your %1ID card%2, %1PIN%2 and a %1NFC-enabled smartphone%2 or an %1USB card reader%2.</source>
-        <extracomment>DESKTOP The text between %1 and %2 will be emphasized.</extracomment>
-        <translation>Dafür brauchen Sie nur Ihren %1Ausweis%2, Ihre %1PIN%2 und ein %1NFC-fähiges Smartphone%2 oder einen %1USB-Kartenleser%2.</translation>
+        <source>To identify yourself to a service provider using the %3, you need your %1ID card%2, your %1PIN%2, and an %1NFC-enabled smartphone%2 or a USB card reader.</source>
+        <extracomment>DESKTOP The text between %1 and %2 will be emphasized, %3 is replaced with &quot;AusweisApp&quot;</extracomment>
+        <translation>Um sich mittels %3 bei einem Diensteanbieter zu identifizieren, benötigen Sie Ihren %1Ausweis%2, Ihre %1PIN%2 und ein %1NFC-fähiges Smartphone%2 bzw. einen USB-Kartenleser.</translation>
     </message>
     <message>
-        <source>All you need is your %1ID card%2, %1PIN%2 and a %1NFC-enabled smartphone%2.</source>
-        <extracomment>MOBILE The text between %1 and %2 will be emphasized.</extracomment>
-        <translation>Dafür brauchen Sie nur Ihren %1Ausweis%2, Ihre %1PIN%2 und ein %1NFC-fähiges Smartphone%2.</translation>
+        <source>To identify yourself to a service provider using the %3, you need your %1ID card%2, your %1PIN%2, and an %1NFC-enabled smartphone%2.</source>
+        <extracomment>Mobile The text between %1 and %2 will be emphasized, %3 is replaced with &quot;AusweisApp&quot;</extracomment>
+        <translation>Um sich mittels %3 bei einem Diensteanbieter zu identifizieren, benötigen Sie Ihren %1Ausweis%2, Ihre %1PIN%2 und ein %1NFC-fähiges Smartphone%2.</translation>
     </message>
     <message>
-        <source>It allows you to identify yourself %1securely%2 on the internet. You can easily take care of %1administrative or business matters%2 online.</source>
-        <extracomment>ALL_PLATFORMS The text between %1 and %2 will be emphasized.</extracomment>
-        <translation>Mit ihr weisen Sie sich %1sicher%2 im Internet aus. So können Sie %1Behördengänge%2 oder geschäftliche Angelegenheiten einfach elektronisch erledigen.</translation>
-    </message>
-    <message>
-        <source>I use the eID function for the 1st time</source>
+        <source>Start setup</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Ich nutze die Online-Ausweisfunktion zum ersten Mal</translation>
+        <translation>Einrichtung starten</translation>
     </message>
     <message>
-        <source>I already used the eID function before</source>
+        <source>The setup is recommended for first-time user. This way it can be ensured that all the technical requirements are met for your online authentication processes.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Ich habe meinen Ausweis zuvor bereits online verwendet</translation>
+        <translation>Die Einrichtung wird für Erstnutzer empfohlen. So kann sichergestellt werden, dass alle technischen Voraussetzungen erfüllt sind.</translation>
+    </message>
+    <message>
+        <source>Are you using the app for the first time?</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Sie nutzen die App zum ersten Mal?</translation>
     </message>
     <message>
         <source>Skip setup</source>
         <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Einrichtung überspringen</translation>
-    </message>
-    <message>
-        <source>Set up %1</source>
-        <extracomment>ALL_PLATFORMS %1 will be replaced with the name of the application</extracomment>
-        <translation>%1 einrichten</translation>
     </message>
 </context>
 <context>
@@ -3931,185 +3605,16 @@ MOBILE</extracomment>
     </message>
 </context>
 <context>
-    <name>PersonalizationController</name>
+    <name>PinResetHints</name>
     <message>
-        <source>Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID</translation>
+        <source>How do I activate the eID function?</source>
+        <extracomment>ALL_PLATFORMS Hint title to assist the user on how to set a new PIN</extracomment>
+        <translation>Wie kann ich die Online-Ausweisfunktion aktivieren?</translation>
     </message>
     <message>
-        <source>Set up Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID einrichten</translation>
-    </message>
-    <message>
-        <source>The Smart-eID issuing authority needs to read your ID card&apos;s data in order to store it on this device:</source>
-        <extracomment>MOBILE The user is informed that the ID card needs to be read to create a Smart-eID.</extracomment>
-        <translation>Der Aussteller der Smart-eID muss Ihre Ausweisdaten lesen, um diese auf diesem Gerät zu speichern:</translation>
-    </message>
-    <message>
-        <source>By entering your ID card PIN, access to the following data of your ID card will be allowed to the mentioned provider:</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Mit Eingabe Ihrer Karten-PIN gewähren Sie dem oben genannten Anbieter folgende Datenzugriffe auf Ihren Ausweis:</translation>
-    </message>
-</context>
-<context>
-    <name>PersonalizationLegalInformationView</name>
-    <message>
-        <source>Set up Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID einrichten</translation>
-    </message>
-    <message>
-        <source>Important Notice</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Wichtige Informationen</translation>
-    </message>
-    <message>
-        <source>Do not give your smartphone to 3rd parties unattended, especially if it is already unlocked.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Geben Sie Ihr Smartphone nicht unbeaufsichtigt an Dritte weiter, insbesondere wenn es bereits entsperrt ist.</translation>
-    </message>
-    <message>
-        <source>Do not keep a note of the Smart-eID PIN in or on your smartphone.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Notieren Sie die Smart-eID-PIN nicht in bzw. auf Ihrem Smartphone.</translation>
-    </message>
-    <message>
-        <source>Do not give your Smart-eID PIN to 3rd parties.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Geben Sie Ihre Smart-eID-PIN nicht an Dritte weiter.</translation>
-    </message>
-    <message>
-        <source>Update the operating system of your smartphone regularly.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Aktualisieren Sie regelmäßig das Betriebssystem Ihres Smartphones.</translation>
-    </message>
-    <message>
-        <source>If your smartphone with the Smart-eID is lost or stolen, please block the Smart-eID immediately by calling the blocking hotline (+49 116 116) and providing your blocking code.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Ging Ihr Smartphone mit Smart-eID verloren oder wurde gestohlen, sperren Sie die Smart-eID bitte unverzüglich bei der Sperrhotline (+49 116 116) unter Angabe Ihres Sperrkennworts.</translation>
-    </message>
-    <message>
-        <source>Delete your Smart-eID before you give away or sell your smartphone.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Löschen Sie Ihre Smart-eID, bevor Sie Ihr Smartphone verschenken oder verkaufen.</translation>
-    </message>
-    <message>
-        <source>If you uninstall the %1 or reset your smartphone, the Smart-eID must be set up again.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Wenn Sie die %1 deinstallieren oder Ihr Smartphone zurücksetzen, muss die Smart-eID neu eingerichtet werden.</translation>
-    </message>
-</context>
-<context>
-    <name>PersonalizationProgressView</name>
-    <message>
-        <source>Checking Smart-eID status</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Überprüfe Smart-eID-Status</translation>
-    </message>
-    <message>
-        <source>Smart-eID is being prepared</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID wird vorbereitet</translation>
-    </message>
-    <message>
-        <source>Acquiring provider certificate</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Berechtigungszertifikat wird heruntergeladen</translation>
-    </message>
-    <message>
-        <source>Retrieving information from ID card</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Lese Informationen des Ausweises aus</translation>
-    </message>
-    <message>
-        <source>Smart-eID is created</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID wird eingerichtet</translation>
-    </message>
-    <message>
-        <source>Aborting Smart-eID personalization</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Personalisierung der Smart-eID wird abgebrochen</translation>
-    </message>
-    <message>
-        <source>Waiting for start of workflow...</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Warte auf Start des Vorgangs...</translation>
-    </message>
-    <message>
-        <source>Please wait a moment.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bitte warten Sie einen Moment.</translation>
-    </message>
-    <message>
-        <source>Please do not move the ID card.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bitte den Ausweis nicht bewegen.</translation>
-    </message>
-    <message>
-        <source>Please observe the display of your card reader.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesers.</translation>
-    </message>
-    <message>
-        <source>Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
-    <message>
-        <source>Please wait a moment, the current process is being finished.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bitte warten Sie einen Moment, der laufende Vorgang wird noch abgeschlossen.</translation>
-    </message>
-</context>
-<context>
-    <name>PersonalizationResultView</name>
-    <message>
-        <source>Set up Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID einrichten</translation>
-    </message>
-    <message>
-        <source>You have successfully set up your Smart-eID.</source>
-        <extracomment>MOBILE Success message that the Smart-eID was created.</extracomment>
-        <translation>Sie haben Ihre Smart-eID erfolgreich eingerichtet.</translation>
-    </message>
-    <message>
-        <source>Continue</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Weiter</translation>
-    </message>
-    <message>
-        <source>Please write down your blocking code:</source>
-        <extracomment>MOBILE Explanation text of the Smart-eID blocking code</extracomment>
-        <translation>Bitte notieren Sie sich das Sperrkennwort:</translation>
-    </message>
-    <message>
-        <source>You will shortly receive the blocking password and further information about your Smart-eID by letter.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie erhalten das Sperrkennwort und weitere Informationen zu Ihrer Smart-eID in Kürze zusätzlich per Brief.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID setup finished successfully but no blocking code was retrieved. For security reasons, you should delete your Smart-eID and restart the setup.</source>
-        <extracomment>MOBILE Placeholder (error) text if the Smart-eID setup finished successfully but for some reason no blocking code was retrieved</extracomment>
-        <translation>Die Smart-eID-Einrichtung wurde erfolgreich abgeschlossen, jedoch konnte kein Sperrkennwort abgerufen werden. Aus Sicherheitsgründen sollten Sie Ihre Smart-eID löschen und die Einrichtung neu starten.</translation>
-    </message>
-    <message>
-        <source>Attention: you may only set up &lt;b&gt;&lt;u&gt;one&lt;/u&gt;&lt;/b&gt; more Smart-eID with your ID card. Further setups may be carried out on %1.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Achtung: Sie können mit Ihrem Ausweis noch &lt;b&gt;&lt;u&gt;eine&lt;/u&gt;&lt;/b&gt; Smart-eID einrichten. Weitere Einrichtungen können Sie ab dem %1 vornehmen.</translation>
-    </message>
-    <message>
-        <source>Personalization failed</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Personalisierung fehlgeschlagen</translation>
-    </message>
-    <message>
-        <source>Back to start page</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Zur Startseite</translation>
+        <source>My PUK is used up. How do I set a new PIN?</source>
+        <extracomment>ALL_PLATFORMS Hint title to assist the user on how to set a new PIN</extracomment>
+        <translation>Meine PUK ist verbraucht. Wie kann ich eine neue PIN setzen?</translation>
     </message>
 </context>
 <context>
@@ -4287,19 +3792,9 @@ MOBILE</extracomment>
 <context>
     <name>PrivacyStatement</name>
     <message>
-        <source>By proceeding you consent to your ID card&apos;s data being read and processed by the issuing authority. Please see %1 for details.</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Durch Fortsetzen des Vorgangs stimmen Sie zu, dass die Daten Ihres Ausweises durch den Aussteller der Smart-eID ausgelesen und verarbeitet werden. Näheres dazu erfahren Sie in der %1.</translation>
-    </message>
-    <message>
         <source>Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten. Näheres dazu erfahren Sie in unserer %1.</translation>
-    </message>
-    <message>
-        <source>data privacy statement of the Federal Ministry of the Interior</source>
-        <extracomment>ALL_PLATFORMS Text of the Smart-eID html link inside of a sentence</extracomment>
-        <translation>Datenschutzerklärung des Bundesministeriums des Innern</translation>
     </message>
     <message>
         <source>data privacy statement</source>
@@ -4308,36 +3803,16 @@ MOBILE</extracomment>
     </message>
 </context>
 <context>
-    <name>ProviderInfo</name>
-    <message>
-        <source>See details under &quot;more...&quot;</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Weitere Details unter &quot;mehr...&quot;</translation>
-    </message>
+    <name>ProviderInfoButton</name>
     <message>
         <source>Show more information about the service provider</source>
-        <extracomment>DESKTOP</extracomment>
+        <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Zeige mehr Informationen über den Anbieter</translation>
     </message>
     <message>
-        <source>You are about to identify yourself towards the following provider:</source>
-        <extracomment>DESKTOP</extracomment>
-        <translation>Sie möchten sich bei folgendem Anbieter ausweisen:</translation>
-    </message>
-    <message>
-        <source>Provider</source>
-        <extracomment>MOBILE</extracomment>
+        <source>Service Provider</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Anbieter</translation>
-    </message>
-    <message>
-        <source>Tap for more details</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Tippen Sie hier für mehr Details</translation>
-    </message>
-    <message>
-        <source>Details about the provider</source>
-        <extracomment>DESKTOP</extracomment>
-        <translation>Details zum Anbieter</translation>
     </message>
 </context>
 <context>
@@ -4480,11 +3955,12 @@ DESKTOP Title of the proxy credentials popup.</extracomment>
     <name>ReleaseNotes</name>
     <message>
         <source>Retry</source>
-        <extracomment>DESKTOP
-----------
-MOBILE</extracomment>
+        <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Erneut versuchen</translation>
     </message>
+</context>
+<context>
+    <name>ReleaseNotesView</name>
     <message>
         <source>Release notes</source>
         <extracomment>MOBILE</extracomment>
@@ -4539,11 +4015,6 @@ MOBILE</extracomment>
 </context>
 <context>
     <name>RemoteServiceController</name>
-    <message>
-        <source>You are about to identify yourself towards the following provider using the device &quot;%1&quot;:</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie möchten sich mit dem Gerät %1 bei folgendem Anbieter ausweisen:</translation>
-    </message>
     <message>
         <source>Card reader</source>
         <extracomment>MOBILE</extracomment>
@@ -4834,6 +4305,24 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
     </message>
 </context>
 <context>
+    <name>RequestedRights</name>
+    <message>
+        <source>Write access (update)</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Schreibzugriff (Aktualisierung)</translation>
+    </message>
+    <message>
+        <source>Read access (optional)</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Lesezugriff (optional)</translation>
+    </message>
+    <message>
+        <source>Read access</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Lesezugriff</translation>
+    </message>
+</context>
+<context>
     <name>ResultErrorView</name>
     <message>
         <source>Show Details</source>
@@ -4880,7 +4369,7 @@ MOBILE</extracomment>
     <name>ScreenshotPreventer</name>
     <message>
         <source>Attention: Screen Recording in progress</source>
-        <extracomment>ANDROID</extracomment>
+        <extracomment>MOBILE</extracomment>
         <translation>Achtung: Bildschirmaufnahme läuft</translation>
     </message>
     <message>
@@ -5091,21 +4580,6 @@ MOBILE</extracomment>
         <translation>15 Tage alte Protokolldatei</translation>
     </message>
     <message>
-        <source>Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
-    <message>
-        <source>Reset Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID zurücksetzen</translation>
-    </message>
-    <message>
-        <source>Reset Smart-eID data on your device</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID auf Ihrem Gerät zurücksetzen</translation>
-    </message>
-    <message>
         <source>Show requested rights on this device as well</source>
         <extracomment>MOBILE</extracomment>
         <translation>Angefragte Berechtigung auch auf diesem Gerät anzeigen</translation>
@@ -5284,9 +4758,9 @@ MOBILE</extracomment>
         <translation>Befolgen der Anweisungen auf Ihrem zweiten Gerät</translation>
     </message>
     <message>
-        <source>Now follow the instruction for the setup on your PC/Mac. If the setup does not start automatically, you may find it under Help &gt; Setup.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Folgen Sie nun den Anweisungen auf Ihrem PC/Mac. Sollte sich die Einrichtung nicht automatisch öffnen, können Sie diese unter Hilfe &gt; Einrichtung finden.</translation>
+        <source>Now follow the instruction for the setup on your PC/Mac. If the setup does not start automatically, you may find it under %1Help%2.</source>
+        <extracomment>MOBILE The text between %1 and %2 will be emphasized.</extracomment>
+        <translation>Folgen Sie nun den Anweisungen auf Ihrem PC/Mac. Sollte sich die Einrichtung nicht automatisch öffnen, können Sie diese unter %1Hilfe%2 finden.</translation>
     </message>
     <message>
         <source>Continue with pairing</source>
@@ -5321,11 +4795,6 @@ MOBILE</extracomment>
         <extracomment>MOBILE</extracomment>
         <translation>WLAN</translation>
     </message>
-    <message>
-        <source>SMART</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>SMART</translation>
-    </message>
 </context>
 <context>
     <name>SkipOnboardingConfirmation</name>
@@ -5343,353 +4812,6 @@ MOBILE</extracomment>
         <source>If you want to use the eID function on your PC, install %1 there and follow the initial setup.</source>
         <extracomment>MOBILE %1 will be replaced with the name of the application</extracomment>
         <translation>Falls Sie die Online-Ausweisfunktion auf dem PC nutzen möchten, installieren Sie dort die %1 und folgen Sie der Ersteinrichtung.</translation>
-    </message>
-</context>
-<context>
-    <name>SmartDeleteBaseView</name>
-    <message>
-        <source>Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
-    <message>
-        <source>Please wait a moment.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bitte warten Sie einen Moment.</translation>
-    </message>
-    <message>
-        <source>Send log</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Protokoll senden</translation>
-    </message>
-    <message>
-        <source>If you want to use that functionality again, you need to set up a new Smart-eID first.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Wenn Sie die Funktionalität in Zukunft wieder nutzen möchten, müssen Sie die Smart-eID erneut einrichten.</translation>
-    </message>
-    <message>
-        <source>Reset Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID zurücksetzen</translation>
-    </message>
-</context>
-<context>
-    <name>SmartDeleteView</name>
-    <message>
-        <source>Delete Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID löschen</translation>
-    </message>
-    <message>
-        <source>You have successfully deleted your Smart-eID.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie haben Ihre Smart-eID erfolgreich gelöscht.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID could not be successfully deleted from your device.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Die Smart-eID konnte nicht erfolgreich von Ihrem Gerät gelöscht werden.</translation>
-    </message>
-    <message>
-        <source>Back to start page</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Zur Startseite</translation>
-    </message>
-    <message>
-        <source>You are about to delete the Smart-eID data that is currently stored on your device.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie sind dabei, die Daten der Smart-eID von Ihrem Gerät zu löschen.</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to delete the Smart-eID?</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sind Sie sicher, dass Sie die Smart-eID löschen wollen?</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Löschen</translation>
-    </message>
-    <message>
-        <source>Deleting Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Lösche Smart-eID</translation>
-    </message>
-    <message>
-        <source>Delete the Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Löschen der Smart-eID</translation>
-    </message>
-</context>
-<context>
-    <name>SmartMainView</name>
-    <message>
-        <source>Updating Smart-eID status...</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Status der Smart-eID wird aktualisiert...</translation>
-    </message>
-    <message>
-        <source>Smart-eID ready for use</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID einsatzbereit</translation>
-    </message>
-    <message>
-        <source>Please wait a moment.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bitte warten Sie einen Moment.</translation>
-    </message>
-    <message>
-        <source>Your Smart-eID is set up and ready for use. You can now perform online identifications without your ID card if supported by the provider.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Ihre Smart-eID ist eingerichtet und einsatzbereit. Sie können die Online-Ausweisfunktion jetzt auch ohne Ausweiskarte nutzen, wenn der jeweilige Anbieter dies unterstützt.</translation>
-    </message>
-    <message>
-        <source>Check here if your device is suitable to set up a Smart-eID.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Prüfen Sie hier, ob Ihr Gerät für die Einrichtung einer Smart-eID geeignet ist.</translation>
-    </message>
-    <message>
-        <source>Start check</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Prüfung starten</translation>
-    </message>
-    <message>
-        <source>With the Smart-eID you may also use the online identification function without the ID card.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Mit der Smart-eID können Sie die Online-Ausweisfunktion auch ohne Ausweiskarte nutzen.</translation>
-    </message>
-</context>
-<context>
-    <name>SmartResetView</name>
-    <message>
-        <source>Reset Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID zurücksetzen</translation>
-    </message>
-    <message>
-        <source>You have successfully reset your Smart-eID.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie haben Ihre Smart-eID erfolgreich zurückgesetzt.</translation>
-    </message>
-    <message>
-        <source>You are about to reset your Smart-eID data. This can also be used for troubleshooting as well.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie sind dabei, die Daten der Smart-eID auf Ihrem Gerät zurücksetzen. Dies kann auch zur Problembeseitigung verwendet werden.</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reset the Smart-eID?</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sind Sie sicher, dass Sie die Smart-eID zurücksetzen wollen?</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Zurücksetzen</translation>
-    </message>
-    <message>
-        <source>Resetting Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Setze Smart-eID zurück</translation>
-    </message>
-    <message>
-        <source>Reset the Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Zurücksetzen der Smart-eID</translation>
-    </message>
-</context>
-<context>
-    <name>SmartSettingsView</name>
-    <message>
-        <source>Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
-    <message>
-        <source>Renew Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID erneuern</translation>
-    </message>
-    <message>
-        <source>Renew your Smart-eID with current data</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID mit aktuellen Daten neu einrichten</translation>
-    </message>
-    <message>
-        <source>Delete Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID löschen</translation>
-    </message>
-    <message>
-        <source>Delete Smart-eID data from your device</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID Daten von diesem Gerät löschen</translation>
-    </message>
-    <message>
-        <source>Try Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID ausprobieren</translation>
-    </message>
-    <message>
-        <source>Show Smart-eID data</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID-Daten anzeigen</translation>
-    </message>
-    <message>
-        <source>Change Smart-eID PIN</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID-PIN ändern</translation>
-    </message>
-    <message>
-        <source>Change the chosen Smart-eID PIN</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Selbstgewählte PIN der Smart-eID ändern</translation>
-    </message>
-</context>
-<context>
-    <name>SmartSetupStartView</name>
-    <message>
-        <source>Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
-    <message>
-        <source>You are about to set up a Smart-eID on your device. In order to proceed, you need your ID card, your 6-digit ID card PIN and an internet connection.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie sind dabei, eine Smart-eID auf Ihrem Gerät einzurichten. Um fortzufahren, benötigen Sie Ihren Ausweis, Ihre 6-stellige Karten-PIN sowie eine Internetverbindung.</translation>
-    </message>
-    <message>
-        <source>Set up Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID einrichten</translation>
-    </message>
-    <message>
-        <source>Sample card required.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Testmusterkarte erforderlich.</translation>
-    </message>
-</context>
-<context>
-    <name>SmartUpdateStartView</name>
-    <message>
-        <source>You are about to renew your Smart-eID. In order to proceed, you need your ID card, your 6-digit ID card PIN and an internet connection.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie sind dabei, Ihre Smart-eID zu erneuern. Um fortzufahren, benötigen Sie Ihren Ausweis, Ihre 6-stellige Karten-PIN sowie eine Internetverbindung.</translation>
-    </message>
-    <message>
-        <source>Please note that your current Smart-eID is invalidated during the process and will not be usable until the update process is completed.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bitte beachten Sie, dass ihre aktuelle Smart-eID während des Prozesses Ihre Gültigkeit verliert und bis zur erfolgreichen Aktualisierung nicht verwendet werden kann.</translation>
-    </message>
-    <message>
-        <source>Renew Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID erneuern</translation>
-    </message>
-    <message>
-        <source>Renew the Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Erneuern der Smart-eID</translation>
-    </message>
-    <message>
-        <source>Sample card required.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Testmusterkarte erforderlich.</translation>
-    </message>
-</context>
-<context>
-    <name>SmartView</name>
-    <message>
-        <source>Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
-    <message>
-        <source>Check Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID prüfen</translation>
-    </message>
-</context>
-<context>
-    <name>SmartWorkflow</name>
-    <message>
-        <source>Updating Smart-eID status...</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Status der Smart-eID wird aktualisiert...</translation>
-    </message>
-    <message>
-        <source>Smart-eID unsupported</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID nicht unterstützt</translation>
-    </message>
-    <message>
-        <source>Smart-eID disallowed</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID nicht erlaubt</translation>
-    </message>
-    <message>
-        <source>Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
-    <message>
-        <source>Smart-eID not ready</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID nicht einsatzbereit</translation>
-    </message>
-    <message>
-        <source>Your Smart-eID is ready for use, tap &quot;Continue&quot; to proceed.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Ihre Smart-eID ist einsatzbereit. Tippen Sie auf &quot;Weiter&quot;, um fortzufahren.</translation>
-    </message>
-    <message>
-        <source>Please wait a moment.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bitte warten Sie einen Moment.</translation>
-    </message>
-    <message>
-        <source>Unfortunately, Smart-eID is not supported by your device.
-
-To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&quot; to connect with another device as cardreader.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Leider wird Smart-eID von Ihrem Gerät nicht unterstützt.
-
-Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle auswählen oder wählen Sie &quot;WLAN&quot;, um sich mit einem anderen Smartphone als Kartenleser zu verbinden.</translation>
-    </message>
-    <message>
-        <source>Unfortunately, using your Smart-eID for this authentication is not allowed by the provider.
-
-To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&quot; to connect with another device as cardreader.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Leider wird die Nutzung Ihrer Smart-eID für diese Authentisierung durch den Provider nicht erlaubt.
-
-Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle auswählen oder wählen Sie &quot;WLAN&quot;, um sich mit einem anderen Smartphone als Kartenleser zu verbinden.</translation>
-    </message>
-    <message>
-        <source>You have not yet set up a Smart-eID or it is no longer usable.
-
-To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&quot; to connect with another device as cardreader. If you want to set up a Smart-eID instead, please abort the current process and start the Smart-eID setup from the main screen.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie haben noch keine Smart-eID eingerichtet oder diese ist nicht mehr nutzbar.
-
-Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle auswählen, oder wählen Sie &quot;WLAN&quot;, um sich mit einem anderen Smartphone als Kartenleser zu verbinden. Möchten Sie stattdessen eine Smart-eID einrichten, brechen Sie den aktuellen Vorgang bitte ab und starten Sie die Smart-eID-Einrichtung vom Startbildschirm.</translation>
-    </message>
-    <message>
-        <source>Continue</source>
-        <translation>Weiter</translation>
-    </message>
-    <message>
-        <source>You have not yet set up a Smart-eID or it is no longer usable.
-
-To proceed use your ID card by selecting the NFC interface. If you want to set up a Smart-eID instead, please abort the current process and start the Smart-eID setup from the main screen.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Sie haben noch keine Smart-eID eingerichtet oder diese ist nicht mehr nutzbar.
-
-Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle auswählen. Möchten Sie stattdessen eine Smart-eID einrichten, brechen Sie den aktuellen Vorgang bitte ab und starten Sie die Smart-eID-Einrichtung vom Startbildschirm.</translation>
-    </message>
-    <message>
-        <source>The device &quot;%1&quot; wants to access your Smart-eID.</source>
-        <extracomment>MOBILE %1 will be replaced with the name of the device.</extracomment>
-        <translation>Das Gerät &quot;%1&quot; möchte auf Ihre Smart-eID zugreifen.</translation>
     </message>
 </context>
 <context>
@@ -5717,11 +4839,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
 </context>
 <context>
     <name>SuggestionData</name>
-    <message>
-        <source>Hint</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Tipp</translation>
-    </message>
     <message>
         <source>Continue</source>
         <extracomment>ALL_PLATFORMS</extracomment>
@@ -5788,11 +4905,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>per NFC</translation>
     </message>
     <message>
-        <source>by Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>per Smart-eID</translation>
-    </message>
-    <message>
         <source>by smartphone as card reader</source>
         <extracomment>MOBILE</extracomment>
         <translation>per Smartphone als Kartenleser</translation>
@@ -5809,6 +4921,11 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Start page</source>
         <extracomment>DESKTOP</extracomment>
         <translation>Startseite</translation>
+    </message>
+    <message>
+        <source>The update can only be performed after the current operation has been completed.</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Das Update kann erst nach dem Abschluss des Vorgangs durchgeführt werden.</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -5833,8 +4950,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Internen Benachrichtigungsdialog der %1 ausblenden</translation>
     </message>
     <message>
-        <source>Update available</source>
-        <translation>Aktualisierung verfügbar</translation>
+        <source>Update available (version %1)</source>
+        <extracomment>DESKTOP %1 will be replaced with an application version number</extracomment>
+        <translation>Aktualisierung verfügbar (Version %1)</translation>
     </message>
 </context>
 <context>
@@ -5853,6 +4971,36 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Close</source>
         <extracomment>MOBILE</extracomment>
         <translation>Schließen</translation>
+    </message>
+</context>
+<context>
+    <name>TransactionInfoButton</name>
+    <message>
+        <source>Show more information about the transaction.</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Zeige mehr Informationen zur Transaktion</translation>
+    </message>
+    <message>
+        <source>Information about the transaction.</source>
+        <translation>Informationen zur Transaktion</translation>
+    </message>
+    <message>
+        <source>Transactional information</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Informationen zum Vorgang</translation>
+    </message>
+    <message>
+        <source>The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Der oben genannte Anbieter benötigt keine Daten von Ihrem Ausweis. Dieser möchte lediglich sicherstellen, dass Sie im Besitz eines gültigen Ausweises sind.</translation>
+    </message>
+</context>
+<context>
+    <name>TransactionInfoView</name>
+    <message>
+        <source>Transactional information</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Informationen zum Vorgang</translation>
     </message>
 </context>
 <context>
@@ -5909,6 +5057,39 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
 </context>
 <context>
+    <name>UpdateOptions</name>
+    <message>
+        <source>When you restart %1 and every 24 hours, it automatically checks for updates. Updates are not performed automatically. If this option is disabled, you have to manually check for updates in the settings.</source>
+        <extracomment>DESKTOP %1 is replaced with the application name</extracomment>
+        <translation>Bei Neustart der %1 und alle 24 Stunden wird automatisch nach Updates gesucht. Eine automatische Ausführung der Aktualisierung findet nicht statt. Ist diese Option ausgeschaltet, müssen mögliche Aktualisierungen manuell in den Einstellungen gesucht werden.</translation>
+    </message>
+    <message>
+        <source>Automatically check for software updates at program start (recommended)</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Automatisch nach Software-Aktualisierungen suchen (empfohlen)</translation>
+    </message>
+    <message>
+        <source>Show update</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Aktualisierung anzeigen</translation>
+    </message>
+    <message>
+        <source>Start manual search for software update</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Manuelle Suche nach Software-Aktualisierung starten</translation>
+    </message>
+    <message>
+        <source>Searching for software updates...</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Die Suche nach Software-Aktualisierungen wird durchgeführt...</translation>
+    </message>
+    <message>
+        <source>Abort search</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Suche abbrechen</translation>
+    </message>
+</context>
+<context>
     <name>UpdateView</name>
     <message>
         <source>Application update</source>
@@ -5919,6 +5100,46 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>An update for the outdated installed version (%1) is available for download.</source>
         <extracomment>DESKTOP %1 is replaced with the current version number</extracomment>
         <translation>Eine Aktualisierung der veralteten installierten Version (%1) ist zum Download verfügbar.</translation>
+    </message>
+    <message>
+        <source>Update information is being checked...</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Update-Informationen werden geprüft...</translation>
+    </message>
+    <message>
+        <source>Update failed</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Update fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Application update could not be performed</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Anwendungsaktualisierung konnte nicht durchgeführt werden</translation>
+    </message>
+    <message>
+        <source>Back to start page</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Zurück zur Startseite</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Erneut versuchen</translation>
+    </message>
+    <message>
+        <source>Show update</source>
+        <extracomment>DESKTOP</extracomment>
+        <translation>Aktualisierung anzeigen</translation>
+    </message>
+    <message>
+        <source>A newer update (version %1) has been found and is available for download.</source>
+        <extracomment>DESKTOP %1 will be replaced with the update version number</extracomment>
+        <translation>Eine neuere Aktualisierung (Version %1) wurde gefunden und ist zum Download verfügbar.</translation>
+    </message>
+    <message>
+        <source>Newer version %1 available</source>
+        <extracomment>DESKTOP %1 will be replaced with the update version number</extracomment>
+        <translation>Neuere Version %1 verfügbar</translation>
     </message>
     <message>
         <source>Warning - Your operating system is no longer supported</source>
@@ -6271,14 +5492,19 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Wenn dies nicht hilft, kontaktieren Sie unseren %1Support%2.</translation>
     </message>
     <message>
-        <source>Searching for software updates...</source>
-        <extracomment>DESKTOP</extracomment>
-        <translation>Die Suche nach Software-Aktualisierungen wird durchgeführt...</translation>
+        <source>An update is available (version %1).</source>
+        <extracomment>DESKTOP %1 is replaced with the version number of the software update</extracomment>
+        <translation>Eine Aktualisierung ist verfügbar (Version %1).</translation>
     </message>
     <message>
-        <source>An update is available (version %1).</source>
-        <extracomment>DESKTOP An update is available, the new version is supplied to the user.</extracomment>
-        <translation>Eine Aktualisierung ist verfügbar (Version %1).</translation>
+        <source>hh:mm AP</source>
+        <extracomment>DESKTOP Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
+        <translation>HH:mm</translation>
+    </message>
+    <message>
+        <source>Last search on %1 at %2</source>
+        <extracomment>DESKTOP %1 will be replaced with the date and %2 with the time of the last search.</extracomment>
+        <translation>Letzte Suche am %1 um %2 Uhr</translation>
     </message>
     <message>
         <source>Your version %1 of %2 is up to date.</source>
@@ -6300,16 +5526,17 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <extracomment>DESKTOP</extracomment>
         <translation>Die Aktualisierungeninformationen konnten nicht heruntergeladen werden. Bitte überprüfen Sie die Netzwerkverbindung.</translation>
     </message>
+    <message>
+        <source>dd.MM.yyyy</source>
+        <extracomment>DESKTOP Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
+        <translation>dd.MM.yyyy</translation>
+    </message>
 </context>
 <context>
     <name>governikus::ApplicationModel</name>
     <message>
         <source>Could not load license text.</source>
         <translation>Konnte Lizenztext nicht laden.</translation>
-    </message>
-    <message>
-        <source>Successfully saved config to &quot;%1&quot;</source>
-        <translation>Konfiguration erfolgreich unter &quot;%1&quot; gespeichert</translation>
     </message>
     <message>
         <source>Error while saving config to &quot;%1&quot;</source>
@@ -6327,6 +5554,11 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Redirect failed</source>
         <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Weiterleitung fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Authentication canceled</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Authentisierung abgebrochen</translation>
     </message>
     <message>
         <source>Authentication failed</source>
@@ -6377,11 +5609,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>ID card (PA/eAT/eID)</source>
         <extracomment>ALL_PLATFORMS An ID card is present/inserted. The text is only used in DiagnosisView.</extracomment>
         <translation>Ausweis (PA/eAT/eID)</translation>
-    </message>
-    <message>
-        <source>Smart-eID</source>
-        <extracomment>ALL_PLATFORMS A Smart-ID is present/inserted. The text is only used in DiagnosisView.</extracomment>
-        <translation>Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -7022,21 +6249,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Der Dienst ist vorübergehend nicht verfügbar, bitte versuchen Sie es zu einem späteren Zeitpunkt erneut.</translation>
     </message>
     <message>
-        <source>The device does not support Smart-eID.</source>
-        <extracomment>ALL_PLATFORMS The device does not support the Smart-eID function</extracomment>
-        <translation>Dieses Gerät unterstützt keine Smart-eID.</translation>
-    </message>
-    <message>
-        <source>Initialization of Personalization of Smart-eID failed.</source>
-        <extracomment>ALL_PLATFORMS Initialization of Personalization failed</extracomment>
-        <translation>Die Initialisierung der Personalisierung der Smart-eID ist fehlgeschlagen.</translation>
-    </message>
-    <message>
-        <source>Personalization of Smart-eID failed.</source>
-        <extracomment>ALL_PLATFORMS Personalization of Smart-eID failed</extracomment>
-        <translation>Die Personalisierung der Smart-eID ist fehlgeschlagen.</translation>
-    </message>
-    <message>
         <source>Establishing a connection is taking too long.</source>
         <extracomment>ALL_PLATFORMS Technical error description.</extracomment>
         <translation>Der Verbindungsaufbau dauert zu lange.</translation>
@@ -7107,9 +6319,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Nicht wohlgeformte Redirect-URL: %1</translation>
     </message>
     <message>
-        <source>The process has been cancelled.</source>
+        <source>You have canceled the process.</source>
         <extracomment>ALL_PLATFORMS The user cancelled the authentication in the UI.</extracomment>
-        <translation>Der Vorgang wurde abgebrochen.</translation>
+        <translation>Sie haben den Vorgang abgebrochen.</translation>
     </message>
     <message>
         <source>The process has been aborted because of an internal error.</source>
@@ -7160,11 +6372,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>The given PUK is not correct.</source>
         <extracomment>ALL_PLATFORMS The ID card declined the PUK.</extracomment>
         <translation>Die eingegebene PUK ist nicht korrekt.</translation>
-    </message>
-    <message>
-        <source>The PIN was blocked after too many unsuccessful attempts.</source>
-        <extracomment>ALL_PLATFORMS The ID card refused the PIN since the PIN feature is blocked after too many wrong attempts.</extracomment>
-        <translation>Die PIN ist nach zu vielen Fehlversuchen gesperrt.</translation>
     </message>
     <message>
         <source>The PIN is not blocked.</source>
@@ -7247,31 +6454,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Ein neuer Prozess zur Durchführung der Aktualisierung konnte nicht gestartet werden.</translation>
     </message>
     <message>
-        <source>You have reached the allowed amount of Smart-eID setups for the current period. You may set up another Smart-eID with your ID card on %1.</source>
-        <extracomment>ALL_PLATFORMS Personalization of Smart-eID is not allowed, no remaining attempts are left.</extracomment>
-        <translation>Sie haben die erlaubte Anzahl an Smart-eID-Einrichtungen für den aktuellen Zeitraum erreicht. Sie können ab dem %1 wieder eine Smart-eID mit Ihrem Ausweis einrichten.</translation>
-    </message>
-    <message>
-        <source>Failed to get the ServiceInformation of the Smart-eID.</source>
-        <extracomment>ALL_PLATFORMS Failed to get the ServiceInformation of the Smart-eID</extracomment>
-        <translation>Die Service-Informationen zu Ihrer Smart-eID konnten nicht abgerufen werden.</translation>
-    </message>
-    <message>
-        <source>The authentication to the personalization service failed.</source>
-        <extracomment>ALL_PLATFORMS No sessionID, required for a personalization, was received</extracomment>
-        <translation>Die Authentisierung gegenüber dem Personalisierungsservice ist fehlgeschlagen.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID is no longer ready for use. This might have been caused by entering the wrong Smart-eID PIN 3 times. You may personalize a new Smart-eID to resolve the issue.</source>
-        <extracomment>ALL_PLATFORMS The existing Smart-eID was invalidated.</extracomment>
-        <translation>Die Smart-eID ist nicht mehr einsatzbereit. Dies kann an einer dreifachen, fehlerhaften Eingabe der Smart-eID-PIN liegen. Um dieses Problem zu beheben, können Sie eine neue Smart-eID personalisieren.</translation>
-    </message>
-    <message>
-        <source>The preparation of the Smart-eID failed.</source>
-        <extracomment>ANDROID The preparation of the Smart-eID Applet failed</extracomment>
-        <translation>Die Vorbereitung der Smart-eID ist fehlgeschlagen.</translation>
-    </message>
-    <message>
         <source>The program did not receive a StartPaosResponse message from the server.</source>
         <extracomment>ALL_PLATFORMS Technical error description.</extracomment>
         <translation>Die Anwendung hat keine StartPaosResponse Nachricht vom Server erhalten.</translation>
@@ -7350,10 +6532,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Die Protokolldatei ist deaktiviert.</translation>
     </message>
     <message>
-        <source>Successfully saved logfile to &quot;%1&quot;</source>
-        <translation>Protokolldatei erfolgreich gespeichert unter &quot;%1&quot;</translation>
-    </message>
-    <message>
         <source>Error while saving logfile to &quot;%1&quot;</source>
         <translation>Fehler beim Speichern der Protokolldatei unter &quot;%1&quot;</translation>
     </message>
@@ -7417,34 +6595,14 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
 <context>
     <name>governikus::NumberModel</name>
     <message>
-        <source>You have entered an incorrect, 6-digit Smart-eID PIN. You have%1 2 further attempts%2 to enter the correct Smart-eID PIN.</source>
-        <extracomment>ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt. %1 + %2 are used to emphasize.</extracomment>
-        <translation>Sie haben eine falsche, 6-stellige Smart-eID-PIN eingegeben. Sie haben%1 2 weitere Versuche%2, die richtige Smart-eID-PIN einzugeben.</translation>
-    </message>
-    <message>
         <source>You have entered an incorrect, 5-digit Transport PIN 3 times, your %1Transport PIN is now blocked%2. To remove the block, the%1 10-digit PUK%2 must be entered first.</source>
         <extracomment>ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. %1 + %2 are used to emphasize.</extracomment>
         <translation>Sie haben 3 Mal eine falsche, 5-stellige Transport-PIN eingegeben, Ihre %1Transport-PIN ist nun gesperrt%2. Um die Sperre aufzuheben, muss zunächst die%1 10-stellige PUK%2 eingegeben werden.</translation>
     </message>
     <message>
-        <source>You have entered an incorrect, 6-digit Smart-eID PIN 3 times. Your Smart-eID is now invalidated. To use a Smart-eID again you have to set one up in the guided setup on the start page.</source>
-        <extracomment>MOBILE The Smart-eID PIN was entered wrongfully three times, the Smart-eID has been invalidated.</extracomment>
-        <translation>Sie haben 3 Mal eine falsche, 6-stellige Smart-eID-PIN eingegeben. Ihre Smart-eID ist nun ungültig. Um die Smart-eID erneut nutzen zu können, müssen Sie erneut die Einrichtung auf der Startseite durchführen.</translation>
-    </message>
-    <message>
         <source>You have entered an incorrect, 10-digit PUK. Please try again.</source>
         <extracomment>ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.</extracomment>
         <translation>Sie haben eine falsche, 10-stellige PUK eingegeben. Bitte versuchen Sie es erneut.</translation>
-    </message>
-    <message>
-        <source>You have entered an %1incorrect, 6-digit Smart-eID PIN 2 times%2. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
-        <extracomment>MOBILE The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID. %1 + %2 are used to emphasize.</extracomment>
-        <translation>Sie haben%1 2 Mal eine falsche, 6-stellige Smart-eID-PIN%2 eingegeben. Nach dem nächsten Fehlversuch können Sie Ihre Smart-eID nicht mehr einsetzen und müssen diese neu einrichten.</translation>
-    </message>
-    <message>
-        <source>The input does not match. Please choose a new Smart-eID PIN.</source>
-        <extracomment>ALL_PLATFORMS Error message if the new pin confirmation mismatches.</extracomment>
-        <translation>Die Eingaben stimmen nicht überein. Bitte wählen Sie eine neue Smart-eID-PIN.</translation>
     </message>
     <message>
         <source>The input does not match. Please choose a new ID card PIN.</source>
@@ -7804,85 +6962,7 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
     </message>
 </context>
 <context>
-    <name>governikus::SmartModel</name>
-    <message>
-        <source>The online check for the Smart-eID support on your device failed. Please note that this process requires an internet connection.</source>
-        <extracomment>MOBILE The check for Smart-eID support failed without any specific reason.</extracomment>
-        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Bitte beachten Sie, dass für diesen Vorgang eine Internetverbindung erforderlich ist.</translation>
-    </message>
-    <message>
-        <source>The online check for the Smart-eID support on your device failed because the server is currently facing too many requests. Please try again later.</source>
-        <extracomment>MOBILE The check for Smart-eID support failed because the server is overloaded.</extracomment>
-        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen da der Server derzeit überlastet ist. Bitte versuchen Sie es später erneut.</translation>
-    </message>
-    <message>
-        <source>The online check for the Smart-eID support on your device failed because the server is currently under maintenance. Please try again later.</source>
-        <extracomment>MOBILE The check for Smart-eID support failed because the server is being maintained.</extracomment>
-        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen da der Server derzeit gewartet wird. Bitte versuchen Sie es später erneut.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. Please note that this process requires an internet connection.</source>
-        <extracomment>MOBILE Deletion of the Smart-eID failed without a specific reason.</extracomment>
-        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Bitte beachten Sie, dass für diesen Vorgang eine Internetverbindung erforderlich ist.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID data and provisioning could not be successfully deleted from your device because the server is currently facing too many requests. Please try again later.</source>
-        <extracomment>MOBILE Deletion of the Smart-eID failed because the server is overloaded.</extracomment>
-        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden da der Server derzeit überlastet ist. Bitte versuchen Sie es später erneut.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID data and provisioning could not be successfully deleted from your device because the server is currently under maintenance. Please try again later.</source>
-        <extracomment>MOBILE Deletion of the Smart-eID failed because the server is being maintained.</extracomment>
-        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden da der Server derzeit gewartet wird. Bitte versuchen Sie es später erneut.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. In order to access the necessary device storage, active NFC functionality is required. Please activate NFC and restart the process.</source>
-        <extracomment>MOBILE Deletion of the Smart-eID failed because NFC is not activated.</extracomment>
-        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Eine aktive NFC-Funktionalität ist erforderlich, um auf die notwendigen Gerätespeicher zuzugreifen. Bitte aktivieren Sie NFC und starten Sie den Löschvorgang erneut.</translation>
-    </message>
-    <message>
-        <source>The online check for the Smart-eID support on your device failed. In order to access the necessary device storage, active NFC functionality is required. Please activate NFC and try again.</source>
-        <extracomment>MOBILE The check for Smart-eID support failed because the NFC functionality is not activated.</extracomment>
-        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Eine aktive NFC-Funktionalität ist erforderlich, um auf die notwendigen Gerätespeicher zuzugreifen. Bitte aktivieren Sie NFC und versuchen Sie es erneut.</translation>
-    </message>
-    <message>
-        <source>The online check for the Smart-eID support on your device failed. The Google Play Integrity Check failed.</source>
-        <extracomment>MOBILE The check for Smart-eID support failed because Google Play Integrity Check failed.</extracomment>
-        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Die Google Play-Integritätsprüfung ist fehlgeschlagen.</translation>
-    </message>
-    <message>
-        <source>The online check for the Smart-eID support on your device failed. An authentication issue occurred (e.g. a resource was accessed without authorization or an unauthorized app tried to access a security component).</source>
-        <extracomment>MOBILE The check for Smart-eID support failed because an authorization issue occurred.</extracomment>
-        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Ein Authorisierungsproblem ist aufgetreten (z.B. erfolgte ein Resourcenzugriff ohne Authorisierung oder eine nicht autorisierte App versuchte auf eine Sicherheitskomponente zuzugreifen).</translation>
-    </message>
-    <message>
-        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. The Google Play Integrity Check failed.</source>
-        <extracomment>MOBILE Deletion of the Smart-eID failed because the Google Play Integrity Check failed.</extracomment>
-        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Die Google Play-Integritätsprüfung ist fehlgeschlagen.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. An authentication issue occurred (e.g. a resource was accessed without authorization or an unauthorized app tried to access a security component).</source>
-        <extracomment>MOBILE Deletion of the Smart-eID failed because an authorization issue occurred.</extracomment>
-        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Ein Authorisierungsproblem ist aufgetreten (z.B. erfolgte ein Resourcenzugriff ohne Authorisierung oder eine nicht autorisierte App versuchte auf eine Sicherheitskomponente zuzugreifen).</translation>
-    </message>
-    <message>
-        <source>The online check for the Smart-eID support on your device failed. Please ensure that you have an internet connection and your antivirus software and firewall are not blocking the connection.</source>
-        <extracomment>MOBILE The check for Smart-eID support failed because a network connection error occurred.</extracomment>
-        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind und weder eine Antivirus-Software noch eine Firewall die Verbindung blockiert.</translation>
-    </message>
-    <message>
-        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. Please ensure that you have an internet connection and your antivirus software and firewall are not blocking the connection.</source>
-        <extracomment>MOBILE Deletion of the Smart-eID failed because a network connection error occurred.</extracomment>
-        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind und weder eine Antivirus-Software noch eine Firewall die Verbindung blockiert.</translation>
-    </message>
-</context>
-<context>
     <name>governikus::StateChangePin</name>
-    <message>
-        <source>You have successfully changed your Smart-eID PIN.</source>
-        <extracomment>ALL_PLATFORMS The Smart-eID PIN was changed successfully.</extracomment>
-        <translation>Sie haben Ihre Smart-eID-PIN erfolgreich geändert.</translation>
-    </message>
     <message>
         <source>You have successfully changed your ID card PIN.</source>
         <extracomment>ALL_PLATFORMS The ID card PIN was changed successfully (1/2).</extracomment>
@@ -7907,14 +6987,6 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
         <source>The used ID card type is not accepted by the server.</source>
         <extracomment>IOS</extracomment>
         <translation>Der verwendete Ausweistyp wird vom Server nicht akzeptiert.</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateDeleteApplet</name>
-    <message>
-        <source>Cleaning up old Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Bereinige alte Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -7950,22 +7022,6 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
     </message>
 </context>
 <context>
-    <name>governikus::StateFinalizePersonalization</name>
-    <message>
-        <source>Finalizing the Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Smart-eID fertigstellen</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateGetChallenge</name>
-    <message>
-        <source>Getting challenge from server</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Challenge vom Server abrufen</translation>
-    </message>
-</context>
-<context>
     <name>governikus::StateGetSelfAuthenticationData</name>
     <message>
         <source>Getting results from server</source>
@@ -7974,34 +7030,10 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
     </message>
 </context>
 <context>
-    <name>governikus::StateGetSessionId</name>
-    <message>
-        <source>Getting results from server</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Ergebnisse vom Server abrufen</translation>
-    </message>
-</context>
-<context>
     <name>governikus::StateGetTcToken</name>
     <message>
         <source>Fetch TCToken</source>
         <translation>TCToken abrufen</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateInitializePersonalization</name>
-    <message>
-        <source>Personalizing the Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Personalisiere Smart-eID</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateInstallApplet</name>
-    <message>
-        <source>Installing Smart-eID</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Installiere Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -8018,14 +7050,6 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
         <source>Weak NFC signal</source>
         <extracomment>The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.</extracomment>
         <translation>Schwacher NFC-Empfang</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateUpdateSupportInfo</name>
-    <message>
-        <source>Checking Smart-eID status</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Überprüfe Smart-eID-Status</translation>
     </message>
 </context>
 <context>
@@ -8192,39 +7216,9 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
         <translation>Bitte wenden Sie sich an das Bürgeramt, um ein neues Ausweisdokument zu beantragen oder die Sperrung des Ausweises aufzuheben.</translation>
     </message>
     <message>
-        <source>The used Smart-eID is not accepted by the server. Please restart the remote service on your connected smartphone and try again with a physical ID card.</source>
+        <source>The used ID card is not accepted by the server. Please remove the ID card from your device or card reader and use a suitable ID card or contact the service provider.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Die verwendete Smart-eID wird vom Server nicht akzeptiert. Bitte starten Sie den Fernzugriff auf Ihrem verbundenen Smartphone neu und versuchen Sie es erneut mit einem physischen Ausweis.</translation>
-    </message>
-    <message>
-        <source>The used Smart-eID is not accepted by the server. Please stop the remote service and use another Smart-eID or contact the service provider.</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Die verwendete Smart-eID wird vom Server nicht akzeptiert. Bitte stoppen Sie den Fernzugriff und verwenden Sie eine andere Smart-eID oder kontaktieren Sie den Anbieter.</translation>
-    </message>
-    <message>
-        <source>The used ID card is not accepted by the server. Please remove the ID card from your device or card reader and use a Smart-eID or contact the service provider.</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Der verwendete Ausweistyp wird vom Server nicht akzeptiert. Bitte entfernen Sie den Ausweis vom Gerät oder Kartenleser und verwenden Sie eine Smart-eID oder kontaktieren Sie den Anbieter.</translation>
-    </message>
-    <message>
-        <source>Renew your Smart-eID and set a new PIN in the Smart-eID menu.</source>
-        <extracomment>MOBILE The hint text that is shown right above the redirect button that appears when a user tried to usa an unusable Smart-eID</extracomment>
-        <translation>Erneuern Sie Ihre Smart-eID und vergeben Sie eine neue PIN im Smart-eID Menü.</translation>
-    </message>
-    <message>
-        <source>Go to Smart-eID menu</source>
-        <extracomment>MOBILE The text on the redirect button that appears when the user tried to use an unusable Smart-eID</extracomment>
-        <translation>Zum Smart-eID Menü</translation>
-    </message>
-    <message>
-        <source>My PUK is used up. How do I set a new PIN?</source>
-        <extracomment>ALL_PLATFORMS Hint title to assist the user on how to set a new PIN</extracomment>
-        <translation>Meine PUK ist verbraucht. Wie kann ich eine neue PIN setzen?</translation>
-    </message>
-    <message>
-        <source>How do I activate the eID function?</source>
-        <extracomment>ALL_PLATFORMS Hint title to assist the user on how to set a new PIN</extracomment>
-        <translation>Wie kann ich die Online-Ausweisfunktion aktivieren?</translation>
+        <translation>Der verwendete Ausweistyp wird vom Server nicht akzeptiert. Bitte entfernen Sie den Ausweis vom Gerät oder Kartenleser und verwenden Sie einen geeigneten Ausweis oder kontaktieren Sie den Anbieter.</translation>
     </message>
     <message>
         <source>Error code: %1</source>

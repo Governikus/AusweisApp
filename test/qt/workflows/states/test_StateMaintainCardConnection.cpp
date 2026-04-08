@@ -46,7 +46,7 @@ class test_StateMaintainCardConnection
 			QTest::addColumn<GlobalStatus::Code>("status");
 
 			QTest::newRow("cancellation_by_user") << CardReturnCode::CANCELLATION_BY_USER << GlobalStatus::Code::Card_Cancellation_By_User;
-			QTest::newRow("puk_inoperative") << CardReturnCode::PUK_INOPERATIVE << GlobalStatus::Code::Card_Puk_Blocked;
+			QTest::newRow("protocol_error") << CardReturnCode::PROTOCOL_ERROR << GlobalStatus::Code::Card_Protocol_Error;
 			QTest::newRow("input_timeout") << CardReturnCode::INPUT_TIME_OUT << GlobalStatus::Code::Card_Input_TimeOut;
 		}
 
@@ -75,10 +75,7 @@ class test_StateMaintainCardConnection
 			QTest::newRow("invalid_pin_2") << CardReturnCode::INVALID_PIN_2;
 			QTest::newRow("invalid_pin_3") << CardReturnCode::INVALID_PIN_3;
 			QTest::newRow("invalid_puk") << CardReturnCode::INVALID_PUK;
-			QTest::newRow("new_pin_mismatch") << CardReturnCode::NEW_PIN_MISMATCH;
-			QTest::newRow("new_pin_invalid_length") << CardReturnCode::NEW_PIN_INVALID_LENGTH;
 			QTest::newRow("pin_not_blocked") << CardReturnCode::PIN_NOT_BLOCKED;
-			QTest::newRow("pin_blocked") << CardReturnCode::PIN_BLOCKED;
 		}
 
 

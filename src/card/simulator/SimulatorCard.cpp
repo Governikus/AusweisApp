@@ -661,7 +661,7 @@ QByteArray SimulatorCard::ecMultiplication(const QByteArray& pPoint) const
 		return QByteArray();
 	}
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
 	const auto& terminalKey = EcUtil::create(EVP_PKEY_new());
 	if (terminalKey.isNull() || EVP_PKEY_copy_parameters(terminalKey.data(), mCardKey.data()) == 0)
 	{

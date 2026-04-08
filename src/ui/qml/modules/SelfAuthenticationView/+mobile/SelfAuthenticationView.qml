@@ -14,7 +14,6 @@ import Governikus.Type
 SelfAuthStartView {
 	id: root
 
-	property bool autoInsertCard: false
 	property var initialPlugin
 
 	signal back
@@ -38,7 +37,7 @@ SelfAuthStartView {
 		AuthView {
 			property bool backRequested: false
 
-			autoInsertCard: root.autoInsertCard
+			initialPlugin: root.initialPlugin
 
 			Component.onCompleted: SelfAuthModel.startWorkflow(false)
 			onChangeTransportPin: root.changeTransportPin()

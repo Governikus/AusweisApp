@@ -1,0 +1,127 @@
+From c2cc87f92f962588e42a7f267a016fe1183d0415 Mon Sep 17 00:00:00 2001
+From: Paolo Insogna <paolo@cowtech.it>
+Date: Wed, 25 Feb 2026 16:55:30 +0100
+Subject: chore: Support both dynamic and static build. (#789)
+
+Signed-off-by: Paolo Insogna <paolo@cowtech.it>
+(cherry picked from commit 2ccad0e65da01c1380f2a054bbb6cebfc1389baa)
+---
+ CMakeLists.txt               | 52 +++++++++++++++++++++---------------
+ cmake/llhttp-config.cmake.in | 19 +++++++++++++
+ 2 files changed, 49 insertions(+), 22 deletions(-)
+ create mode 100644 cmake/llhttp-config.cmake.in
+
+diff --git x/CMakeLists.txt y/CMakeLists.txt
+index ea2f20aa71a0e4ec5d91f6b7b9327881ec2c70a0..f4fd0faafb34dd8e97e0bc178b24ae69a257a26c 100644
+--- x/CMakeLists.txt
++++ y/CMakeLists.txt
+@@ -3,6 +3,7 @@ cmake_policy(SET CMP0069 NEW)
+ 
+ project(llhttp VERSION 9.3.1)
+ include(GNUInstallDirs)
++include(CMakePackageConfigHelpers)
+ 
+ set(CMAKE_C_STANDARD 99)
+ 
+@@ -66,47 +67,54 @@ function(config_library target)
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+   )
++endfunction(config_library target)
+ 
++if(LLHTTP_BUILD_SHARED_LIBS)
++  add_library(llhttp_shared SHARED
++      ${llhttp_src}
++  )
++  add_library(llhttp::llhttp ALIAS llhttp_shared)
++  config_library(llhttp_shared)
++endif()
++
++if(LLHTTP_BUILD_STATIC_LIBS)
++  add_library(llhttp_static STATIC
++      ${llhttp_src}
++  )
++  if(NOT LLHTTP_BUILD_SHARED_LIBS)
++    add_library(llhttp::llhttp ALIAS llhttp_static)
++  endif()
++  config_library(llhttp_static)
++endif()
++
++if(TARGET llhttp_shared OR TARGET llhttp_static)
+   install(FILES
+     ${CMAKE_CURRENT_SOURCE_DIR}/libllhttp.pc
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+   )
+ 
+-  # This is required to work with FetchContent
+   install(EXPORT llhttp
+-    FILE llhttp-config.cmake
++    FILE llhttp-targets.cmake
+     NAMESPACE llhttp::
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llhttp
+   )
+ 
+-  include(CMakePackageConfigHelpers)
++  configure_package_config_file(
++    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/llhttp-config.cmake.in
++    ${CMAKE_CURRENT_BINARY_DIR}/llhttp-config.cmake
++    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llhttp
++  )
++
+   write_basic_package_version_file(
+     ${CMAKE_CURRENT_BINARY_DIR}/llhttp-config-version.cmake
+     COMPATIBILITY AnyNewerVersion
+   )
++
+   install(FILES
++    ${CMAKE_CURRENT_BINARY_DIR}/llhttp-config.cmake
+     ${CMAKE_CURRENT_BINARY_DIR}/llhttp-config-version.cmake
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llhttp
+   )
+-
+-endfunction(config_library target)
+-
+-if(LLHTTP_BUILD_SHARED_LIBS)
+-  add_library(llhttp_shared SHARED
+-      ${llhttp_src}
+-  )
+-  add_library(llhttp::llhttp ALIAS llhttp_shared)
+-  config_library(llhttp_shared)
+-endif()
+-
+-if(LLHTTP_BUILD_STATIC_LIBS)
+-  add_library(llhttp_static STATIC
+-      ${llhttp_src}
+-  )
+-  if(NOT LLHTTP_BUILD_SHARED_LIBS)
+-    add_library(llhttp::llhttp ALIAS llhttp_static)
+-  endif()
+-  config_library(llhttp_static)
+ endif()
+ 
+ # On windows with Visual Studio, add a debug postfix so that release
+diff --git x/cmake/llhttp-config.cmake.in y/cmake/llhttp-config.cmake.in
+new file mode 100644
+index 0000000000000000000000000000000000000000..4d7e02c775230eddd8e1123aad22e11c1b914c3b
+--- /dev/null
++++ y/cmake/llhttp-config.cmake.in
+@@ -0,0 +1,19 @@
++@PACKAGE_INIT@
++
++include("${CMAKE_CURRENT_LIST_DIR}/llhttp-targets.cmake")
++
++if(NOT TARGET llhttp::llhttp)
++  if(TARGET llhttp::llhttp_shared)
++    add_library(llhttp::llhttp INTERFACE IMPORTED)
++    set_property(TARGET llhttp::llhttp PROPERTY
++      INTERFACE_LINK_LIBRARIES llhttp::llhttp_shared
++    )
++  elseif(TARGET llhttp::llhttp_static)
++    add_library(llhttp::llhttp INTERFACE IMPORTED)
++    set_property(TARGET llhttp::llhttp PROPERTY
++      INTERFACE_LINK_LIBRARIES llhttp::llhttp_static
++    )
++  endif()
++endif()
++
++check_required_components(llhttp)

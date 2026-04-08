@@ -1,14 +1,17 @@
 # Set CMAKE_PREFIX_PATH with toolchain directory
 
+set(MIN_QT_VERSION_DESKTOP 6.8)
+set(MIN_QT_VERSION_MOBILE 6.10)
+
 find_package(Governikus QUIET)
 if(LIBS_GOVERNIKUS)
 	message(STATUS "Library revision: ${LIBS_REVISION}")
 	string(REGEX REPLACE "-.*" "" MIN_QT_VERSION "${LIBS_QT}")
 else()
 	if(DESKTOP)
-		set(MIN_QT_VERSION 6.8)
+		set(MIN_QT_VERSION ${MIN_QT_VERSION_DESKTOP})
 	else()
-		set(MIN_QT_VERSION 6.9.2)
+		set(MIN_QT_VERSION ${MIN_QT_VERSION_MOBILE})
 	endif()
 endif()
 
@@ -31,7 +34,7 @@ if(IOS OR ANDROID)
 endif()
 
 set(Qt Qt6)
-find_package(${Qt} ${MIN_QT_VERSION} REQUIRED COMPONENTS Core Concurrent Network StateMachine CMAKE_FIND_ROOT_PATH_BOTH)
+find_package(${Qt} ${MIN_QT_VERSION} REQUIRED COMPONENTS Core Concurrent Network StateMachine)
 set(QT_VERSION "${Qt6Core_VERSION}")
 
 if(NOT CONTAINER_SDK)
@@ -91,6 +94,8 @@ find_package(OpenSSL ${MIN_OPENSSL_VERSION} REQUIRED)
 if(tmp_crosscompile_enabled)
 	set(CMAKE_CROSSCOMPILING OFF)
 endif()
+
+find_package(llhttp REQUIRED)
 
 
 if(MINGW)

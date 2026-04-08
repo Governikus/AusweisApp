@@ -36,7 +36,7 @@ class test_IfdMessage
 			if (type == IfdMessageType::IFDEstablishContext)
 			{
 				QVERIFY(!msg.isIncomplete());
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 				return;
 			}
 
@@ -44,12 +44,12 @@ class test_IfdMessage
 
 			if (type != IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 1);
+				QTRY_COMPARE(logSpy.count(), 1);
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 2);
+			QTRY_COMPARE(logSpy.count(), 2);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
 		}
@@ -73,12 +73,12 @@ class test_IfdMessage
 			if (type != IfdMessageType::UNDEFINED)
 			{
 				QVERIFY(!msg.isIncomplete());
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 				return;
 			}
 
 			QVERIFY(msg.isIncomplete());
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \""_L1));
 		}
 
@@ -101,7 +101,7 @@ class test_IfdMessage
 			{
 				QCOMPARE(msg.getContextHandle(), QString());
 				QVERIFY(!msg.isIncomplete());
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 				return;
 			}
 
@@ -110,12 +110,12 @@ class test_IfdMessage
 			if (type != IfdMessageType::UNDEFINED)
 			{
 				QVERIFY(!msg.isIncomplete());
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 				return;
 			}
 
 			QVERIFY(msg.isIncomplete());
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \""_L1));
 		}
 
@@ -137,7 +137,7 @@ class test_IfdMessage
 			IfdMessage msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 5);
+			QTRY_COMPARE(logSpy.count(), 5);
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Json parsing failed. 0 : \"illegal number\""_L1));
 #else
@@ -161,7 +161,7 @@ class test_IfdMessage
 			IfdMessage msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 4);
+			QTRY_COMPARE(logSpy.count(), 4);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Expected object at top level"_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Invalid messageType received: \"\""_L1));
@@ -180,7 +180,7 @@ class test_IfdMessage
 			IfdMessage msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 4);
+			QTRY_COMPARE(logSpy.count(), 4);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Expected object at top level"_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Invalid messageType received: \"\""_L1));
@@ -201,7 +201,7 @@ class test_IfdMessage
 			IfdMessage msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 2);
+			QTRY_COMPARE(logSpy.count(), 2);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
 		}
@@ -240,12 +240,12 @@ class test_IfdMessage
 			if (type != IfdMessageType::UNDEFINED)
 			{
 				QVERIFY(!msg.isIncomplete());
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 				return;
 			}
 
 			QVERIFY(msg.isIncomplete());
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \""_L1));
 		}
 

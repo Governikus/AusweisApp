@@ -24,6 +24,7 @@
 
             <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath_$(sys.BUILDARCHSHORT)" Order="3" />
             <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4" Condition="WIXUI_INSTALLDIR_VALID&lt;&gt;&quot;1&quot;" />
+            <Publish Dialog="BrowseDlg" Control="OK" Event="EndDialog" Value="Return" Order="5" Condition="WIXUI_INSTALLDIR_VALID=&quot;1&quot;" />
 
             <Publish Dialog="CustomExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication" Order="1" Condition="AllowStartOnExit AND (LaunchGui = &quot;true&quot;)" />
             <Publish Dialog="CustomExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999" />
@@ -66,7 +67,6 @@
         </UI>
         <UIRef Id="WixUI_Common" />
     </Fragment>
-
 
     <!-- Custom InstallDirDlg Dialog -->
     <Fragment>

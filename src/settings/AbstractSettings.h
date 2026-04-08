@@ -33,7 +33,7 @@ class AbstractSettings
 		AbstractSettings();
 		~AbstractSettings() override = default;
 
-		static void save(const QSharedPointer<QSettings>& pSettings);
+		static void sync(const QSharedPointer<QSettings>& pSettings);
 
 	public:
 #ifndef QT_NO_DEBUG

@@ -53,7 +53,6 @@ ColumnLayout {
 			}
 			return Accessible.Button;
 		}
-		Layout.fillWidth: true
 		checkable: true
 		implicitHeight: bannerLayout.implicitHeight + Style.dimens.pane_spacing * 2
 		implicitWidth: bannerLayout.implicitWidth

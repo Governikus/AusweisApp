@@ -4,9 +4,6 @@
 
 #include "UrlUtil.h"
 
-#include "AppSettings.h"
-#include "Env.h"
-
 #include "MockNetworkReply.h"
 
 #include <QtTest>
@@ -89,45 +86,6 @@ class test_UrlUtil
 			const auto [parsedType, parsedValue] = UrlUtil::getRequest(queryUrl);
 			QCOMPARE(parsedType, type);
 			QCOMPARE(parsedValue, value);
-		}
-
-
-		void setHiddenSettings_data()
-		{
-			QTest::addColumn<QUrl>("url");
-			QTest::addColumn<bool>("useTestUri");
-			QTest::addColumn<bool>("enableSimulator");
-
-			QTest::newRow("empty") << QUrl(""_L1) << false << false;
-			QTest::newRow("useTestUri") << QUrl("?useTestUri=true"_L1) << true << false;
-			QTest::newRow("!useTestUri") << QUrl("?useTestUri=false"_L1) << false << false;
-			QTest::newRow("enableSimulator") << QUrl("?enableSimulator=true"_L1) << false << true;
-			QTest::newRow("!enableSimulator") << QUrl("?enableSimulator=false"_L1) << false << false;
-			QTest::newRow("multi 1") << QUrl("?useTestUri=true&enableSimulator=true"_L1) << true << true;
-			QTest::newRow("multi 2") << QUrl("?useTestUri=true&enableSimulator=false"_L1) << true << false;
-		}
-
-
-		void setHiddenSettings()
-		{
-			auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-			auto& simulatorSettings = Env::getSingleton<AppSettings>()->getSimulatorSettings();
-
-			generalSettings.setDeveloperOptions(true);
-			generalSettings.setUseSelfauthenticationTestUri(false);
-			simulatorSettings.setEnabled(false);
-
-			QCOMPARE(generalSettings.useSelfAuthTestUri(), false);
-			QCOMPARE(simulatorSettings.isEnabled(), false);
-
-			QFETCH(QUrl, url);
-			QFETCH(bool, useTestUri);
-			QFETCH(bool, enableSimulator);
-
-			UrlUtil::setHiddenSettings(QUrlQuery(url));
-
-			QCOMPARE(generalSettings.useSelfAuthTestUri(), useTestUri);
-			QCOMPARE(simulatorSettings.isEnabled(), enableSimulator);
 		}
 
 

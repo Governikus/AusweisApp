@@ -75,6 +75,7 @@ void HttpHandler::handle(const QSharedPointer<HttpRequest>& pRequest)
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocaleCode()));
 	//: ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_BUTTON"), tr("Report now"));
+	htmlTemplate.setContextParameter(QStringLiteral("AUSWEISAPP_LOGO"), QStringLiteral("/images/html_templates/ausweisapp_logo_%1.svg").arg(LanguageLoader::getLocaleCode()));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
 	HttpResponse response(HTTP_STATUS_NOT_FOUND);
@@ -94,7 +95,6 @@ void HttpHandler::handleCorsRequest(const QSharedPointer<HttpRequest>& pRequest)
 bool HttpHandler::handleGetRequest(const QSharedPointer<HttpRequest>& pRequest, const QUrl& pUrl)
 {
 	const auto queryUrl = QUrlQuery(pUrl);
-	UrlUtil::setHiddenSettings(queryUrl);
 	const auto [type, value] = UrlUtil::getRequest(queryUrl);
 	switch (type)
 	{

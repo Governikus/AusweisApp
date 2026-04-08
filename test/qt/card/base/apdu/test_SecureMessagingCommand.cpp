@@ -41,7 +41,7 @@ class test_SecureMessagingCommand
 			QCOMPARE(command.getExpectedLengthObjectEncoded(), QByteArray());
 			QCOMPARE(command.getMac(), QByteArray());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));
 		}
 
@@ -71,7 +71,7 @@ class test_SecureMessagingCommand
 			QCOMPARE(command.getExpectedLengthObjectEncoded(), QByteArray());
 			QCOMPARE(command.getMac(), QByteArray());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			if (input.getData().isEmpty())
 			{
 				QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));
@@ -90,7 +90,7 @@ class test_SecureMessagingCommand
 			SecureMessagingCommand command(CommandApdu(Ins::MSE_SET, 0, 0, QByteArray::fromHex("8704050607088E080102030405060708")));
 			QVERIFY(!command.isValid());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Error on decoding encrypted data"_L1));
 		}
 
@@ -120,7 +120,7 @@ class test_SecureMessagingCommand
 			SecureMessagingCommand command(input);
 			QVERIFY(!command.isValid());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			if (input.getData().isEmpty())
 			{
 				QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));

@@ -23,8 +23,6 @@ FlickableSectionPage {
 		text: qsTr("6-digit card PIN")
 	}
 	AnimationLoader {
-		id: animation
-
 		Layout.alignment: Qt.AlignHCenter
 		Layout.bottomMargin: Style.dimens.pane_spacing
 		animated: false

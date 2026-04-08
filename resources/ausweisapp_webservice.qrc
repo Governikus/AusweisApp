@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="images/html_templates/AusweisApp_Logo.svg">../docs/sdk/AusweisApp_Logo.svg</file>
+        <file alias="images/html_templates/ausweisapp_logo_en.svg">../docs/sdk/ausweisapp_logo_en.svg</file>
+        <file alias="images/html_templates/ausweisapp_logo_de.svg">images/ausweisapp_logo_de.svg</file>
+        <file alias="images/html_templates/ausweisapp_logo_uk.svg">../docs/sdk/ausweisapp_logo_en.svg</file>
+        <file alias="images/html_templates/ausweisapp_logo_ru.svg">../docs/sdk/ausweisapp_logo_en.svg</file>
         <file>images/desktop/npa.ico</file>
         <file>images/html_templates/html_message_section.jpg</file>
         <file>images/html_templates/icon_attention.svg</file>

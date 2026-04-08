@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Version 2.5.0
+^^^^^^^^^^^^^
+* Removed support for iOS 16.
+* Updated Android NDK to r29 (29.0.14206865).
+* Paired smartphones-as-cardreader of an installed AusweisApp running at least version 2.5.0 are now
+  usable as a reader on Android.
+* Added parameter ``AusweisApp`` to :ref:`info` that contains information about the state
+  of the LocalIfd interface (Android only).
+* Added environment variable ``AUSWEISAPP_WEBSOCKET_ORIGIN``.
+* The method on Android (AIDL) ``send()`` has been deprecated and replaced with ``transmit()``.
+
+
 Version 2.4.1
 ^^^^^^^^^^^^^
 * The Container-SDK now only contains necessary libraries instead of a complete distribution package manager.

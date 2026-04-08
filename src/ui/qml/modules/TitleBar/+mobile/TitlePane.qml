@@ -14,8 +14,6 @@ Item {
 	readonly property int shadowHeight: visible ? 15 : 0
 
 	RoundedRectangle {
-		id: background
-
 		bottomLeftCorner: false
 		bottomRightCorner: false
 

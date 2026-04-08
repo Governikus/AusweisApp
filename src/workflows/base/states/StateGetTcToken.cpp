@@ -12,7 +12,7 @@
 #include <QLoggingCategory>
 #include <QNetworkRequest>
 #include <QSslKey>
-#include <http_parser.h>
+#include <llhttp.h>
 
 
 using namespace governikus;
@@ -191,7 +191,10 @@ void StateGetTcToken::onNetworkReply()
 		};
 		updateStatus({errorStatus, infoMap});
 		Q_EMIT fireAbort({reason,
-						  {FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
+						  {
+							  {FailureCode::Info::Network_Error, mReply->errorString()},
+							  {FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
+						  }
 				});
 		return;
 	}
@@ -219,7 +222,10 @@ void StateGetTcToken::onNetworkReply()
 	qCCritical(network) << NetworkManager::toStatus(mReply);
 	updateStatus(NetworkManager::toTrustedChannelStatus(mReply));
 	Q_EMIT fireAbort({FailureCode::Reason::Get_TcToken_Invalid_Server_Reply,
-					  {FailureCode::Info::Network_Error, mReply->errorString()}
+					  {
+						  {FailureCode::Info::Network_Error, mReply->errorString()},
+						  {FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
+					  }
 			});
 }
 

@@ -1,6 +1,6 @@
 .. only:: html
 
-  .. image:: AusweisApp_Logo.svg
+  .. image:: ausweisapp_logo_en.svg
      :alt: AusweisApp
      :align: center
      :width: 200pt

@@ -77,11 +77,20 @@ class test_StateProcessIfdMessages
 		}
 
 
+		void test_OnEstablishPaceChannel_data()
+		{
+			QTest::addColumn<bool>("basicReader");
+			QTest::addRow("basicReader") << true;
+			QTest::addRow("pinPadReader") << false;
+		}
+
+
 		void test_OnEstablishPaceChannel()
 		{
 			TestHookThread workerThread;
 
 			{
+				QFETCH(bool, basicReader);
 
 				const PacePasswordId pinId(PacePasswordId::PACE_PIN);
 				const QByteArray chat = QByteArray::fromHex("7F4C12060904007F00070301020253050000000F0F");
@@ -96,9 +105,13 @@ class test_StateProcessIfdMessages
 				const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(mIfdServer));
 				StateProcessIfdMessages state(context);
 				const QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("test"_L1, establishPaceChannel, 6));
-				const auto& worker = MockCardConnectionWorker::create(&workerThread);
+				MockReader mockReader;
+				mockReader.setInfoBasicReader(basicReader);
+				mockReader.moveToThread(workerThread.getThread());
+				const auto& worker = MockCardConnectionWorker::create(&workerThread, &mockReader);
 				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-				QSignalSpy spy(&state, &StateProcessIfdMessages::fireEstablishPaceChannel);
+				QSignalSpy spyBasicReader(&state, &StateProcessIfdMessages::fireEstablishPaceChannel);
+				QSignalSpy spyPinPadReader(&state, &StateProcessIfdMessages::fireEstablishPaceChannelPinPad);
 
 				state.onEstablishPaceChannel(message, connection);
 				QVERIFY(!context->getSlotHandle().isEmpty());
@@ -108,8 +121,17 @@ class test_StateProcessIfdMessages
 				QCOMPARE(paceChannel.getChat(), chat);
 				QCOMPARE(paceChannel.getCertificateDescription(), certDescription);
 				QCOMPARE(context->getCardConnection(), connection);
-				QCOMPARE(spy.count(), 1);
+				QCOMPARE(spyBasicReader.count(), basicReader ? 1 : 0);
+				QCOMPARE(spyPinPadReader.count(), basicReader ? 0 : 1);
 			}
+		}
+
+
+		void test_OnModifyPin_data()
+		{
+			QTest::addColumn<bool>("basicReader");
+			QTest::addRow("basicReader") << true;
+			QTest::addRow("pinPadReader") << false;
 		}
 
 
@@ -118,17 +140,24 @@ class test_StateProcessIfdMessages
 			TestHookThread workerThread;
 
 			{
+				QFETCH(bool, basicReader);
+
 				const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(mIfdServer));
 				StateProcessIfdMessages state(context);
 				const QSharedPointer<const IfdModifyPin> message(new IfdModifyPin());
-				const auto& worker = MockCardConnectionWorker::create(&workerThread);
+				MockReader mockReader;
+				mockReader.setInfoBasicReader(basicReader);
+				mockReader.moveToThread(workerThread.getThread());
+				const auto& worker = MockCardConnectionWorker::create(&workerThread, &mockReader);
 				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-				QSignalSpy spy(&state, &StateProcessIfdMessages::fireModifyPin);
+				QSignalSpy spyBasicReader(&state, &StateProcessIfdMessages::fireModifyPin);
+				QSignalSpy spyPinPadReader(&state, &StateProcessIfdMessages::fireModifyPinPinPad);
 
 				state.onModifyPin(message, connection);
 				QCOMPARE(context->getModifyPinMessage(), message);
 				QCOMPARE(context->getCardConnection(), connection);
-				QCOMPARE(spy.count(), 1);
+				QCOMPARE(spyBasicReader.count(), basicReader ? 1 : 0);
+				QCOMPARE(spyPinPadReader.count(), basicReader ? 0 : 1);
 			}
 		}
 

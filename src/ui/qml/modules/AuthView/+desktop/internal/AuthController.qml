@@ -8,7 +8,6 @@ import QtQuick
 
 import Governikus.Animations
 import Governikus.EnterPasswordView
-import Governikus.Global
 import Governikus.MultiInfoView
 import Governikus.ProgressView
 import Governikus.ResultView
@@ -170,16 +169,11 @@ ProgressView {
 			}
 			break;
 		case "FinalState":
-			if (AuthModel.error) {
-				if (AuthModel.shouldSkipResultView()) {
-					pop(root);
-					AuthModel.continueWorkflow();
-					if (AuthModel.changeTransportPin) {
-						changeTransportPin();
-					} else {
-						backToStartPage(false);
-					}
-				} else if (userCancelAndManualRedirect) {
+			if (AuthModel.changeTransportPin) {
+				AuthModel.continueWorkflow();
+				changeTransportPin();
+			} else if (AuthModel.error) {
+				if (userCancelAndManualRedirect) {
 					userCancelledAndBackToStart(true);
 				} else {
 					push(authResult);
@@ -377,7 +371,7 @@ ProgressView {
 		id: enterPasswordView
 
 		EnterPasswordView {
-			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || passwordType === NumberModel.PasswordType.SMART_PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
+			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
 			moreInformationText: infoData.linkText
 			passwordType: NumberModel.passwordType
 			title: root.title
@@ -542,19 +536,13 @@ ProgressView {
 			buttonText: root.startedByOnboarding ?
 			//: MOBILE
 			qsTr("Back to setup") : AuthModel.resultViewButtonText
-			firstHintButtonText: AuthModel.statusHintActionText
-			firstHintText: AuthModel.statusHintText
-			firstHintTitle: AuthModel.statusHintTitle
 			header: AuthModel.resultHeader
-			hintBoxesTitle: AuthModel.statusHintBoxesTitle
+			hintText: AuthModel.statusHintText
 			linkToOpen: AuthModel.resultViewButtonLink
 			mailButtonVisible: AuthModel.errorIsMasked
 			popupText: AuthModel.errorText
 			popupTitle: AuthModel.statusCodeDisplayString
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: Utils.getSecondPRSHintText(AuthModel.statusCode)
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
+			statusCode: AuthModel.statusCode
 			subheader: AuthModel.errorHeader
 			text: AuthModel.resultString
 			title: root.title
@@ -566,7 +554,6 @@ ProgressView {
 			}
 
 			onEmailButtonPressed: AuthModel.sendResultMail()
-			onFirstHintClicked: AuthModel.invokeStatusHintAction()
 			onLeaveView: {
 				if (AuthModel.resultViewButtonLink !== "") {
 					Qt.openUrlExternally(AuthModel.resultViewButtonLink);

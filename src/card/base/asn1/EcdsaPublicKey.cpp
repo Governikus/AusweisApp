@@ -182,7 +182,7 @@ QByteArray EcdsaPublicKey::getUncompressedPublicPoint() const
 }
 
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
+#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
 QSharedPointer<EC_GROUP> EcdsaPublicKey::createGroup(const CurveData& pData) const
 {
 	QSharedPointer<EC_GROUP> group = EcUtil::create(EC_GROUP_new_curve_GFp(pData.p.data(), pData.a.data(), pData.b.data(), nullptr));
@@ -239,7 +239,7 @@ QSharedPointer<EVP_PKEY> EcdsaPublicKey::createKey(const uchar* pPublicPoint, in
 		return nullptr;
 	}
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
+#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
 	const auto& group = createGroup(curveData);
 	if (group.isNull())
 	{

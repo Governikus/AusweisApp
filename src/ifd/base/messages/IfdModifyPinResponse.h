@@ -17,6 +17,8 @@ class IfdModifyPinResponse
 	private:
 		QByteArray mOutputData;
 
+		void ensureOutputData(ECardApiResult::Minor pMinor);
+
 	public:
 		IfdModifyPinResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		explicit IfdModifyPinResponse(const QJsonObject& pMessageObject);

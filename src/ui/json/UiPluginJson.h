@@ -10,7 +10,6 @@
 
 class test_UiPluginJson;
 class test_MsgHandlerAuth;
-class test_MsgHandlerPersonalization;
 
 
 namespace governikus
@@ -24,7 +23,6 @@ class UiPluginJson
 	Q_INTERFACES(governikus::UiPlugin)
 	friend class ::test_UiPluginJson;
 	friend class ::test_MsgHandlerAuth;
-	friend class ::test_MsgHandlerPersonalization;
 
 	private:
 		MessageDispatcher mMessageDispatcher;

@@ -4,6 +4,7 @@
 
 #include "UiPluginModel.h"
 
+#include "AppSettings.h"
 #include "Env.h"
 #include "UiLoader.h"
 #include "UiPluginQml.h"
@@ -45,7 +46,8 @@ void UiPluginModel::setUpdatePending(bool pNewIsUpdatePending)
 
 bool UiPluginModel::showUpdateInformationIfPending()
 {
-	if (!isUpdatePending())
+	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	if (!(isUpdatePending() && generalSettings.isTrayIconEnabled() && generalSettings.isAutoUpdateCheck()))
 	{
 		return false;
 	}

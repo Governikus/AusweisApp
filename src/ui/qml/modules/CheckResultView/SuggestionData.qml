@@ -12,18 +12,10 @@ QtObject {
 	property url continueButtonIcon
 	//: ALL_PLATFORMS
 	property string continueButtonText: qsTr("Continue")
-	property string firstHintButtonLink
-	property string firstHintButtonText
-	property string firstHintText
-	//: ALL_PLATFORMS
-	property string firstHintTitle: qsTr("Hint")
 	property string header
 	property string hintBoxesTitle
+	property string hintText
 	property string linkToOpen
-	property url secondHintButtonLink
-	property string secondHintButtonText
-	property string secondHintText
-	property string secondHintTitle: qsTr("Hint")
 	property string text
 	property int textFormat: Text.AutoText
 	property string title

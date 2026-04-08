@@ -151,8 +151,6 @@ SectionPage {
 		onStartScanIfNecessary: checkIDCardModel.startScanIfNecessary()
 	}
 	RemoteWorkflow {
-		id: remoteWorkflow
-
 		anchors.fill: parent
 		foundSelectedReader: RemoteServiceModel.connectedServerDeviceNames !== ""
 		visible: root.readerType === ReaderManagerPluginType.REMOTE_IFD && root.cardNotFound

@@ -68,6 +68,7 @@ Item {
 
 			Accessible.ignored: d.lockedAndHidden
 			Layout.alignment: Qt.AlignHCenter
+			Layout.fillWidth: true
 			activeModule: d.activeModule
 			visible: root.height > root.safeAreaBottomMargin
 

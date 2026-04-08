@@ -70,22 +70,9 @@ class test_StateGenericSendReceive
 		}
 
 
-		void checkServerAddress_data()
-		{
-			QTest::addColumn<bool>("personalization");
-			QTest::addColumn<QUrl>("url");
-
-			QTest::newRow("authentication") << false << QUrl("https://eid-server.example.de/entrypoint"_L1);
-			QTest::newRow("personalization") << true << QUrl("https://eid-server.example.de/personalization"_L1);
-		}
-
-
 		void checkServerAddress()
 		{
-			QFETCH(bool, personalization);
-			QFETCH(QUrl, url);
-
-			const_cast<bool&>(mState->mPersonalization) = personalization;
+			const auto& url = QUrl("https://eid-server.example.de/entrypoint"_L1);
 
 			mNetworkManager->setFilename(":/paos/DIDList.xml"_L1);
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());

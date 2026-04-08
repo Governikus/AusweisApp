@@ -10,8 +10,6 @@ import Governikus.Global
 import Governikus.Type
 
 RowLayout {
-	id: root
-
 	spacing: 0
 
 	GRepeater {
@@ -21,6 +19,7 @@ RowLayout {
 			required property int index
 			required property string value
 
+			Layout.fillWidth: false
 			checked: SettingsModel.language === value
 			position: getPosition(index, repeater.count)
 			tintIcon: false

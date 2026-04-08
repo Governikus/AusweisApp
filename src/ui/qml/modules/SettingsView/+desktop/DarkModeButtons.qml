@@ -10,8 +10,6 @@ import Governikus.Global
 import Governikus.Type
 
 RowLayout {
-	id: root
-
 	function onChanged(pChecked, pMode) {
 		if (!pChecked || SettingsModel.userDarkMode === pMode)
 			return;
@@ -27,6 +25,7 @@ RowLayout {
 			required property int index
 			required property int value
 
+			Layout.fillWidth: false
 			checked: SettingsModel.userDarkMode === value
 			position: getPosition(index, repeater.count)
 

@@ -142,7 +142,7 @@ Rectangle {
 				delegate: GCheckBox {
 					required property string modelData
 
-					Layout.fillWidth: true
+					Layout.fillWidth: false
 					checked: filterModel.selectedLevels.indexOf(text) !== -1
 					horizontalPadding: 0
 					text: modelData
@@ -186,7 +186,6 @@ Rectangle {
 					delegate: GCheckBox {
 						required property string modelData
 
-						Layout.fillWidth: true
 						checked: filterModel.selectedCategories.indexOf(text) !== -1
 						horizontalPadding: 0
 						text: modelData

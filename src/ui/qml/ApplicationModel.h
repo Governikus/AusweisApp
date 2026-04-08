@@ -50,8 +50,6 @@ class ApplicationModel
 	Q_PROPERTY(NfcState nfcState READ getNfcState NOTIFY fireNfcStateChanged)
 	Q_PROPERTY(bool extendedLengthApdusUnsupported READ isExtendedLengthApdusUnsupported NOTIFY fireReaderPropertiesUpdated)
 
-	Q_PROPERTY(bool smartSupported READ isSmartSupported CONSTANT)
-
 	Q_PROPERTY(bool wifiEnabled READ isWifiEnabled NOTIFY fireWifiEnabledChanged)
 
 	Q_PROPERTY(Workflow currentWorkflow READ getCurrentWorkflow NOTIFY fireCurrentWorkflowChanged)
@@ -124,7 +122,6 @@ class ApplicationModel
 			CHANGE_PIN,
 			SELF_AUTHENTICATION,
 			AUTHENTICATION,
-			SMART,
 			REMOTE_SERVICE,
 			NONE
 		};
@@ -147,8 +144,6 @@ class ApplicationModel
 
 		[[nodiscard]] NfcState getNfcState() const;
 		[[nodiscard]] bool isExtendedLengthApdusUnsupported() const;
-
-		[[nodiscard]] bool isSmartSupported() const;
 
 		[[nodiscard]] bool isWifiEnabled() const;
 		[[nodiscard]] Workflow getCurrentWorkflow() const;

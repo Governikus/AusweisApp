@@ -30,6 +30,3 @@ Android / iOS
   Webseite https://www.ausweisapp.bund.de/aa2/mobile-devices
 
 - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle.
-
-- Unter iOS 16 kommt es bei der Verwendung von VoiceOver zu einem
-  Absturz, wenn versucht wird ein Anwendungsprotokoll zu teilen.

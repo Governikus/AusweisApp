@@ -128,6 +128,8 @@ class test_ServerMessageHandler
 		void cleanupTestCase()
 		{
 			Env::getSingleton<ReaderManager>()->shutdown();
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -150,7 +152,7 @@ class test_ServerMessageHandler
 			IfdConnectResponse unexpectedMsg(QStringLiteral("RemoteReader"));
 
 			mDataChannel->onReceived(unexpectedMsg.toByteArray(IfdVersion::Version::latest, QStringLiteral("invalidContextHandle")));
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid context handle received")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid context handle received")));
 		}
 
 
@@ -168,7 +170,7 @@ class test_ServerMessageHandler
 
 			IfdConnectResponse unexpectedMsg(QStringLiteral("RemoteReader"));
 			mDataChannel->onReceived(unexpectedMsg.toByteArray(IfdVersion::Version::v2, contextHandle));
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Received an unexpected message of type: IFDConnectResponse")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Received an unexpected message of type: IFDConnectResponse")));
 		}
 
 
@@ -181,7 +183,7 @@ class test_ServerMessageHandler
 									 "    \"ContextHandle\": \"TestContext\",\n"
 									 "    \"msg\": \"RANDOM_STUFF\"\n"
 									 "}\n");
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received")));
 		}
 
 
@@ -346,7 +348,7 @@ class test_ServerMessageHandler
 			QVERIFY(connectResponse2.resultHasError());
 			QCOMPARE(connectResponse2.getResultMinor(), ECardApiResult::Minor::IFDL_IFD_SharingViolation);
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is already connected \"test-reader\"")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is already connected \"test-reader\"")));
 
 			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
 		}
@@ -411,9 +413,9 @@ class test_ServerMessageHandler
 
 			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Update retry counter before disconnect card for \"{")));
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Update retry counter for \"{")));
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("}\" finished with COMMAND_FAILED")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Update retry counter before disconnect card for \"{")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Update retry counter for \"{")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("}\" finished with COMMAND_FAILED")));
 		}
 
 
@@ -474,7 +476,7 @@ class test_ServerMessageHandler
 			QVERIFY(disconnectResponse.resultHasError());
 			QCOMPARE(disconnectResponse.getResultMinor(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected \"wrong-reader\"")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected \"wrong-reader\"")));
 
 			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
 		}
@@ -537,7 +539,7 @@ class test_ServerMessageHandler
 			QVERIFY(transmitResponse.resultHasError());
 			QCOMPARE(transmitResponse.getResultMinor(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected \"wrong-reader\"")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected \"wrong-reader\"")));
 
 			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
 		}
@@ -601,7 +603,7 @@ class test_ServerMessageHandler
 			QVERIFY(ifdEstablishPACEChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPACEChannelResponse.getResultMinor(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected \"wrong-reader\"")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected \"wrong-reader\"")));
 
 			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
 		}
@@ -743,7 +745,7 @@ class test_ServerMessageHandler
 			QVERIFY(ifdEstablishPACEChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPACEChannelResponse.getResultMinor(), ECardApiResult::Minor::AL_Unknown_Error);
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("\"EstablishPaceChannel\" is only available in pin pad mode.")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("\"EstablishPaceChannel\" is only available in pin pad mode.")));
 
 			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
 			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(pinpadModeToSave);
@@ -779,7 +781,7 @@ class test_ServerMessageHandler
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			sendSpy.clear();
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected")));
 			const auto& msg0 = mDispatcher->getMessage().staticCast<const IfdDestroyPaceChannelResponse>();
 			QCOMPARE(msg0->getResultMinor(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 
@@ -803,7 +805,7 @@ class test_ServerMessageHandler
 			mDataChannel->onReceived(ifdDestroyPace);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			sendSpy.clear();
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("\"DestroyPaceChannel\" is only available in pin pad mode.")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("\"DestroyPaceChannel\" is only available in pin pad mode.")));
 			QCOMPARE(mDispatcher->getMessage()->getType(), IfdMessageType::IFDDestroyPACEChannelResponse);
 			const auto& msg1 = mDispatcher->getMessage().staticCast<const IfdDestroyPaceChannelResponse>();
 			QCOMPARE(msg1->getResultMinor(), ECardApiResult::Minor::AL_Unknown_Error);
@@ -853,7 +855,7 @@ class test_ServerMessageHandler
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			sendSpy.clear();
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected")));
 			const auto& msg0 = mDispatcher->getMessage().staticCast<const IfdModifyPinResponse>();
 			QCOMPARE(msg0->getResultMinor(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 			QCOMPARE(spyModifyPin.count(), 0);
@@ -878,7 +880,7 @@ class test_ServerMessageHandler
 			mDataChannel->onReceived(ifdModifyPin);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			sendSpy.clear();
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("\"ModifyPin\" is only available in pin pad mode.")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("\"ModifyPin\" is only available in pin pad mode.")));
 			QCOMPARE(mDispatcher->getMessage()->getType(), IfdMessageType::IFDModifyPINResponse);
 			const auto& msg1 = mDispatcher->getMessage().staticCast<const IfdModifyPinResponse>();
 			QCOMPARE(msg1->getResultMinor(), ECardApiResult::Minor::AL_Unknown_Error);

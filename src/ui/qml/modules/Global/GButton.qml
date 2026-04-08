@@ -35,7 +35,6 @@ GAbstractButton {
 
 	Accessible.ignored: !enableButton
 	Accessible.name: text
-	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
 	Layout.minimumWidth: background ? Style.dimens.min_button_width : -1
 	ToolTip.delay: Style.toolTipDelay

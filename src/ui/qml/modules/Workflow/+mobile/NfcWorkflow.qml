@@ -37,7 +37,7 @@ GFlickableColumnLayout {
 		//: MOBILE AA can't use NFC on this device, suggest to use a PC instead. The text between %1 and %2 will be emphasized.
 		(root.isRemoteWorkflow ? "" : "<br/><br/>" + qsTr("Alternatively, you may use the %3 with a %1USB card reader%2 on your %1PC%2.").arg("<b>").arg("</b>").arg(Qt.application.name))
 		readonly property string positionHint: {
-			if (Style.is_layout_ios) {
+			if (Qt.platform.os === "ios") {
 				//: IOS The ID card may be inserted, the authentication process may be started.
 				return qsTr("Please place your ID card on the top of the device's back side");
 			} else {
@@ -198,8 +198,6 @@ GFlickableColumnLayout {
 		}
 
 		MoreInformationLink {
-			id: moreInformationLink
-
 			Layout.alignment: Qt.AlignHCenter
 			//: MOBILE
 			text: qsTr("My ID card is not detected")

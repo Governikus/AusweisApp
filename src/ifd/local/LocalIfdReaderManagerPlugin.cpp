@@ -25,7 +25,7 @@ LocalIfdReaderManagerPlugin::LocalIfdReaderManagerPlugin()
 	updateState();
 	if (!getInfo().isAvailable())
 	{
-		qCWarning(ifd) << "Smart-eID not available, could not find correct AusweisApp version";
+		qCWarning(ifd) << "LocalIfd not available, could not find correct AusweisApp version";
 	}
 }
 
@@ -35,7 +35,7 @@ void LocalIfdReaderManagerPlugin::startScan(bool pAutoConnect)
 	updateState();
 	if (!getInfo().isAvailable())
 	{
-		qCWarning(ifd) << "Smart-eID not available, could not find correct AusweisApp version";
+		qCWarning(ifd) << "LocalIfd not available, could not find correct AusweisApp version";
 		return;
 	}
 

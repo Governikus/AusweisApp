@@ -18,7 +18,6 @@ FlickableSectionPage {
 	required property string okButtonText
 
 	fillWidth: true
-	margins: Style.dimens.pane_padding * 2
 	spacing: Style.dimens.pane_spacing
 
 	Connections {
@@ -50,8 +49,6 @@ FlickableSectionPage {
 			verticalItemAlignment: Grid.AlignTop
 
 			Repeater {
-				id: dataRepeater
-
 				model: SelfAuthModel
 
 				LabeledText {
@@ -68,7 +65,7 @@ FlickableSectionPage {
 	GButton {
 		id: okButton
 
-		Layout.alignment: Qt.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
 		text: root.okButtonText
 
 		onClicked: root.leaveView()

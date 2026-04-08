@@ -9,8 +9,6 @@ import Governikus.Global
 import Governikus.Style
 
 GLink {
-	id: root
-
 	property bool iconVisible: true
 
 	Layout.fillWidth: true

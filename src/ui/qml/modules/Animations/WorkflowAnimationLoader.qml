@@ -5,8 +5,6 @@
 import Governikus.Type
 
 AnimationLoader {
-	id: root
-
 	property int animation: GAnimation.NONE
 
 	symbol: {

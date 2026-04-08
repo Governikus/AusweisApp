@@ -38,43 +38,8 @@ DidAuthenticateEAC2Command::DidAuthenticateEAC2Command(QSharedPointer<CardConnec
 }
 
 
-void DidAuthenticateEAC2Command::internalExecuteSoftwareSmartCard()
-{
-	auto [returnCode, efCardSecurity, authenticationToken, nonce] = getCardConnectionWorker()->performTAandCA(
-			mCvcChain,
-			mAuthenticatedAuxiliaryDataAsBinary,
-			QByteArray::fromHex(mSignatureAsHex),
-			mPin,
-			QByteArray::fromHex(mEphemeralPublicKeyAsHex));
-
-	setReturnCode(returnCode);
-	if (returnCode != CardReturnCode::OK)
-	{
-		qCWarning(card) << "Perform terminal and chip authentication failed:" << CardReturnCodeUtil::toGlobalStatus(getReturnCode());
-		return;
-	}
-
-	mEfCardSecurityAsHex += efCardSecurity.toHex();
-	if (EFCardSecurity::decode(efCardSecurity) == nullptr)
-	{
-		qCCritical(card) << "Cannot parse EF.CardSecurity";
-		setReturnCode(CardReturnCode::PROTOCOL_ERROR);
-		return;
-	}
-
-	mNonceAsHex = nonce.toHex();
-	mAuthTokenAsHex = authenticationToken.toHex();
-}
-
-
 void DidAuthenticateEAC2Command::internalExecute()
 {
-	if (getCardConnectionWorker()->getReaderInfo().isSoftwareSmartEid())
-	{
-		internalExecuteSoftwareSmartCard();
-		return;
-	}
-
 	setReturnCode(putCertificateChain(mCvcChain));
 	if (getReturnCode() != CardReturnCode::OK)
 	{

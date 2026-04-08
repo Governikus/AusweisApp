@@ -50,6 +50,7 @@ class test_TlsChecker
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -69,7 +70,10 @@ class test_TlsChecker
 
 			QTest::newRow("rsa") << ":/core/invalid.keysize.rsa.der" << "Rsa key with insufficient key size found 1024";
 			QTest::newRow("dsa") << ":/core/invalid.keysize.dsa.der" << "Dsa key with insufficient key size found 1024";
-			QTest::newRow("ec") << ":/core/invalid.keysize.ec.der" << "Ec key with insufficient key size found 128";
+			if (!QSysInfo::prettyProductName().contains(QLatin1String("Fedora")))
+			{
+				QTest::newRow("ec") << ":/core/invalid.keysize.ec.der" << "Ec key with insufficient key size found 128";
+			}
 		}
 
 
@@ -84,7 +88,7 @@ class test_TlsChecker
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QVERIFY(!TlsChecker::hasValidCertificateKeyLength(invalidCert));
 
-			QVERIFY(logSpy.count() > 0);
+			QTRY_VERIFY(logSpy.count() > 0);
 			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains(output));
 		}
@@ -117,11 +121,14 @@ class test_TlsChecker
 			 * openssl ecparam -in secp112r2_param.pem -genkey -noout -out secp112r2_key.pem
 			 * openssl ec -in secp112r2_key.pem -pubout -out secp112r2_pubkey.pem
 			 */
-			QByteArray ec112("-----BEGIN PUBLIC KEY-----\n"
-							 "MDIwEAYHKoZIzj0CAQYFK4EEAAcDHgAEWo89aCax3oUWJho7rFZ1u70WqghvA7Tf\n"
-							 "SXXiZw==\n"
-							 "-----END PUBLIC KEY-----");
-			QTest::newRow("ec112") << ec112 << QSsl::KeyAlgorithm::Ec << false << FailureCode::FailureInfoMap {};
+			if (!QSysInfo::prettyProductName().contains(QLatin1String("Fedora")))
+			{
+				QByteArray ec112("-----BEGIN PUBLIC KEY-----\n"
+								 "MDIwEAYHKoZIzj0CAQYFK4EEAAcDHgAEWo89aCax3oUWJho7rFZ1u70WqghvA7Tf\n"
+								 "SXXiZw==\n"
+								 "-----END PUBLIC KEY-----");
+				QTest::newRow("ec112") << ec112 << QSsl::KeyAlgorithm::Ec << false << FailureCode::FailureInfoMap {};
+			}
 
 			/*
 			 * openssl ecparam -name secp521r1 -out secp521r1_param.pem
@@ -381,7 +388,7 @@ class test_TlsChecker
 			QSslConfiguration cfg;
 			TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
-			QCOMPARE(logSpy.count(), 6);
+			QTRY_COMPARE(logSpy.count(), 6);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Used session cipher QSslCipher(name=, bits=0, proto=)"_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Used session protocol: QSsl::UnknownProtocol"_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Used ephemeral server key:"_L1));

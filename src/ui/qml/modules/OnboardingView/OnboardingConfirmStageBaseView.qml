@@ -19,8 +19,6 @@ ColumnLayout {
 	spacing: Style.dimens.pane_spacing
 
 	Heading {
-		id: titleText
-
 		text: confirmationData.headerText
 		wrapMode: Text.WordWrap
 	}
@@ -42,8 +40,6 @@ ColumnLayout {
 		textFormat: Text.StyledText
 	}
 	Hint {
-		id: hintItem
-
 		Layout.fillWidth: true
 		text: confirmationData.hintText
 		//: ALL_PLATFORMS

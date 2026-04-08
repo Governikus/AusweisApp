@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 
 ListModel {

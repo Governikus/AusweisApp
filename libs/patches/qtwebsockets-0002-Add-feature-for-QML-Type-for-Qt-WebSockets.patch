@@ -1,4 +1,4 @@
-From 14e42d6da1f0c9a973eb5487e45c2f95e6d81980 Mon Sep 17 00:00:00 2001
+From 5003c47e7c198338785683023343b202289533ad Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Sat, 3 Jan 2026 11:54:30 +0100
 Subject: Add feature for QML Type for Qt WebSockets

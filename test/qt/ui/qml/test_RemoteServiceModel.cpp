@@ -166,9 +166,6 @@ class test_RemoteServiceModel
 		void test_getSupportedReaderPluginTypes()
 		{
 			QList<ReaderManagerPluginType> supportedPlugins {ReaderManagerPluginType::NFC};
-#if __has_include("SmartManager.h")
-			supportedPlugins << ReaderManagerPluginType::SMART;
-#endif
 			QCOMPARE(mModel->getSupportedReaderPluginTypes(), supportedPlugins);
 		}
 

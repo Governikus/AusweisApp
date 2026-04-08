@@ -41,7 +41,7 @@ class test_ResourceLoader
 			ResourceLoader::getInstance().init();
 			QVERIFY(ResourceLoader::getInstance().isLoaded());
 
-			QVERIFY(logSpy.count() > 0);
+			QTRY_VERIFY(logSpy.count() > 0);
 			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Register resource: "_L1));
 			QVERIFY(param.at(0).toString().contains(" | true"_L1));
@@ -58,7 +58,7 @@ class test_ResourceLoader
 			ResourceLoader::getInstance().shutdown();
 			QVERIFY(!ResourceLoader::getInstance().isLoaded());
 
-			QVERIFY(logSpy.count() > 1);
+			QTRY_VERIFY(logSpy.count() > 1);
 			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Unregister resource: "_L1));
 			QVERIFY(param.at(0).toString().contains(" | true"_L1));

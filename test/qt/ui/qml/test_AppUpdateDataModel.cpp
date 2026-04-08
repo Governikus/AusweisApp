@@ -2,13 +2,15 @@
  * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
+#include "AppSettings.h"
 #include "AppUpdateDataModel.h"
+#include "AppUpdater.h"
+#include "VersionNumber.h"
 
 #include <QtTest>
 
 
 using namespace governikus;
-
 
 class test_AppUpdateDataModel
 	: public QObject
@@ -16,6 +18,50 @@ class test_AppUpdateDataModel
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void init()
+		{
+			QApplication::setApplicationVersion(QStringLiteral("2.2.2"));
+		}
+
+
+		void cleanup()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			settings.setLastAppcastDate(QDateTime());
+			settings.setLastAppcastVersion(QString());
+		}
+
+
+		void test_isUpdateAvailable_data()
+		{
+			QTest::addColumn<QDateTime>("lastAppcastDate");
+			QTest::addColumn<QString>("lastAppcastVersion");
+			QTest::addColumn<bool>("result");
+
+			QTest::addRow("No update ever") << QDateTime() << QString() << false;
+			QTest::addRow("App is newer than update") << QDateTime(QDate(2026, 1, 2), QTime(12, 34)) << "1.1.1" << false;
+			QTest::addRow("No update available") << QDateTime(QDate(2026, 1, 2), QTime(12, 34)) << "2.2.2" << false;
+			QTest::addRow("Update available") << QDateTime(QDate(2026, 1, 2), QTime(12, 34)) << "3.3.3" << true;
+		}
+
+
+		void test_isUpdateAvailable()
+		{
+
+			QFETCH(QDateTime, lastAppcastDate);
+			QFETCH(QString, lastAppcastVersion);
+			QFETCH(bool, result);
+
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			settings.setLastAppcastDate(lastAppcastDate);
+			settings.setLastAppcastVersion(lastAppcastVersion);
+
+			auto* model = Env::getSingleton<AppUpdateDataModel>();
+			QCOMPARE(model->isUpdateAvailable(), result);
+			QVERIFY(!model->isValid());
+		}
+
+
 		void test_onAppDownloadFinished_data()
 		{
 			QTest::addColumn<GlobalStatus::Code>("globalStatus");
@@ -61,32 +107,56 @@ class test_AppUpdateDataModel
 		}
 
 
+		void test_onAppcastFinished_data()
+		{
+			QTest::addColumn<QString>("version");
+			QTest::addColumn<bool>("valid");
+			QTest::addColumn<GlobalStatusCode>("parsingResult");
+
+			QTest::addColumn<bool>("appcastFailed");
+			QTest::addColumn<bool>("appcastUpdateTextEmpty");
+			QTest::addColumn<bool>("appcastNoUpdateTextEmpty");
+			QTest::addColumn<bool>("appcastErrorTextEmpty");
+
+			const auto& versionCurrent = QStringLiteral("2.2.2");
+			const auto& versionUpdate = QStringLiteral("3.3.3");
+
+			QTest::addRow("Abort") << QString() << false << GlobalStatus::Code::Downloader_Aborted << false << true << true << true;
+			QTest::addRow("Missing Platform") << QString() << false << GlobalStatus::Code::Downloader_Missing_Platform << true << true << false << false;
+			QTest::addRow("No Update") << versionCurrent << true << GlobalStatus::Code::No_Error << false << false << false << true;
+			QTest::addRow("Update") << versionUpdate << true << GlobalStatus::Code::No_Error << false << false << false << true;
+		}
+
+
 		void test_onAppcastFinished()
 		{
 			auto* model = Env::getSingleton<AppUpdateDataModel>();
-			QVERIFY(model->getAppcastStatus().isEmpty());
-			QStringList statusStrings;
+			auto* updater = Env::getSingleton<AppUpdater>();
+			model->mAppcastFinished = false;
 
-			model->onAppcastFinished(false, GlobalStatus::Code::Downloader_Aborted);
-			QVERIFY(model->getAppcastStatus().isEmpty());
+			QFETCH(QString, version);
+			QFETCH(bool, valid);
+			QFETCH(GlobalStatusCode, parsingResult);
 
-			model->onAppcastFinished(true, GlobalStatus::Code::Downloader_Missing_Platform);
-			const auto& statusMissingPlatform = model->getAppcastStatus();
-			QVERIFY(!statusMissingPlatform.isEmpty());
-			QVERIFY(!statusStrings.contains(statusMissingPlatform));
-			statusStrings.append(statusMissingPlatform);
+			QFETCH(bool, appcastFailed);
+			QFETCH(bool, appcastUpdateTextEmpty);
+			QFETCH(bool, appcastNoUpdateTextEmpty);
+			QFETCH(bool, appcastErrorTextEmpty);
 
-			model->onAppcastFinished(false, GlobalStatus::Code::No_Error);
-			const auto& statusNoUpdateAvailable = model->getAppcastStatus();
-			QVERIFY(!statusNoUpdateAvailable.isEmpty());
-			QVERIFY(!statusStrings.contains(statusNoUpdateAvailable));
-			statusStrings.append(statusNoUpdateAvailable);
+			AppUpdateData data(parsingResult);
+			data.mVersion = version;
+			if (valid)
+			{
+				const auto& validUrl = QUrl(QStringLiteral("https://example.com/appcast.json"));
+				data.mUrl = validUrl;
+				data.mChecksumUrl = validUrl;
+			}
 
-			model->onAppcastFinished(true, GlobalStatus::Code::No_Error);
-			const auto& statusUpdateAvailable = model->getAppcastStatus();
-			QVERIFY(!statusUpdateAvailable.isEmpty());
-			QVERIFY(!statusStrings.contains(statusUpdateAvailable));
-			statusStrings.append(statusUpdateAvailable);
+			updater->handleVersionInfoDownloadFinished(data);
+			QCOMPARE(model->getAppcastFailed(), appcastFailed);
+			QCOMPARE(model->getAppcastUpdateText().isEmpty(), appcastUpdateTextEmpty);
+			QCOMPARE(model->getAppcastNoUpdateText().isEmpty(), appcastNoUpdateTextEmpty);
+			QCOMPARE(model->getAppcastErrorText().isEmpty(), appcastErrorTextEmpty);
 		}
 
 

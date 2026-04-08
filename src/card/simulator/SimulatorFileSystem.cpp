@@ -347,7 +347,7 @@ QByteArray SimulatorFileSystem::getPassword(PacePasswordId pPasswordId) const
 }
 
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
 QSharedPointer<EVP_PKEY> SimulatorFileSystem::getKey(int pKeyId) const
 #else
 QSharedPointer<EC_KEY> SimulatorFileSystem::getKey(int pKeyId) const
@@ -367,7 +367,7 @@ QSharedPointer<EC_KEY> SimulatorFileSystem::getKey(int pKeyId) const
 		return nullptr;
 	}
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
 	return privateKey;
 
 #else

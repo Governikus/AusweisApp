@@ -37,7 +37,6 @@ ColumnLayout {
 			spacing: 0
 
 			GSwitch {
-				Layout.fillWidth: true
 				checked: SettingsModel.showBetaTesting
 				enabled: UiPluginModel.developerVersion
 				//: DESKTOP
@@ -46,7 +45,6 @@ ColumnLayout {
 				onCheckedChanged: SettingsModel.showBetaTesting = checked
 			}
 			GSwitch {
-				Layout.fillWidth: true
 				checked: SettingsModel.enableCanAllowed
 				//: DESKTOP
 				text: qsTr("Support CAN allowed mode")
@@ -54,7 +52,6 @@ ColumnLayout {
 				onCheckedChanged: SettingsModel.enableCanAllowed = checked
 			}
 			GSwitch {
-				Layout.fillWidth: true
 				checked: SettingsModel.skipRightsOnCanAllowed
 				enabled: SettingsModel.enableCanAllowed
 				//: DESKTOP

@@ -62,7 +62,7 @@ class test_CommandLineParser
 
 			QCOMPARE(process.exitStatus(), QProcess::NormalExit);
 			QCOMPARE(standardOut, expected);
-			QCOMPARE(process.readAllStandardError(), QByteArray());
+			QTRY_COMPARE(process.readAllStandardError(), QByteArray());
 		}
 
 

@@ -10,8 +10,6 @@ import Governikus.Style
 import Governikus.Type
 
 DecisionView {
-	id: root
-
 	signal startSelfAuth
 
 	descriptionTextsModel: [

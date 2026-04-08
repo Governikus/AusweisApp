@@ -46,28 +46,17 @@ SectionPage {
 			implicitHeight: delegateText.implicitHeight
 			implicitWidth: root.width
 
-			GPaneBackgroundDelegate {
+			GText {
+				id: delegateText
+
+				Accessible.role: Utils.useSpecialAppleTabRole(Accessible.StaticText)
 				anchors.centerIn: parent
 				anchors.horizontalCenterOffset: -Style.dimens.pane_padding
-				count: listView.count
-				height: delegateText.implicitHeight
-				idx: delegateItem.index
+				text: delegateItem.modelData
 				width: Math.min(listView.width - Style.dimens.pane_padding, Style.dimens.max_text_width)
 
-				GText {
-					id: delegateText
-
-					Accessible.role: Utils.useSpecialAppleTabRole(Accessible.StaticText)
-					anchors.fill: parent
-					bottomPadding: parent.isLast ? Style.dimens.pane_padding : 0
-					leftPadding: Style.dimens.pane_padding
-					rightPadding: Style.dimens.pane_padding
-					text: delegateItem.modelData
-					topPadding: parent.isFirst ? Style.dimens.pane_padding : 0
-
-					Accessible.onScrollDownAction: listView.scrollPageDown()
-					Accessible.onScrollUpAction: listView.scrollPageUp()
-				}
+				Accessible.onScrollDownAction: listView.scrollPageDown()
+				Accessible.onScrollUpAction: listView.scrollPageUp()
 			}
 		}
 

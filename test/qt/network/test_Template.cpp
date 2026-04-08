@@ -94,6 +94,7 @@ class test_Template
 			QString report_header("report_header"_L1);
 			QString report_link("report_link"_L1);
 			QString report_button("report_button"_L1);
+			QString ausweisapp_logo("ausweisapp_logo"_L1);
 
 			Template tplt = Template::fromFile(QStringLiteral(":/template.html"));
 
@@ -106,9 +107,10 @@ class test_Template
 			tplt.setContextParameter(QStringLiteral("CONTENT_HEADER"), report_header);
 			tplt.setContextParameter(QStringLiteral("CONTENT_LINK"), report_link);
 			tplt.setContextParameter(QStringLiteral("CONTENT_BUTTON"), report_button);
+			tplt.setContextParameter(QStringLiteral("AUSWEISAPP_LOGO"), ausweisapp_logo);
 
 			const auto& errorPage = tplt.render();
-			QCOMPARE(tplt.getContextKeys().size(), 9);
+			QCOMPARE(tplt.getContextKeys().size(), 10);
 			QVERIFY(!errorPage.contains('$'_L1));
 			QVERIFY(errorPage.contains(title));
 			QVERIFY(errorPage.contains(application_link));
@@ -119,6 +121,7 @@ class test_Template
 			QVERIFY(errorPage.contains(report_header));
 			QVERIFY(errorPage.contains(report_link));
 			QVERIFY(errorPage.contains(report_button));
+			QVERIFY(errorPage.contains(ausweisapp_logo));
 		}
 
 
@@ -145,7 +148,7 @@ class test_Template
 			QTest::ignoreMessage(QtDebugMsg, "No parameter specified, replace with empty string: \"MESSAGE_SUBHEADER\"");
 			QTest::ignoreMessage(QtDebugMsg, "No parameter specified, replace with empty string: \"MESSAGE_SUBHEADER_LABEL\"");
 			const auto& errorPage = tplt.render();
-			QCOMPARE(tplt.getContextKeys().size(), 9);
+			QCOMPARE(tplt.getContextKeys().size(), 10);
 			QVERIFY(!errorPage.contains('$'_L1));
 			QVERIFY(errorPage.contains(title));
 			QVERIFY(errorPage.contains(application_link));

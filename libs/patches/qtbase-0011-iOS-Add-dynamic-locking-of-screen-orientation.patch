@@ -1,0 +1,83 @@
+From fb756ac1af7c755fc496a2d7ff2daac15ec7f932 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Tue, 10 Jun 2025 11:24:14 +0200
+Subject: iOS: Add dynamic locking of screen orientation
+
+This introduces support to dynamically lock the screen orientation on
+iOS by taking QWindow::contentOrientation into account and mapping
+these enums to UIInterfaceOrientationMask.
+
+Fixes: QTBUG-38576
+Pick-to: 6.10 6.9
+Change-Id: Ibc9a374c8baff02aed4e727ee2c0c30cf319ee01
+---
+ .../platforms/ios/qiosviewcontroller.h        |  1 +
+ .../platforms/ios/qiosviewcontroller.mm       | 25 ++++++++++++++++++-
+ src/plugins/platforms/ios/qioswindow.mm       |  6 +++++
+ 3 files changed, 31 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/plugins/platforms/ios/qiosviewcontroller.h y/qtbase/src/plugins/platforms/ios/qiosviewcontroller.h
+index b5ce88d6a3338d67d70ff35ed4b3069034f292e7..e0968ff7454f481e7306f71cf167a689f9caa4b2 100644
+--- x/qtbase/src/plugins/platforms/ios/qiosviewcontroller.h
++++ y/qtbase/src/plugins/platforms/ios/qiosviewcontroller.h
+@@ -24,6 +24,7 @@ QT_END_NAMESPACE
+ @property (nonatomic, assign) BOOL prefersStatusBarHidden;
+ @property (nonatomic, assign) UIStatusBarAnimation preferredStatusBarUpdateAnimation;
+ @property (nonatomic, assign) UIStatusBarStyle preferredStatusBarStyle;
++@property (nonatomic, readonly) UIInterfaceOrientationMask supportedInterfaceOrientations;
+ #endif
+ 
+ @end
+diff --git x/qtbase/src/plugins/platforms/ios/qiosviewcontroller.mm y/qtbase/src/plugins/platforms/ios/qiosviewcontroller.mm
+index 169f8ae17547fbad56dc6c49a5eb284f6c4bfd75..454e66981fdff708464c2a95bfea0ffe6bbb30b4 100644
+--- x/qtbase/src/plugins/platforms/ios/qiosviewcontroller.mm
++++ y/qtbase/src/plugins/platforms/ios/qiosviewcontroller.mm
+@@ -531,7 +531,30 @@
+     shortcutMap.tryShortcut(&keyEvent);
+ }
+ 
+-
++- (UIInterfaceOrientationMask)supportedInterfaceOrientations
++{
++    QWindow *window = nullptr;
++    QWindow *focusWindow = QGuiApplication::focusWindow();
++    if (focusWindow && focusWindow->screen()
++        && focusWindow->screen()->handle() == self.platformScreen)
++        window = qt_window_private(focusWindow)->topLevelWindow();
++
++    if (!window || window->contentOrientation() == Qt::PrimaryOrientation)
++        return UIInterfaceOrientationMaskAll;
++
++    const auto contentOrientation = window->contentOrientation();
++    NSInteger supportedOrientations = 0;
++    if (contentOrientation & Qt::PortraitOrientation)
++        supportedOrientations |= UIInterfaceOrientationMaskPortrait;
++    if (contentOrientation & Qt::InvertedPortraitOrientation)
++        supportedOrientations |= UIInterfaceOrientationMaskPortraitUpsideDown;
++    if (contentOrientation & Qt::LandscapeOrientation)
++        supportedOrientations |= UIInterfaceOrientationMaskLandscapeLeft;
++    if (contentOrientation & Qt::InvertedLandscapeOrientation)
++        supportedOrientations |= UIInterfaceOrientationMaskLandscapeRight;
++
++    return supportedOrientations;
++}
+ 
+ @end
+ 
+diff --git x/qtbase/src/plugins/platforms/ios/qioswindow.mm y/qtbase/src/plugins/platforms/ios/qioswindow.mm
+index af1fbb0abaf1f937d4b3bc6991e39bc104fd380e..1dff0e6a526541425cbbc55d9e4b86d13554fef1 100644
+--- x/qtbase/src/plugins/platforms/ios/qioswindow.mm
++++ y/qtbase/src/plugins/platforms/ios/qioswindow.mm
+@@ -81,6 +81,12 @@ QIOSWindow::QIOSWindow(QWindow *window, WId nativeHandle)
+             handleContentOrientationChange(initialOrientation);
+         });
+     }
++
++    connect(window, &QWindow::contentOrientationChanged, this,
++            [this](Qt::ScreenOrientation orientation) {
++                Q_UNUSED(orientation;)
++                [m_view.qtViewController setNeedsUpdateOfSupportedInterfaceOrientations];
++            });
+ }
+ 
+ QIOSWindow::~QIOSWindow()

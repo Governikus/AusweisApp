@@ -6,6 +6,7 @@ import QtQuick
 
 import Governikus.Global
 import Governikus.Style
+import Governikus.Type
 
 Rectangle {
 	id: root
@@ -27,8 +28,10 @@ Rectangle {
 		property double scaleFactor: root.enabled ? 1.0 : 0.7
 
 		Behavior on scaleFactor {
+			enabled: SettingsModel.useAnimations
+
 			PropertyAnimation {
-				duration: 500
+				duration: 2 * Style.animation_duration
 				easing.type: Easing.InOutCubic
 			}
 		}

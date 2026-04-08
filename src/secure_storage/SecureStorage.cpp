@@ -59,12 +59,6 @@ CONFIG_NAME(CONFIGURATION_GROUP_NAME_UPDATES, "updates")
 CONFIG_NAME(CONFIGURATION_NAME_APPCAST_UPDATE_URL, "release")
 CONFIG_NAME(CONFIGURATION_NAME_APPCAST_BETA_UPDATE_URL, "beta")
 
-CONFIG_NAME(CONFIGURATION_GROUP_NAME_SMART, "smart")
-CONFIG_NAME(CONFIGURATION_NAME_SMART_PERSONALIZATION_URL, "personalizationUrl")
-CONFIG_NAME(CONFIGURATION_NAME_SMART_PERSONALIZATION_TEST_URL, "personalizationTestUrl")
-CONFIG_NAME(CONFIGURATION_NAME_SMART_SERVICEID, "serviceId")
-CONFIG_NAME(CONFIGURATION_NAME_SMART_SSDAID, "ssdAid")
-
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_LOCAL_IFD, "localIfd")
 CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_PACKAGE_NAME, "packageName")
 CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_MIN_VERSION, "minVersion")
@@ -90,10 +84,6 @@ SecureStorage::SecureStorage()
 	, mWhitelistServerBaseUrl()
 	, mAppcastUpdateUrl()
 	, mAppcastBetaUpdateUrl()
-	, mSmartPersonalizationUrl()
-	, mSmartPersonalizationTestUrl()
-	, mSmartServiceId()
-	, mSmartSsdAid()
 	, mLocalIfdPackageName()
 	, mLocalIfdMinVersion()
 	, mLocalIfdAllowedCertificateHashes()
@@ -260,11 +250,6 @@ void SecureStorage::load()
 	mAppcastUpdateUrl = QUrl(readGroup(config, CONFIGURATION_GROUP_NAME_UPDATES(), CONFIGURATION_NAME_APPCAST_UPDATE_URL()));
 	mAppcastBetaUpdateUrl = QUrl(readGroup(config, CONFIGURATION_GROUP_NAME_UPDATES(), CONFIGURATION_NAME_APPCAST_BETA_UPDATE_URL()));
 
-	mSmartPersonalizationUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_PERSONALIZATION_URL());
-	mSmartPersonalizationTestUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_PERSONALIZATION_TEST_URL());
-	mSmartServiceId = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_SERVICEID());
-	mSmartSsdAid = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_SSDAID());
-
 	QJsonValue localIfdValue = config.value(CONFIGURATION_GROUP_NAME_LOCAL_IFD());
 	if (localIfdValue.isObject())
 	{
@@ -380,24 +365,6 @@ const QUrl& SecureStorage::getAppcastUpdateUrl() const
 const QUrl& SecureStorage::getAppcastBetaUpdateUrl() const
 {
 	return mAppcastBetaUpdateUrl;
-}
-
-
-const QString& SecureStorage::getSmartPersonalizationUrl(bool pTest) const
-{
-	return pTest ? mSmartPersonalizationTestUrl : mSmartPersonalizationUrl;
-}
-
-
-const QString& SecureStorage::getSmartServiceId() const
-{
-	return mSmartServiceId;
-}
-
-
-const QString& SecureStorage::getSmartSsdAid() const
-{
-	return mSmartSsdAid;
 }
 
 

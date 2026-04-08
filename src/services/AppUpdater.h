@@ -61,9 +61,10 @@ class AppUpdater
 		[[nodiscard]] QString getDownloadPath() const;
 		void setDownloadPath(const QString& pPath);
 		void setAppUpdateJsonUrl(const QUrl& pUrl);
+		void setAppUpdateData(const AppUpdateData& pData);
 #endif
 
-		void handleVersionInfoDownloadFinished(const QByteArray& pData);
+		void handleVersionInfoDownloadFinished(const AppUpdateData& pData);
 		void handleChecksumDownloadFinished(const QUrl& pUpdateUrl, const QByteArray& pData);
 		void handleAppDownloadFinished(const QByteArray& pData);
 

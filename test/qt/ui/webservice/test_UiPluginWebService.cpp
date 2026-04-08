@@ -95,9 +95,6 @@ class test_UiPluginWebService
 			QTest::newRow("Onboarding") << QLatin1String("/eID-Client?ShowUI=ONBOARDING") << UiModule::ONBOARDING;
 			QTest::newRow("Help") << QLatin1String("/eID-Client?ShowUI=HELP") << UiModule::HELP;
 			QTest::newRow("Self AUth") << QLatin1String("/eID-Client?ShowUI=SELF_AUTHENTICATION") << UiModule::SELF_AUTHENTICATION;
-
-			QTest::newRow("SMART_EID") << QLatin1String("/eID-Client?ShowUI=SMART_EID") << UiModule::SMART_EID;
-			QTest::newRow("Smart-eID") << QLatin1String("/eID-Client?ShowUI=Smart-eID") << UiModule::SMART_EID;
 		}
 
 

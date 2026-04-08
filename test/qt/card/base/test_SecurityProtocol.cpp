@@ -124,7 +124,7 @@ class test_SecurityProtocol
 			QCOMPARE(securityProtocol.getSignature(), signature);
 			QCOMPARE(securityProtocol.getHashAlgorithm(), hash);
 
-			QCOMPARE(logSpy.count() > 0, causeWarnings);
+			QTRY_COMPARE(logSpy.count() > 0, causeWarnings);
 		}
 
 

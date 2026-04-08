@@ -38,14 +38,9 @@ class CardConnectionWorker
 		 */
 		QScopedPointer<SecureMessaging> mSecureMessaging;
 
-		QTimer mKeepAliveTimer;
-
 		inline QSharedPointer<const EFCardAccess> getEfCardAccess() const;
 
 		void stopSecureMessaging();
-
-	private Q_SLOTS:
-		void onKeepAliveTimeout();
 
 	protected:
 		/*!
@@ -89,8 +84,6 @@ class CardConnectionWorker
 		 */
 		virtual CardReturnCode destroyPaceChannel();
 
-		virtual void setKeepAlive(bool pEnabled);
-
 		/*!
 		 * Sets the current workflow progress message. This is necessary for platforms like iOS,
 		 * where interacting with a card leads to a dialog where the message needs to be updated.
@@ -99,8 +92,6 @@ class CardConnectionWorker
 		virtual void setErrorMessage(const QString& pMessage);
 
 		virtual ResponseApduResult setEidPin(const QByteArray& pNewPin, quint8 pTimeoutSeconds);
-
-		EstablishPaceChannelOutput prepareIdentification(const QByteArray& pChat) const;
 
 		ResponseApduResult getChallenge() const;
 

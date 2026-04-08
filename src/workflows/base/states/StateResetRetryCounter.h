@@ -2,14 +2,15 @@
  * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
  */
 
-
 #pragma once
 
 #include "AbstractState.h"
 #include "GenericContextContainer.h"
 #include "context/WorkflowContext.h"
 
+
 class test_StateResetRetryCounter;
+
 
 namespace governikus
 {

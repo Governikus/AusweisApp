@@ -13,11 +13,15 @@
 #include <QUrl>
 #include <QVersionNumber>
 
+class test_AppUpdateDataModel;
+
 namespace governikus
 {
 
 class AppUpdateData
 {
+	friend class ::test_AppUpdateDataModel;
+
 	private:
 		QVersionNumber mMinOsVersion;
 		QDateTime mDate;

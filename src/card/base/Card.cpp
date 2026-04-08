@@ -58,22 +58,25 @@ ResponseApduResult Card::setEidPin(quint8 pTimeoutSeconds)
 }
 
 
-QString Card::generateProgressMessage(const QString& pMessage, int pProgress)
+QString Card::generateProgressMessage(const QString& pMessage, int pProgress, bool pForwardSdkMessages)
 {
-	const bool usedAsSdk = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();
+	const auto* settings = Env::getSingleton<VolatileSettings>();
+	const auto usedAsSdk = settings->isUsedAsSDK();
+	if ((usedAsSdk && pForwardSdkMessages) || (!usedAsSdk && pProgress == -1))
+	{
+		return pMessage;
+	}
 
 	QString message = usedAsSdk
-			? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
+			? settings->getMessages().getSessionInProgress()
 			: pMessage;
 
-	if (pProgress != -1 || usedAsSdk)
+	if (!message.isEmpty())
 	{
-		if (!message.isEmpty())
-		{
-			message += QLatin1Char('\n');
-		}
-		message += QStringLiteral("%1 %").arg(pProgress > 0 ? pProgress : 0);
+		message += QLatin1Char('\n');
 	}
+
+	message += QStringLiteral("%1 %").arg(std::max(0, pProgress));
 
 	return message;
 }
@@ -84,15 +87,6 @@ QString Card::generateErrorMessage(const QString& pMessage)
 	return Env::getSingleton<VolatileSettings>()->isUsedAsSDK() && !pMessage.isNull()
 			? Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed()
 			: pMessage;
-}
-
-
-EstablishPaceChannelOutput Card::prepareIdentification(const QByteArray& pChat)
-{
-	Q_UNUSED(pChat)
-	qCWarning(card) << "Preparing identification is not supported";
-
-	return EstablishPaceChannelOutput();
 }
 
 

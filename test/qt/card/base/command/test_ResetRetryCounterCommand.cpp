@@ -22,29 +22,34 @@ class test_ResetRetryCounterCommand
 	private Q_SLOTS:
 		void test_InternalExecute_data()
 		{
-			QTest::addColumn<SW1>("sw1");
 			QTest::addColumn<CardReturnCode>("returnCode");
+			QTest::addColumn<StatusCode>("statusCode");
+			QTest::addColumn<bool>("inoperative");
 
-			QTest::addRow("PUK inoperative") << SW1::ERROR_COMMAND_NOT_ALLOWED << CardReturnCode::PUK_INOPERATIVE;
-			QTest::addRow("Reset success") << SW1::SUCCESS << CardReturnCode::OK;
+			QTest::addRow("Reset success") << CardReturnCode::OK << StatusCode::SUCCESS << false;
+			QTest::addRow("PUK inoperative") << CardReturnCode::OK << StatusCode::ACCESS_DENIED << true;
+			QTest::addRow("Unexpected statusCode") << CardReturnCode::OK << StatusCode::COMMAND_NOT_ALLOWED << false;
+			QTest::addRow("Response empty") << CardReturnCode::RESPONSE_EMPTY << StatusCode::UNKNOWN << false;
+			QTest::addRow("Command failed") << CardReturnCode::COMMAND_FAILED << StatusCode::UNKNOWN << false;
 		}
 
 
 		void test_InternalExecute()
 		{
-			QFETCH(SW1, sw1);
 			QFETCH(CardReturnCode, returnCode);
+			QFETCH(StatusCode, statusCode);
+			QFETCH(bool, inoperative);
 
-			const auto& worker = MockCardConnectionWorker::create();
-			QByteArray buffer;
-			buffer += static_cast<char>(sw1);
-			buffer += static_cast<char>(0x00); // SW2 - Does not matter for this test
-			worker->addResponse(CardReturnCode::OK, buffer);
+			QPointer<MockReader> reader = new MockReader(QStringLiteral("reader"));
+			const auto& worker = MockCardConnectionWorker::create(reader);
+			worker->addResponse(returnCode, statusCode == StatusCode::UNKNOWN ? ResponseApdu() : ResponseApdu(statusCode));
 
 			ResetRetryCounterCommand command(worker);
 			command.internalExecute();
 
 			QCOMPARE(command.getReturnCode(), returnCode);
+			QCOMPARE(command.getStatusCode(), statusCode);
+			QCOMPARE(reader->getReaderInfo().isPukInoperative(), inoperative);
 		}
 
 

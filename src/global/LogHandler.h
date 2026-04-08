@@ -58,8 +58,9 @@ class LogEventHandler
 
 	Q_SIGNALS:
 		/**
-		 * \brief Every log will be fired by this signal. Be aware that you NEVER use a qDebug()
-		 * or something like that function in your slot or you will get a deadlock!
+		 * \brief Every log will cause a lambda invocation on the main thread, which then will fire
+		 * these signals. Be aware that you NEVER use a qDebug() or something like that in your slot
+		 * or you will get an endless logging loop!
 		 */
 		void fireLog(const QString& pMsg);
 		void fireRawLog(const QString& pMsg, const QString& pCategoryName);

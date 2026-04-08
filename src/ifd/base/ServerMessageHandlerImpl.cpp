@@ -143,7 +143,8 @@ void ServerMessageHandlerImpl::handleIfdConnect(const QJsonObject& pJsonObject)
 void ServerMessageHandlerImpl::onCreateCardConnectionCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand)
 {
 	qCDebug(ifd) << "Card connection command completed";
-	if (pCommand->getCardConnection() == nullptr)
+	const auto& cardConnection = pCommand->getCardConnection();
+	if (cardConnection == nullptr)
 	{
 		qCWarning(ifd) << "Cannot connect card" << pCommand->getReaderName();
 		const auto& response = QSharedPointer<IfdConnectResponse>::create(pCommand->getReaderName(), ECardApiResult::Minor::AL_Unknown_Error);
@@ -153,12 +154,12 @@ void ServerMessageHandlerImpl::onCreateCardConnectionCommandDone(QSharedPointer<
 
 	QString slotHandle = Randomizer::getInstance().createUuid().toString();
 	qCInfo(ifd) << "Card successfully connected" << pCommand->getReaderName() << ", using slot handle:" << slotHandle;
-	mCardConnections.insert(slotHandle, pCommand->getCardConnection());
+	mCardConnections.insert(slotHandle, cardConnection);
 
 	const auto& response = QSharedPointer<IfdConnectResponse>::create(slotHandle);
 	mDispatcher->send(response);
 
-	Q_EMIT fireCardConnected(pCommand->getCardConnection());
+	Q_EMIT fireCardConnected(cardConnection);
 }
 
 
@@ -569,12 +570,14 @@ void ServerMessageHandlerImpl::onUpdateRetryCounterDone(QSharedPointer<BaseCardC
 		return;
 	}
 
-	const auto cardConnection = mCardConnections.take(slotHandle);
 	qCInfo(ifd) << "Card successfully disconnected" << slotHandle;
 	const auto& response = QSharedPointer<IfdDisconnectResponse>::create(slotHandle);
 	mDispatcher->send(response);
 
-	Q_EMIT fireCardDisconnected(cardConnection);
+	if (mCardConnections.contains(slotHandle))
+	{
+		Q_EMIT fireCardDisconnected(mCardConnections.take(slotHandle));
+	}
 }
 
 

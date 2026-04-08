@@ -28,16 +28,16 @@ HttpRequest::HttpRequest(QTcpSocket* pSocket, QObject* pParent)
 	mSocket->setParent(this);
 	mSocket->startTransaction();
 
-	http_parser_init(&mParser, HTTP_REQUEST);
-	mParser.data = this;
-
-	mParserSettings.on_message_begin = &HttpRequest::onMessageBegin;
+	llhttp_settings_init(&mParserSettings);
 	mParserSettings.on_message_complete = &HttpRequest::onMessageComplete;
 	mParserSettings.on_headers_complete = &HttpRequest::onHeadersComplete;
 	mParserSettings.on_header_field = &HttpRequest::onHeaderField;
 	mParserSettings.on_header_value = &HttpRequest::onHeaderValue;
 	mParserSettings.on_body = &HttpRequest::onBody;
 	mParserSettings.on_url = &HttpRequest::onUrl;
+
+	llhttp_init(&mParser, HTTP_REQUEST, &mParserSettings);
+	mParser.data = this;
 
 	connect(mSocket, &QAbstractSocket::readyRead, this, &HttpRequest::onReadyRead);
 	connect(mSocket, &QAbstractSocket::stateChanged, this, &HttpRequest::fireSocketStateChanged);
@@ -75,13 +75,13 @@ bool HttpRequest::isConnected() const
 
 QByteArray HttpRequest::getMethod() const
 {
-	return QByteArray(http_method_str(getHttpMethod()));
+	return QByteArray(llhttp_method_name(getHttpMethod()));
 }
 
 
-http_method HttpRequest::getHttpMethod() const
+llhttp_method HttpRequest::getHttpMethod() const
 {
-	return static_cast<http_method>(mParser.method);
+	return static_cast<llhttp_method>(mParser.method);
 }
 
 
@@ -133,7 +133,7 @@ void HttpRequest::triggerSocketBuffer()
 }
 
 
-bool HttpRequest::send(http_status pStatus)
+bool HttpRequest::send(llhttp_status pStatus)
 {
 	return send(HttpResponse(pStatus));
 }
@@ -181,14 +181,10 @@ void HttpRequest::onReadyRead()
 	while (mSocket->bytesAvailable())
 	{
 		const auto& buffer = mSocket->readAll();
-		http_parser_execute(&mParser, &mParserSettings, buffer.constData(), static_cast<size_t>(buffer.size()));
-
-		// See macro HTTP_PARSER_ERRNO if http_errno fails.
-		// We do not use this to avoid -Wold-style-cast warning
-		const auto errorCode = static_cast<http_errno>(mParser.http_errno);
+		const auto errorCode = llhttp_execute(&mParser, buffer.constData(), static_cast<size_t>(buffer.size()));
 		if (errorCode != HPE_OK)
 		{
-			qCWarning(network) << "Http request not well-formed:" << http_errno_name(errorCode) << '|' << http_errno_description(errorCode);
+			qCWarning(network) << "Http request not well-formed:" << llhttp_errno_name(errorCode) << '|' << llhttp_get_error_reason(&mParser);
 		}
 	}
 
@@ -204,14 +200,7 @@ void HttpRequest::onReadyRead()
 }
 
 
-int HttpRequest::onMessageBegin(http_parser* pParser)
-{
-	Q_UNUSED(pParser)
-	return 0;
-}
-
-
-int HttpRequest::onMessageComplete(http_parser* pParser)
+int HttpRequest::onMessageComplete(llhttp_t* pParser)
 {
 	CAST_OBJ(pParser)
 	obj->mFinished = true;
@@ -220,7 +209,7 @@ int HttpRequest::onMessageComplete(http_parser* pParser)
 }
 
 
-int HttpRequest::onHeadersComplete(http_parser* pParser)
+int HttpRequest::onHeadersComplete(llhttp_t* pParser)
 {
 	CAST_OBJ(pParser)
 	obj->insertHeader();
@@ -230,7 +219,7 @@ int HttpRequest::onHeadersComplete(http_parser* pParser)
 }
 
 
-int HttpRequest::onHeaderField(http_parser* pParser, const char* const pPos, size_t pLength)
+int HttpRequest::onHeaderField(llhttp_t* pParser, const char* const pPos, size_t pLength)
 {
 	CAST_OBJ(pParser)
 	obj->insertHeader();
@@ -239,7 +228,7 @@ int HttpRequest::onHeaderField(http_parser* pParser, const char* const pPos, siz
 }
 
 
-int HttpRequest::onHeaderValue(http_parser* pParser, const char* const pPos, size_t pLength)
+int HttpRequest::onHeaderValue(llhttp_t* pParser, const char* const pPos, size_t pLength)
 {
 	CAST_OBJ(pParser)
 	add(obj->mCurrentHeaderValue, pPos, pLength);
@@ -247,7 +236,7 @@ int HttpRequest::onHeaderValue(http_parser* pParser, const char* const pPos, siz
 }
 
 
-int HttpRequest::onBody(http_parser* pParser, const char* const pPos, size_t pLength)
+int HttpRequest::onBody(llhttp_t* pParser, const char* const pPos, size_t pLength)
 {
 	CAST_OBJ(pParser)
 	add(obj->mBody, pPos, pLength);
@@ -255,7 +244,7 @@ int HttpRequest::onBody(http_parser* pParser, const char* const pPos, size_t pLe
 }
 
 
-int HttpRequest::onUrl(http_parser* pParser, const char* const pPos, size_t pLength)
+int HttpRequest::onUrl(llhttp_t* pParser, const char* const pPos, size_t pLength)
 {
 	CAST_OBJ(pParser)
 	add(obj->mUrl, pPos, pLength);
@@ -265,7 +254,7 @@ int HttpRequest::onUrl(http_parser* pParser, const char* const pPos, size_t pLen
 
 void HttpRequest::insertHeader()
 {
-	if (!mCurrentHeaderField.isEmpty() && !mCurrentHeaderValue.isEmpty())
+	if (!mCurrentHeaderField.isEmpty() && !mCurrentHeaderValue.isNull())
 	{
 		qCDebug(network).nospace() << "Header | " << mCurrentHeaderField << ": " << mCurrentHeaderValue;
 		mHeader.insert(mCurrentHeaderField.toLower(), mCurrentHeaderValue);

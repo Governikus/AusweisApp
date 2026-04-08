@@ -94,13 +94,8 @@ class test_UiPluginJson
 
 		void newCard_data()
 		{
-#if __has_include("SmartManager.h")
-			const QByteArray eidType = QByteArray(R"("eidType":"CARD_CERTIFIED",)");
-#else
-			const QByteArray eidType;
-#endif
 			const QByteArray unknownCard(R"({"attached":true,"card":{},"insertable":false,"keypad":false,"msg":"READER","name":"Reader"})");
-			const QByteArray knownCard(R"({"attached":true,"card":{"deactivated":false,)" + eidType + R"("inoperative":false,"retryCounter":-1},"insertable":false,"keypad":false,"msg":"READER","name":"Reader"})");
+			const QByteArray knownCard(R"({"attached":true,"card":{"deactivated":false,"inoperative":false,"retryCounter":-1},"insertable":false,"keypad":false,"msg":"READER","name":"Reader"})");
 
 			QTest::addColumn<MsgLevel>("msgLevel");
 			QTest::addColumn<CardType>("cardType");
@@ -112,8 +107,6 @@ class test_UiPluginJson
 			QTest::newRow("UNKNOWN v3") << MsgLevel::v3 << CardType::UNKNOWN << unknownCard;
 			QTest::newRow("EID_CARD v2") << MsgLevel::v2 << CardType::EID_CARD << knownCard;
 			QTest::newRow("EID_CARD v3") << MsgLevel::v3 << CardType::EID_CARD << knownCard;
-			QTest::newRow("SMART_EID v2") << MsgLevel::v2 << CardType::SMART_EID << knownCard;
-			QTest::newRow("SMART_EID v3") << MsgLevel::v3 << CardType::SMART_EID << knownCard;
 		}
 
 
@@ -160,12 +153,7 @@ class test_UiPluginJson
 
 			QCOMPARE(spy.size(), 2);
 			const auto notAttached = R"({"attached":true,"card":null,"insertable":false,"keypad":false,"msg":"READER","name":"MockReader 0815"})";
-#if __has_include("SmartManager.h")
-			const QByteArray eidType = QByteArray(R"("eidType":"CARD_CERTIFIED",)");
-#else
-			const QByteArray eidType;
-#endif
-			const auto attached = R"({"attached":true,"card":{"deactivated":false,)" + eidType + R"("inoperative":false,"retryCounter":-1},"insertable":false,"keypad":false,"msg":"READER","name":"MockReader 0815"})";
+			const auto attached = R"({"attached":true,"card":{"deactivated":false,"inoperative":false,"retryCounter":-1},"insertable":false,"keypad":false,"msg":"READER","name":"MockReader 0815"})";
 			QCOMPARE(spy.at(0).at(0).toByteArray(), notAttached);
 			QCOMPARE(spy.at(1).at(0).toByteArray(), attached);
 		}

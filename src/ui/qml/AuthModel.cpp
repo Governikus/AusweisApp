@@ -91,6 +91,11 @@ QString AuthModel::getResultHeader() const
 		//: ALL_PLATFORMS
 		return tr("Redirect failed");
 	}
+	if (mContext->getStatus().isCancellationByUser())
+	{
+		//: ALL_PLATFORMS
+		return tr("Authentication canceled");
+	}
 
 	if (mContext->getStatus().isError())
 	{

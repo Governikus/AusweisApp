@@ -17,13 +17,11 @@ FlickableSectionPage {
 
 	property alias okButtonText: okButton.text
 
+	preventScreenshots: true
 	spacing: Style.dimens.pane_spacing
 	//: MOBILE
 	title: qsTr("Identify")
 
-	ScreenshotPreventer {
-		Layout.bottomMargin: -root.spacing
-	}
 	GPane {
 		Layout.fillWidth: true
 
@@ -32,8 +30,6 @@ FlickableSectionPage {
 		}
 	}
 	GridLayout {
-		id: grid
-
 		columnSpacing: Style.dimens.text_spacing
 		columns: Math.max(1, (width + columnSpacing) / (repeater.maxItemWidth + columnSpacing))
 		rowSpacing: Style.dimens.text_spacing

@@ -7,27 +7,36 @@ package com.governikus.ausweisapp2;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.ResultReceiver;
 
 import org.qtproject.qt.android.bindings.QtService;
 
 public final class AusweisApp2LocalIfdService extends QtService
 {
-	private static final String ACTION_ABORT_WORKFLOW = AusweisApp2LocalIfdService.class.getCanonicalName() + ".abort";
+	private static final String ACTION_REMOTE_IFD = AusweisApp2LocalIfdService.class.getCanonicalName() + ".remoteIfd";
 	public static final String PARAM_TLS_WEBSOCKET_PSK = "PSK";
 	public static final String PARAM_SERVICE_TOKEN = "SERVICE_TOKEN";
+	public static final String PARAM_ENABLED = "ENABLED";
+	public static final String PARAM_RECEIVER = "RECEIVER";
 
 	private final IBinder mBinder = new AusweisApp2LocalIfdServiceBinder();
 
-	// Native method provided by UiPluginLocalIfd
+	// Native methods provided by UiPluginLocalIfd
 	public static native boolean notifyStartWorkflow(String pPsk);
 	public static native void notifyAbortWorkflow();
-	public static native boolean verifyServiceToken(String token);
+	public static native void notifyEnableLocalIfdDetection(boolean pEnable);
+	public static native boolean verifyServiceToken(String pToken);
+
+	// Native method provided by RemoteIfdClient
+	public static native void notifyLocalIfdDisabled();
 
 	public class AusweisApp2LocalIfdServiceBinder extends Binder
 	{
@@ -39,41 +48,49 @@ public final class AusweisApp2LocalIfdService extends QtService
 
 	}
 
-	private static boolean isServiceRunning(Context context)
+
+	public static void enableLocalIfdDetection(Context context, String serviceToken, boolean enable)
 	{
-		final String serviceName = AusweisApp2LocalIfdService.class.getName();
-		ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-		for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
+		Intent serviceIntent = new Intent(context, AusweisApp2LocalIfdService.class);
+		serviceIntent.setAction(ACTION_REMOTE_IFD);
+		serviceIntent.putExtra(PARAM_SERVICE_TOKEN, serviceToken);
+		serviceIntent.putExtra(PARAM_ENABLED, enable);
+
+		if (!enable)
 		{
-			if (serviceName.equals(service.service.getClassName()))
+			// We only need to listen if the detection was stopped to be sure to be able to bind the port.
+			ResultReceiver receiver = new ResultReceiver(new Handler(Looper.getMainLooper()))
 			{
-				return true;
-			}
+				@Override
+				protected void onReceiveResult(int resultCode, Bundle resultData)
+				{
+					notifyLocalIfdDisabled();
+				}
+
+			};
+			serviceIntent.putExtra(PARAM_RECEIVER, receiver);
 		}
-		return false;
-	}
-
-
-	public static void abortWorkflow(Context context, String serviceToken)
-	{
-		if (!isServiceRunning(context))
-		{
-			return;
-		}
-
-		Intent abortWorkflowIntent = new Intent(context, AusweisApp2LocalIfdService.class);
-		abortWorkflowIntent.setAction(ACTION_ABORT_WORKFLOW);
-		abortWorkflowIntent.putExtra(PARAM_SERVICE_TOKEN, serviceToken);
 
 		try
 		{
-			LogHandler.getLogger().info("Aborting LocalIfdService workflow");
-			context.startService(abortWorkflowIntent);
+			context.startService(serviceIntent);
 		}
 		catch (Exception e)
 		{
-			LogHandler.getLogger().log(Level.SEVERE, "Could not abort LocalIfdService workflow", e);
+			LogHandler.getLogger().log(Level.SEVERE, "Could not change Local IFD detection", e);
 		}
+	}
+
+
+	@SuppressWarnings("deprecation")
+	private ResultReceiver getReceiver(Intent intent)
+	{
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) // API 33, Android 13
+		{
+			return intent.getParcelableExtra(PARAM_RECEIVER);
+		}
+
+		return intent.getParcelableExtra(PARAM_RECEIVER, ResultReceiver.class);
 	}
 
 
@@ -98,9 +115,22 @@ public final class AusweisApp2LocalIfdService extends QtService
 			return START_NOT_STICKY;
 		}
 
-		if (ACTION_ABORT_WORKFLOW.equals(intent.getAction()))
+		if (ACTION_REMOTE_IFD.equals(intent.getAction()))
 		{
-			abortWorkflow();
+			if (!intent.hasExtra(PARAM_ENABLED))
+			{
+				LogHandler.getLogger().severe("Missing required parameter " + PARAM_ENABLED);
+				return START_NOT_STICKY;
+			}
+
+			boolean enabled = intent.getBooleanExtra(PARAM_ENABLED, false);
+			notifyEnableLocalIfdDetection(enabled);
+
+			ResultReceiver receiver = getReceiver(intent);
+			if (receiver != null)
+			{
+				receiver.send(0, Bundle.EMPTY);
+			}
 		}
 
 		return START_NOT_STICKY;
@@ -116,24 +146,19 @@ public final class AusweisApp2LocalIfdService extends QtService
 			return null;
 		}
 
-		String psk;
-		try
+		String psk = intent.getStringExtra(PARAM_TLS_WEBSOCKET_PSK);
+		if (psk != null)
 		{
-			if (intent.getExtras().get(PARAM_TLS_WEBSOCKET_PSK).getClass() == String.class)
+			LogHandler.getLogger().info("Received string parameter");
+		}
+		else
+		{
+			byte[] bytes = intent.getByteArrayExtra(PARAM_TLS_WEBSOCKET_PSK);
+			if (bytes != null)
 			{
-				psk = intent.getStringExtra(PARAM_TLS_WEBSOCKET_PSK);
-				LogHandler.getLogger().info("Received string parameter");
-			}
-			else
-			{
-				psk = new String(intent.getByteArrayExtra(PARAM_TLS_WEBSOCKET_PSK), StandardCharsets.UTF_8);
+				psk = new String(bytes, StandardCharsets.UTF_8);
 				LogHandler.getLogger().info("Received byte[] parameter");
 			}
-		}
-		catch (Exception e)
-		{
-			LogHandler.getLogger().severe("Could not get string parameter " + PARAM_TLS_WEBSOCKET_PSK + " from Intent");
-			return null;
 		}
 
 		if (psk == null || psk.isEmpty())
@@ -144,11 +169,11 @@ public final class AusweisApp2LocalIfdService extends QtService
 
 		if (!notifyStartWorkflow(psk))
 		{
-			LogHandler.getLogger().severe("Could not start LocalIfdService");
+			LogHandler.getLogger().severe("Could not start Local IFD Service");
 			return null;
 		}
 
-		LogHandler.getLogger().info("LocalIfdService bound");
+		LogHandler.getLogger().info("Local IFD Service bound");
 
 		return mBinder;
 	}
@@ -157,8 +182,9 @@ public final class AusweisApp2LocalIfdService extends QtService
 	@Override
 	public boolean onUnbind(Intent intent)
 	{
-		LogHandler.getLogger().info("LocalIfdService unbound");
-		abortWorkflow();
+		LogHandler.getLogger().info("Local IFD Service unbound");
+		notifyAbortWorkflow();
+		stopSelf();
 		return false;
 	}
 
@@ -167,23 +193,16 @@ public final class AusweisApp2LocalIfdService extends QtService
 	public void onCreate()
 	{
 		super.onCreate();
-		LogHandler.getLogger().info("LocalIfdService created");
+		LogHandler.getLogger().info("Local IFD Service created");
 	}
 
 
 	@Override
 	public void onDestroy()
 	{
-		LogHandler.getLogger().info("LocalIfdService destroyed");
+		LogHandler.getLogger().info("Local IFD Service destroyed");
 		BootstrapHelper.triggerShutdown();
 		super.onDestroy();
-	}
-
-
-	private void abortWorkflow()
-	{
-		notifyAbortWorkflow();
-		stopSelf();
 	}
 
 

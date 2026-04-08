@@ -335,6 +335,7 @@ class test_Env
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
 			Env::clear();
+			qApp->processEvents();
 		}
 
 
@@ -745,10 +746,10 @@ class test_Env
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			Env::getSingleton<TestAbstractUnmanagedInstance>();
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 
 			Env::getSingleton<TestAbstractUnmanagedInstance>();
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -758,14 +759,14 @@ class test_Env
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			Env::getSingleton<TestAbstractUnmanagedInstance>();
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 
 			QThreadPool pool; // do not use global one, otherwise the main thread is allowed, too
 			QtConcurrent::run(&pool, [] {
 						Env::getSingleton<TestAbstractUnmanagedInstance>();
 					}).waitForFinished();
 
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -775,7 +776,7 @@ class test_Env
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			Env::getSingleton<LogHandler>();
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -785,7 +786,7 @@ class test_Env
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			Env::getSingleton<NetworkManager>();
-			QCOMPARE(logSpy.count(), 2); // Create singleton NetworkManager / AppSettings
+			QTRY_COMPARE(logSpy.count(), 2); // Create singleton NetworkManager / AppSettings
 			logSpy.clear();
 
 			QThreadPool pool; // do not use global one, otherwise the main thead is allowed, too
@@ -793,7 +794,7 @@ class test_Env
 						Env::getSingleton<NetworkManager>();
 					}).waitForFinished();
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeLast().at(0).toString().contains(QLatin1String("governikus::NetworkManager was created in \"Main\" but is requested by \"Thread (pooled)\"")));
 		}
 

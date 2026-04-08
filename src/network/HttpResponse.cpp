@@ -28,7 +28,7 @@ HEADER_NAME(HEADER_DATE, "Date")
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
-HttpResponse::HttpResponse(http_status pStatus, const QByteArray& pBody, const QByteArray& pContentType)
+HttpResponse::HttpResponse(llhttp_status pStatus, const QByteArray& pBody, const QByteArray& pContentType)
 	: mStatus(pStatus)
 	, mHeader()
 	, mBody()
@@ -58,13 +58,13 @@ void HttpResponse::setHeader(const QByteArray& pKey, const QByteArray& pValue)
 }
 
 
-http_status HttpResponse::getStatus() const
+llhttp_status HttpResponse::getStatus() const
 {
 	return mStatus;
 }
 
 
-void HttpResponse::setStatus(http_status pStatus)
+void HttpResponse::setStatus(llhttp_status pStatus)
 {
 	mStatus = pStatus;
 }

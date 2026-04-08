@@ -48,6 +48,7 @@ class test_ResponseApdu
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -128,10 +129,6 @@ class test_ResponseApdu
 			QTest::newRow("PIN_BLOCKED") << StatusCode::PIN_BLOCKED << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xC0);
 			QTest::newRow("PIN_SUSPENDED") << StatusCode::PIN_SUSPENDED << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xC1);
 			QTest::newRow("PIN_RETRY_COUNT_2") << StatusCode::PIN_RETRY_COUNT_2 << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xC2);
-			QTest::newRow("INITIAL_PIN_BLOCKED") << StatusCode::INITIAL_PIN_BLOCKED << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xD0);
-			QTest::newRow("INITIAL_PIN_RETRY_COUNT_1") << StatusCode::INITIAL_PIN_RETRY_COUNT_1 << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xD1);
-			QTest::newRow("INITIAL_PIN_RETRY_COUNT_2") << StatusCode::INITIAL_PIN_RETRY_COUNT_2 << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xD2);
-			QTest::newRow("INITIAL_PIN_RETRY_COUNT_3") << StatusCode::INITIAL_PIN_RETRY_COUNT_3 << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xD3);
 			QTest::newRow("NO_PRECISE_DIAGNOSIS") << StatusCode::NO_PRECISE_DIAGNOSIS << SW1::NO_PRECISE_DIAGNOSIS << static_cast<char>(0x00);
 
 			mTestAllKnownStatusCode = true;
@@ -201,7 +198,7 @@ class test_ResponseApdu
 			ResponseApdu apduParse(statusBytes);
 			if (statusBytes.size() == 1)
 			{
-				QCOMPARE(logSpy.count(), 1);
+				QTRY_COMPARE(logSpy.count(), 1);
 				QVERIFY(logSpy.takeFirst().at(0).toString().contains(QStringLiteral("One byte status, assuming")));
 			}
 
@@ -216,23 +213,23 @@ class test_ResponseApdu
 			QCOMPARE(apduParse.getStatusCode(), statusCode);
 			if (statusCode == StatusCode::UNKNOWN)
 			{
-				QCOMPARE(logSpy.count(), 1);
+				QTRY_COMPARE(logSpy.count(), 1);
 				QVERIFY(logSpy.takeFirst().at(0).toString().contains(QStringLiteral("Unknown StatusCode value, returning UNKNOWN, value:")));
 			}
 			else
 			{
-				QVERIFY(logSpy.isEmpty());
+				QTRY_VERIFY(logSpy.isEmpty());
 			}
 			QCOMPARE(apduParse.getStatusBytes(), resultStatusBytes);
 			QCOMPARE(apduParse.getSW1(), sw1);
 			if (sw1 == SW1::UNKNOWN)
 			{
-				QCOMPARE(logSpy.count(), 1);
+				QTRY_COMPARE(logSpy.count(), 1);
 				QVERIFY(logSpy.takeFirst().at(0).toString().contains(QStringLiteral("Unknown SW1 value, returning UNKNOWN, value:")));
 			}
 			else
 			{
-				QVERIFY(logSpy.isEmpty());
+				QTRY_VERIFY(logSpy.isEmpty());
 
 			}
 			QCOMPARE(apduParse.getSW2(), sw2);
@@ -246,11 +243,11 @@ class test_ResponseApdu
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			qDebug() << ResponseApdu(StatusCode::ACCESS_DENIED);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("6982"_L1));
 
 			qDebug() << ResponseApdu(StatusCode::SUCCESS, QByteArray::fromHex("010203040506070809"));
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("\"0102030405~9000\" (11)"_L1));
 		}
 

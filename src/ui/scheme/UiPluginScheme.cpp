@@ -66,7 +66,6 @@ void UiPluginScheme::onCustomUrl(const QUrl& pUrl)
 	}
 
 	const auto queryUrl = QUrlQuery(pUrl);
-	UrlUtil::setHiddenSettings(queryUrl);
 	const auto& [type, value] = UrlUtil::getRequest(queryUrl);
 	switch (type)
 	{

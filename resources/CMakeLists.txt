@@ -16,9 +16,6 @@ function(WRITE_GLOB_QRC _dest_file _dir _prefix)
 endfunction()
 
 
-if(EXISTS "${CMAKE_DIR}/SmartService.internal.cmake")
-	include(SmartService.internal)
-endif()
 configure_file(${RESOURCES_DIR}/config.json.in ${CMAKE_CURRENT_BINARY_DIR}/config.json @ONLY)
 
 

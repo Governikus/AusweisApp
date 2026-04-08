@@ -1,36 +1,10 @@
 # CPack
 # https://gitlab.kitware.com/cmake/community/-/wikis/doc/cpack/Configuration
 
-set(PACKAGE_VERSION ${PROJECT_VERSION})
-
-if(ANDROID)
-	set(PACKAGE_VERSION ${PACKAGE_VERSION}-${CMAKE_ANDROID_ARCH_ABI})
-endif()
-
-if(DEFINED dvcs_distance)
-	set(PACKAGE_VERSION ${PACKAGE_VERSION}+${dvcs_distance})
-endif()
-
-if(DEFINED dvcs_branch)
-	set(PACKAGE_VERSION ${PACKAGE_VERSION}-${dvcs_branch})
-endif()
-
-if(DEFINED dvcs_phase)
-	set(PACKAGE_VERSION ${PACKAGE_VERSION}-${dvcs_phase})
-endif()
-
-if(DEFINED dvcs_revision)
-	set(PACKAGE_VERSION ${PACKAGE_VERSION}-${dvcs_revision})
-endif()
-
 if(ANDROID AND INTEGRATED_SDK)
-	string(TOLOWER "${PROJECT_NAME}-" AAR_PROJECT_NAME)
-	string(REGEX REPLACE "[0-9]*-" "-" AAR_PROJECT_NAME "${AAR_PROJECT_NAME}")
-	set(FILENAME ${AAR_PROJECT_NAME}${PACKAGE_VERSION})
+	string(TOLOWER "${ARTIFACT_FILENAME}" ARTIFACT_FILENAME)
 elseif(IOS AND INTEGRATED_SDK)
-	set(FILENAME ${PROJECT_NAME}2-${PACKAGE_VERSION})
-else()
-	set(FILENAME ${PROJECT_NAME}-${PACKAGE_VERSION})
+	string(REPLACE "${PROJECT_NAME}" "${PROJECT_NAME}2" ARTIFACT_FILENAME "${ARTIFACT_FILENAME}")
 endif()
 
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
@@ -41,8 +15,8 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
 set(CPACK_PACKAGE_VERSION_TWEAK ${PROJECT_VERSION_TWEAK})
 set(CPACK_PACKAGE_VENDOR "${VENDOR}")
 set(CPACK_PACKAGE_CONTACT "support@ausweisapp.de")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AusweisApp")
-set(CPACK_PACKAGE_FILE_NAME ${FILENAME})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_NAME}")
+set(CPACK_PACKAGE_FILE_NAME ${ARTIFACT_FILENAME})
 if(USE_DISTRIBUTION_PROFILE)
 	set(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_FILE_NAME}-appstore)
 endif()
@@ -61,7 +35,7 @@ endif()
 find_program(ENSCRIPT enscript)
 find_program(GS gs)
 
-set(LICENSE_FILE_DIST ${FILENAME}-Lizenz)
+set(LICENSE_FILE_DIST ${ARTIFACT_FILENAME}-Lizenz)
 set(LICENSE_FILE_TXT ${LICENSE_FILE_DIST}.txt)
 add_custom_command(OUTPUT ${LICENSE_FILE_TXT} COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CPACK_RESOURCE_FILE_LICENSE} ${LICENSE_FILE_TXT})
 add_custom_target(license DEPENDS ${LICENSE_FILE_TXT})
@@ -91,7 +65,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "DEBUG" AND NOT CMAKE_BUILD_TYPE STREQUAL "RELW
 endif()
 
 set(CPACK_SOURCE_GENERATOR TGZ)
-set(CPACK_SOURCE_PACKAGE_FILE_NAME ${FILENAME} CACHE INTERNAL "tarball basename")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME ${ARTIFACT_FILENAME} CACHE INTERNAL "tarball basename")
 
 set(CPACK_SOURCE_IGNORE_FILES "\\\\.hgignore" "\\\\.hgtags" "/\\\\.hg/" "\\\\.hgchurn")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "\\\\.gitignore" "/\\\\.git/")
@@ -120,7 +94,7 @@ if(WIN32)
 		endif()
 	endfunction()
 
-	find_program(WIX_TOOLSET wix VALIDATOR wixtoolset_validator CMAKE_FIND_ROOT_PATH_BOTH)
+	find_program(WIX_TOOLSET wix VALIDATOR wixtoolset_validator)
 	if(WIX_TOOLSET)
 		set(CPACK_GENERATOR WIX)
 		set(CPACK_WIX_VERSION 4) # Package using WiX .NET Tools (v4 and above)

@@ -53,6 +53,21 @@ class test_MsgHandlerInfo
 		}
 
 
+		void localIfd()
+		{
+			const QByteArray msg(R"({"cmd": "GET_INFO"})");
+			MessageDispatcher dispatcher;
+			auto versionInfo = VersionInfo::getInstance().toJson(QJsonDocument::Compact);
+
+			const auto& result = dispatcher.processCommand(msg);
+			QCOMPARE(result, MsgType::INFO);
+			const QByteArray data = result;
+			QVERIFY(data.contains(versionInfo));
+			QVERIFY(data.contains(R"("msg":"INFO")"));
+			QVERIFY(data.contains(R"("AusweisApp")"));
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_MsgHandlerInfo)

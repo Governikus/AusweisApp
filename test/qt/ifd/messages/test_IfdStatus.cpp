@@ -29,6 +29,14 @@ class test_IfdStatus
 		{
 			Env::getSingleton<LogHandler>()->init();
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
+			qApp->processEvents();
+		}
+
+
+		void cleanup()
+		{
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -44,7 +52,7 @@ class test_IfdStatus
 			IfdStatus msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), v0Supported ? 10 : 9);
+			QTRY_COMPARE(logSpy.count(), v0Supported ? 10 : 9);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"msg\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"ContextHandle\"")));
@@ -210,7 +218,7 @@ class test_IfdStatus
 			QVERIFY(!ifdStatus.getConnectedReader());
 			QVERIFY(!ifdStatus.getCardAvailable());
 
-			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
+			QTRY_COMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
 			{
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"PINPad\""_L1));
@@ -261,7 +269,7 @@ class test_IfdStatus
 				QVERIFY(!ifdStatus.isIncomplete());
 				QCOMPARE(ifdStatus.getType(), IfdMessageType::IFDStatus);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -271,14 +279,14 @@ class test_IfdStatus
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
 				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDStatus"_L1));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDStatus"_L1));
 		}
 
@@ -312,7 +320,7 @@ class test_IfdStatus
 			QVERIFY(!ifdStatus.getConnectedReader());
 			QVERIFY(!ifdStatus.getCardAvailable());
 
-			QCOMPARE(logSpy.count(), v0Supported ? 6 : 5);
+			QTRY_COMPARE(logSpy.count(), v0Supported ? 6 : 5);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"SlotName\" should be of type \"string\"")));
 			if (v0Supported)
 			{
@@ -362,7 +370,7 @@ class test_IfdStatus
 			QVERIFY(!ifdStatus.getConnectedReader());
 			QVERIFY(!ifdStatus.getCardAvailable());
 
-			QCOMPARE(logSpy.count(), 4);
+			QTRY_COMPARE(logSpy.count(), 4);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"PACE\" should be of type \"boolean\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"eID\" should be of type \"boolean\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"eSign\" should be of type \"boolean\"")));
@@ -400,11 +408,6 @@ class test_IfdStatus
 			QTest::newRow("LOCAL_IFD - Comfort reader with pin pad mode") << ReaderManagerPluginType::LOCAL_IFD << false << 500 << false << true;
 			QTest::newRow("LOCAL_IFD - Comfort reader without pin pad mode") << ReaderManagerPluginType::LOCAL_IFD << false << 500 << false << false;
 
-			QTest::newRow("SMART - Basic reader with pin pad mode") << ReaderManagerPluginType::SMART << true << 500 << false << true;
-			QTest::newRow("SMART - Basic reader without pin pad mode") << ReaderManagerPluginType::SMART << true << 500 << false << false;
-			QTest::newRow("SMART - Comfort reader with pin pad mode") << ReaderManagerPluginType::SMART << false << 500 << false << true;
-			QTest::newRow("SMART - Comfort reader without pin pad mode") << ReaderManagerPluginType::SMART << false << 500 << false << false;
-
 			QTest::newRow("SIMULATOR - Basic reader with pin pad mode") << ReaderManagerPluginType::SIMULATOR << true << 500 << false << true;
 			QTest::newRow("SIMULATOR - Basic reader without pin pad mode") << ReaderManagerPluginType::SIMULATOR << true << 500 << false << false;
 			QTest::newRow("SIMULATOR - Comfort reader with pin pad mode") << ReaderManagerPluginType::SIMULATOR << false << 500 << false << true;
@@ -434,8 +437,8 @@ class test_IfdStatus
 			QCOMPARE(ifdStatus.getType(), IfdMessageType::IFDStatus);
 			QCOMPARE(ifdStatus.getContextHandle(), QString());
 			QCOMPARE(ifdStatus.getSlotName(), slotName);
-			const bool isNfcOrSmart = type == ReaderManagerPluginType::NFC || type == ReaderManagerPluginType::SMART;
-			QCOMPARE(ifdStatus.hasPinPad(), !isBasicReader || (isNfcOrSmart && pinPadMode));
+			const bool isNfcOrRemoteIfd = type == ReaderManagerPluginType::NFC || type == ReaderManagerPluginType::REMOTE_IFD;
+			QCOMPARE(ifdStatus.hasPinPad(), !isBasicReader || (isNfcOrRemoteIfd && pinPadMode));
 			QCOMPARE(ifdStatus.getMaxApduLength(), maxApduLength);
 			QCOMPARE(ifdStatus.getConnectedReader(), true);
 			QCOMPARE(ifdStatus.getCardAvailable(), cardAvailable);

@@ -59,14 +59,6 @@ bool CardConnection::getPacePinSuccessful() const
 }
 
 
-void CardConnection::setKeepAlive(bool pEnabled)
-{
-	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [worker = mCardConnectionWorker, pEnabled] {
-				worker->setKeepAlive(pEnabled);
-			});
-}
-
-
 void CardConnection::setProgressMessage(const QString& pMessage, int pProgress)
 {
 	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [worker = mCardConnectionWorker, pMessage, pProgress] {

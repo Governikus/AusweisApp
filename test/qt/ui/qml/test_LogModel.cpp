@@ -46,6 +46,8 @@ class test_LogModel
 		void cleanup()
 		{
 			resetModel();
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -227,7 +229,7 @@ class test_LogModel
 			qDebug() << "test : input";
 
 			QCOMPARE(mModel->isCurrentLog(), true);
-			QCOMPARE(signalSpy.count(), 1);
+			QTRY_COMPARE(signalSpy.count(), 1);
 			QCOMPARE(mModel->rowCount(QModelIndex()), oldMsgCount + 1);
 		}
 
@@ -241,7 +243,7 @@ class test_LogModel
 			qDebug() << "test : input";
 
 			QCOMPARE(mModel->isCurrentLog(), false);
-			QCOMPARE(signalSpy.count(), 0);
+			QTRY_COMPARE(signalSpy.count(), 0);
 			QCOMPARE(mModel->rowCount(QModelIndex()), oldMsgCount);
 		}
 

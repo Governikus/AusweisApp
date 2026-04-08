@@ -30,15 +30,15 @@ FlickableSectionPage {
 		type: AnimationLoader.Type.STATUS
 	}
 	Subheading {
-		Layout.alignment: Qt.AlignHCenter
-		horizontalAlignment: Text.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
+		horizontalAlignment: Style.scanPatternAlignment
 		//: ALL_PLATFORMS
 		text: qsTr("The authentication is being canceled at the provider (%1)").arg(CertificateDescriptionModel.subjectName)
 		visible: text !== ""
 	}
 	GText {
-		Layout.alignment: Qt.AlignHCenter
-		horizontalAlignment: Text.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
+		horizontalAlignment: Style.scanPatternAlignment
 		//: ALL_PLATFORMS
 		text: qsTr("This may take a few moments.")
 		visible: text !== ""
@@ -47,13 +47,12 @@ FlickableSectionPage {
 		//: ALL_PLATFORMS Name of an progress indicator during the cancellation of an authentication read by screen readers
 		Accessible.name: qsTr("Cancellation progress")
 		Layout.alignment: Qt.AlignHCenter
-		Layout.fillWidth: true
 		Layout.maximumWidth: Style.dimens.max_text_width
 		value: root.isSelfAuth ? 100 : AuthModel.currentState === "StateRedirectBrowser" ? 100 : 50
 	}
 	GText {
-		Layout.alignment: Qt.AlignHCenter
-		horizontalAlignment: Text.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
+		horizontalAlignment: Style.scanPatternAlignment
 		text: root.isSelfAuth || AuthModel.currentState === "StateRedirectBrowser" ?
 		//: ALL_PLATFORMS
 		qsTr("The authentication was cancelled successfully.") + "<br>" +
@@ -65,11 +64,8 @@ FlickableSectionPage {
 			qsTr("You may start a new authentication after tapping the button.")) : ""
 		visible: text !== ""
 	}
-	GSpacer {
-		Layout.fillHeight: true
-	}
 	GButton {
-		Layout.alignment: Qt.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
 		enabled: root.isSelfAuth ? true : AuthModel.currentState === "StateRedirectBrowser"
 		icon.source: root.isSelfAuth ? "" : "qrc:///images/open_website.svg"
 		text: !root.isSelfAuth ?

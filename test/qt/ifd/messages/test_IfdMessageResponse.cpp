@@ -36,7 +36,7 @@ class test_IfdMessageResponse
 			IfdMessageResponse msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 5);
+			QTRY_COMPARE(logSpy.count(), 5);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
@@ -130,7 +130,7 @@ class test_IfdMessageResponse
 			QCOMPARE(ifdMessageResponse.resultHasError(), hasError);
 			QCOMPARE(ifdMessageResponse.getResultMinor(), resultMinor);
 
-			QCOMPARE(logSpy.count(), spyCount);
+			QTRY_COMPARE(logSpy.count(), spyCount);
 			if (spyCount > 0)
 			{
 				QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"ResultMinor\" should be of type \"string\""_L1));

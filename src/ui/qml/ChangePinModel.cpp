@@ -20,7 +20,6 @@ void ChangePinModel::resetChangePinContext(const QSharedPointer<ChangePinContext
 		connect(mContext.data(), &ChangePinContext::fireSuccessMessageChanged, this, &WorkflowModel::fireResultChanged);
 
 		Q_EMIT fireSupportedPluginTypesChanged();
-		Q_EMIT fireIsCurrentSmartCardAllowedChanged();
 	}
 }
 
@@ -39,17 +38,6 @@ QString ChangePinModel::getResultString() const
 	}
 
 	return isError() ? WorkflowModel::getResultString() : mContext->getSuccessMessage();
-}
-
-
-QList<ReaderManagerPluginType> ChangePinModel::getSupportedReaderPluginTypes() const
-{
-	auto plugins = WorkflowModel::getSupportedReaderPluginTypes();
-	if (mContext && mContext->isRequestTransportPin())
-	{
-		plugins.removeOne(ReaderManagerPluginType::SMART);
-	}
-	return plugins;
 }
 
 

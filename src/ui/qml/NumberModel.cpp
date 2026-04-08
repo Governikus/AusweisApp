@@ -8,10 +8,6 @@
 #include "context/ChangePinContext.h"
 #include "context/IfdServiceContext.h"
 
-#if __has_include("context/PersonalizationContext.h")
-	#include "context/PersonalizationContext.h"
-#endif
-
 
 namespace
 {
@@ -23,9 +19,7 @@ QString addBoldFormatting(const QString& inputString)
 
 } // namespace
 
-
 using namespace governikus;
-
 
 NumberModel::NumberModel()
 	: QObject()
@@ -70,14 +64,6 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 			connect(remoteServiceContext.data(), &IfdServiceContext::fireEstablishPaceChannelUpdated, this, &NumberModel::fireInputErrorChanged);
 		}
 
-#if __has_include("context/PersonalizationContext.h")
-		const auto personalizationContext = mContext.objectCast<PersonalizationContext>();
-		if (personalizationContext)
-		{
-			connect(personalizationContext.data(), &PersonalizationContext::fireSessionIdentifierChanged, this, &NumberModel::firePasswordTypeChanged);
-		}
-#endif
-
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &NumberModel::onCardConnectionChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &NumberModel::fireReaderInfoChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &NumberModel::fireInputErrorChanged);
@@ -109,22 +95,10 @@ NumberModel::PasswordType NumberModel::getPasswordType() const
 	{
 		if (mNewPin.isEmpty())
 		{
-			return mContext->isSmartCardUsed() ? PasswordType::NEW_SMART_PIN : PasswordType::NEW_PIN;
+			return PasswordType::NEW_PIN;
 		}
-		return mContext->isSmartCardUsed() ? PasswordType::NEW_SMART_PIN_CONFIRMATION : PasswordType::NEW_PIN_CONFIRMATION;
+		return PasswordType::NEW_PIN_CONFIRMATION;
 	}
-
-#if __has_include("context/PersonalizationContext.h")
-	const auto& smartContext = mContext.objectCast<PersonalizationContext>();
-	if (smartContext && !smartContext->getSessionIdentifier().isNull())
-	{
-		if (mNewPin.isEmpty())
-		{
-			return PasswordType::NEW_SMART_PIN;
-		}
-		return PasswordType::NEW_SMART_PIN_CONFIRMATION;
-	}
-#endif
 
 	switch (mContext->getEstablishPaceChannelType())
 	{
@@ -136,7 +110,7 @@ NumberModel::PasswordType NumberModel::getPasswordType() const
 			{
 				return PasswordType::TRANSPORT_PIN;
 			}
-			return mContext->isSmartCardUsed() ? PasswordType::SMART_PIN : PasswordType::PIN;
+			return PasswordType::PIN;
 		}
 
 		case PacePasswordId::PACE_CAN:
@@ -247,14 +221,6 @@ bool NumberModel::commitNewPin()
 		remoteServiceContext->setNewPin(mNewPin);
 	}
 
-#if __has_include("context/PersonalizationContext.h")
-	const auto smartContext = mContext.objectCast<PersonalizationContext>();
-	if (smartContext)
-	{
-		smartContext->setNewPin(mNewPin);
-	}
-#endif
-
 	clearNewPinAndConfirmation();
 	Q_EMIT firePasswordTypeChanged();
 
@@ -355,24 +321,16 @@ QString NumberModel::getInputError() const
 {
 	const CardReturnCode paceResult = getInputErrorCode();
 	const bool isRequestTransportPin = mContext && mContext->isRequestTransportPin();
-	const bool isSmartCard = mContext && mContext->isSmartCardUsed();
 
 	if (!mNewPinConfirmation.isEmpty() && !newPinAndConfirmationMatch())
 	{
-#if __has_include("context/PersonalizationContext.h")
-		return isSmartCard || (mContext && mContext.objectCast<PersonalizationContext>()) ?
-#else
-		return isSmartCard ?
-#endif
-		       //: ALL_PLATFORMS Error message if the new pin confirmation mismatches.
-			   tr("The input does not match. Please choose a new Smart-eID PIN.") :
-		       //: ALL_PLATFORMS Error message if the new pin confirmation mismatches.
-			   tr("The input does not match. Please choose a new ID card PIN.");
+		//: ALL_PLATFORMS Error message if the new pin confirmation mismatches.
+		return tr("The input does not match. Please choose a new ID card PIN.");
 	}
 
 	switch (paceResult)
 	{
-		case CardReturnCode::OK :
+		case CardReturnCode::OK:
 			return QString();
 
 		case CardReturnCode::INVALID_PIN:
@@ -384,11 +342,6 @@ QString NumberModel::getInputError() const
 						//: ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt. %1 + %2 are used to emphasize. Part 2/2
 						addBoldFormatting(tr("You have%1 2 further attempts%2 to enter the correct Transport PIN. "
 											 "The 5-digit Transport PIN may be found on the %1bottom left of your PIN letter%2.")));
-			}
-			else if (isSmartCard)
-			{
-				//: ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt. %1 + %2 are used to emphasize.
-				return(tr("You have entered an incorrect, 6-digit Smart-eID PIN. You have%1 2 further attempts%2 to enter the correct Smart-eID PIN."));
 			}
 			else
 			{
@@ -410,12 +363,6 @@ QString NumberModel::getInputError() const
 						   "You can find your CAN in the %1bottom right on the front of your ID card%2.")));
 
 			}
-			else if (isSmartCard)
-			{
-				//: MOBILE The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID. %1 + %2 are used to emphasize.
-				return addBoldFormatting(tr("You have entered an %1incorrect, 6-digit Smart-eID PIN 2 times%2. "
-											"After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again."));
-			}
 			else
 			{
 				return addBoldFormatting(QStringLiteral("%1<br/><br/>%2").arg(
@@ -432,13 +379,6 @@ QString NumberModel::getInputError() const
 				//: ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. %1 + %2 are used to emphasize.
 				return addBoldFormatting(tr("You have entered an incorrect, 5-digit Transport PIN 3 times, your %1Transport PIN is now blocked%2. "
 											"To remove the block, the%1 10-digit PUK%2 must be entered first."));
-			}
-			else if (isSmartCard)
-			{
-				//: MOBILE The Smart-eID PIN was entered wrongfully three times, the Smart-eID has been invalidated.
-				return tr("You have entered an incorrect, 6-digit Smart-eID PIN 3 times. "
-						  "Your Smart-eID is now invalidated. "
-						  "To use a Smart-eID again you have to set one up in the guided setup on the start page.");
 			}
 			else
 			{

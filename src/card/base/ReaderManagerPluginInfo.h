@@ -21,7 +21,6 @@ defineEnumTypeQmlExposed(ReaderManagerPluginType
 		, NFC
 		, REMOTE_IFD
 		, LOCAL_IFD
-		, SMART
 		, SIMULATOR
 		)
 

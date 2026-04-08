@@ -23,7 +23,7 @@
 	<key>CFBundleVersion</key>
 	<string>${MACOSX_FRAMEWORK_BUNDLE_VERSION}</string>
 	<key>BuildVersionKey</key>
-	<string>${PACKAGE_VERSION}</string>
+	<string>${ARTIFACT_VERSION}</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 	<key>LSApplicationQueriesSchemes</key>

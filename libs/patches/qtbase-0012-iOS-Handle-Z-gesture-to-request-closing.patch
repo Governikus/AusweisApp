@@ -1,0 +1,37 @@
+From c60d1917b4395e9b538ab2abae80769074bf5bb7 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Thu, 21 Aug 2025 14:42:14 +0200
+Subject: iOS: Handle Z gesture to request closing
+
+This is similiar to the implementation for Android in
+QGuiApplicationPrivate::processKeyEvent and allows to
+implement onClosing in ApplicationWindow to decide if
+the application should really be closed or only a view
+should be popped to execute a "back".
+
+Pick-to: 6.10 6.9 6.8
+Fixes: QTBUG-139363
+Change-Id: Ifd3d830f62043ee1fae928c3d7421a973ca07f78
+---
+ src/plugins/platforms/ios/quiview_accessibility.mm | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+index 9eef855b620d01b83c34906112498a8eeecac03d..3858c2ca5374b30bf11f0fd4572d79afa0c9c055 100644
+--- x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
++++ y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+@@ -87,4 +87,14 @@
+     return m_accessibleElements;
+ }
+ 
++- (BOOL)accessibilityPerformEscape {
++    QWindow *win = QGuiApplication::focusWindow();
++    if (win) {
++        QWindowSystemInterface::handleCloseEvent(win);
++        return YES;
++    }
++
++    return NO;
++}
++
+ @end

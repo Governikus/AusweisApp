@@ -35,7 +35,7 @@ class test_IfdEstablishContext
 			IfdEstablishContext msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 6);
+			QTRY_COMPARE(logSpy.count(), 6);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
@@ -132,7 +132,7 @@ class test_IfdEstablishContext
 				QVERIFY(!ifdEstablishContext.isIncomplete());
 				QCOMPARE(ifdEstablishContext.getType(), IfdMessageType::IFDEstablishContext);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -142,7 +142,7 @@ class test_IfdEstablishContext
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 3);
+				QTRY_COMPARE(logSpy.count(), 3);
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
 				QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
 				QVERIFY(logSpy.at(2).at(0).toString().contains("The value of msg should be IFDEstablishContext"_L1));
@@ -150,7 +150,7 @@ class test_IfdEstablishContext
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 2);
+			QTRY_COMPARE(logSpy.count(), 2);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDEstablishContext"_L1));
 		}
@@ -172,7 +172,7 @@ class test_IfdEstablishContext
 			QVERIFY(!ifdEstablishContext.isIncomplete());
 			QCOMPARE(ifdEstablishContext.getContextHandle(), QString());
 
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -193,7 +193,7 @@ class test_IfdEstablishContext
 			QCOMPARE(ifdEstablishContext.getProtocol(), IfdVersion::Version::Unknown);
 			QCOMPARE(ifdEstablishContext.getUdName(), QString());
 
-			QCOMPARE(logSpy.count(), 2);
+			QTRY_COMPARE(logSpy.count(), 2);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"Protocol\" should be of type \"string\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"UDName\" should be of type \"string\""_L1));
 		}

@@ -1,8 +1,10 @@
 /**
  * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtTest
 import Governikus.Global
+import Governikus.Type
 
 TestCase {
 	id: parent
@@ -19,5 +21,5 @@ TestCase {
 		item.destroy();
 	}
 
-	name: "ModuleImportTest"
+	name: "test_EnterPasswordView"
 }

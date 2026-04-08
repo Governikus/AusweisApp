@@ -46,7 +46,7 @@ void SimulatorSettings::setEnabled(bool pEnabled)
 	if (pEnabled != isEnabled())
 	{
 		mStore->setValue(SETTINGS_NAME_ENABLED(), pEnabled);
-		save(mStore);
+		sync(mStore);
 		Q_EMIT fireEnabledChanged();
 	}
 }
@@ -61,5 +61,5 @@ bool SimulatorSettings::isBasicReader() const
 void SimulatorSettings::setBasicReader(bool pBasicReader)
 {
 	mStore->setValue(SETTINGS_NAME_BASIC_READER(), pBasicReader);
-	save(mStore);
+	sync(mStore);
 }

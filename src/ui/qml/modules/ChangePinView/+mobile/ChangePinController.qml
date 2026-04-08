@@ -20,15 +20,12 @@ import Governikus.Type
 Controller {
 	id: root
 
-	property bool autoInsertCard: false
 	property Component cardNotActivatedDelegate: null
 	property Component errorViewDelegate: null
 	property var initialPlugin: null
 	property bool isNewPin: false
-	readonly property bool isSmartWorkflow: ChangePinModel.readerPluginType === ReaderManagerPluginType.SMART
 	property int navigationActionType: NavigationAction.Action.Cancel
 	property bool skipProgressView: false
-	property bool smartEidUsed: false
 	property Component successViewDelegate: null
 	property string title
 
@@ -114,7 +111,6 @@ Controller {
 			if (ChangePinModel.requestTransportPin && !root.isNewPin) {
 				switch (NumberModel.passwordType) {
 				case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
-				case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
 					break;
 				default:
 					displaySuccessView(NumberModel.PasswordType.TRANSPORT_PIN);
@@ -130,10 +126,6 @@ Controller {
 			requestInput();
 			break;
 		case "FinalState":
-			if (ChangePinModel.shouldSkipResultView()) {
-				ChangePinModel.continueWorkflow();
-				break;
-			}
 			d.setWorkflowProgress(progressTracker.steps);
 			if (ChangePinModel.error && ChangePinModel.statusCode === GlobalStatusCode.Card_Pin_Deactivated) {
 				push(root.cardNotActivatedDelegate ? root.cardNotActivatedDelegate : cardNotActivatedView);
@@ -204,10 +196,8 @@ Controller {
 		GeneralWorkflow {
 			id: workflow
 
-			autoInsertCard: root.autoInsertCard
 			initialPlugin: root.initialPlugin
 			progress: progressTracker
-			smartEidUsed: root.smartEidUsed
 			workflowModel: ChangePinModel
 			workflowTitle: root.title
 
@@ -238,7 +228,6 @@ Controller {
 		InputErrorView {
 			isTransportPin: ChangePinModel.requestTransportPin
 			progress: progressTracker
-			smartEidUsed: root.smartEidUsed
 			title: root.title
 
 			navigationAction: NavigationAction {
@@ -264,7 +253,6 @@ Controller {
 		InputSuccessView {
 			isTransportPin: ChangePinModel.requestTransportPin
 			progress: progressTracker
-			smartEidUsed: root.smartEidUsed
 			title: root.title
 
 			navigationAction: NavigationAction {
@@ -291,16 +279,9 @@ Controller {
 			animation: ChangePinModel.statusCodeAnimation
 			//: MOBILE
 			buttonText: qsTr("Back to start page")
-			firstHintButtonText: ChangePinModel.statusHintActionText
-			firstHintText: ChangePinModel.statusHintText
-			firstHintTitle: ChangePinModel.statusHintTitle
-			hintBoxesTitle: ChangePinModel.statusHintBoxesTitle
+			hintText: ChangePinModel.statusHintText
 			progress: progressTracker
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: Utils.getSecondPRSHintText(ChangePinModel.statusCode)
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
-			smartEidUsed: root.smartEidUsed
+			statusCode: ChangePinModel.statusCode
 			text: ChangePinModel.resultString
 			title: root.title
 
@@ -311,10 +292,7 @@ Controller {
 			}
 
 			onContinueClicked: ChangePinModel.continueWorkflow()
-			onFirstHintClicked: {
-				ChangePinModel.continueWorkflow();
-				ChangePinModel.invokeStatusHintAction();
-			}
+			onLinkAboutToOpen: ChangePinModel.continueWorkflow()
 		}
 	}
 	MultiInfoData {
@@ -339,7 +317,6 @@ Controller {
 		MultiInfoView {
 			infoContent: infoData
 			progress: progressTracker
-			smartEidUsed: root.smartEidUsed
 
 			onAbortCurrentWorkflow: ChangePinModel.cancelWorkflow()
 			onClose: pop()
@@ -351,7 +328,6 @@ Controller {
 		EnterPasswordView {
 			moreInformationText: infoData.linkText
 			progress: progressTracker
-			smartEidUsed: root.smartEidUsed
 			title: root.title
 
 			navigationAction: NavigationAction {
@@ -369,12 +345,10 @@ Controller {
 					ChangePinModel.continueWorkflow();
 					break;
 				case NumberModel.PasswordType.NEW_PIN:
-				case NumberModel.PasswordType.NEW_SMART_PIN:
 					d.setWorkflowProgress(4);
 					root.rerunCurrentState();
 					break;
 				case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
-				case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
 					root.isNewPin = true;
 					if (NumberModel.commitNewPin()) {
 						d.setWorkflowProgress(5);
@@ -395,13 +369,6 @@ Controller {
 
 		ProgressView {
 			headline: {
-				if (root.isSmartWorkflow) {
-					return root.isNewPin ?
-					//: MOBILE Processing screen label while the card communication is running after the new Smart-eID PIN has been entered during PIN change process.
-					qsTr("Setting new Smart-eID PIN") :
-					//: MOBILE Processing screen label while the card communication is running before the new ID card PIN has been entered during PIN change process.
-					qsTr("Change Smart-eID PIN");
-				}
 				return root.isNewPin ?
 				//: MOBILE Processing screen label while the card communication is running after the new ID card PIN has been entered during PIN change process.
 				qsTr("Setting new ID card PIN") :
@@ -409,14 +376,9 @@ Controller {
 				qsTr("Change ID card PIN");
 			}
 			progress: progressTracker
-			smartEidUsed: root.smartEidUsed
 			text: {
 				if (!visible) {
 					return "";
-				}
-				if (root.isSmartWorkflow) {
-					//: MOBILE Generic progress message during PIN change process.
-					return qsTr("Please wait a moment.");
 				}
 				if (ChangePinModel.isBasicReader) {
 					//: MOBILE Loading screen during PIN change process, data communication is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.

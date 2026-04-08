@@ -38,10 +38,8 @@ GAbstractButton {
 		}
 	}
 	contentItem: RowLayout {
-		id: layout
-
 		anchors.margins: Style.dimens.pane_padding
-		spacing: 0
+		spacing: Style.dimens.groupbox_spacing
 
 		ColumnLayout {
 			Layout.maximumWidth: Number.POSITIVE_INFINITY
@@ -64,7 +62,7 @@ GAbstractButton {
 			id: iconItem
 
 			Accessible.ignored: true
-			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+			Layout.alignment: Qt.AlignRight | Qt.AlignTop
 			source: root.icon.source
 			sourceSize.height: Style.dimens.small_icon_size
 		}

@@ -26,7 +26,7 @@ class EcUtil
 		static QSharedPointer<EC_POINT> oct2point(const QSharedPointer<const EC_GROUP>& pCurve, const QByteArray& pCompressedData);
 
 		static QSharedPointer<EC_GROUP> create(EC_GROUP* pEcGroup);
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
+#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
 		static QSharedPointer<EC_KEY> create(EC_KEY* pEcKey);
 #endif
 		static QSharedPointer<EC_POINT> create(EC_POINT* pEcPoint);
@@ -34,7 +34,7 @@ class EcUtil
 		static QSharedPointer<EVP_PKEY> create(EVP_PKEY* pEcGroup);
 		static QSharedPointer<EVP_PKEY_CTX> create(EVP_PKEY_CTX* pEcGroup);
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
 		static QByteArray getEncodedPublicKey(const QSharedPointer<EVP_PKEY>& pKey, bool pCompressed = false);
 		static QSharedPointer<BIGNUM> getPrivateKey(const QSharedPointer<const EVP_PKEY>& pKey);
 		static QSharedPointer<OSSL_PARAM> create(const std::function<bool(OSSL_PARAM_BLD* pBuilder)>& pFunc);
@@ -60,7 +60,7 @@ inline QSharedPointer<EC_GROUP> EcUtil::create(EC_GROUP* pEcGroup)
 }
 
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
+#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
 inline QSharedPointer<EC_KEY> EcUtil::create(EC_KEY* pEcKey)
 {
 	static auto deleter = [](EC_KEY* ecKey)

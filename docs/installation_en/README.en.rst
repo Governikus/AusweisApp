@@ -92,14 +92,15 @@ CUSTOMPROXYPORT
   with a checkbox in the settings.
 
 UPDATECHECK
-  Upon opening the user interface of the |AppName|, an update check is started,
-  provided that at least 24 hours have elapsed since the last update check. If a
-  newer version is available, the user is notified accordingly. Setting
-  UPDATECHECK to false or true deactivates or activates the update check
-  respectively. Users are unable to change this setting in the |AppName|. Not
-  specified, the update check is activated, but users can adjust the settings.
-  The UPDATECHECK parameter affects neither updates of the service
-  provider list nor updates of card reader information.
+  On Windows the |AppName| checks on startup and in a 24 hour interval if a new
+  version is available. If a newer version is available and the tray icon is
+  active then the user is informed via a notification. Additionally a note
+  regarding the new version will be displayed when opening the |AppName|
+  interface the next time. Setting UPDATECHECK to false or true deactivates or
+  activates the update check respectively. Users are unable to change this
+  setting in the |AppName|. Not specified, the update check is activated, but
+  users can adjust the settings. The UPDATECHECK parameter affects neither
+  updates of the service provider list nor updates of card reader information.
 
 SHUFFLESCREENKEYBOARD
   If the on-screen keyboard is activated, the number keys can be arranged at random.
@@ -292,7 +293,7 @@ TLS termination proxy.
 .. [#eidports] Port 443 is used for the initial contact with the provider or
    eID server. Due to configuration of the service on the service provider's
    behalf, any other port might be used by forwarding.
-.. [#TR-03112] See TR-03112-6 specifiaction from the BSI
+.. [#TR-03112] See TR-03112-6 specification from the BSI
 .. [#govurl] All updates are based on the URL https://updates.autentapp.de/
 .. [#updatecheck] Automatic checks for new |AppName| versions can be deactivated, see commandline parameter
     UPDATECHECK.
@@ -303,7 +304,7 @@ TLS termination proxy.
    :widths: 25, 15, 15, 15, 30
    :align: left
 
-   "AusweisApp-Firewall-Rule", TCP, \*, "outgoing", "eID2, eID3, SaC2, Update"
+   "AusweisApp-Outbound", TCP, \*, "outgoing", "eID2, eID3, SaC2, Update"
    "AusweisApp-SaC", UDP, 24727, "incoming", "SaC1"
 
 .. raw:: latex
@@ -375,6 +376,15 @@ The following safety tests are disabled in the developer mode:
 **Please note:**
 Developer mode can only be used for test services, usage with genuine provider
 certificates is not possible.
+
+Show notifications inside the app
+'''''''''''''''''''''''''''''''''
+
+With this option, notifications are displayed within the app instead of as
+system notifications. When enabled, a bell icon appears in the top right
+corner of the application window. Clicking the bell icon shows past
+notifications with timestamps. This option is automatically enabled when the
+developer mode is active, as security violations are listed there.
 
 Support CAN Allowed mode for on-site reading (mobile only)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''

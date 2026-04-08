@@ -46,6 +46,9 @@ endmacro()
 option(INTEGRATED_SDK "Build integrated specific SDK" OFF)
 option(CONTAINER_SDK "Build container specific SDK" OFF)
 option(DEVELOPER "Include modules/features for developer" OFF)
+option(USE_LEGACY_OPENSSL_API "Enable legacy API" OFF)
+
+list(APPEND LIBS_ID_SALT ${USE_LEGACY_OPENSSL_API})
 
 if(CONTAINER_SDK)
 	set(INTEGRATED_SDK ON)
@@ -57,16 +60,16 @@ use_project_include(DVCS)
 
 
 if(MSVC)
-	find_program(MAKE jom CMAKE_FIND_ROOT_PATH_BOTH)
+	find_program(MAKE jom)
 	if(NOT MAKE)
-		find_program(MAKE nmake CMAKE_FIND_ROOT_PATH_BOTH)
+		find_program(MAKE nmake)
 	endif()
 else()
-	find_program(MAKE make CMAKE_FIND_ROOT_PATH_BOTH)
+	find_program(MAKE make)
 endif()
 
 if(MINGW AND NOT MAKE)
-	find_program(MAKE mingw32-make CMAKE_FIND_ROOT_PATH_BOTH)
+	find_program(MAKE mingw32-make)
 endif()
 
 if(MAKE)
@@ -98,7 +101,7 @@ if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG" AND NOT ${CMAKE_BUILD_TYPE} STREQUAL
 endif()
 
 if(MSVC)
-	FIND_HOST_PACKAGE(Perl REQUIRED)
+	find_package(Perl REQUIRED)
 else()
 	set(PERL_EXECUTABLE perl)
 endif()
@@ -129,13 +132,20 @@ endif()
 
 ################################## Versions
 include(Versions.cmake)
-list(APPEND LIBS_ID_SALT "${OPENSSL} ${QT}")
+list(APPEND LIBS_ID_SALT "${OPENSSL} ${QT} ${LLHTTP}")
 
 ################################## Files
 set(QT_FILE qt-everywhere-src-${QT}.tar.xz)
 set(OPENSSL_FILE openssl-${OPENSSL}.tar.gz)
 
 ################################## Downloads
+if(NOT DEFINED ENV{MIRROR_QT})
+	set(ENV{MIRROR_QT} https://download.qt.io)
+endif()
+if(NOT DEFINED ENV{MIRROR_GITHUB})
+	set(ENV{MIRROR_GITHUB} https://github.com)
+endif()
+
 if("${QT}" MATCHES "alpha|beta|rc")
 	set(QT_DEST_DIR development_releases)
 else()
@@ -146,9 +156,6 @@ string(REPLACE "." ";" QT_VERSION_LIST ${QT})
 list(GET QT_VERSION_LIST 0 QT_MAJOR_VERSION)
 list(GET QT_VERSION_LIST 1 QT_MINOR_VERSION)
 set(QT_SUBVERSION ${QT_MAJOR_VERSION}.${QT_MINOR_VERSION})
-if(NOT DEFINED ENV{MIRROR_QT})
-	set(ENV{MIRROR_QT} https://download.qt.io)
-endif()
 list(APPEND QT_URLS $ENV{MIRROR_QT}/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single/${QT_FILE})
 
 set(OPENSSL_SOURCE https://www.openssl.org/source)
@@ -156,16 +163,58 @@ if("${OPENSSL}" MATCHES "SNAP")
 	list(APPEND OPENSSL_URLS ${OPENSSL_SOURCE}/snapshot/${OPENSSL_FILE})
 else()
 	string(SUBSTRING ${OPENSSL} 0 5 OPENSSL_SUBVERSION)
-	if(NOT DEFINED ENV{MIRROR_GITHUB})
-		set(ENV{MIRROR_GITHUB} https://github.com)
-	endif()
 	list(APPEND OPENSSL_URLS $ENV{MIRROR_GITHUB}/openssl/openssl/releases/download/openssl-${OPENSSL}/${OPENSSL_FILE})
 	list(APPEND OPENSSL_URLS ${OPENSSL_SOURCE}/old/${OPENSSL_SUBVERSION}/${OPENSSL_FILE})
 endif()
 
+set(LLHTTP_FILE_SUFFIX ${LLHTTP}.tar.gz)
+list(APPEND LLHTTP_URLS $ENV{MIRROR_GITHUB}/nodejs/llhttp/archive/refs/tags/release/v${LLHTTP_FILE_SUFFIX})
+
 
 
 set(ENABLED_TARGETS)
+
+################################## llhttp
+#########################################################################
+list(APPEND ENABLED_TARGETS llhttp)
+
+if(IOS)
+	set(LLHTTP_CONFIGURE_FLAGS -GXcode)
+else()
+	set(LLHTTP_CONFIGURE_FLAGS -GNinja)
+endif()
+
+if(ANDROID OR IOS OR MAC)
+	set(LLHTTP_CONFIGURE_FLAGS ${LLHTTP_CONFIGURE_FLAGS} -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE})
+endif()
+
+if(ANDROID)
+	set(LLHTTP_CONFIGURE_FLAGS ${LLHTTP_CONFIGURE_FLAGS} -DCMAKE_ANDROID_ARCH_ABI=${CMAKE_ANDROID_ARCH_ABI})
+endif()
+
+if(LLHTTP_PATCHES)
+	set(LLHTTP_PATCHES_CMD ${CMAKE_COMMAND} -DCOMPONENT=llhttp -P ${PATCH_CMAKE})
+endif()
+
+ExternalProject_Add(llhttp
+	URL ${LLHTTP_URLS}
+	URL_HASH SHA256=${LLHTTP_HASH}
+	DOWNLOAD_DIR ${PACKAGES_DIR}
+	DOWNLOAD_NAME llhttp-${LLHTTP_FILE_SUFFIX}
+
+	PATCH_COMMAND ${LLHTTP_PATCHES_CMD}
+	CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR> ${LLHTTP_CONFIGURE_FLAGS}
+						-DCMAKE_POSITION_INDEPENDENT_CODE=ON
+						-DCMAKE_INSTALL_PREFIX=${DESTINATION_DIR}
+						-DLLHTTP_BUILD_STATIC_LIBS=ON
+						-DLLHTTP_BUILD_SHARED_LIBS=OFF
+						-DCMAKE_BUILD_TYPE=MinSizeRel
+						-DCMAKE_CONFIGURATION_TYPES=MinSizeRel
+	BUILD_COMMAND ${CMAKE_COMMAND} --build . ${MAKE_JOBS}
+	INSTALL_COMMAND ${CMAKE_COMMAND} --install .
+)
+
+
 
 ################################## OpenSSL
 #########################################################################
@@ -174,12 +223,16 @@ list(APPEND ENABLED_TARGETS openssl)
 set(OPENSSL_CONFIGURE_FLAGS no-camellia no-bf no-aria no-seed no-poly1305 no-srp no-gost no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-srtp no-sm2 no-sm3 no-sm4)
 set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-ct no-dgram no-cast no-chacha no-blake2 no-rmd160 no-scrypt no-siphash no-whirlpool no-md4 no-des no-ec2m)
 set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls1 no-tls1-method no-tls1_1 no-tls1_1-method no-tls1_3 no-ssl3 no-ssl3-method no-dtls no-dtls1-method no-dtls1_2-method)
-set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-deprecated no-engine no-async no-dso no-comp no-ts no-makedepend no-tests)
-if(OPENSSL VERSION_GREATER "1.1.1")
-	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-legacy)
-endif()
-if(OPENSSL VERSION_GREATER_EQUAL "3.5")
-	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls-deprecated-ec)
+set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-engine no-async no-dso no-comp no-ts no-makedepend no-tests)
+if(NOT USE_LEGACY_OPENSSL_API)
+	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-deprecated)
+
+	if(OPENSSL VERSION_GREATER "1.1.1")
+		set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-legacy)
+	endif()
+	if(OPENSSL VERSION_GREATER_EQUAL "3.5")
+		set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls-deprecated-ec)
+	endif()
 endif()
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
@@ -239,7 +292,7 @@ elseif(APPLE)
 		message(FATAL_ERROR "Unknown CMAKE_OSX_ARCHITECTURES: ${CMAKE_OSX_ARCHITECTURES}")
 	endif()
 
-	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=13.0)
+	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET})
 elseif(MINGW OR CYGWIN)
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		set(OPENSSL_ARCH mingw64)
@@ -347,9 +400,9 @@ endif()
 if(IOS)
 	# Remove this work-around! Do not build any .dylib or be able to use .dylib
 	# Globbing is not supported by cmake command mode! This will work if executed with unix shell only.
-	add_custom_command(TARGET openssl POST_BUILD COMMAND ${CMAKE_COMMAND} -E rm -f ${DESTINATION_DIR}/lib/*.dylib)
-elseif(ANDROID)
-	add_custom_command(TARGET openssl POST_BUILD COMMAND ${CMAKE_COMMAND} -E rm -f ${DESTINATION_DIR}/lib/*.a)
+	add_custom_command(TARGET openssl POST_BUILD COMMAND ${CMAKE_COMMAND} -E rm -f ${DESTINATION_DIR}/lib/libssl*.dylib ${DESTINATION_DIR}/lib/libcrypto*.dylib)
+elseif(UNIX)
+	add_custom_command(TARGET openssl POST_BUILD COMMAND ${CMAKE_COMMAND} -E rm -f ${DESTINATION_DIR}/lib/libssl*.a ${DESTINATION_DIR}/lib/libcrypto*.a)
 endif()
 
 ################################## Qt
@@ -393,6 +446,9 @@ endif()
 
 if(CMAKE_CXX_COMPILER_LAUNCHER STREQUAL "ccache")
 	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -ccache)
+	execute_process(COMMAND ccache --print-version OUTPUT_VARIABLE CCACHE_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+	message(STATUS "CCACHE_VERSION: ${CCACHE_VERSION}")
+	list(APPEND LIBS_ID_SALT ${CCACHE_VERSION})
 endif()
 
 ######## Modules
@@ -401,11 +457,11 @@ set(QT_CONFIGURE_FLAGS_HOST ${QT_CONFIGURE_FLAGS_HOST} -submodules qtbase,qtdecl
 
 set(QT_MODULES qtbase,qtwebsockets,qtscxml)
 if(NOT INTEGRATED_SDK)
-	set(QT_MODULES ${QT_MODULES},qttranslations,qtdeclarative,qtimageformats,qttools,qtsvg,qtconnectivity)
+	set(QT_MODULES ${QT_MODULES},qttranslations,qtdeclarative,qttools,qtsvg,qtconnectivity)
 endif()
 set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -submodules ${QT_MODULES})
 
-set(QT_MODULES_SKIP qtactiveqt,qtlanguageserver) # enabled by dependency but not necessary
+set(QT_MODULES_SKIP qtactiveqt,qtimageformats,qtlanguageserver) # enabled by dependency but not necessary
 if(INTEGRATED_SDK)
 	set(QT_MODULES_SKIP ${QT_MODULES_SKIP},qtdeclarative) # otherwise qtwebsockets and qtscxml enables it
 endif()
@@ -440,11 +496,15 @@ endif()
 # qtbase/src/corelib
 DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED hijricalendar islamiccivilcalendar jalalicalendar)
 DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED sharedmemory filesystemwatcher)
+if(WIN32 OR CYGWIN)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED winsdkicu)
+endif()
 
 # qtbase/src/gui
 if(NOT CONTAINER_SDK)
-	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED directfb imageformat_bmp imageformat_ppm imageformat_xbm)
-	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED linuxfb mtdev pdf textodfwriter undocommand undogroup undostack)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED directfb gif ico imageformat_bmp imageformat_ppm)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED imageformat_xbm linuxfb mtdev pdf textodfwriter)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED undocommand undogroup undostack)
 	list(APPEND QT_CONFIGURE_FLAGS_SHARED -qt-harfbuzz)
 endif()
 
@@ -497,7 +557,7 @@ DISABLE_FEATURES(QT_CONFIGURE_FLAGS qeventtransition scxml statemachine-qml)
 if(CONTAINER_SDK)
 	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED androiddeployqt)
 else()
-	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED designer qdoc)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED assistant designer qdoc)
 endif()
 
 # qtwebsockets
@@ -525,6 +585,7 @@ if(IOS)
 	endif()
 elseif(APPLE)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -framework)
+	set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
 elseif(WIN32 OR CYGWIN)
 	if(MSVC)
 		set(QT_PLATFORM win32-msvc)
@@ -643,6 +704,9 @@ ExternalProject_Add(qt
 set(vendor_file "GovernikusConfig.cmake")
 add_custom_command(TARGET qt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/${vendor_file} ${DESTINATION_DIR}/lib/cmake/Governikus/${vendor_file})
 
+configure_file(${PROJECT_SOURCE_DIR}/test/valgrind.supp.${CMAKE_BUILD_TYPE} "${CMAKE_BINARY_DIR}/valgrind.supp" COPYONLY)
+add_custom_command(TARGET qt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/valgrind.supp" ${DESTINATION_DIR}/test/valgrind.supp)
+
 #########################################################################
 
 foreach(var ${ENABLED_TARGETS})
@@ -744,11 +808,14 @@ add_custom_command(OUTPUT ${compressed_filename}
 add_custom_target(compress DEPENDS ${compressed_filename})
 
 include(patch.cmake)
-if(QT_PATCHES)
-	FETCH_PATCHES_NAMES(QT_PATCHES qt)
+if(LLHTTP_PATCHES)
+	FETCH_PATCHES_NAMES(LLHTTP_PATCHES llhttp)
 endif()
 if(OPENSSL_PATCHES)
 	FETCH_PATCHES_NAMES(OPENSSL_PATCHES openssl)
+endif()
+if(QT_PATCHES)
+	FETCH_PATCHES_NAMES(QT_PATCHES qt)
 endif()
 include(CMakePackageConfigHelpers)
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/${vendor_file}.in ${CMAKE_BINARY_DIR}/${vendor_file} INSTALL_DESTINATION ${DESTINATION_DIR})

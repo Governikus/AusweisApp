@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import Governikus.CheckResultView
 import Governikus.Type
@@ -46,7 +47,7 @@ CheckResultSuggestionView {
 		//: ALL_PLATFORMS
 		continueButtonText: qsTr("Retry")
 		//: ALL_PLATFORMS
-		firstHintText: qsTr("Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.")
+		hintText: qsTr("Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.")
 		//: ALL_PLATFORMS
 		text: qsTr("No supported ID card was detected. The %1 supports:<p><ul><li>German ID cards</li><li>Electronic residence permits (eAT)</li><li>eID cards for citizen of the EU/EEA/</li></ul></p>If you have used one of the above documents and this error message still appears, please restart the check.").arg(Qt.application.name)
 
@@ -106,16 +107,8 @@ CheckResultSuggestionView {
 		id: pinBlockedSuggestionData
 
 		continueButtonIcon: "qrc:///images/identify.svg"
-		firstHintButtonLink: PinResetInformationModel.pinResetUrl
-		firstHintButtonText: PinResetInformationModel.resetPinWithPRSActionText
-		firstHintText: PinResetInformationModel.resetPinWithPRSHint
-		firstHintTitle: PinResetInformationModel.resetPinWithPRSHintTitle
 		//: ALL_PLATFORMS
 		hintBoxesTitle: qsTr("I can't recall my PUK. How do I set a new card PIN?")
-		secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-		secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-		secondHintText: PinResetInformationModel.resetPinAtAuthorityHint
-		secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
 		//: ALL_PLATFORMS Sentence 1 of 3 of PUK explanation
 		text: qsTr("The ID card PIN has been entered incorrectly 3 times. Therefore, you must first enter the 10-digit PUK during the next authentication process. You can find it in the PIN letter you received after applying for your ID card.") + "<br><br>" +
 		//: ALL_PLATFORMS Sentence 2 of 3 of PUK explanation

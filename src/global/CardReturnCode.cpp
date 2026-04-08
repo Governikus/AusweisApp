@@ -56,20 +56,8 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 		case CardReturnCode::INVALID_PUK:
 			return GlobalStatus::Code::Card_Invalid_Puk;
 
-		case CardReturnCode::NEW_PIN_MISMATCH:
-			return GlobalStatus::Code::Card_NewPin_Mismatch;
-
-		case CardReturnCode::NEW_PIN_INVALID_LENGTH:
-			return GlobalStatus::Code::Card_NewPin_Invalid_Length;
-
-		case CardReturnCode::PIN_BLOCKED:
-			return GlobalStatus::Code::Card_Pin_Blocked;
-
 		case CardReturnCode::PIN_NOT_BLOCKED:
 			return GlobalStatus::Code::Card_Pin_Not_Blocked;
-
-		case CardReturnCode::PUK_INOPERATIVE:
-			return GlobalStatus::Code::Card_Puk_Blocked;
 	}
 
 	Q_UNREACHABLE();
@@ -86,10 +74,7 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 		case CardReturnCode::INVALID_PIN_2:
 		case CardReturnCode::INVALID_PIN_3:
 		case CardReturnCode::INVALID_PUK:
-		case CardReturnCode::NEW_PIN_MISMATCH:
-		case CardReturnCode::NEW_PIN_INVALID_LENGTH:
 		case CardReturnCode::PIN_NOT_BLOCKED:
-		case CardReturnCode::PIN_BLOCKED:
 			return true;
 
 		case CardReturnCode::UNDEFINED:
@@ -104,7 +89,6 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 		case CardReturnCode::OK_PUK:
 		case CardReturnCode::OK_CAN:
 		case CardReturnCode::CANCELLATION_BY_USER:
-		case CardReturnCode::PUK_INOPERATIVE:
 		case CardReturnCode::INPUT_TIME_OUT:
 			return false;
 	}

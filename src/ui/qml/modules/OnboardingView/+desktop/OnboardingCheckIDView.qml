@@ -167,9 +167,7 @@ BaseOnboardingView {
 		type: root.isPcsc ? AnimationLoader.Type.WAIT_FOR_CARD_USB : AnimationLoader.Type.WAIT_FOR_CARD_SAC
 	}
 	GText {
-		id: subText
-
-		Layout.alignment: Text.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
 		//: DESKTOP
 		text: root.isPcsc ? qsTr("Please ensure that the ID card is placed on the card reader.") :
 		//: DESKTOP

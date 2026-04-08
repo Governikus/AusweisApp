@@ -59,23 +59,6 @@ class test_ChangePinModel
 		}
 
 
-		void test_supportedPluginTypes()
-		{
-			const auto& model = Env::getSingleton<ChangePinModel>();
-			QSharedPointer<ChangePinContext> context(new ChangePinContext());
-			model->resetChangePinContext(context);
-#if __has_include("context/PersonalizationContext.h")
-			QVERIFY(model->getSupportedReaderPluginTypes().contains(ReaderManagerPluginType::SMART));
-#else
-			QVERIFY(!model->getSupportedReaderPluginTypes().contains(ReaderManagerPluginType::SMART));
-#endif
-
-			QSharedPointer<ChangePinContext> contextTransportPin(new ChangePinContext(true));
-			model->resetChangePinContext(contextTransportPin);
-			QVERIFY(!model->getSupportedReaderPluginTypes().contains(ReaderManagerPluginType::SMART));
-		}
-
-
 		void test_getStatusCodeAnimation()
 		{
 			const auto& model = Env::getSingleton<ChangePinModel>();

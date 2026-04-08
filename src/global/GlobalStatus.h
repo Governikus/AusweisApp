@@ -77,13 +77,6 @@ defineEnumTypeQmlExposed(GlobalStatusCode,
 		Workflow_Network_Invalid_Scheme,
 		Workflow_Network_Malformed_Redirect_Url,
 		Workflow_Wrong_Parameter_Invocation,
-		Workflow_Smart_eID_Unavailable,
-		Workflow_Smart_eID_Applet_Preparation_Failed,
-		Workflow_Smart_eID_Authentication_Failed,
-		Workflow_Smart_eID_ServiceInformation_Query_Failed,
-		Workflow_Smart_eID_PrePersonalization_Failed,
-		Workflow_Smart_eID_Personalization_Failed,
-		Workflow_Smart_eID_Personalization_Denied,
 
 		Paos_Unexpected_Warning,
 
@@ -106,13 +99,11 @@ defineEnumTypeQmlExposed(GlobalStatusCode,
 		Card_Invalid_Pin,
 		Card_Invalid_Can,
 		Card_Invalid_Puk,
-		Card_Pin_Blocked,
 		Card_Pin_Not_Blocked,
 		Card_Puk_Blocked,
 		Card_NewPin_Mismatch,
 		Card_NewPin_Invalid_Length,
 		Card_ValidityVerificationFailed,
-		Card_Smart_Invalid,
 
 		RemoteReader_CloseCode_AbnormalClose,
 
@@ -144,8 +135,7 @@ class GlobalStatus
 			REDIRECT_URL,
 			CERTIFICATE_ISSUER_NAME,
 			URL_SCHEME,
-			ACTIVATION_ERROR,
-			PERSONALIZATION_RESTRICTION_DATE
+			ACTIVATION_ERROR
 		};
 
 		using ExternalInfoMap = QMap<ExternalInformation, QString>;

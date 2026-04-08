@@ -5,6 +5,7 @@
 #include "UiPluginQml.h"
 
 #include "AppSettings.h"
+#include "AppUpdateDataModel.h"
 #include "ApplicationModel.h"
 #include "AuthModel.h"
 #include "CertificateDescriptionModel.h"
@@ -14,23 +15,17 @@
 #include "Initializer.h"
 #include "LogHandler.h"
 #include "NumberModel.h"
-#include "PersonalizationModel.h"
 #include "PlatformTools.h"
 #include "RemoteServiceModel.h"
 #include "SelfAuthModel.h"
 #include "Service.h"
 #include "SettingsModel.h"
-#include "SmartModel.h"
 #include "VersionNumber.h"
 #include "VolatileSettings.h"
 #include "WorkflowRequest.h"
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 #include "context/SelfAuthContext.h"
-
-#if __has_include("context/PersonalizationContext.h")
-	#include "context/PersonalizationContext.h"
-#endif
 
 #if defined(Q_OS_ANDROID)
 	#include "UiLoader.h"
@@ -115,6 +110,14 @@ UiPluginQml::UiPluginQml()
 	QGuiApplication::setDesktopFileName(QStringLiteral("com.governikus.ausweisapp2"));
 
 	connect(&mTrayIcon, &TrayIcon::fireShow, this, &UiPluginQml::show);
+	connect(&mTrayIcon, &TrayIcon::fireMessageClicked, this, [this](){
+				const auto applicationModel = Env::getSingleton<ApplicationModel>();
+				bool isWorkflowActive = applicationModel->getCurrentWorkflow() != ApplicationModel::Workflow::NONE;
+				if (isWorkflowActive || !showUpdateInformationIfPending())
+				{
+					onShowUi(UiModule::CURRENT);
+				}
+			});
 	connect(&mTrayIcon, &TrayIcon::fireQuit, this, [this] {
 				Q_EMIT fireQuitApplicationRequest();
 			});
@@ -151,17 +154,6 @@ void UiPluginQml::init()
 		qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", "1");
 	}
 
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
-	const QStringList cachePaths = QStandardPaths::standardLocations(QStandardPaths::CacheLocation);
-	if (!cachePaths.isEmpty() && !cachePaths.first().isEmpty())
-	{
-		QString cacheBasePath = cachePaths.first();
-		cacheBasePath.replace(QStringLiteral("AusweisApp"), QStringLiteral("AusweisApp2"));
-		cacheBasePath.append(QStringLiteral("/qmlcache"));
-		qputenv("QML_DISK_CACHE_PATH", cacheBasePath.toUtf8());
-	}
-#endif
-
 	const auto basicStyle = QStringLiteral("Basic");
 	if (QQuickStyle::name() != basicStyle)
 	{
@@ -196,13 +188,14 @@ void UiPluginQml::init()
 
 	onWindowPaletteChanged();
 	onUserDarkModeChanged();
-	onLanguageChanged();
 
 #ifdef Q_OS_WIN
 	QMetaObject::invokeMethod(this, [] {
 				Env::getSingleton<Service>()->runUpdateIfNeeded(true);
 			}, Qt::QueuedConnection);
 #endif
+
+	QGuiApplication::setAttribute(Qt::AA_QtQuickUseDefaultSizePolicy);
 }
 
 
@@ -274,27 +267,15 @@ void UiPluginQml::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequ
 		Env::getSingleton<ChangePinModel>()->resetChangePinContext(changePinContext);
 	}
 
-#if __has_include("context/PersonalizationContext.h")
-	if (auto smartContext = context.objectCast<PersonalizationContext>())
+	if (auto authContext = context.objectCast<AuthContext>())
 	{
-		onShowUi(UiModule::SMART_EID);
-		Env::getSingleton<PersonalizationModel>()->resetPersonalizationContext(smartContext);
-		Env::getSingleton<CertificateDescriptionModel>()->resetContext(smartContext);
-		Env::getSingleton<ChatModel>()->resetContext(smartContext);
-	}
-	else
-#endif
-	{
-		if (auto authContext = context.objectCast<AuthContext>())
+		if (authContext->isActivateUi())
 		{
-			if (authContext->isActivateUi())
-			{
-				onShowUi(UiModule::IDENTIFY);
-			}
-			Env::getSingleton<AuthModel>()->resetAuthContext(authContext);
-			Env::getSingleton<CertificateDescriptionModel>()->resetContext(authContext);
-			Env::getSingleton<ChatModel>()->resetContext(authContext);
+			onShowUi(UiModule::IDENTIFY);
 		}
+		Env::getSingleton<AuthModel>()->resetAuthContext(authContext);
+		Env::getSingleton<CertificateDescriptionModel>()->resetContext(authContext);
+		Env::getSingleton<ChatModel>()->resetContext(authContext);
 	}
 
 	if (auto authContext = context.objectCast<SelfAuthContext>())
@@ -332,13 +313,7 @@ void UiPluginQml::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pReq
 
 		const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
-		// Only hide the UI if we don't need to show the update information view. This behaviour ensures that
-		// the user is (aggressively) notified about a pending update if the AA is only shown for authentication
-		// workflows and never manually brought to foreground in between.
 		if (!context.objectCast<SelfAuthContext>()
-#if __has_include("context/PersonalizationContext.h")
-				&& !context.objectCast<PersonalizationContext>()
-#endif
 				&& !context->hasNextWorkflowPending()
 				&& generalSettings.isAutoCloseWindowAfterAuthentication()
 				&& !showUpdateInformationIfPending()
@@ -359,15 +334,6 @@ void UiPluginQml::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pReq
 		Env::getSingleton<ChatModel>()->resetContext();
 		Env::getSingleton<CertificateDescriptionModel>()->resetContext();
 	}
-
-#if __has_include("context/PersonalizationContext.h")
-	if (context.objectCast<PersonalizationContext>())
-	{
-		Env::getSingleton<PersonalizationModel>()->resetPersonalizationContext();
-	}
-#endif
-
-	Env::getSingleton<SmartModel>()->workflowFinished(context);
 }
 
 
@@ -377,13 +343,11 @@ void UiPluginQml::onApplicationInitialized()
 	connect(Env::getSingleton<ChangePinModel>(), &ChangePinModel::fireStartWorkflow, this, &UiPlugin::fireWorkflowRequested);
 	connect(Env::getSingleton<SelfAuthModel>(), &SelfAuthModel::fireStartWorkflow, this, &UiPlugin::fireWorkflowRequested);
 	connect(Env::getSingleton<RemoteServiceModel>(), &RemoteServiceModel::fireStartWorkflow, this, &UiPlugin::fireWorkflowRequested);
-	connect(Env::getSingleton<PersonalizationModel>(), &PersonalizationModel::fireStartWorkflow, this, &UiPlugin::fireWorkflowRequested);
 	connect(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireRawLog, this, &UiPluginQml::onRawLog, Qt::QueuedConnection);
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireTrayIconEnabledChanged, this, &UiPluginQml::onTrayIconEnabledChanged);
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireUseSystemFontChanged, this, &UiPluginQml::onUseSystemFontChanged);
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireDarkModeChanged, this, &UiPluginQml::onUserDarkModeChanged);
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireDarkModeChanged, this, &UiPluginQml::fireDarkModeEnabledChanged);
-	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireLanguageChanged, this, &UiPluginQml::onLanguageChanged);
 
 	const auto* service = Env::getSingleton<Service>();
 	connect(service, &Service::fireAppcastFinished, this, &UiPluginModel::setUpdatePending);
@@ -434,6 +398,17 @@ void UiPluginQml::onShowUi(UiModule pModule)
 	{
 		pModule = UiModule::CURRENT;
 	}
+
+	if (pModule == UiModule::UPDATEINFORMATION)
+	{
+#ifdef Q_OS_WIN
+		if (!Env::getSingleton<AppUpdateDataModel>()->isUpdateAvailable())
+#endif
+		{
+			pModule = UiModule::CURRENT;
+		}
+	}
+
 	Q_EMIT fireShowRequest(pModule);
 
 	Env::getSingleton<Service>()->runUpdateIfNeeded();
@@ -507,10 +482,7 @@ void UiPluginQml::onUpdateScheduled() const
 
 void UiPluginQml::show()
 {
-	if (!showUpdateInformationIfPending())
-	{
-		onShowUi(UiModule::CURRENT);
-	}
+	onShowUi(UiModule::CURRENT);
 }
 
 
@@ -917,15 +889,6 @@ void UiPluginQml::onReaderStatusChanged(const ReaderManagerPluginInfo& pInfo) co
 #else
 	Q_UNUSED(pInfo)
 #endif
-}
-
-
-void UiPluginQml::onLanguageChanged() const
-{
-	if (mEngine)
-	{
-		mEngine->setUiLanguage(Env::getSingleton<SettingsModel>()->getLanguage());
-	}
 }
 
 

@@ -1,4 +1,4 @@
-From 8d9129f46a54fc9e2066b473086b51fa37d7641f Mon Sep 17 00:00:00 2001
+From ce840a36c1c266630960ab0564424cb88873dd7d Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Sat, 3 Jan 2026 11:10:44 +0100
 Subject: Make finding optional components quiet

@@ -28,6 +28,13 @@ class test_IfdTransmit
 		}
 
 
+		void cleanup()
+		{
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
+		}
+
+
 		void invalidJson()
 		{
 			const bool v0Supported = IfdVersion(IfdVersion::Version::v0).isSupported();
@@ -40,7 +47,7 @@ class test_IfdTransmit
 			IfdTransmit msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), v0Supported ? 7 : 6);
+			QTRY_COMPARE(logSpy.count(), v0Supported ? 7 : 6);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"msg\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"ContextHandle\"")));
@@ -170,7 +177,7 @@ class test_IfdTransmit
 			QCOMPARE(ifdTransmit.getSlotHandle(), QStringLiteral("SlotHandle"));
 			QCOMPARE(ifdTransmit.getInputApdu(), incomplete ? QByteArray() : QByteArray::fromHex(apdu));
 
-			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
+			QTRY_COMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
 			{
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"InputAPDU\""_L1));
@@ -216,7 +223,7 @@ class test_IfdTransmit
 				QVERIFY(!ifdTransmit.isIncomplete());
 				QCOMPARE(ifdTransmit.getType(), IfdMessageType::IFDTransmit);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -226,14 +233,14 @@ class test_IfdTransmit
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"UNDEFINED\"")));
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDTransmit")));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDTransmit")));
 		}
 
@@ -297,7 +304,7 @@ class test_IfdTransmit
 			QCOMPARE(ifdTransmit.getSlotHandle(), QString());
 			QCOMPARE(ifdTransmit.getInputApdu(), QByteArray());
 
-			QCOMPARE(logSpy.count(), v0Supported ? 3 : 2);
+			QTRY_COMPARE(logSpy.count(), v0Supported ? 3 : 2);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"SlotHandle\" should be of type \"string\"")));
 			if (v0Supported)
 			{
@@ -333,7 +340,7 @@ class test_IfdTransmit
 			QCOMPARE(ifdTransmit.getSlotHandle(), "SlotHandle"_L1);
 			QCOMPARE(ifdTransmit.getInputApdu(), QByteArray());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"CommandAPDUs\" should be of type \"object array\"")));
 		}
 
@@ -367,7 +374,7 @@ class test_IfdTransmit
 			QCOMPARE(ifdTransmit.getSlotHandle(), "SlotHandle"_L1);
 			QCOMPARE(ifdTransmit.getInputApdu(), QByteArray());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"InputAPDU\" should be of type \"string\"")));
 		}
 
@@ -405,7 +412,7 @@ class test_IfdTransmit
 			QCOMPARE(ifdTransmit.getSlotHandle(), QStringLiteral("SlotHandle"));
 			QCOMPARE(ifdTransmit.getInputApdu(), QByteArray::fromHex("00A402022F00"));
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Only using the first CommandAPDU. Command chaining is not supported yet")));
 		}
 

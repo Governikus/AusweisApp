@@ -20,14 +20,13 @@ using namespace governikus;
 const int CardInfo::UNDEFINED_RETRY_COUNTER = -1;
 
 
-CardInfo::CardInfo(CardType pCardType, const FileRef& pApplication, const QSharedPointer<const EFCardAccess>& pEfCardAccess, int pRetryCounter, bool pPinDeactivated, bool pPukInoperative, bool pPinInitial)
+CardInfo::CardInfo(CardType pCardType, const FileRef& pApplication, const QSharedPointer<const EFCardAccess>& pEfCardAccess, int pRetryCounter, bool pPinDeactivated, bool pPukInoperative)
 	: mCardType(pCardType)
 	, mApplication(pApplication)
 	, mEfCardAccess(pEfCardAccess)
 	, mRetryCounter(pRetryCounter)
 	, mPinDeactivated(pPinDeactivated)
 	, mPukInoperative(pPukInoperative)
-	, mPinInitial(pPinInitial)
 	, mTagType(TagType::UNKNOWN)
 {
 }
@@ -60,10 +59,6 @@ QString CardInfo::getCardTypeString() const
 		case CardType::EID_CARD:
 			//: ALL_PLATFORMS An ID card is present/inserted. The text is only used in DiagnosisView.
 			return tr("ID card (PA/eAT/eID)");
-
-		case CardType::SMART_EID:
-			//: ALL_PLATFORMS A Smart-ID is present/inserted. The text is only used in DiagnosisView.
-			return tr("Smart-eID");
 	}
 
 	Q_UNREACHABLE();
@@ -103,12 +98,6 @@ bool CardInfo::isPinDeactivated() const
 bool CardInfo::isPukInoperative() const
 {
 	return mPukInoperative;
-}
-
-
-bool CardInfo::isPinInitial() const
-{
-	return mPinInitial;
 }
 
 
@@ -169,8 +158,7 @@ QDebug operator<<(QDebug pDbg, const CardInfo& pCardInfo)
 	QDebugStateSaver saver(pDbg);
 	pDbg.nospace() << "{Type: " << pCardInfo.mCardType
 				   << ", Retry counter: " << pCardInfo.mRetryCounter
-				   << ", PIN deactivated: " << pCardInfo.mPinDeactivated
-				   << ", PIN initial: " << pCardInfo.mPinInitial << "}";
+				   << ", PIN deactivated: " << pCardInfo.mPinDeactivated << "}";
 	// Skipping mEfCardAccess since there is no pretty formatting available.
 
 	return pDbg;

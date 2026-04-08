@@ -4,6 +4,7 @@
 
 #include "LogHandler.h"
 
+#include "FileCopy.h"
 #include "SingletonHelper.h"
 
 #include <QCoreApplication>
@@ -105,10 +106,10 @@ void LogHandler::init()
 
 		setAutoRemove(mAutoRemove);
 		setLogFileInternal(mUseLogFile);
-
-		// Avoid deadlock with subsequent logging of this call.
-		QMetaObject::invokeMethod(mLogFile.data(), [this] {removeOldLogFiles();}, Qt::QueuedConnection);
 	}
+
+	// Avoid deadlock with subsequent logging of this call.
+	QMetaObject::invokeMethod(mLogFile.data(), [this] {removeOldLogFiles();}, Qt::QueuedConnection);
 
 	if (!isInstalled())
 	{
@@ -397,8 +398,14 @@ void LogHandler::handleMessage(QtMsgType pType, const QMessageLogContext& pConte
 
 	if (mEventHandler)
 	{
-		Q_EMIT mEventHandler->fireRawLog(pMsg, QString::fromLatin1(pContext.category));
-		Q_EMIT mEventHandler->fireLog(logMsg);
+		const auto cat = QString::fromLatin1(pContext.category);
+		QMetaObject::invokeMethod(mEventHandler, [this, pMsg, logMsg, cat]{
+					if (mEventHandler)
+					{
+						Q_EMIT mEventHandler->fireRawLog(pMsg, cat);
+						Q_EMIT mEventHandler->fireLog(logMsg);
+					}
+				}, Qt::QueuedConnection);
 	}
 }
 
@@ -452,8 +459,7 @@ bool LogHandler::copyOther(const QString& pSource, const QString& pDest) const
 	{
 		return false;
 	}
-
-	return QFile::copy(pSource, pDest);
+	return FileCopy::copyFile(pSource, pDest);
 }
 
 
@@ -581,10 +587,8 @@ JNIEXPORT void Java_com_governikus_ausweisapp2_LogHandler_propagate(JNIEnv* pEnv
 	Q_UNUSED(pObj)
 
 	const auto* category = pCategory ? pEnv->GetStringUTFChars(pCategory, 0) : nullptr;
-	const bool useFuncSignature = qstrcmp(category, "bdr") != 0 && qstrcmp(category, "dts") != 0; // no useful information provided
-
-	const auto* file = useFuncSignature && pFile ? pEnv->GetStringUTFChars(pFile, 0) : nullptr;
-	const auto* func = useFuncSignature && pFunction ? pEnv->GetStringUTFChars(pFunction, 0) : nullptr;
+	const auto* file = pFile ? pEnv->GetStringUTFChars(pFile, 0) : nullptr;
+	const auto* func = pFunction ? pEnv->GetStringUTFChars(pFunction, 0) : nullptr;
 	const auto* msg = pMsg ? pEnv->GetStringUTFChars(pMsg, 0) : nullptr;
 
 	const auto& utf8Msg = QString::fromUtf8(msg);

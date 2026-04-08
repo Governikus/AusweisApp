@@ -29,6 +29,14 @@ class test_TransmitCommand
 			Env::getSingleton<LogHandler>()->init();
 			TestFileHelper::createTranslations(translationDir.path());
 			LanguageLoader::getInstance().setPath(translationDir.path());
+			qApp->processEvents();
+		}
+
+
+		void cleanup()
+		{
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -117,13 +125,15 @@ class test_TransmitCommand
 			command1.internalExecute();
 			QVERIFY(command1.getOutputApduAsHex().isEmpty());
 			QCOMPARE(command1.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+			QTRY_VERIFY(!logSpy.isEmpty());
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Transmit unsuccessful. Return code:"_L1));
 
-			worker->addResponse(CardReturnCode::PIN_BLOCKED, QByteArray::fromHex("63C0"));
+			worker->addResponse(CardReturnCode::COMMAND_FAILED, QByteArray::fromHex("63C0"));
 			TransmitCommand command2(worker, inputApduInfos, QStringLiteral("slotname"));
 			command2.internalExecute();
 			QVERIFY(command2.getOutputApduAsHex().isEmpty());
-			QCOMPARE(command2.getReturnCode(), CardReturnCode::PIN_BLOCKED);
+			QCOMPARE(command2.getReturnCode(), CardReturnCode::COMMAND_FAILED);
+			QTRY_VERIFY(!logSpy.isEmpty());
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Transmit unsuccessful. Return code:"_L1));
 		}
 
@@ -141,6 +151,7 @@ class test_TransmitCommand
 			QCOMPARE(command.getOutputApduAsHex().size(), 1);
 			QCOMPARE(command.getOutputApduAsHex()[0], QByteArray("9000"));
 			QCOMPARE(command.getReturnCode(), CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
+			QTRY_VERIFY(!logSpy.isEmpty());
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Transmit unsuccessful. StatusCode does not start with acceptable status code"_L1));
 		}
 
@@ -175,6 +186,7 @@ class test_TransmitCommand
 			QCOMPARE(command1.getOutputApduAsHex().size(), 1);
 			QCOMPARE(command1.getOutputApduAsHex()[0], QByteArray("9000"));
 			QCOMPARE(command1.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+			QTRY_VERIFY(!logSpy.isEmpty());
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Transmit unsuccessful. Return code"_L1));
 
 			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, QByteArray::fromHex("1919"));
@@ -183,6 +195,7 @@ class test_TransmitCommand
 			command2.internalExecute();
 			QCOMPARE(command2.getOutputApduAsHex().size(), 0);
 			QCOMPARE(command2.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+			QTRY_VERIFY(!logSpy.isEmpty());
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Transmit unsuccessful. Return code"_L1));
 		}
 
@@ -205,6 +218,7 @@ class test_TransmitCommand
 			QCOMPARE(command1.getOutputApduAsHex()[0], QByteArray("9000"));
 			QCOMPARE(command1.getOutputApduAsHex()[1], QByteArray("9000"));
 			QCOMPARE(command1.getReturnCode(), CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
+			QTRY_VERIFY(!logSpy.isEmpty());
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Transmit unsuccessful. StatusCode does not start with acceptable status code"_L1));
 
 			inputApduInfos2[0].addAcceptableStatusCode(QByteArray("1010"));
@@ -216,6 +230,7 @@ class test_TransmitCommand
 			QCOMPARE(command2.getOutputApduAsHex().size(), 1);
 			QCOMPARE(command2.getOutputApduAsHex()[0], QByteArray("9000"));
 			QCOMPARE(command2.getReturnCode(), CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
+			QTRY_VERIFY(!logSpy.isEmpty());
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Transmit unsuccessful. StatusCode does not start with acceptable status code"_L1));
 		}
 
