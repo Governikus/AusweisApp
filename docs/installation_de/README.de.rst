@@ -99,12 +99,13 @@ CUSTOMPROXYPORT
   der Installation über eine Checkbox in den Einstellungen deaktiviert werden.
 
 UPDATECHECK
-  Wird die Benutzeroberfläche der |AppName| geöffnet, wird eine Überprüfung auf
-  eine neue Version der |AppName| gestartet, falls seit der letzten Überprüfung
-  mindestens 24 Stunden vergangen sind. Liegt eine neue Version vor, wird der
-  Benutzer darüber in einem Dialog informiert. Durch Setzen von UPDATECHECK auf
-  false oder true kann diese Überprüfung deaktiviert bzw. aktiviert werden.
-  Die Einstellung kann dann durch den Benutzer in der |AppName| nicht geändert
+  Auf Windows prüft die |AppName| bei Start und danach in einem 24 Stunden
+  Intervall ob eine neue Version verfügbar ist. Liegt eine neue Version vor
+  wird der Benutzer darüber bei aktiviertem Trayicon mit einer Notification
+  informiert. Beim nächsten Öffnen der |AppName| wird zusätzlich ein Hinweis
+  auf die neue Version angezeigt. Durch Setzen von UPDATECHECK auf false oder
+  true kann diese Überprüfung deaktiviert bzw. aktiviert werden. Die
+  Einstellung kann dann durch den Benutzer in der |AppName| nicht geändert
   werden. Ohne Angabe ist die Überprüfung aktiviert, der Benutzer kann die
   Einstellung jedoch ändern. Der UPDATECHECK Parameter beeinflusst weder die
   Aktualisierung der Anbieterliste noch die Aktualisierung der
@@ -325,7 +326,7 @@ CA-Zertifikate im Windows-Truststore werden daher ignoriert.
    :widths: 25, 15, 15, 15, 30
    :align: left
 
-   "AusweisApp-Firewall-Rule", TCP, \*, "ausgehend", "eID2, eID3, SaK2, Update"
+   "AusweisApp-Outbound", TCP, \*, "ausgehend", "eID2, eID3, SaK2, Update"
    "AusweisApp-SaC", UDP, 24727, "eingehend", "SaK1"
 
 .. raw:: latex
@@ -407,6 +408,17 @@ Der Entwicklermodus ist nur unter Windows und macOS verfügbar.
 
 **Wichtig:** Der Entwicklermodus kann nur für Test-Dienste verwendet werden,
 eine Verwendung mit echten Berechtigungszertifikaten ist nicht möglich.
+
+Benachrichtigungen in der App anzeigen
+''''''''''''''''''''''''''''''''''''''
+
+Mit dieser Option werden Benachrichtigungen in der App anstelle von
+Systembenachrichtigungen angezeigt. Wenn die Option aktiviert ist, erscheint
+oben rechts im Applikationsfenster ein Glockensymbol. Ein Klick auf das
+Glockensymbol zeigt die bisherigen Benachrichtigungen mit Zeitstempel. Diese
+Option wird automatisch aktiviert wenn der Entwicklermodus aktiviert ist, da
+dort die Sicherheitsverletzungen aufgeführt werden.
+
 
 CAN-Allowed Modus für Vor-Ort-Auslesen untertützen (nur mobil)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''

@@ -9,7 +9,6 @@
 #include "ProviderConfiguration.h"
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
-#include "SmartModel.h"
 
 #include "MockCardConnectionWorker.h"
 #include "MockReaderManagerPlugin.h"
@@ -44,7 +43,6 @@ class test_WorkflowModel
 
 			Env::getSingleton<AppSettings>(); // just init in MainThread because of QObject
 			Env::getSingleton<ApplicationModel>(); // just init in MainThread because of QObject
-			Env::getSingleton<SmartModel>(); // just init in MainThread because of QObject
 
 			ResourceLoader::getInstance().init();
 		}
@@ -142,13 +140,6 @@ class test_WorkflowModel
 		}
 
 
-		void test_isCurrentSmartCardAllowed()
-		{
-			WorkflowModel workflowModel;
-			QVERIFY2(!workflowModel.isCurrentSmartCardAllowed(), "Ensure that this will not crash when the model has no WorkflowContext.");
-		}
-
-
 		void test_startScanExplicitly()
 		{
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
@@ -174,7 +165,7 @@ class test_WorkflowModel
 
 			auto mockReader = MockReaderManagerPlugin::getInstance().addReader("SomeReaderWithCard"_L1);
 			auto info = mockReader->getReaderInfo();
-			info.setCardInfo(CardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<EFCardAccess>(), 3, false, false, false));
+			info.setCardInfo(CardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<EFCardAccess>(), 3, false, false));
 			mockReader->setReaderInfo(info);
 			model.setReaderPluginType(ReaderManagerPluginType::MOCK);
 			QCOMPARE(model.hasCard(), true);
@@ -250,38 +241,17 @@ class test_WorkflowModel
 			QTest::addColumn<QString>("text");
 			QTest::addColumn<QString>("action");
 
-			QTest::addRow("no_prs_No_error") << false << GlobalStatus::Code::No_Error << QString() << QString() << QString() << QString();
-			QTest::addRow("no_prs_Card_Puk_Blocked") << false << GlobalStatus::Code::Card_Puk_Blocked
-													 << "My PUK is used up. How do I set a new PIN?"
-													 << "At your competent authority" << "You may turn to the competent authority and reset the ID card PIN there."
-													 << "Find competent authority";
-			QTest::addRow("no_prs_Card_Pin_Deactivated") << false << GlobalStatus::Code::Card_Pin_Deactivated
-														 << "How do I activate the eID function?"
-														 << "At your competent authority"
-														 << "You may turn to your competent authority to activate the eID function."
-														 << "Find competent authority";
+			QTest::addRow("no_prs_No_error") << false << GlobalStatus::Code::No_Error << QString() << QString() << QString();
+
 			QTest::addRow("no_prs_Card_ValidityVerificationFailed") << false << GlobalStatus::Code::Card_ValidityVerificationFailed
 																	<< QString()
 																	<< QString()
-																	<< "Contact your local citizens' office (Bürgeramt) to apply for a new ID card or to unblock the ID card."
-																	<< QString();
+																	<< "Contact your local citizens' office (Bürgeramt) to apply for a new ID card or to unblock the ID card.";
 
-			QTest::addRow("prs_No_error") << true << GlobalStatus::Code::No_Error << QString() << QString() << QString() << QString();
-			QTest::addRow("prs_Card_Puk_Blocked") << true << GlobalStatus::Code::Card_Puk_Blocked
-												  << "My PUK is used up. How do I set a new PIN?"
-												  << "Online via PIN Reset Service"
-												  << "You may request a PIN Reset Letter with a new PIN and it's according activation code on the following website."
-												  << "Request PIN Reset Letter";
-			QTest::addRow("prs_Card_Pin_Deactivated") << true << GlobalStatus::Code::Card_Pin_Deactivated
-													  << "How do I activate the eID function?"
-													  << "Online via PIN Reset Service"
-													  << "You may request a PIN Reset Letter with a new PIN and it's according activation code on the following website to activate the eID function."
-													  << "Request PIN Reset Letter";
 			QTest::addRow("prs_Card_ValidityVerificationFailed") << true << GlobalStatus::Code::Card_ValidityVerificationFailed
 																 << QString()
 																 << QString()
-																 << "Contact your local citizens' office (Bürgeramt) to apply for a new ID card or to unblock the ID card."
-																 << QString();
+																 << "Contact your local citizens' office (Bürgeramt) to apply for a new ID card or to unblock the ID card.";
 		}
 
 
@@ -289,15 +259,11 @@ class test_WorkflowModel
 		{
 			QFETCH(bool, prs);
 			QFETCH(GlobalStatus::Code, statusCode);
-			QFETCH(QString, box);
-			QFETCH(QString, title);
 			QFETCH(QString, text);
-			QFETCH(QString, action);
 
 			WorkflowModel model;
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			model.resetWorkflowContext(context);
-			QCOMPARE(model.getStatusHintTitle(), QString());
 
 			auto* config = Env::getSingleton<ProviderConfiguration>();
 			if (prs)
@@ -310,10 +276,7 @@ class test_WorkflowModel
 			}
 			context->setStatus(statusCode);
 
-			QCOMPARE(model.getStatusHintBoxesTitle(), box);
-			QCOMPARE(model.getStatusHintTitle(), title);
 			QCOMPARE(model.getStatusHintText(), text);
-			QCOMPARE(model.getStatusHintActionText(), action);
 		}
 
 

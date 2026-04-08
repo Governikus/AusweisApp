@@ -90,6 +90,13 @@ SectionPage {
 			Component {
 				ReleaseNotes {
 					Layout.preferredHeight: tabbedPane.availableHeight
+
+					layer {
+						enabled: GraphicsInfo.api !== GraphicsInfo.Software
+
+						effect: GDropShadow {
+						}
+					}
 				}
 			}
 		}

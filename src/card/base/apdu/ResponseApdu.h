@@ -54,10 +54,6 @@ defineTypedEnumType(StatusCode, quint16,
 		PIN_BLOCKED = 0x63C0, // retries left: 0
 		PIN_SUSPENDED = 0x63C1, // retries left: 1
 		PIN_RETRY_COUNT_2 = 0x63C2, // retries left: 2
-		INITIAL_PIN_BLOCKED = 0x63D0,
-		INITIAL_PIN_RETRY_COUNT_1 = 0x63D1,
-		INITIAL_PIN_RETRY_COUNT_2 = 0x63D2,
-		INITIAL_PIN_RETRY_COUNT_3 = 0x63D3,
 		NO_PRECISE_DIAGNOSIS = 0x6F00
 		)
 

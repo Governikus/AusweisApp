@@ -14,7 +14,6 @@ StateEnterNewPacePinIfd::StateEnterNewPacePinIfd(const QSharedPointer<WorkflowCo
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
-	setKeepCardConnectionAlive();
 }
 
 

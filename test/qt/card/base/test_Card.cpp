@@ -31,29 +31,37 @@ class test_Card
 		void test_generateProgressMessage_data()
 		{
 			QTest::addColumn<bool>("sdk");
+			QTest::addColumn<bool>("forwardSdkMessages");
 			QTest::addColumn<QString>("message");
 			QTest::addColumn<int>("progress");
 			QTest::addColumn<QString>("expectedMessage");
 
-			QTest::addRow("Message without Progress") << false << "specific message" << -1 << "specific message";
-			QTest::addRow("Message with Progress") << false << "specific message" << 20 << "specific message\n20 %";
-			QTest::addRow("No Message but Progress") << false << QString() << 30 << "30 %";
+			QTest::addRow("Message without Progress") << false << false << "specific message" << -1 << "specific message";
+			QTest::addRow("Message without Progress - forward message") << false << true << "specific message" << -1 << "specific message";
+			QTest::addRow("Message with Progress") << false << false << "specific message" << 20 << "specific message\n20 %";
+			QTest::addRow("Message with Progress - forward message") << false << true << "specific message" << 20 << "specific message\n20 %";
+			QTest::addRow("No Message but Progress") << false << false << QString() << 30 << "30 %";
+			QTest::addRow("No Message but Progress - forward message") << false << true << QString() << 30 << "30 %";
 
-			QTest::addRow("SDK - Message without Progress") << true << "specific message" << -1 << "scan progress\n0 %";
-			QTest::addRow("SDK - Message with Progress") << true << "specific message" << 20 << "scan progress\n20 %";
-			QTest::addRow("SDK - No Message but Progress") << true << QString() << 30 << "scan progress\n30 %";
+			QTest::addRow("SDK - Message without Progress") << true << false << "specific message" << -1 << "scan progress\n0 %";
+			QTest::addRow("SDK - Message without Progress - forward message") << true << true << "specific message" << -1 << "specific message";
+			QTest::addRow("SDK - Message with Progress") << true << false << "specific message" << 20 << "scan progress\n20 %";
+			QTest::addRow("SDK - Message with Progress - forward message") << true << true << "specific message" << 20 << "specific message";
+			QTest::addRow("SDK - No Message but Progress") << true << false << QString() << 30 << "scan progress\n30 %";
+			QTest::addRow("SDK - No Message but Progress - forward message") << true << true << QString() << 30 << QString();
 		}
 
 
 		void test_generateProgressMessage()
 		{
 			QFETCH(bool, sdk);
+			QFETCH(bool, forwardSdkMessages);
 			QFETCH(QString, message);
 			QFETCH(int, progress);
 			QFETCH(QString, expectedMessage);
 
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(sdk);
-			const auto result = Card::generateProgressMessage(message, progress);
+			const auto result = Card::generateProgressMessage(message, progress, forwardSdkMessages);
 			QCOMPARE(result, expectedMessage);
 		}
 

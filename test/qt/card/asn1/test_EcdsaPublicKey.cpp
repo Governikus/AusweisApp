@@ -26,7 +26,7 @@ class test_EcdsaPublicKey
 	private:
 		QByteArray fetchEcParams(const QSharedPointer<EVP_PKEY>& pKey, BIGNUM** pA, BIGNUM** pB, BIGNUM** pP, BIGNUM** pCofactor, BIGNUM** pOrder)
 		{
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
 			EVP_PKEY_get_bn_param(pKey.data(), "a", pA);
 			EVP_PKEY_get_bn_param(pKey.data(), "b", pB);
 			EVP_PKEY_get_bn_param(pKey.data(), "p", pP);

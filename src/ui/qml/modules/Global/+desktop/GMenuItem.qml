@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
@@ -20,11 +21,14 @@ RowLayout {
 
 	signal clicked
 
-	spacing: Style.dimens.pane_spacing
+	spacing: Style.dimens.groupbox_spacing
 
 	TintableIcon {
 		id: icon
 
+		readonly property int verticalAlignment: height > labeledText.height ? Qt.AlignVCenter : Qt.AlignTop
+
+		Layout.alignment: Qt.AlignLeft | verticalAlignment
 		sourceSize.width: Style.dimens.icon_size
 		tintColor: Style.color.textSubline.basic_unchecked
 	}
@@ -46,6 +50,7 @@ RowLayout {
 		Accessible.description: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, Accessible.name) : ""
 		Accessible.name: (root.title && hasLink ? root.title + ", " : "") + text
 		Accessible.role: hasLink ? Accessible.Link : Accessible.Button
+		Layout.alignment: Qt.AlignRight | Qt.AlignTop
 		tintIcon: true
 
 		onClicked: {

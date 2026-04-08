@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtTest
 import Governikus.Type
@@ -23,7 +24,6 @@ TestCase {
 				readonly property int v8: UiModule.UPDATEINFORMATION
 				readonly property int v9: UiModule.REMOTE_SERVICE
 				readonly property int v10: UiModule.CHECK_ID_CARD
-				readonly property int v11: UiModule.SMART_EID
 
 				readonly property var testVar: UiModule.DEFAULT
 				readonly property int testInt: UiModule.DEFAULT
@@ -50,8 +50,6 @@ TestCase {
 		verify(UiModule.HELP !== UiModule.SELF_AUTHENTICATION);
 		verify(UiModule.UPDATEINFORMATION !== UiModule.REMOTE_SERVICE);
 		verify(UiModule.REMOTE_SERVICE !== UiModule.CHECK_ID_CARD);
-		verify(UiModule.CHECK_ID_CARD !== UiModule.SMART_EID);
-		verify(UiModule.SMART_EID !== UiModule.CURRENT);
 	}
 	function test_load() {
 		let testObject = createTestObject();

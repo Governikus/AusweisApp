@@ -40,8 +40,6 @@ Rectangle {
 		readonly property int steps: root.progress !== null ? root.progress.steps : 0
 	}
 	RowLayout {
-		id: bars
-
 		anchors.fill: parent
 		spacing: Style.dimens.stagedprogressbar_spacing
 

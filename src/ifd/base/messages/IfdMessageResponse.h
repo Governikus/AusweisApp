@@ -19,6 +19,7 @@ class IfdMessageResponse
 
 	protected:
 		[[nodiscard]] QJsonObject createMessageBody(const QString& pContextHandle) const override;
+		void clearError();
 
 	public:
 		IfdMessageResponse(IfdMessageType pType, ECardApiResult::Minor pResultMinor);

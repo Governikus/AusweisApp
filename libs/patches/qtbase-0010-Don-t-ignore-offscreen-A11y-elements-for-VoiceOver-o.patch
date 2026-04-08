@@ -1,0 +1,26 @@
+From 693b0c55939bcf40fc7f63bba73c86baed4a044d Mon Sep 17 00:00:00 2001
+From: Timon Sassor <timon.sassor@governikus.de>
+Date: Tue, 29 Apr 2025 09:22:56 +0200
+Subject: Don't ignore offscreen A11y elements for VoiceOver on macOS
+
+As soon as an element moved offscreen (while still visible: true), VoiceOver couldn't focus it. So either the user had to constantly switch between scrolling and re-navigating to the content he wants to read or he might even miss additional available content.
+
+Fixes: QTBUG-135845
+Change-Id: Ie0b00002357c6efc21cf741680246d54d74f0c86
+---
+ src/plugins/platforms/cocoa/qcocoaaccessibility.mm | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
+index bec4ccc6932660bf64420f011a9616a944462063..642d7cf115f400df5a73f7511784df90f6298d67 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
+@@ -220,7 +220,7 @@ bool shouldBeIgnored(QAccessibleInterface *interface)
+     // Cocoa accessibility does not have an attribute that corresponds to the Invisible/Offscreen
+     // state. Ignore interfaces with those flags set.
+     const QAccessible::State state = interface->state();
+-    if (state.invisible || state.offscreen || state.invalid)
++    if (state.invisible || state.invalid)
+         return true;
+ 
+     // Some roles are not interesting. In particular, container roles should be

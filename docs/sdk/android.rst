@@ -166,13 +166,18 @@ Interface
   import com.governikus.ausweisapp2.IAusweisApp2SdkCallback;
   import android.nfc.Tag;
 
-  interface IAusweisApp2Sdk
-  {
+  interface IAusweisApp2Sdk {
       boolean connectSdk(IAusweisApp2SdkCallback pCallback);
+      /** @deprecated use {@link #transmit} instead */
       boolean send(String pSessionId, String pMessageFromClient);
+      boolean transmit(String pSessionId, in char[] pMessageFromClient);
       boolean updateNfcTag(String pSessionId, in Tag pTag);
   }
 
+.. important::
+  The memory **pMessageFromClient** in **transmit()** does not get nulled
+  in the call. This is the responsibility of the caller if you provided a sensitive
+  data like PIN, CAN, PUK.
 
 
 Callback
@@ -430,11 +435,11 @@ and establishing a session.
 
 
 
-Send command
-""""""""""""
+Transmit command
+""""""""""""""""
 In order to send a JSON command to the |AppName| SDK, you need to invoke
-the **send** function of your instance of **IAusweisApp2Sdk**. For this command
-to be processed by the SDK you need to supply the session ID which you have
+the **transmit** function of your instance of **IAusweisApp2Sdk**. For this
+command to be processed by the SDK you need to supply the session ID which you have
 previously received. The listing below shows an example.
 
 
@@ -444,7 +449,7 @@ previously received. The listing below shows an example.
   String cmd = "{\"cmd\": \"GET_INFO\"}";
   try
   {
-    if (!mSdk.send(mCallback.mSessionID, cmd))
+    if (!mSdk.transmit(mCallback.mSessionID, cmd.toCharArray()))
     {
         // disconnected? Handle error...
     }

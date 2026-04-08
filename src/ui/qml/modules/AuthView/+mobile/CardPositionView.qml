@@ -11,8 +11,6 @@ import Governikus.ResultView
 import Governikus.Style
 
 ResultView {
-	id: root
-
 	animationSymbol: Symbol.Type.ERROR
 	animationType: AnimationLoader.Type.NFC_RESULT
 	//: MOBILE

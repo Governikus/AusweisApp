@@ -104,8 +104,6 @@ FlickableSectionPage {
 			width: parent.width
 
 			GMenuItem {
-				id: menuItemShowLogs
-
 				Layout.fillWidth: true
 				drawTopCorners: true
 				//: MOBILE
@@ -201,12 +199,12 @@ FlickableSectionPage {
 				//: MOBILE
 				title: qsTr("Release notes")
 
-				onClicked: root.push(releaseNotes)
+				onClicked: root.push(releaseNotesView)
 
 				Component {
-					id: releaseNotes
+					id: releaseNotesView
 
-					ReleaseNotes {
+					ReleaseNotesView {
 						enableTileStyle: root.enableTileStyle
 					}
 				}

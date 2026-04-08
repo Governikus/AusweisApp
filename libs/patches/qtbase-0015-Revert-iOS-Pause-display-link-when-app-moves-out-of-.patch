@@ -1,0 +1,48 @@
+From a49964f665d992547d83c258043e96c2f66bc9ff Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Mon, 29 Sep 2025 09:11:38 +0200
+Subject: Revert "iOS: Pause display link when app moves out of active state"
+
+This reverts commit 1b993a787d7e1e2ed7bde8102847424db676d2c7.
+---
+ src/plugins/platforms/ios/qiosscreen.mm | 20 --------------------
+ 1 file changed, 20 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/ios/qiosscreen.mm y/qtbase/src/plugins/platforms/ios/qiosscreen.mm
+index 1ab701a1934d919bbf12e073482b091494fb64a3..8e9f575534a3554b51519965c1c1efb678369b43 100644
+--- x/qtbase/src/plugins/platforms/ios/qiosscreen.mm
++++ y/qtbase/src/plugins/platforms/ios/qiosscreen.mm
+@@ -201,15 +201,6 @@ QIOSScreen::QIOSScreen(UIScreen *screen)
+             }
+         });
+ 
+-    // We're pausing the display link if the application moves out of the active state,
+-    // so make sure to deliver to any windows that need it once the app becomes active.
+-    QObject::connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, [this](auto newState) {
+-        if (newState == Qt::ApplicationActive) {
+-            qCDebug(lcQpaApplication) << "Attempting update request delivery after becoming active";
+-            deliverUpdateRequests();
+-        }
+-    });
+-
+ #endif // !defined(Q_OS_VISIONOS))
+ 
+     updateProperties();
+@@ -295,17 +286,6 @@ void QIOSScreen::deliverUpdateRequests() const
+ {
+     bool pauseUpdates = true;
+ 
+-    if (QGuiApplication::applicationState() != Qt::ApplicationActive) {
+-        // The applicationWillResignActive documentation describes that the app
+-        // should "use this method to pause ongoing tasks, disable timers, and
+-        // throttle down OpenGL ES frame rates", so we skip update request
+-        // delivery if the app is not active. Once it becomes active again
+-        // we re-try the update request delivery (see QIOSScreen constructor).
+-        qCDebug(lcQpaApplication) << "Skipping update request delivery and pausing display link";
+-        m_displayLink.paused = true;
+-        return;
+-    }
+-
+     QList<QWindow*> windows = QGuiApplication::allWindows();
+     for (int i = 0; i < windows.size(); ++i) {
+         QWindow *window = windows.at(i);

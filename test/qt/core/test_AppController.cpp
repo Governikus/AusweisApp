@@ -2,7 +2,7 @@
  * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
 
-#include "controller/AppController.h"
+#include "AppController.h"
 
 #include "ReaderManager.h"
 #include "context/ChangePinContext.h"

@@ -99,7 +99,7 @@ void ReaderInfo::invalidate()
 
 [[nodiscard]] bool ReaderInfo::ReaderInfo::hasEid() const
 {
-	return QList<CardType>({CardType::EID_CARD, CardType::SMART_EID}).contains(mCardInfo.getCardType());
+	return mCardInfo.getCardType() == CardType::EID_CARD;
 }
 
 
@@ -127,12 +127,6 @@ void ReaderInfo::invalidate()
 }
 
 
-[[nodiscard]] bool ReaderInfo::isSoftwareSmartEid() const
-{
-	return mCardInfo.getMobileEidType() == MobileEidType::HW_KEYSTORE;
-}
-
-
 [[nodiscard]] bool ReaderInfo::wasShelved() const
 {
 	return mShelvedCard != CardType::NONE;
@@ -148,18 +142,7 @@ void ReaderInfo::shelveCard()
 
 [[nodiscard]] bool ReaderInfo::isInsertable() const
 {
-	switch (mShelvedCard)
-	{
-		case CardType::NONE:
-			return false;
-
-		case CardType::SMART_EID:
-			return mCardInfo.getRetryCounter() > 0 && !mCardInfo.isPinInitial();
-
-		default:
-			return true;
-	}
-
+	return mShelvedCard != CardType::NONE;
 }
 
 

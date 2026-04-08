@@ -15,8 +15,6 @@ EnterPasswordAnimation {
 	symbolY: 0.545
 
 	Symbol {
-		id: check
-
 		sourceSize.height: parent.height * 0.24
 		type: Symbol.Type.CHECK
 

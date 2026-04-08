@@ -29,23 +29,6 @@ class test_CardInfoFactory
 							  "            02 01 02"
 							  "            02 01 08")
 				<< true;
-			QTest::newRow("Smart-eID without Security Mechanism")
-				<< QByteArray("31 14"
-							  "        30 12"
-							  "            06 0A 04007F00070202040202"
-							  "            02 01 02"
-							  "            02 01 08")
-				<< true;
-			QTest::newRow("Smart-eID with Security Mechanism")
-				<< QByteArray("31 24"
-							  "        30 12"
-							  "            06 0A 04007F00070202040202"
-							  "            02 01 02"
-							  "            02 01 08"
-							  "        30 0E"
-							  "            06 0A 04007F00070302030201"
-							  "            05 00")
-				<< true;
 		}
 
 

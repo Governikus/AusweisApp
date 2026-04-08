@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
@@ -8,8 +9,6 @@ import Governikus.Style
 import Governikus.Type
 
 Item {
-	id: root
-
 	property alias color: mainText.color
 	property alias effectiveFirstLineHeight: mainText.effectiveFirstLineHeight
 	property alias elide: mainText.elide
@@ -26,6 +25,7 @@ Item {
 	Accessible.role: mainText.Accessible.role
 	Layout.fillWidth: true
 	Layout.maximumWidth: Style.dimens.max_text_width
+	baselineOffset: mainText.baselineOffset
 	implicitHeight: Math.max(mainText.implicitHeight, tempText.implicitHeight)
 	implicitWidth: Math.max(mainText.implicitWidth, tempText.implicitWidth)
 

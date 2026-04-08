@@ -80,7 +80,7 @@ class test_ReleaseInformationModel
 
 			QCOMPARE(mSpyCurrentInformationChanged->count(), 1);
 			QCOMPARE(mSpyUpdateInformationChanged->count(), 0);
-			QCOMPARE(mModel->getCurrentRelease()->rowCount(QModelIndex()), 11);
+			QCOMPARE(mModel->getCurrentRelease()->rowCount(QModelIndex()), 14);
 			QCOMPARE(mModel->getUpdateRelease()->rowCount(QModelIndex()), 1);
 		}
 
@@ -92,7 +92,7 @@ class test_ReleaseInformationModel
 			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"_L1));
 
 			QCOMPARE(mSpyUpdateInformationChanged->count(), 1);
-			QCOMPARE(mModel->getUpdateRelease()->rowCount(QModelIndex()), 11);
+			QCOMPARE(mModel->getUpdateRelease()->rowCount(QModelIndex()), 14);
 		}
 
 

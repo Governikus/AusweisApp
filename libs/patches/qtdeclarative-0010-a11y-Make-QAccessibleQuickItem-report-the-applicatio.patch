@@ -1,0 +1,164 @@
+From 22e2eac35b9a2dd01dfae370c9edab0c1afa9d8f Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Wed, 26 Nov 2025 09:35:09 +0100
+Subject: a11y: Make QAccessibleQuickItem report the application's locale
+
+QAccessibleQuickItem now also implements QAccessibleAttributesInterface
+and returns the QLocale of QQuickApplicationWindow if it is parented
+to such a window. Otherwise an empty QVariant is returned.
+
+This is helpful for Screen Readers to read texts in the application's
+language in case it differs from the OS language.
+
+For QQuickControls this is already implemented as they also feature
+a separate `locale` property.
+
+Task-number: QTBUG-141701
+Pick-to: 6.11
+Change-Id: Ie9630d5f02964d9dcd3da72fe0c5f20a3376276e
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+(Cherry-picked from commit 3bd428471d7121a1c19e6076de35957a43532e67)
+---
+ src/quick/accessible/qaccessiblequickitem.cpp | 22 +++++++++++++++++++
+ src/quick/accessible/qaccessiblequickitem_p.h | 14 +++++++++++-
+ .../accessible/qaccessiblequickcontrol.cpp    | 16 +++++---------
+ .../accessible/qaccessiblequickcontrol_p.h    |  9 +++-----
+ 4 files changed, 44 insertions(+), 17 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+index d9313257dd8110f25d4d06283ea88e1c1c70a09e..042371b63acd7419d097a92d8151380f31623a1e 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+@@ -718,6 +718,8 @@ void *QAccessibleQuickItem::interface_cast(QAccessible::InterfaceType t)
+     switch (t) {
+     case QAccessible::ActionInterface:
+         return static_cast<QAccessibleActionInterface*>(this);
++    case QAccessible::AttributesInterface:
++        return static_cast<QAccessibleAttributesInterface *>(this);
+     case QAccessible::ValueInterface:
+         if (r == QAccessible::Slider
+          || r == QAccessible::SpinBox
+@@ -936,6 +938,26 @@ void QAccessibleQuickItem::setSelection(int /* selectionIndex */, int /* startOf
+ 
+ }
+ 
++QList<QAccessible::Attribute> QAccessibleQuickItem::attributeKeys() const
++{
++    if (attributeValue(QAccessible::Attribute::Locale).isValid())
++        return { QAccessible::Attribute::Locale };
++
++    return {};
++}
++
++QVariant QAccessibleQuickItem::attributeValue(QAccessible::Attribute key) const
++{
++    if (key == QAccessible::Attribute::Locale) {
++        QAccessibleInterface *windowIface = QAccessible::queryAccessibleInterface(window());
++        if (!windowIface || !windowIface->attributesInterface())
++            return QVariant();
++
++        return windowIface->attributesInterface()->attributeValue(QAccessible::Attribute::Locale);
++    }
++
++    return QVariant();
++}
+ 
+ #endif // accessibility
+ 
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h
+index 8517b2894045107dc7d62708a970eafa922c3d51..0221097fc67fc40fc07a20707d5b52a24614c92a 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h
+@@ -27,8 +27,16 @@ QT_BEGIN_NAMESPACE
+ 
+ class QTextDocument;
+ 
+-class Q_QUICK_EXPORT QAccessibleQuickItem : public QAccessibleObject, public QAccessibleActionInterface, public QAccessibleValueInterface, public QAccessibleTextInterface
++class Q_QUICK_EXPORT QAccessibleQuickItem : public QAccessibleObject,
++                                            public QAccessibleActionInterface,
++                                            public QAccessibleValueInterface,
++                                            public QAccessibleTextInterface,
++                                            public QAccessibleAttributesInterface
+ {
++#ifdef Q_OS_INTEGRITY
++    // force instantiation to avoid error #2045
++    struct error2045 : QList<QAccessible::Attribute> {};
++#endif
+ public:
+     QAccessibleQuickItem(QQuickItem *item);
+ 
+@@ -100,6 +108,10 @@ public:
+ 
+     QTextDocument *textDocument() const;
+ 
++    // QAccessibleAttributesInterface
++    QList<QAccessible::Attribute> attributeKeys() const override;
++    QVariant attributeValue(QAccessible::Attribute key) const override;
++
+ protected:
+     QQuickItem *item() const { return static_cast<QQuickItem*>(object()); }
+     void *interface_cast(QAccessible::InterfaceType t) override;
+diff --git x/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickcontrol.cpp y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickcontrol.cpp
+index d079c530530bd504f0a0b2d5b191740fbc51e1da..9185f76da7df4ab191f6fc3faff1d69bf63359f1 100644
+--- x/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickcontrol.cpp
++++ y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickcontrol.cpp
+@@ -12,17 +12,13 @@ QAccessibleQuickControl::QAccessibleQuickControl(QQuickControl *control)
+ {
+ }
+ 
+-void *QAccessibleQuickControl::interface_cast(QAccessible::InterfaceType t)
+-{
+-    if (t == QAccessible::AttributesInterface)
+-        return static_cast<QAccessibleAttributesInterface *>(this);
+-
+-    return QAccessibleQuickItem::interface_cast(t);
+-}
+-
+ QList<QAccessible::Attribute> QAccessibleQuickControl::attributeKeys() const
+ {
+-    return { QAccessible::Attribute::Locale };
++    auto keys = QAccessibleQuickItem::attributeKeys();
++    if (!keys.contains(QAccessible::Attribute::Locale))
++        keys << QAccessible::Attribute::Locale;
++
++    return keys;
+ }
+ 
+ QVariant QAccessibleQuickControl::attributeValue(QAccessible::Attribute key) const
+@@ -30,7 +26,7 @@ QVariant QAccessibleQuickControl::attributeValue(QAccessible::Attribute key) con
+     if (key == QAccessible::Attribute::Locale)
+         return QVariant::fromValue(control()->locale());
+ 
+-    return QVariant();
++    return QAccessibleQuickItem::attributeValue(key);
+ }
+ 
+ QQuickControl *QAccessibleQuickControl::control() const
+diff --git x/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickcontrol_p.h y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickcontrol_p.h
+index cf7b22a985cbc4039a4a1307bcbbe61dfd829e25..e49b55e46bbfe0a4b86b8e72b9349c9c6c9590a5 100644
+--- x/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickcontrol_p.h
++++ y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickcontrol_p.h
+@@ -22,7 +22,7 @@ QT_BEGIN_NAMESPACE
+ 
+ class QQuickControl;
+ 
+-class QAccessibleQuickControl : public QAccessibleQuickItem, public QAccessibleAttributesInterface
++class QAccessibleQuickControl : public QAccessibleQuickItem
+ {
+ #ifdef Q_OS_INTEGRITY
+     // force instantiation to avoid error #2045
+@@ -31,12 +31,9 @@ class QAccessibleQuickControl : public QAccessibleQuickItem, public QAccessibleA
+ public:
+     QAccessibleQuickControl(QQuickControl *control);
+ 
+-    // QAccessibleInterface
+-    void *interface_cast(QAccessible::InterfaceType t) override;
+-
+     // QAccessibleAttributesInterface
+-    virtual QList<QAccessible::Attribute> attributeKeys() const override;
+-    virtual QVariant attributeValue(QAccessible::Attribute key) const override;
++    QList<QAccessible::Attribute> attributeKeys() const override;
++    QVariant attributeValue(QAccessible::Attribute key) const override;
+ 
+ private:
+     QQuickControl *control() const;

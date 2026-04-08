@@ -1,7 +1,34 @@
+continue_on_error: false
+doublestar: false
+exclude: []
+extensions:
+    - yaml
+    - yml
+gitignore_excludes: false
+gitignore_path: .gitignore
+include: []
+line_ending: lf
+match_type: standard
+output_format: default
+regex_exclude: []
 formatter:
-  type: basic
-  indent: 2
-  line_ending: lf
-  retain_line_breaks: true
-  retain_line_breaks_single: true
-  eof_newline: true
+    array_indent: 0
+    disable_alias_key_correction: false
+    disallow_anchors: false
+    drop_merge_tag: false
+    eof_newline: true
+    force_array_style: ""
+    force_quote_style: ""
+    include_document_start: false
+    indent: 2
+    indent_root_array: false
+    indentless_arrays: false
+    line_ending: lf
+    max_line_length: 0
+    pad_line_comments: 1
+    retain_line_breaks: true
+    retain_line_breaks_single: true
+    scan_folded_as_literal: true
+    strip_directives: false
+    trim_trailing_whitespace: false
+    type: basic

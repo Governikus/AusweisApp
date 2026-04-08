@@ -32,6 +32,7 @@ class test_ECardApiResult
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -83,42 +84,42 @@ class test_ECardApiResult
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << ECardApiResult::createOk();
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok |  | \""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#internalError | The authenticity of your ID card could not be confirmed.\""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process has been cancelled by the card reader.\""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::UNDEFINED));
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownError | An unexpected error has occurred during processing.\""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(GlobalStatus::Code::Workflow_Preverification_Error);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/il/signature#invalidCertificatePath | Pre-verification failed.\""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(GlobalStatus::Code::Card_Cancellation_By_User, FailureCode::Reason::Change_Pin_User_Cancelled);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process has been cancelled by the card reader. | Change_Pin_User_Cancelled\""_L1));
 		}

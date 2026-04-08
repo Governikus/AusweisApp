@@ -109,10 +109,6 @@ QString UpdatableFile::sectionCachePath(const QString& pSection) const
 		return QString();
 	}
 
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
-	cacheBasePath.replace(QStringLiteral("AusweisApp"), QStringLiteral("AusweisApp2"));
-#endif
-
 	return cacheBasePath + Sep + pSection;
 }
 

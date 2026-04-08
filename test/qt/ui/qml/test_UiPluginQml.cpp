@@ -4,14 +4,6 @@
 
 #include "UiPluginQml.h"
 
-#include "context/AuthContext.h"
-#include "context/ChangePinContext.h"
-#include "context/IfdServiceContext.h"
-#include "context/SelfAuthContext.h"
-#if __has_include("context/PersonalizationContext.h")
-	#include "PersonalizationModel.h"
-	#include "context/PersonalizationContext.h"
-#endif
 #include "AppSettings.h"
 #include "ApplicationModel.h"
 #include "AuthModel.h"
@@ -25,6 +17,10 @@
 #include "SelfAuthModel.h"
 #include "SettingsModel.h"
 #include "VolatileSettings.h"
+#include "context/AuthContext.h"
+#include "context/ChangePinContext.h"
+#include "context/IfdServiceContext.h"
+#include "context/SelfAuthContext.h"
 
 #include "TestWorkflowController.h"
 
@@ -63,9 +59,6 @@ class test_UiPluginQml
 			QTest::newRow("SelfAuthContext") << TestWorkflowController::createWorkflowRequest<SelfAuthContext>();
 			QTest::newRow("ChangePinContext") << TestWorkflowController::createWorkflowRequest<ChangePinContext>();
 			QTest::newRow("IfdServiceContext") << TestWorkflowController::createWorkflowRequest<IfdServiceContext>(QSharedPointer<IfdServer>(new MockIfdServer()));
-#if __has_include("context/PersonalizationContext.h")
-			QTest::newRow("PersonalizationContext") << TestWorkflowController::createWorkflowRequest<PersonalizationContext>(QString());
-#endif
 		}
 
 
@@ -78,19 +71,11 @@ class test_UiPluginQml
 			const bool isSelfAuth = !context.objectCast<SelfAuthContext>().isNull();
 			const bool isPinChange = !context.objectCast<ChangePinContext>().isNull();
 			const bool isIfdService = !context.objectCast<IfdServiceContext>().isNull();
-#if __has_include("context/PersonalizationContext.h")
-			const bool isPersonalization = !context.objectCast<PersonalizationContext>().isNull();
-#else
-			const bool isPersonalization = false;
-#endif
 
 			QCOMPARE(Env::getSingleton<VolatileSettings>()->getDelay(), 0);
 			QVERIFY(!Env::getSingleton<ApplicationModel>()->mContext);
 			QVERIFY(!Env::getSingleton<NumberModel>()->mContext);
 			QVERIFY(!Env::getSingleton<ChangePinModel>()->mContext);
-#if __has_include("context/PersonalizationContext.h")
-			QVERIFY(!Env::getSingleton<PersonalizationModel>()->mContext);
-#endif
 			QVERIFY(!Env::getSingleton<CertificateDescriptionModel>()->mContext);
 			QVERIFY(!Env::getSingleton<ChatModel>()->mContext);
 			QVERIFY(!Env::getSingleton<AuthModel>()->mContext);
@@ -103,12 +88,9 @@ class test_UiPluginQml
 			QVERIFY(Env::getSingleton<ApplicationModel>()->mContext);
 			QVERIFY(Env::getSingleton<NumberModel>()->mContext);
 			QCOMPARE(!Env::getSingleton<ChangePinModel>()->mContext.isNull(), isPinChange);
-#if __has_include("context/PersonalizationContext.h")
-			QCOMPARE(!Env::getSingleton<PersonalizationModel>()->mContext.isNull(), isPersonalization);
-#endif
-			QCOMPARE(!Env::getSingleton<CertificateDescriptionModel>()->mContext.isNull(), isAuth || isIfdService || isPersonalization);
-			QCOMPARE(!Env::getSingleton<ChatModel>()->mContext.isNull(), isAuth || isIfdService || isPersonalization);
-			QCOMPARE(!Env::getSingleton<AuthModel>()->mContext.isNull(), isAuth && !isPersonalization);
+			QCOMPARE(!Env::getSingleton<CertificateDescriptionModel>()->mContext.isNull(), isAuth || isIfdService);
+			QCOMPARE(!Env::getSingleton<ChatModel>()->mContext.isNull(), isAuth || isIfdService);
+			QCOMPARE(!Env::getSingleton<AuthModel>()->mContext.isNull(), isAuth);
 			QCOMPARE(!Env::getSingleton<SelfAuthModel>()->mContext.isNull(), isSelfAuth);
 			QCOMPARE(!Env::getSingleton<RemoteServiceModel>()->mContext.isNull(), isIfdService);
 
@@ -117,9 +99,6 @@ class test_UiPluginQml
 			QVERIFY(!Env::getSingleton<ApplicationModel>()->mContext);
 			QVERIFY(!Env::getSingleton<NumberModel>()->mContext);
 			QVERIFY(!Env::getSingleton<ChangePinModel>()->mContext);
-#if __has_include("context/PersonalizationContext.h")
-			QVERIFY(!Env::getSingleton<PersonalizationModel>()->mContext);
-#endif
 			QVERIFY(!Env::getSingleton<CertificateDescriptionModel>()->mContext);
 			QVERIFY(!Env::getSingleton<ChatModel>()->mContext);
 			QVERIFY(!Env::getSingleton<AuthModel>()->mContext);
@@ -301,22 +280,6 @@ class test_UiPluginQml
 			plugin.setA11yOnOffSwitchLabelActive(false);
 			QVERIFY(!plugin.isA11yOnOffSwitchLabelActive());
 			QCOMPARE(spy.count(), 2);
-		}
-
-
-		void test_onLanguageChanged()
-		{
-			UiPluginQml plugin;
-			plugin.mEngine.reset(new QQmlApplicationEngine());
-			plugin.onLanguageChanged();
-
-			auto* settingsModel = Env::getSingleton<SettingsModel>();
-
-			const auto& currentLanguage = settingsModel->getLanguage();
-			QCOMPARE(plugin.mEngine->uiLanguage(), currentLanguage);
-
-			settingsModel->setLanguage(currentLanguage == "de"_L1 ? "en"_L1 : "de"_L1);
-			QTRY_COMPARE(plugin.mEngine->uiLanguage(), settingsModel->getLanguage());
 		}
 
 

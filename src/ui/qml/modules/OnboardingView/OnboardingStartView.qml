@@ -30,57 +30,67 @@ BaseOnboardingView {
 	}
 	Subheading {
 		Layout.topMargin: Style.dimens.pane_spacing
-		//: ALL_PLATFORMS
-		text: qsTr("What can I do with it?")
+		//: ALL_PLATFORMS %1 is replaced with "AusweisApp"
+		text: qsTr("Securely identify yourself online with the %1").arg(Qt.application.name)
 	}
 	GText {
-		readonly property string technologyString: Style.is_layout_desktop ?
-		//: DESKTOP The text between %1 and %2 will be emphasized.
-		qsTr("All you need is your %1ID card%2, %1PIN%2 and a %1NFC-enabled smartphone%2 or an %1USB card reader%2.").arg("<b>").arg("</b>") :
-		//: MOBILE The text between %1 and %2 will be emphasized.
-		qsTr("All you need is your %1ID card%2, %1PIN%2 and a %1NFC-enabled smartphone%2.").arg("<b>").arg("</b>")
-
 		Layout.topMargin: Style.dimens.text_spacing
-		//: ALL_PLATFORMS The text between %1 and %2 will be emphasized.
-		text: qsTr("It allows you to identify yourself %1securely%2 on the internet. You can easily take care of %1administrative or business matters%2 online.").arg("<b>").arg("</b>") + " " + technologyString
+		//: ALL_PLATFORMS
+		text: qsTr("The eID function allows you to handle administrative or business matters easily and securely online.")
 	}
-	GInformativeButton {
-		Layout.fillWidth: true
-		Layout.topMargin: Style.dimens.pane_spacing
-		//: ALL_PLATFORMS
-		description: qsTr("I use the eID function for the 1st time")
-		//: ALL_PLATFORMS %1 will be replaced with the name of the application
-		text: qsTr("Set up %1").arg(Qt.application.name)
-
-		onClicked: root.continueOnboarding()
+	GText {
+		Layout.topMargin: Style.dimens.text_spacing
+		text: Style.is_layout_desktop ?
+		//: DESKTOP The text between %1 and %2 will be emphasized, %3 is replaced with "AusweisApp"
+		qsTr("To identify yourself to a service provider using the %3, you need your %1ID card%2, your %1PIN%2, and an %1NFC-enabled smartphone%2 or a USB card reader.").arg("<b>").arg("</b>").arg(Qt.application.name) :
+		//: Mobile The text between %1 and %2 will be emphasized, %3 is replaced with "AusweisApp"
+		qsTr("To identify yourself to a service provider using the %3, you need your %1ID card%2, your %1PIN%2, and an %1NFC-enabled smartphone%2.").arg("<b>").arg("</b>").arg(Qt.application.name)
 	}
-	GInformativeButton {
-		Layout.fillWidth: true
-		Layout.topMargin: Style.dimens.pane_spacing
-		//: ALL_PLATFORMS
-		description: qsTr("I already used the eID function before")
-		isPane: true
-		//: ALL_PLATFORMS
-		text: qsTr("Skip setup")
+	ButtonBox {
+		id: buttonBox
 
-		onClicked: root.push(skipConfirmation)
+		SecondaryButton {
+			Layout.maximumWidth: buttonBox.uniformButtonWidth
+			Layout.preferredWidth: buttonBox.uniformButtonWidth
+			//: ALL_PLATFORMS
+			text: qsTr("Skip setup")
 
-		Component {
-			id: skipConfirmation
+			onClicked: root.push(skipConfirmation)
 
-			SkipOnboardingConfirmation {
-				title: root.title
+			Component {
+				id: skipConfirmation
 
-				onContinueOnboarding: {
-					pop();
-					root.continueOnboarding();
-				}
-				onLeaveView: pop()
-				onSkipOnboarding: {
-					pop();
-					root.skipOnboarding();
+				SkipOnboardingConfirmation {
+					title: root.title
+
+					onContinueOnboarding: {
+						pop();
+						root.continueOnboarding();
+					}
+					onLeaveView: pop()
+					onSkipOnboarding: {
+						pop();
+						root.skipOnboarding();
+					}
 				}
 			}
 		}
+		GContinueButton {
+			Layout.maximumWidth: buttonBox.uniformButtonWidth
+			Layout.preferredWidth: buttonBox.uniformButtonWidth
+			//: ALL_PLATFORMS
+			text: qsTr("Start setup")
+
+			onClicked: root.continueOnboarding()
+		}
+	}
+	InformativeHint {
+		Layout.fillWidth: true
+		Layout.topMargin: Style.dimens.pane_spacing
+
+		//: ALL_PLATFORMS
+		text: qsTr("The setup is recommended for first-time user. This way it can be ensured that all the technical requirements are met for your online authentication processes.")
+		//: ALL_PLATFORMS
+		title: qsTr("Are you using the app for the first time?")
 	}
 }

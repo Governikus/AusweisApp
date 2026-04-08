@@ -27,6 +27,55 @@ class test_SettingsModel
 		}
 
 
+		void testStartupModule()
+		{
+			auto* model = Env::getSingleton<SettingsModel>();
+			QSignalSpy startupModuleSpy(model, &SettingsModel::fireStartupModuleChanged);
+
+			QCOMPARE(model->getShowOnboarding(), true);
+			QCOMPARE(model->getStartupModule(), UiModule::ONBOARDING);
+
+			model->setStartupModule(UiModule::DEFAULT);
+			QCOMPARE(startupModuleSpy.count(), 1);
+			QCOMPARE(model->getStartupModule(), UiModule::ONBOARDING);
+
+			model->setShowOnboarding(false);
+			QCOMPARE(model->getShowOnboarding(), false);
+			QCOMPARE(startupModuleSpy.count(), 2);
+			QCOMPARE(model->getStartupModule(), UiModule::DEFAULT);
+
+			model->setShowOnboarding(false);
+			QCOMPARE(startupModuleSpy.count(), 2);
+		}
+
+
+		void test_startupModuleIsOnboarding_data()
+		{
+			QTest::addColumn<bool>("showOnboarding");
+			QTest::addColumn<bool>("onboardingShown");
+			QTest::addColumn<bool>("startupModuleIsOnboarding");
+
+			QTest::addRow("1") << true << false << true;
+			QTest::addRow("2") << true << true << false;
+			QTest::addRow("3") << false << false << false;
+			QTest::addRow("4") << false << true << false;
+		}
+
+
+		void test_startupModuleIsOnboarding()
+		{
+			QFETCH(bool, showOnboarding);
+			QFETCH(bool, onboardingShown);
+			QFETCH(bool, startupModuleIsOnboarding);
+
+			auto* model = Env::getSingleton<SettingsModel>();
+
+			model->setShowOnboarding(showOnboarding);
+			model->setOnboardingShown(onboardingShown);
+			QCOMPARE(model->getStartupModule() == UiModule::ONBOARDING, startupModuleIsOnboarding);
+		}
+
+
 		void testAutoRedirect()
 		{
 			auto* model = Env::getSingleton<SettingsModel>();
@@ -53,6 +102,24 @@ class test_SettingsModel
 		}
 
 
+		void test_isAutoRedirectAfterAuthentication()
+		{
+			auto* settings = Env::getSingleton<SettingsModel>();
+
+			QSignalSpy spy(settings, &SettingsModel::fireRemindUserOfAutoRedirectChanged);
+			bool initial = settings->isRemindUserOfAutoRedirect();
+			bool newValue = !initial;
+
+			settings->setRemindUserOfAutoRedirect(newValue);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(settings->isRemindUserOfAutoRedirect(), newValue);
+
+			settings->setRemindUserOfAutoRedirect(initial);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(settings->isRemindUserOfAutoRedirect(), initial);
+		}
+
+
 		void testAnimations()
 		{
 			const auto* model = Env::getSingleton<SettingsModel>();
@@ -76,6 +143,32 @@ class test_SettingsModel
 			model->setUseAnimations(true);
 			QCOMPARE(animationsSpy.count(), 2);
 			QCOMPARE(model->isUseAnimations(), true);
+		}
+
+
+		void testScreenPrivacy()
+		{
+			const auto* model = Env::getSingleton<SettingsModel>();
+			QSignalSpy spy(model, &SettingsModel::fireScreenPrivacyChanged);
+
+			QCOMPARE(spy.count(), 0);
+			QCOMPARE(model->isScreenPrivacy(), true);
+
+			model->setScreenPrivacy(false);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(model->isScreenPrivacy(), false);
+
+			model->setScreenPrivacy(false);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(model->isScreenPrivacy(), false);
+
+			model->setScreenPrivacy(true);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(model->isScreenPrivacy(), true);
+
+			model->setScreenPrivacy(true);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(model->isScreenPrivacy(), true);
 		}
 
 
@@ -128,25 +221,35 @@ class test_SettingsModel
 		}
 
 
-		void testStartupModule()
+		void test_onNfcStateChanged_data()
 		{
-			auto* model = Env::getSingleton<SettingsModel>();
-			QSignalSpy startupModuleSpy(model, &SettingsModel::fireStartupModuleChanged);
+			QTest::addColumn<ApplicationModel::NfcState>("nfcState");
+			QTest::addColumn<ReaderManagerPluginType>("initialPreferredTechnology");
+			QTest::addColumn<ReaderManagerPluginType>("finalPreferredTechnology");
 
-			QCOMPARE(model->getShowOnboarding(), true);
-			QCOMPARE(model->getStartupModule(), UiModule::ONBOARDING);
+			QTest::addRow("NFC ready and selected") << ApplicationModel::NfcState::READY << ReaderManagerPluginType::NFC << ReaderManagerPluginType::NFC;
+			QTest::addRow("NFC inactive and selected") << ApplicationModel::NfcState::INACTIVE << ReaderManagerPluginType::NFC << ReaderManagerPluginType::NFC;
+			QTest::addRow("NFC disabled and selected") << ApplicationModel::NfcState::DISABLED << ReaderManagerPluginType::NFC << ReaderManagerPluginType::NFC;
+			QTest::addRow("NFC unavailable and selected") << ApplicationModel::NfcState::UNAVAILABLE << ReaderManagerPluginType::NFC << ReaderManagerPluginType::REMOTE_IFD;
+			QTest::addRow("NFC unavailable and simulator selected") << ApplicationModel::NfcState::UNAVAILABLE << ReaderManagerPluginType::SIMULATOR << ReaderManagerPluginType::SIMULATOR;
+			QTest::addRow("NFC unavailable and remote ifd selected") << ApplicationModel::NfcState::UNAVAILABLE << ReaderManagerPluginType::REMOTE_IFD << ReaderManagerPluginType::REMOTE_IFD;
+		}
 
-			model->setStartupModule(UiModule::DEFAULT);
-			QCOMPARE(startupModuleSpy.count(), 1);
-			QCOMPARE(model->getStartupModule(), UiModule::ONBOARDING);
 
-			model->setShowOnboarding(false);
-			QCOMPARE(model->getShowOnboarding(), false);
-			QCOMPARE(startupModuleSpy.count(), 2);
-			QCOMPARE(model->getStartupModule(), UiModule::DEFAULT);
+		void test_onNfcStateChanged()
+		{
+			QFETCH(ApplicationModel::NfcState, nfcState);
+			QFETCH(ReaderManagerPluginType, initialPreferredTechnology);
+			QFETCH(ReaderManagerPluginType, finalPreferredTechnology);
 
-			model->setShowOnboarding(false);
-			QCOMPARE(startupModuleSpy.count(), 2);
+			auto* settings = Env::getSingleton<SettingsModel>();
+			settings->setSimulatorEnabled(true);
+			settings->setPreferredTechnology(initialPreferredTechnology);
+			QSignalSpy spy(settings, &SettingsModel::firePreferredTechnologyChanged);
+
+			settings->onNfcStateChanged(nfcState);
+			QCOMPARE(settings->getPreferredTechnology(), finalPreferredTechnology);
+			QCOMPARE(spy.count(), 1);
 		}
 
 
@@ -155,6 +258,8 @@ class test_SettingsModel
 			auto* settingsModel = Env::getSingleton<SettingsModel>();
 			settingsModel->setTransportPinReminder(false);
 			settingsModel->setRemindUserToClose(false);
+			settingsModel->setShowOnboarding(false);
+			settingsModel->setOnboardingShown(false);
 			auto remindRedirectSpy = QSignalSpy(settingsModel, &SettingsModel::fireRemindUserOfAutoRedirectChanged);
 			settingsModel->setRemindUserOfAutoRedirect(false);
 			QCOMPARE(remindRedirectSpy.count(), 1);
@@ -216,33 +321,6 @@ class test_SettingsModel
 		}
 
 
-		void test_startupModuleIsOnboarding_data()
-		{
-			QTest::addColumn<bool>("showOnboarding");
-			QTest::addColumn<bool>("onboardingShown");
-			QTest::addColumn<bool>("startupModuleIsOnboarding");
-
-			QTest::addRow("1") << true << false << true;
-			QTest::addRow("2") << true << true << false;
-			QTest::addRow("3") << false << false << false;
-			QTest::addRow("4") << false << true << false;
-		}
-
-
-		void test_startupModuleIsOnboarding()
-		{
-			QFETCH(bool, showOnboarding);
-			QFETCH(bool, onboardingShown);
-			QFETCH(bool, startupModuleIsOnboarding);
-
-			auto* model = Env::getSingleton<SettingsModel>();
-
-			model->setShowOnboarding(showOnboarding);
-			model->setOnboardingShown(onboardingShown);
-			QCOMPARE(model->getStartupModule() == UiModule::ONBOARDING, startupModuleIsOnboarding);
-		}
-
-
 		void test_manualUpdateCheck()
 		{
 			auto* settingsModel = Env::getSingleton<SettingsModel>();
@@ -259,81 +337,6 @@ class test_SettingsModel
 			QCOMPARE(spy.count(), 1);
 			arguments = spy.takeFirst();
 			QVERIFY(arguments.at(0).toBool() == true);
-		}
-
-
-		void test_isAutoRedirectAfterAuthentication()
-		{
-			auto* settings = Env::getSingleton<SettingsModel>();
-
-			QSignalSpy spy(settings, &SettingsModel::fireRemindUserOfAutoRedirectChanged);
-			bool initial = settings->isRemindUserOfAutoRedirect();
-			bool newValue = !initial;
-
-			settings->setRemindUserOfAutoRedirect(newValue);
-			QCOMPARE(spy.count(), 1);
-			QCOMPARE(settings->isRemindUserOfAutoRedirect(), newValue);
-
-			settings->setRemindUserOfAutoRedirect(initial);
-			QCOMPARE(spy.count(), 2);
-			QCOMPARE(settings->isRemindUserOfAutoRedirect(), initial);
-		}
-
-
-		void test_onNfcStateChanged_data()
-		{
-			QTest::addColumn<ApplicationModel::NfcState>("nfcState");
-			QTest::addColumn<ReaderManagerPluginType>("initialPreferredTechnology");
-			QTest::addColumn<ReaderManagerPluginType>("finalPreferredTechnology");
-
-			QTest::addRow("NFC ready and selected") << ApplicationModel::NfcState::READY << ReaderManagerPluginType::NFC << ReaderManagerPluginType::NFC;
-			QTest::addRow("NFC inactive and selected") << ApplicationModel::NfcState::INACTIVE << ReaderManagerPluginType::NFC << ReaderManagerPluginType::NFC;
-			QTest::addRow("NFC disabled and selected") << ApplicationModel::NfcState::DISABLED << ReaderManagerPluginType::NFC << ReaderManagerPluginType::NFC;
-			QTest::addRow("NFC unavailable and selected") << ApplicationModel::NfcState::UNAVAILABLE << ReaderManagerPluginType::NFC << ReaderManagerPluginType::REMOTE_IFD;
-			QTest::addRow("NFC unavailable and simulator selected") << ApplicationModel::NfcState::UNAVAILABLE << ReaderManagerPluginType::SIMULATOR << ReaderManagerPluginType::SIMULATOR;
-			QTest::addRow("NFC unavailable and remote ifd selected") << ApplicationModel::NfcState::UNAVAILABLE << ReaderManagerPluginType::REMOTE_IFD << ReaderManagerPluginType::REMOTE_IFD;
-		}
-
-
-		void test_onNfcStateChanged()
-		{
-			QFETCH(ApplicationModel::NfcState, nfcState);
-			QFETCH(ReaderManagerPluginType, initialPreferredTechnology);
-			QFETCH(ReaderManagerPluginType, finalPreferredTechnology);
-
-			auto* settings = Env::getSingleton<SettingsModel>();
-			settings->setPreferredTechnology(initialPreferredTechnology);
-			QSignalSpy spy(settings, &SettingsModel::firePreferredTechnologyChanged);
-
-			settings->onNfcStateChanged(nfcState);
-			QCOMPARE(settings->getPreferredTechnology(), finalPreferredTechnology);
-			QCOMPARE(spy.count(), 1);
-		}
-
-
-		void testScreenPrivacy()
-		{
-			const auto* model = Env::getSingleton<SettingsModel>();
-			QSignalSpy spy(model, &SettingsModel::fireScreenPrivacyChanged);
-
-			QCOMPARE(spy.count(), 0);
-			QCOMPARE(model->isScreenPrivacy(), true);
-
-			model->setScreenPrivacy(false);
-			QCOMPARE(spy.count(), 1);
-			QCOMPARE(model->isScreenPrivacy(), false);
-
-			model->setScreenPrivacy(false);
-			QCOMPARE(spy.count(), 1);
-			QCOMPARE(model->isScreenPrivacy(), false);
-
-			model->setScreenPrivacy(true);
-			QCOMPARE(spy.count(), 2);
-			QCOMPARE(model->isScreenPrivacy(), true);
-
-			model->setScreenPrivacy(true);
-			QCOMPARE(spy.count(), 2);
-			QCOMPARE(model->isScreenPrivacy(), true);
 		}
 
 

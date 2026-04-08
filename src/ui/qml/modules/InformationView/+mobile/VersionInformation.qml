@@ -10,6 +10,7 @@ import QtQuick.Layouts
 import Governikus.Global
 import Governikus.TitleBar
 import Governikus.View
+import Governikus.Style
 import Governikus.Type
 
 FlickableSectionPage {
@@ -28,7 +29,7 @@ FlickableSectionPage {
 		property int advancedSettingsCounter: 0
 
 		Layout.fillWidth: true
-		implicitHeight: pane.implicitHeight
+		implicitHeight: repeaterLayout.implicitHeight
 
 		onClicked: {
 			advancedSettingsCounter += 1;
@@ -53,8 +54,10 @@ FlickableSectionPage {
 			}
 		}
 
-		GPane {
-			id: pane
+		ColumnLayout {
+			id: repeaterLayout
+
+			spacing: Style.dimens.pane_spacing
 
 			anchors {
 				left: parent.left

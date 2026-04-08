@@ -20,7 +20,6 @@ ColumnLayout {
 		title: qsTr("Numeric keypad")
 
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.shuffleScreenKeyboard
 			//: DESKTOP
 			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
@@ -31,7 +30,6 @@ ColumnLayout {
 			onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.visualPrivacy
 			//: DESKTOP
 			description: qsTr("Makes it difficult for outsiders to detect PIN entry")

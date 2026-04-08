@@ -9,6 +9,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 import Governikus.TitleBar
@@ -26,6 +27,27 @@ FlickableSectionPage {
 	//: DESKTOP
 	title: qsTr("Application update")
 
+	states: [
+		State {
+			name: "appcastRunning"
+			when: SettingsModel.appUpdateData.appcastRunning
+
+			PropertyChanges {
+				updateInfoContent.visible: false
+				updateLoadingContent.visible: true
+			}
+		},
+		State {
+			name: "appcastFailed"
+			when: SettingsModel.appUpdateData.appcastFailed
+
+			PropertyChanges {
+				updateAvailableInfoContent.visible: false
+				updateFailedContent.visible: true
+				updateInfoContent.visible: false
+			}
+		}
+	]
 	titleBarSettings: TitleBarSettings {
 		navigationAction: root.downloadRunning ? NavigationAction.Action.Cancel : NavigationAction.Action.Back
 
@@ -36,63 +58,169 @@ FlickableSectionPage {
 			root.leaveView();
 		}
 	}
+	transitions: [
+		Transition {
+			from: "appcastRunning"
+			to: ""
 
-	Subheading {
-		elide: Text.ElideRight
-		maximumLineCount: 1
-		//: DESKTOP
-		text: qsTr("Update available")
-	}
-	GText {
-		//: DESKTOP %1 is replaced with the current version number
-		text: qsTr("An update for the outdated installed version (%1) is available for download.").arg(Qt.application.version)
-	}
-	UpdateViewInformation {
-		id: updateInformation
+			ScriptAction {
+				script: {
+					let version = SettingsModel.appUpdateData.version;
+					if (version === "" || d.updateVersionBeforeRefresh === "")
+						return;
 
-		Layout.fillWidth: true
-		downloadSize: root.updateData.size
-		releaseDate: root.updateData.date
-		version: root.updateData.version
-	}
-	UpdateViewButtonRow {
-		id: updateButtons
-
-		Layout.fillWidth: true
-		downloadInProgress: root.downloadRunning
-		downloadProgressKB: root.updateData.downloadProgress
-		downloadTotalKB: root.updateData.downloadTotal
-		version: root.updateData.version
-
-		onAbortDownload: root.updateData.abortDownload()
-		onStartDownload: download.exec()
-	}
-	GPane {
-		Layout.fillWidth: true
-		contentPadding: 0
-		contentSpacing: 0
-		shadowScale: 1.005
-
-		ReleaseInformationModel {
-			id: releaseInformationModel
-
+					if (d.updateVersionBeforeRefresh !== version)
+						newVersionConfirmation.exec();
+				}
+			}
 		}
-		Repeater {
-			id: releaseInfoRepeater
+	]
 
-			model: releaseInformationModel.updateRelease
+	Component.onCompleted: d.refreshUpdateInformation()
 
-			FormattedTextView {
-				Layout.fillWidth: true
-				color: Style.color.transparent
-				count: releaseInfoRepeater.count
+	QtObject {
+		id: d
 
-				onActiveFocusChanged: if (activeFocus) {
-					Utils.positionViewAtItem(this);
+		property string updateVersionBeforeRefresh: ""
+
+		function refreshUpdateInformation() {
+			if (SettingsModel.appUpdateData.appcastRunning)
+				return;
+
+			let version = SettingsModel.appUpdateData.version;
+			if (version !== "")
+				d.updateVersionBeforeRefresh = version;
+			SettingsModel.updateAppcast();
+		}
+	}
+	ColumnLayout {
+		id: updateAvailableInfoContent
+
+		spacing: root.spacing
+
+		Subheading {
+			elide: Text.ElideRight
+			maximumLineCount: 1
+			//: DESKTOP
+			text: qsTr("Update available")
+		}
+		GText {
+			//: DESKTOP %1 is replaced with the current version number
+			text: qsTr("An update for the outdated installed version (%1) is available for download.").arg(Qt.application.version)
+		}
+	}
+	RowLayout {
+		id: updateLoadingContent
+
+		spacing: Style.dimens.pane_spacing
+		visible: false
+
+		SpinningLoader {
+		}
+		GText {
+			//: DESKTOP
+			text: qsTr("Update information is being checked...")
+		}
+	}
+	ColumnLayout {
+		id: updateInfoContent
+
+		spacing: root.spacing
+
+		UpdateViewInformation {
+			Layout.fillWidth: true
+			downloadSize: root.updateData.size
+			releaseDate: root.updateData.date
+			version: root.updateData.version
+		}
+		UpdateViewButtonRow {
+			Layout.fillWidth: true
+			downloadInProgress: root.downloadRunning
+			downloadProgressKB: root.updateData.downloadProgress
+			downloadTotalKB: root.updateData.downloadTotal
+			version: root.updateData.version
+
+			onAbortDownload: root.updateData.abortDownload()
+			onStartDownload: download.exec()
+		}
+		GPane {
+			Layout.fillWidth: true
+			contentPadding: 0
+			contentSpacing: 0
+			shadowScale: 1.005
+
+			ReleaseInformationModel {
+				id: releaseInformationModel
+
+			}
+			Repeater {
+				id: releaseInfoRepeater
+
+				model: releaseInformationModel.updateRelease
+
+				FormattedTextPaneDelegate {
+					Layout.fillWidth: true
+					color: Style.color.transparent
+					count: releaseInfoRepeater.count
+
+					onActiveFocusChanged: if (activeFocus) {
+						Utils.positionViewAtItem(this);
+					}
+
+					FocusFrame {
+					}
 				}
+			}
+		}
+	}
+	ColumnLayout {
+		id: updateFailedContent
 
-				FocusFrame {
-				}
+		Layout.preferredWidth: Style.dimens.max_text_width
+		visible: false
+
+		Heading {
+			//: DESKTOP
+			text: qsTr("Update failed")
+			wrapMode: Text.WordWrap
+		}
+		AnimationLoader {
+			Layout.alignment: Qt.AlignHCenter
+			Layout.bottomMargin: Style.dimens.pane_spacing
+			animated: false
+			symbol: Symbol.Type.ERROR
+			type: AnimationLoader.Type.STATUS
+		}
+		Subheading {
+			Layout.topMargin: Style.dimens.pane_spacing
+
+			//: DESKTOP
+			text: qsTr("Application update could not be performed")
+		}
+		GText {
+			Layout.topMargin: Style.dimens.text_spacing
+			text: SettingsModel.appUpdateData.appcastErrorText
+		}
+		ButtonBox {
+			id: buttonBox
+
+			SecondaryButton {
+				Layout.maximumWidth: buttonBox.uniformButtonWidth
+				Layout.preferredWidth: buttonBox.uniformButtonWidth
+
+				//: DESKTOP
+				text: qsTr("Back to start page")
+
+				onClicked: root.popAll()
+			}
+			GButton {
+				Layout.maximumWidth: buttonBox.uniformButtonWidth
+				Layout.preferredWidth: buttonBox.uniformButtonWidth
+
+				//: DESKTOP
+				text: qsTr("Retry")
+
+				onClicked: d.refreshUpdateInformation()
 			}
 		}
 	}
@@ -105,6 +233,26 @@ FlickableSectionPage {
 		}
 
 		target: root.updateData
+	}
+	ConfirmationPopup {
+		id: newVersionConfirmation
+
+		function exec() {
+			open();
+		}
+
+		//: DESKTOP
+		cancelButtonText: qsTr("Back to start page")
+		closePolicy: Popup.NoAutoClose
+		//: DESKTOP
+		okButtonText: qsTr("Show update")
+		//: DESKTOP %1 will be replaced with the update version number
+		text: qsTr("A newer update (version %1) has been found and is available for download.").arg(root.updateData.version)
+		//: DESKTOP %1 will be replaced with the update version number
+		title: qsTr("Newer version %1 available").arg(root.updateData.version)
+
+		onCancelled: root.popAll()
+		onConfirmed: close()
 	}
 	ConfirmationPopup {
 		id: download

@@ -63,8 +63,6 @@ RoundedRectangle {
 			}
 
 			Image {
-				id: readerIcon
-
 				anchors.centerIn: parent
 				asynchronous: true
 				fillMode: Image.PreserveAspectFit
@@ -74,8 +72,6 @@ RoundedRectangle {
 			}
 		}
 		ColumnLayout {
-			id: textColumn
-
 			Layout.alignment: Qt.AlignLeft
 			Layout.bottomMargin: Style.dimens.pane_padding
 			Layout.leftMargin: 0

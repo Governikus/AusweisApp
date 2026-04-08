@@ -44,6 +44,7 @@ class test_DatagramHandlerImpl
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -53,14 +54,13 @@ class test_DatagramHandlerImpl
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 
 			QVERIFY(socket->isBound());
-			QVERIFY(!logSpy.isEmpty());
-			auto param = logSpy.takeLast();
-			QVERIFY(param.at(0).toString().contains("Bound on port:"_L1));
+			QTRY_VERIFY(!logSpy.isEmpty());
+			QTRY_VERIFY(logSpy.last().at(0).toString().contains("Bound on port:"_L1));
+			logSpy.removeLast();
 
 			socket.reset();
-			QVERIFY(!logSpy.isEmpty());
-			param = logSpy.takeLast();
-			QVERIFY(param.at(0).toString().contains("Shutdown socket"_L1));
+			QTRY_VERIFY(!logSpy.isEmpty());
+			QTRY_VERIFY(logSpy.last().at(0).toString().contains("Shutdown socket"_L1));
 		}
 
 
@@ -83,9 +83,8 @@ class test_DatagramHandlerImpl
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 
 			QVERIFY(!socket->isBound());
-			QCOMPARE(logSpy.count(), 1);
-			auto param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Cannot bind socket: \"The address is protected\""_L1));
+			QTRY_COMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.first().at(0).toString().contains("Cannot bind socket: \"The address is protected\""_L1));
 		}
 
 
@@ -102,9 +101,8 @@ class test_DatagramHandlerImpl
 			auto written = clientSocket.writeDatagram("dummy", QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
 			QTRY_COMPARE(spySocket.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(written, 5);
-			QCOMPARE(logSpy.count(), 0);
-			auto param = spySocket.takeFirst();
-			QCOMPARE(param.at(0).toByteArray(), QByteArray("dummy"));
+			QVERIFY(TestFileHelper::containsLog(logSpy, "Bound on port:"_L1));
+			QCOMPARE(spySocket.first().at(0).toByteArray(), QByteArray("dummy"));
 		}
 
 
@@ -212,12 +210,12 @@ class test_DatagramHandlerImpl
 			QTRY_COMPARE(spyReceiver.count(), 1); // clazy:exclude=qstring-allocations
 			if (broadcast)
 			{
-				QVERIFY(logSpy.count() >= 2);
+				QTRY_VERIFY(logSpy.count() >= 2);
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Broadcast Addresses changed...")));
 			}
 			else
 			{
-				QVERIFY(logSpy.isEmpty());
+				QTRY_VERIFY(logSpy.count() == 2);
 			}
 
 			QVERIFY(receiver.hasPendingDatagrams());

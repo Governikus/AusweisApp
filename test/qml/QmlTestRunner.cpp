@@ -50,6 +50,7 @@ class QmlTestRunner
 		{
 			QStandardPaths::setTestModeEnabled(true);
 			QCoreApplication::setApplicationName("TestQmlRunner"_L1);
+			QCoreApplication::setAttribute(Qt::AA_QtQuickUseDefaultSizePolicy);
 			QQuickStyle::setStyle(QStringLiteral("Basic"));
 			QThread::currentThread()->setObjectName(QStringLiteral("MainThread"));
 			ResourceLoader::getInstance().init();

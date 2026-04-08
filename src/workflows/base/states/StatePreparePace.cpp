@@ -88,28 +88,6 @@ void StatePreparePace::run()
 	}
 
 	const int currentRetryCounter = cardConnection->getReaderInfo().getRetryCounter();
-	if (context->isSmartCardUsed())
-	{
-		if (currentRetryCounter == 0)
-		{
-			qCDebug(statemachine) << "Smart-eID was invalidated during workflow";
-			updateStatus(GlobalStatus::Code::Card_Smart_Invalid);
-			Q_EMIT fireAbort(FailureCode::Reason::Prepace_Pace_Smart_Eid_Invalidated);
-			return;
-		}
-
-		qCDebug(statemachine) << "Smart-eID PIN required";
-		context->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
-		if (context->getPin().isEmpty())
-		{
-			Q_EMIT fireEnterPacePassword();
-			return;
-		}
-
-		Q_EMIT fireContinue();
-		return;
-	}
-
 	if (context->isCanAllowedMode())
 	{
 		qCDebug(statemachine) << "CAN allowed required";

@@ -18,7 +18,6 @@ import Governikus.Type
 SectionPage {
 	id: root
 
-	property alias autoInsertCard: technologyInfo.autoInsertCard
 	property alias cardInitiallyAppeared: technologyInfo.cardInitiallyAppeared
 	property var initialPlugin: null
 	readonly property bool isLandscape: ApplicationWindow.window && ApplicationWindow.menuBar ? ApplicationWindow.window.height - ApplicationWindow.menuBar.height < ApplicationWindow.window.width : false

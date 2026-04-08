@@ -30,6 +30,7 @@ class test_VersionInfo
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -117,7 +118,7 @@ class test_VersionInfo
 
 			qDebug() << versionInfo;
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toByteArray().contains(versionInfo.toJson(QJsonDocument::JsonFormat::Compact)));
 		}
 

@@ -87,15 +87,6 @@ function(SHOULD_SKIP_TEST _out filename)
 	set(${_out} FALSE PARENT_SCOPE)
 	string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" test "${sourcefile}")
 
-	if(NOT USE_SMARTEID AND (test MATCHES "card/smart"
-			OR test MATCHES "external/smartID"
-			OR test MATCHES "ui/qml/smart"
-			OR test MATCHES "workflows/personalization"
-			OR test MATCHES "ui/json/test_MsgHandlerPersonalization"))
-		set(${_out} TRUE PARENT_SCOPE)
-		return()
-	endif()
-
 	if(INTEGRATED_SDK AND (test MATCHES "ui/qml"
 			OR test MATCHES "ui/scheme"
 			OR test MATCHES "ifd"
@@ -146,7 +137,12 @@ function(ADD_TEST_EXECUTABLE_SUBDIR)
 
 		set_tests_properties(${TESTNAME} PROPERTIES FAIL_REGULAR_EXPRESSION "nullptr parameter")
 		set_tests_properties(${TESTNAME} PROPERTIES ENVIRONMENT "${TESTENV}")
-		set_tests_properties(${TESTNAME} PROPERTIES LABELS "qt" TIMEOUT 120)
+		if(TESTNAME STREQUAL "Test_settings_KeyPair")
+			set (TEST_TIMEOUT 240)
+		else()
+			set (TEST_TIMEOUT 120)
+		endif()
+		set_tests_properties(${TESTNAME} PROPERTIES LABELS "qt" TIMEOUT ${TEST_TIMEOUT})
 
 		# Create a target for each folder and add each test as a dependency
 		get_filename_component(TEST_FOLDER_TARGET ${sourcefile} DIRECTORY)

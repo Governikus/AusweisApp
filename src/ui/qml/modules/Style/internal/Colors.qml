@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 
 QtObject {
 	required property color background
 	readonly property color blue: "#164a8c"
 	required property color border
-	readonly property color card_smart: "#327509"
 	required property ControlComponents control
 	required property ControlComponents controlCheckbox
 	required property ControlComponents controlOptional

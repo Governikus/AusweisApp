@@ -24,6 +24,7 @@ CreateCardConnectionCommand::CreateCardConnectionCommand(const QString& pReaderN
 	: QObject()
 	, mReaderName(pReaderName)
 	, mReaderManagerWorker(pReaderManagerWorker)
+	, mCardConnectionWorker(nullptr)
 	, mCardConnection(nullptr)
 {
 }
@@ -39,47 +40,32 @@ void CreateCardConnectionCommand::execute()
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	if (connect(mReaderManagerWorker.data(), &ReaderManagerWorker::fireCardConnectionWorkerCreated, this, &CreateCardConnectionCommand::onCardConnectionWorkerCreated))
-	{
-		const auto& localCopy = mReaderManagerWorker;
-		const auto& name = mReaderName;
-		QMetaObject::invokeMethod(localCopy.data(), [localCopy, name] {
-					localCopy->createCardConnectionWorker(name, [] (const QSharedPointer<CardConnectionWorker>& pWorker) -> QSharedPointer<CardConnectionWorker> {
-						if (pWorker)
-						{
-							const auto application = pWorker->getReaderInfo().getCardInfo().getApplication();
-							if (application != FileRef() && !pWorker->selectApplicationRoot(application))
-							{
-								return nullptr;
-							}
-						}
+	mCardConnectionWorker = mReaderManagerWorker->createCardConnectionWorker(mReaderName, [] (const QSharedPointer<CardConnectionWorker>& pWorker) -> QSharedPointer<CardConnectionWorker> {
+				if (pWorker)
+				{
+					const auto application = pWorker->getReaderInfo().getCardInfo().getApplication();
+					if (application != FileRef() && !pWorker->selectApplicationRoot(application))
+					{
+						return nullptr;
+					}
+				}
 
-						return pWorker;
-					});
-				}, Qt::QueuedConnection);
-	}
-	else
-	{
-		qCCritical(card) << "Cannot invoke ReaderManagerWorker to create CardConnectionWorker";
-		QSharedPointer<CreateCardConnectionCommand> command(this, &QObject::deleteLater);
-		Q_EMIT fireCommandDone(command);
-	}
-}
+				return pWorker;
+			});
 
-
-void CreateCardConnectionCommand::onCardConnectionWorkerCreated(QSharedPointer<CardConnectionWorker> pWorker)
-{
-	if (pWorker != nullptr)
-	{
-		mCardConnection.reset(new CardConnection(pWorker));
-	}
 	QSharedPointer<CreateCardConnectionCommand> command(this, &QObject::deleteLater);
 	Q_EMIT fireCommandDone(command);
 }
 
 
-QSharedPointer<CardConnection> CreateCardConnectionCommand::getCardConnection() const
+QSharedPointer<CardConnection> CreateCardConnectionCommand::getCardConnection()
 {
+	Q_ASSERT(QCoreApplication::instance()->thread() == QThread::currentThread());
+
+	if (mCardConnectionWorker && !mCardConnection)
+	{
+		mCardConnection = QSharedPointer<CardConnection>::create(mCardConnectionWorker);
+	}
 	return mCardConnection;
 }
 

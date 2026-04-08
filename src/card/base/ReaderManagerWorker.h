@@ -42,7 +42,7 @@ class ReaderManagerWorker
 		Q_INVOKABLE void stopScan(ReaderManagerPluginType pType, const QString& pError);
 
 		Q_INVOKABLE void updateReaderInfo(const QString& pReaderName) const;
-		void createCardConnectionWorker(const QString& pReaderName, const std::function<QSharedPointer<CardConnectionWorker>(const QSharedPointer<CardConnectionWorker>&)>& pInitWorker);
+		QSharedPointer<CardConnectionWorker> createCardConnectionWorker(const QString& pReaderName, const std::function<QSharedPointer<CardConnectionWorker>(const QSharedPointer<CardConnectionWorker>&)>& pInitWorker);
 
 	Q_SIGNALS:
 		void firePluginAdded(const ReaderManagerPluginInfo& pInfo);
@@ -53,7 +53,6 @@ class ReaderManagerWorker
 		void fireCardInserted(const ReaderInfo& pInfo);
 		void fireCardRemoved(const ReaderInfo& pInfo);
 		void fireCardInfoChanged(const ReaderInfo& pInfo);
-		void fireCardConnectionWorkerCreated(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 		void fireInitialized();
 
 	private Q_SLOTS:

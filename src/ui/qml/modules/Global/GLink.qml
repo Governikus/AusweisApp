@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
@@ -20,13 +21,14 @@ GAbstractButton {
 	property alias tintIcon: linkIcon.tintEnabled
 
 	Accessible.name: text
-	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
 	background: null
+	baselineOffset: linkText.baselineOffset + verticalPadding + (contentItem.height - linkText.height) / 2
 	font.pixelSize: linkText.textStyle.textSize
 	font.underline: UiPluginModel.a11yButtonShapeActive
 	font.weight: linkText.textStyle.fontWeight
 	horizontalPadding: Style.dimens.control_horizontalPadding
+	implicitWidth: linkText.visible ? (implicitContentWidth + leftPadding + rightPadding) : implicitHeight
 	verticalPadding: Style.dimens.control_verticalPadding
 
 	contentItem: RowLayout {
@@ -41,6 +43,7 @@ GAbstractButton {
 			TintableIcon {
 				id: linkIcon
 
+				Layout.alignment: Qt.AlignCenter
 				source: root.icon.source
 				sourceSize.height: 1.5 * linkText.effectiveFirstLineHeight
 				tintColor: colors.linkColor
@@ -97,8 +100,6 @@ GAbstractButton {
 		focus = false
 
 	HoverHandler {
-		id: hoverHandler
-
 	}
 	StatefulColors {
 		id: colors

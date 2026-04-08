@@ -1,0 +1,260 @@
+From 3170ff9515edbb0b858cb2f6b59a8225842af486 Mon Sep 17 00:00:00 2001
+From: Timon Sassor <timon.sassor@governikus.de>
+Date: Fri, 12 Sep 2025 14:20:50 +0200
+Subject: a11y iOS: Enable granular text navigation for editable components
+
+VoiceOver has the Rotor that allows it to change the text navigation on
+editable components between character, word, line, sentence etc..
+However the ios platform plugin does not listen to these gestures and
+does not pass them to editable components like TextEdit.
+So we listen to these actions and provide the appropriate events.
+QAccessibleTextInterface already has the ability to navigate text as
+described. So we add the missing link here, which is the support in the
+accessibility plugin.
+Also add a local translation for the rotor names, since they must not
+depend on the app language but on the OS language.
+
+[ChangeLog][Accessibility][iOS] Enable granular text navigation for
+editable components e.g. TextEdit
+
+Fixes: QTBUG-139943
+Change-Id: I2ff9c06140256de4e49ee4d4e0a47f8640bc0837
+---
+ src/plugins/platforms/ios/qiostextresponder.h |  18 +++
+ .../platforms/ios/qiostextresponder.mm        |  15 +--
+ .../platforms/ios/quiaccessibilityelement.mm  | 110 +++++++++++++++++-
+ src/plugins/platforms/ios/uistrings.cpp       |   4 +
+ src/plugins/platforms/ios/uistrings_p.h       |   4 +
+ 5 files changed, 134 insertions(+), 17 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/ios/qiostextresponder.h y/qtbase/src/plugins/platforms/ios/qiostextresponder.h
+index c3c8d083e653dc19228f40da56da7b6163b5393d..f12c5af7026b61825fa67298d5a72c080bdfba7b 100644
+--- x/qtbase/src/plugins/platforms/ios/qiostextresponder.h
++++ y/qtbase/src/plugins/platforms/ios/qiostextresponder.h
+@@ -53,4 +53,22 @@ QT_END_NAMESPACE
+ 
+ @end
+ 
++// -------------------------------------------------------------------------
++
++@interface QUITextPosition : UITextPosition
++
++@property (nonatomic) NSUInteger index;
+++ (instancetype)positionWithIndex:(NSUInteger)index;
++
++@end
++
++// -------------------------------------------------------------------------
++
++@interface QUITextRange : UITextRange
++
++@property (nonatomic) NSRange range;
+++ (instancetype)rangeWithNSRange:(NSRange)range;
++
++@end
++
+ #endif // QIOSTEXTRESPONDER_H
+diff --git x/qtbase/src/plugins/platforms/ios/qiostextresponder.mm y/qtbase/src/plugins/platforms/ios/qiostextresponder.mm
+index df07d8d6bf8c7b92a4897a8dac9869e830e9ce8e..d4f5e3050ae5788b1c5d46ade709533e86d7a5ce 100644
+--- x/qtbase/src/plugins/platforms/ios/qiostextresponder.mm
++++ y/qtbase/src/plugins/platforms/ios/qiostextresponder.mm
+@@ -14,14 +14,8 @@
+ #include <QtGui/private/qguiapplication_p.h>
+ #include <QtGui/qpa/qplatformwindow.h>
+ 
+-// -------------------------------------------------------------------------
+-
+-@interface QUITextPosition : UITextPosition
+-
+-@property (nonatomic) NSUInteger index;
+-+ (instancetype)positionWithIndex:(NSUInteger)index;
+ 
+-@end
++// -------------------------------------------------------------------------
+ 
+ @implementation QUITextPosition
+ 
+@@ -36,13 +30,6 @@
+ 
+ // -------------------------------------------------------------------------
+ 
+-@interface QUITextRange : UITextRange
+-
+-@property (nonatomic) NSRange range;
+-+ (instancetype)rangeWithNSRange:(NSRange)range;
+-
+-@end
+-
+ @implementation QUITextRange
+ 
+ + (instancetype)rangeWithNSRange:(NSRange)nsrange
+diff --git x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+index bf4351d2ecec9233312648d2cb776a776bc31739..109fce7722fd27a0cb0da2b2730247771331b61d 100644
+--- x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+@@ -2,6 +2,7 @@
+ // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ 
+ #include "quiaccessibilityelement.h"
++#include "qiostextresponder.h"
+ 
+ #if QT_CONFIG(accessibility)
+ 
+@@ -125,9 +126,14 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+     QAccessibleValueInterface *val = iface->valueInterface();
+     if (val) {
+         return val->currentValue().toString().toNSString();
+-    } else if (iface->editableTextInterface()) {
+-        if (QAccessibleTextInterface *text = iface->textInterface())
+-            return text->text(0, text->characterCount()).toNSString();
++    } else if (iface->role() == QAccessible::Role::EditableText) {
++        if (QAccessibleTextInterface *text = iface->textInterface()) {
++            int start = 0;
++            int end = text->characterCount();
++            if (text->selectionCount() > 0)
++                text->selection(0, &start, &end);
++            return text->text(start, end).toNSString();
++        }
+     }
+ 
+     return [super accessibilityHint];
+@@ -179,6 +185,7 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+             return textField.accessibilityTraits;
+         }();
+         traits |= defaultTextFieldTraits;
++        traits |= UIAccessibilityTraitUpdatesFrequently;
+     } else if (accessibleRole == QAccessible::Graphic) {
+         traits |= UIAccessibilityTraitImage;
+     } else if (accessibleRole == QAccessible::Heading) {
+@@ -288,6 +295,103 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+     return localeVariant.toLocale().bcp47Name().toNSString();
+ }
+ 
++struct RotorNameTranslator {
++    RotorNameTranslator() : chars(A11Y_ROTOR_NAME_CHARS), words(A11Y_ROTOR_NAME_WORDS), sentences(A11Y_ROTOR_NAME_SENTENCES) {
++        const auto fileName = QString(":/translations/qtbase_%1.qm").arg(QLocale::system().bcp47Name());
++        auto translator = QTranslator();
++        if (translator.load(fileName)) {
++            chars = translator.translate(ACCESSIBILITY_ELEMENT, A11Y_ROTOR_NAME_CHARS);
++            words = translator.translate(ACCESSIBILITY_ELEMENT, A11Y_ROTOR_NAME_WORDS);
++            sentences = translator.translate(ACCESSIBILITY_ELEMENT, A11Y_ROTOR_NAME_SENTENCES);
++        }
++    }
++    QString chars;
++    QString words;
++    QString sentences;
++};
++
++- (NSArray<UIAccessibilityCustomRotor *> *)accessibilityCustomRotors
++{
++    QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || iface->role() != QAccessible::EditableText)
++        return nil;
++
++    const static auto rotorNameTranslator = RotorNameTranslator();
++    auto getRotorName = [](QAccessible::TextBoundaryType stepSize) {
++        switch (stepSize) {
++        case QAccessible::TextBoundaryType::WordBoundary:
++            return rotorNameTranslator.words;
++        case QAccessible::TextBoundaryType::SentenceBoundary:
++            return rotorNameTranslator.sentences;
++        default:
++            return rotorNameTranslator.chars;
++        }
++    };
++
++    auto createRotor = [&getRotorName, self](QAccessible::TextBoundaryType stepSize) {
++        UIAccessibilityCustomRotor *rotor = [[UIAccessibilityCustomRotor alloc]
++            initWithName:getRotorName(stepSize).toNSString()
++            itemSearchBlock:^UIAccessibilityCustomRotorItemResult * (UIAccessibilityCustomRotorSearchPredicate *predicate)
++            {
++                QAccessibleTextInterface *textIface = QAccessible::accessibleInterface(self.axid)->textInterface();
++                if (!textIface)
++                    return nil;
++
++                textIface->removeSelection(0);
++                const int cursorPosition = textIface->cursorPosition();
++                const int charCount = textIface->characterCount();
++                const bool forward = predicate.searchDirection == UIAccessibilityCustomRotorDirectionNext;
++
++                if ((cursorPosition == 0 && !forward) || (cursorPosition == charCount && forward))
++                    return nil;
++
++                int fromIndex = 0;
++                int toIndex = 0;
++
++                if (forward) {
++                    textIface->textAfterOffset(cursorPosition, stepSize, &fromIndex, &toIndex);
++                    if (toIndex < 0)
++                        textIface->textBeforeOffset(charCount, stepSize, &fromIndex, &toIndex);
++                } else {
++                    textIface->textBeforeOffset(cursorPosition, stepSize, &fromIndex, &toIndex);
++                    // This adjustment is required to place the cursor at the end of the word.
++                    textIface->textBeforeOffset(fromIndex, stepSize, &fromIndex, &toIndex);
++                }
++
++                if (fromIndex < 0 && !forward) {
++                    textIface->setCursorPosition(0);
++                    return nil;
++                }
++                else if (toIndex < 0 && forward) {
++                    textIface->setCursorPosition(charCount);
++                    return nil;
++                }
++                else {
++                    textIface->setCursorPosition(toIndex);
++                }
++
++                if (fromIndex >= 0 && toIndex >= 0) {
++                    textIface->setSelection(0, fromIndex, toIndex);
++
++                    return [[[UIAccessibilityCustomRotorItemResult alloc]
++                            initWithTargetElement:self
++                            targetRange:[QUITextRange rangeWithNSRange:NSMakeRange(fromIndex, toIndex)]
++                        ]
++                        autorelease
++                    ];
++                }
++                return nil;
++            }
++        ];
++        return [rotor autorelease];
++    };
++    return @[
++        createRotor(QAccessible::TextBoundaryType::CharBoundary),
++        createRotor(QAccessible::TextBoundaryType::WordBoundary),
++        createRotor(QAccessible::TextBoundaryType::SentenceBoundary)
++    ];
++}
++
+ @end
+ 
+ #endif
+diff --git x/qtbase/src/plugins/platforms/ios/uistrings.cpp y/qtbase/src/plugins/platforms/ios/uistrings.cpp
+index b17438ba93ad2894667d5b7e499d274179c5965b..6b7efe5a60a4c1406b8eeff0a7f0178ff16cf78e 100644
+--- x/qtbase/src/plugins/platforms/ios/uistrings.cpp
++++ y/qtbase/src/plugins/platforms/ios/uistrings.cpp
+@@ -12,4 +12,8 @@ const char ACCESSIBILITY_ELEMENT[] = "quiaccessibilityelement";
+ const char AE_CHECKED[] = QT_TRANSLATE_NOOP("quiaccessibilityelement", "checked");
+ const char AE_UNCHECKED[] = QT_TRANSLATE_NOOP("quiaccessibilityelement", "unchecked");
+ 
++extern const char A11Y_ROTOR_NAME_CHARS[] = QT_TRANSLATE_NOOP("quiaccessibilityelement", "Character by character");
++extern const char A11Y_ROTOR_NAME_WORDS[] = QT_TRANSLATE_NOOP("quiaccessibilityelement", "Word by word");
++extern const char A11Y_ROTOR_NAME_SENTENCES[] = QT_TRANSLATE_NOOP("quiaccessibilityelement", "Sentence by sentence");
++
+ QT_END_NAMESPACE
+diff --git x/qtbase/src/plugins/platforms/ios/uistrings_p.h y/qtbase/src/plugins/platforms/ios/uistrings_p.h
+index cbe139afaccbffb85aad8894646df6f6527eac17..8eea3baa84ee2526ac80356cc328896f621c18a4 100644
+--- x/qtbase/src/plugins/platforms/ios/uistrings_p.h
++++ y/qtbase/src/plugins/platforms/ios/uistrings_p.h
+@@ -25,6 +25,10 @@ extern const char ACCESSIBILITY_ELEMENT[];
+ extern const char AE_CHECKED[];
+ extern const char AE_UNCHECKED[];
+ 
++extern const char A11Y_ROTOR_NAME_CHARS[];
++extern const char A11Y_ROTOR_NAME_WORDS[];
++extern const char A11Y_ROTOR_NAME_SENTENCES[];
++
+ QT_END_NAMESPACE
+ 
+ #endif // UISTRINGS_P_H

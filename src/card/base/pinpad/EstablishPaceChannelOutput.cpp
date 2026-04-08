@@ -109,23 +109,25 @@ EstablishPaceChannelErrorCode EstablishPaceChannelOutput::generateReturnCode(Car
 	{
 		case CardReturnCode::UNKNOWN:
 		case CardReturnCode::UNDEFINED:
-		case CardReturnCode::NEW_PIN_MISMATCH:
-		case CardReturnCode::NEW_PIN_INVALID_LENGTH:
-		case CardReturnCode::PIN_BLOCKED:
 		case CardReturnCode::PIN_NOT_BLOCKED:
-		case CardReturnCode::PUK_INOPERATIVE:
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 		case CardReturnCode::PROTOCOL_ERROR:
 		case CardReturnCode::WRONG_LENGTH:
 			return EstablishPaceChannelErrorCode::UnexpectedDataInInput;
 
-		case CardReturnCode::INVALID_CAN:
-		case CardReturnCode::INVALID_PASSWORD:
 		case CardReturnCode::INVALID_PIN:
+			return EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC2;
+
 		case CardReturnCode::INVALID_PIN_2:
+			return EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC1;
+
 		case CardReturnCode::INVALID_PIN_3:
+			return EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC0;
+
+		case CardReturnCode::INVALID_CAN:
 		case CardReturnCode::INVALID_PUK:
-			return EstablishPaceChannelErrorCode::GeneralAuthenticateStep1_4_Warning;
+		case CardReturnCode::INVALID_PASSWORD:
+			return EstablishPaceChannelErrorCode::GeneralAuthenticateStep4;
 
 		case CardReturnCode::OK:
 		case CardReturnCode::OK_PUK:

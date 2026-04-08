@@ -8,6 +8,7 @@
       "name": "ci-macos",
       "inherits": "ci-with-libs",
       "generator": "Xcode",
+      "toolchainFile": "${sourceDir}/cmake/macOS.toolchain.cmake",
       "cacheVariables": {
         "BUILD_SHARED_LIBS": "ON",
         "SANITIZER": "ON"

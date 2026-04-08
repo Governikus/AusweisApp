@@ -46,7 +46,6 @@ class ReaderInfo
 		[[nodiscard]] bool isRetryCounterDetermined() const;
 		[[nodiscard]] bool isPinDeactivated() const;
 		[[nodiscard]] bool isPukInoperative() const;
-		[[nodiscard]] bool isSoftwareSmartEid() const;
 
 		[[nodiscard]] bool wasShelved() const;
 		void shelveCard();

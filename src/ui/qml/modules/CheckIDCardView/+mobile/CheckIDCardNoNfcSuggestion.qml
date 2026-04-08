@@ -22,7 +22,7 @@ DecisionView {
 
 		if (usedInOnboarding) {
 			//: MOBILE The text between %1 and %2 will be emphasized.
-			textModel.push(qsTr("We recommend that you set up your ID card on another smartphone. You can call the setup again at any time under %1Help > Setup%2.").arg("<b>").arg("</b>"));
+			textModel.push(qsTr("We recommend that you set up your ID card on another smartphone. You can call the setup again at any time under %1Help%2.").arg("<b>").arg("</b>"));
 		}
 
 		//: MOBILE %1 will be replaced with the application name. The text between %2 and %3 will be emphasized.

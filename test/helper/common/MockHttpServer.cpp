@@ -7,7 +7,7 @@
 #include "Env.h"
 
 #include <QTest>
-#include <http_parser.h>
+#include <llhttp.h>
 
 using namespace governikus;
 
@@ -29,7 +29,7 @@ void MockHttpServer::reset()
 }
 
 
-void MockHttpServer::addMock(const QByteArray& pUrl, const HttpResponse& pResponse, const http_method& pHttpMethod)
+void MockHttpServer::addMock(const QByteArray& pUrl, const HttpResponse& pResponse, const llhttp_method& pHttpMethod)
 {
 	const MockKey mockUrl = {pHttpMethod, pUrl};
 	mMock.insert(mockUrl, pResponse);

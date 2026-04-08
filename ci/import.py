@@ -30,9 +30,7 @@ class CommandLineParser(argparse.ArgumentParser):
         self.add_argument(
             '--repatch', help='Repatch previous series', action='store_true'
         )
-        self.add_argument(
-            '--patch', help='Patch file', default='../patch.diff'
-        )
+        self.add_argument('--patch', help='Patch file', required=True)
         self.args = self.parse_args()
 
         for key, value in vars(self.args).items():
@@ -41,17 +39,17 @@ class CommandLineParser(argparse.ArgumentParser):
 
 class PatchProcessor:
     def __init__(self, file, repatch):
-        self.file = file.decode('utf-8')
-        self.dir = os.path.dirname(os.path.realpath(self.file))
+        self.file = os.path.normpath(file)
+        self.prefix = self.file + '.'
         self.patch_series = sorted(
-            glob.glob(self.dir + os.sep + '*.patch'),
-            key=lambda x: int(Path(x).stem),
+            glob.glob(self.prefix + '*.patch'),
+            key=lambda x: int(Path(x.removeprefix(self.prefix)).stem),
         )
-        self.applied = self.dir + os.sep + 'applied'
+        self.applied = self.prefix + 'applied'
         self.applied_patches = []
 
         if os.path.isfile(self.applied):
-            with open(self.applied, 'r') as f:
+            with open(self.applied) as f:
                 self.applied_patches = list(filter(None, f.read().split('\n')))
                 if repatch and len(self.applied_patches) > 0:
                     self.applied_patches.pop()
@@ -68,7 +66,7 @@ class PatchProcessor:
     def split(self):
         def nextFilename():
             self.patch_series.append(
-                self.dir + os.sep + str(len(self.patch_series)) + '.patch'
+                self.prefix + str(len(self.patch_series)) + '.patch'
             )
             return open(self.patch_series[-1], 'wb')
 
@@ -86,7 +84,7 @@ class PatchProcessor:
 
     def apply(self, client, split):
         if self.patch_series == self.applied_patches or not split:
-            print('Apply all patches: %s' % len(self.patch_series))
+            print(f'Apply all patches: {len(self.patch_series)}')
             client.import_(
                 [s.encode('utf-8') for s in self.patch_series], nocommit=True
             )
@@ -114,9 +112,8 @@ class PatchProcessor:
 def main():
     parser = CommandLineParser()
 
-    patch = b(parser.patch)
-    if not os.path.isfile(patch):
-        print(f'Patch file "{patch}" does not exists')
+    if not os.path.isfile(parser.patch):
+        print(f'Patch file "{parser.patch}" does not exists')
         return -1
 
     if 'CI' not in os.environ:
@@ -156,7 +153,7 @@ def main():
             ]
         )
 
-    processor = PatchProcessor(patch, parser.repatch)
+    processor = PatchProcessor(parser.patch, parser.repatch)
     if parser.clean or parser.clean_only:
         processor.clean()
 
@@ -164,7 +161,7 @@ def main():
         return 0
 
     if not processor.isSplit():
-        print(f'Split patch: {patch}')
+        print(f'Split patch: {parser.patch}')
         processor.split()
         print(f'Wrote {len(processor.patch_series)} patch(es)')
 

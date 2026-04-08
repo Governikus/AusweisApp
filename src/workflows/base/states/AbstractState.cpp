@@ -24,7 +24,6 @@ AbstractState::AbstractState(const QSharedPointer<WorkflowContext>& pContext)
 	, mConnections()
 	, mAbortOnCardRemoved(false)
 	, mHandleNfcStop(false)
-	, mKeepCardConnectionAlive(false)
 {
 	Q_ASSERT(mContext);
 	connect(this, &AbstractState::fireAbort, this, &AbstractState::onAbort);
@@ -40,12 +39,6 @@ void AbstractState::setAbortOnCardRemoved()
 void AbstractState::setHandleNfcStop()
 {
 	mHandleNfcStop = true;
-}
-
-
-void AbstractState::setKeepCardConnectionAlive()
-{
-	mKeepCardConnectionAlive = true;
 }
 
 
@@ -97,11 +90,6 @@ void AbstractState::onEntry(QEvent* pEvent)
 	mConnections += connect(mContext.data(), &WorkflowContext::fireCancelWorkflow, this, &AbstractState::onUserCancelled);
 	mConnections += connect(mContext.data(), &WorkflowContext::fireStateApprovedChanged, this, &AbstractState::onStateApprovedChanged, Qt::QueuedConnection);
 
-	if (const auto& connection = mContext->getCardConnection(); connection && mKeepCardConnectionAlive)
-	{
-		connection->setKeepAlive(true);
-	}
-
 	qCDebug(statemachine) << "Next state is" << getStateName();
 	mContext->setCurrentState(getStateName());
 
@@ -116,10 +104,6 @@ void AbstractState::onEntry(QEvent* pEvent)
 
 void AbstractState::onExit(QEvent* pEvent)
 {
-	if (const auto& connection = mContext->getCardConnection(); connection && mKeepCardConnectionAlive)
-	{
-		connection->setKeepAlive(false);
-	}
 	clearConnections();
 	mContext->setStateApproved(false);
 	qCDebug(statemachine) << "Leaving state" << getStateName()

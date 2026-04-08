@@ -109,7 +109,6 @@ class CardConnection
 		[[nodiscard]] bool getPaceCanSuccessful() const;
 		[[nodiscard]] bool getPacePinSuccessful() const;
 
-		void setKeepAlive(bool pEnabled);
 		void setProgressMessage(const QString& pMessage, int pProgress = -1);
 		void setErrorMessage(const QString& pMessage);
 

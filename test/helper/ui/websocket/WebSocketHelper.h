@@ -21,6 +21,8 @@ class WebSocketHelper
 		const int mConnectionTimeout;
 		QWebSocket mWebSocket;
 		QStringList mInput;
+		QAbstractSocket::SocketError mError;
+		QByteArray mOrigin;
 
 		void connectWebsocket(int pPort);
 
@@ -28,8 +30,9 @@ class WebSocketHelper
 		void onTextMessageReceived(const QString& pMessage);
 
 	public:
-		WebSocketHelper(int pPort, int pConnectionTimeout = 15000);
+		WebSocketHelper(int pPort, const QByteArray& pOrigin = QByteArray(), int pConnectionTimeout = 15000);
 		[[nodiscard]] bool isConnected() const;
+		QAbstractSocket::SocketError getError() const;
 		[[nodiscard]] QAbstractSocket::SocketState getState() const;
 		bool waitForMessage(const std::function<bool(const QJsonObject&)>& pMessageMatcher);
 		void sendMessage(const QString& pMessage);

@@ -14,8 +14,6 @@ class PacePinStatus
 	public:
 		[[nodiscard]] static int getRetryCounter(StatusCode pStatusCode);
 
-		[[nodiscard]] static bool isInitial(StatusCode pStatusCode);
-
 		[[nodiscard]] static bool isDeactivated(StatusCode pStatusCode);
 };
 

@@ -35,7 +35,7 @@ class test_IfdModifyPin
 			IfdModifyPin msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 6);
+			QTRY_COMPARE(logSpy.count(), 6);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
@@ -104,7 +104,7 @@ class test_IfdModifyPin
 			QCOMPARE(ifdModifyPin.getSlotHandle(), QStringLiteral("SlotHandle"));
 			QCOMPARE(ifdModifyPin.getInputData(), QByteArray::fromHex("ABCD1234"));
 
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -140,7 +140,7 @@ class test_IfdModifyPin
 				QVERIFY(!ifdModifyPin.isIncomplete());
 				QCOMPARE(ifdModifyPin.getType(), IfdMessageType::IFDModifyPIN);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -150,14 +150,14 @@ class test_IfdModifyPin
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
 				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDModifyPIN"_L1));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDModifyPIN"_L1));
 		}
 
@@ -181,7 +181,7 @@ class test_IfdModifyPin
 			QCOMPARE(ifdModifyPin.getSlotHandle(), QString());
 			QCOMPARE(ifdModifyPin.getInputData(), QByteArray());
 
-			QCOMPARE(logSpy.count(), 2);
+			QTRY_COMPARE(logSpy.count(), 2);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SlotHandle\" should be of type \"string\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"InputData\" should be of type \"string\""_L1));
 		}

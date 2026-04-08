@@ -14,7 +14,6 @@ StateEnterPacePasswordIfd::StateEnterPacePasswordIfd(const QSharedPointer<Workfl
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
-	setKeepCardConnectionAlive();
 }
 
 

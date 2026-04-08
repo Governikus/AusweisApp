@@ -13,7 +13,7 @@
 #include <openssl/asn1t.h>
 #include <openssl/evp.h>
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
+#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
 	#include <openssl/ec.h>
 #endif
 
@@ -105,7 +105,7 @@ using EcdsaPublicKey = struct ecdsapublickey_st
 
 		[[nodiscard]] CurveData createCurveData() const;
 		[[nodiscard]] QSharedPointer<EVP_PKEY> createKey(const uchar* pPublicPoint, int pPublicPointLength) const;
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
+#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
 		[[nodiscard]] QSharedPointer<EC_GROUP> createGroup(const CurveData& pData) const;
 #endif
 

@@ -1,0 +1,143 @@
+From 3feeff78323d5d10e873fff6fb4c042a47867f47 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Thu, 4 Sep 2025 09:00:01 +0200
+Subject: Implement QAccessibleScrollInterface in QAccessibleQuickItem
+
+Task-number: QTBUG-139833
+Change-Id: I2b81a930d22e198b5438affc126c85c9383b7b46
+---
+ src/quick/accessible/qaccessiblequickitem.cpp | 77 +++++++++++++++++++
+ src/quick/accessible/qaccessiblequickitem_p.h | 11 ++-
+ 2 files changed, 87 insertions(+), 1 deletion(-)
+
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+index 042371b63acd7419d097a92d8151380f31623a1e..7044772a0b347947bc2d98b29c5b8dc3c0d432ee 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+@@ -11,6 +11,8 @@
+ #include "QtQuick/private/qquicktext_p.h"
+ #include <private/qquicktext_p_p.h>
+ 
++#include "QtQuick/private/qquickflickable_p.h"
++#include "QtQuick/private/qquicklistview_p.h"
+ #include "QtQuick/private/qquicktextinput_p.h"
+ #include "QtQuick/private/qquickaccessibleattached_p.h"
+ #include "QtQuick/qquicktextdocument.h"
+@@ -740,6 +742,10 @@ void *QAccessibleQuickItem::interface_cast(QAccessible::InterfaceType t)
+         break;
+     }
+ 
++    if (t == QAccessible::ScrollInterface
++        && (r == QAccessible::ScrollBar || r == QAccessible::List))
++        return static_cast<QAccessibleScrollInterface *>(this);
++
+     return QAccessibleObject::interface_cast(t);
+ }
+ 
+@@ -790,6 +796,77 @@ QVariant QAccessibleQuickItem::minimumStepSize() const
+     return item()->property("stepSize");
+ }
+ 
++qreal QAccessibleQuickItem::xPosition() const
++{
++    if (auto *flickable = qobject_cast<QQuickFlickable *>(item()))
++        return qMax(0.0, flickable->contentX());
++
++    return 0.0;
++}
++
++qreal QAccessibleQuickItem::maximumXPosition() const
++{
++    if (auto *flickable = qobject_cast<QQuickFlickable *>(item()))
++        return flickable->contentWidth();
++
++    return 0.0;
++}
++
++qreal QAccessibleQuickItem::yPosition() const
++{
++    if (auto *flickable = qobject_cast<QQuickFlickable *>(item()))
++        return qMax(0.0, flickable->contentY());
++
++    return 0.0;
++}
++
++qreal QAccessibleQuickItem::maximumYPosition() const
++{
++    if (auto *flickable = qobject_cast<QQuickFlickable *>(item()))
++        return flickable->contentHeight();
++
++    return 0.0;
++}
++
++int QAccessibleQuickItem::itemCount() const
++{
++    if (auto *listView = qobject_cast<QQuickListView *>(item()))
++        return listView->count();
++
++    return -1;
++}
++
++int QAccessibleQuickItem::fromIndex() const
++{
++    if (auto *listView = qobject_cast<QQuickListView *>(item())) {
++        // Account for overshooting and dragging over bounds
++        if (listView->orientation() == QQuickListView::Horizontal)
++            return qMax(0, listView->indexAt(listView->contentX(), 0));
++        else
++            return qMax(0, listView->indexAt(0, listView->contentY()));
++    }
++
++    return -1;
++}
++
++int QAccessibleQuickItem::toIndex() const
++{
++    if (auto *listView = qobject_cast<QQuickListView *>(item())) {
++        // Account for overshooting, dragging over bounds, and rounding errors
++        if (listView->orientation() == QQuickListView::Horizontal) {
++            const qreal x =
++                    qMin(listView->contentWidth(), listView->width() + listView->contentX());
++            return listView->indexAt(x - 1, 0);
++        } else {
++            const qreal y =
++                    qMin(listView->contentHeight(), listView->height() + listView->contentY());
++            return listView->indexAt(0, y - 1);
++        }
++    }
++
++    return -1;
++}
++
+ /*!
+   \internal
+   Shared between QAccessibleQuickItem and QAccessibleQuickView
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h
+index 0221097fc67fc40fc07a20707d5b52a24614c92a..92d82fd8cdce79031c5a3ea414f4ca43eb565bdf 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem_p.h
+@@ -31,7 +31,8 @@ class Q_QUICK_EXPORT QAccessibleQuickItem : public QAccessibleObject,
+                                             public QAccessibleActionInterface,
+                                             public QAccessibleValueInterface,
+                                             public QAccessibleTextInterface,
+-                                            public QAccessibleAttributesInterface
++                                            public QAccessibleAttributesInterface,
++                                            public QAccessibleScrollInterface
+ {
+ #ifdef Q_OS_INTEGRITY
+     // force instantiation to avoid error #2045
+@@ -76,6 +77,14 @@ public:
+     QVariant minimumValue() const override;
+     QVariant minimumStepSize() const override;
+ 
++    // Scroll Interface
++    qreal xPosition() const override;
++    qreal maximumXPosition() const override;
++    qreal yPosition() const override;
++    qreal maximumYPosition() const override;
++    int itemCount() const override;
++    int fromIndex() const override;
++    int toIndex() const override;
+ 
+     // Text Interface
+     void selection(int selectionIndex, int *startOffset, int *endOffset) const override;

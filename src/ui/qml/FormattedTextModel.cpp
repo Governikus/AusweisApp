@@ -81,6 +81,7 @@ bool FormattedTextModel::loadSeveral(const QStringList& pFilepaths)
 		if (!allLines.isEmpty())
 		{
 			allLines << QString();
+			allLines << QString();
 		}
 		allLines += lines;
 	}

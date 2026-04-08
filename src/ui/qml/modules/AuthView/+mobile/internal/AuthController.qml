@@ -6,7 +6,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
-import Governikus.Global
 import Governikus.EnterPasswordView
 import Governikus.TitleBar
 import Governikus.MultiInfoView
@@ -20,13 +19,10 @@ import Governikus.Type
 Controller {
 	id: root
 
-	property bool autoInsertCard: false
 	property var initialPlugin: null
 	property bool isInitialState: true
 	readonly property bool isSelfAuth: ApplicationModel.currentWorkflow === ApplicationModel.Workflow.SELF_AUTHENTICATION
-	readonly property bool isSmartWorkflow: AuthModel.readerPluginType === ReaderManagerPluginType.SMART
 	readonly property int passwordType: NumberModel.passwordType
-	readonly property bool smartEidUsed: isSmartWorkflow && !isInitialState
 	property bool startedByOnboarding: false
 	property string title
 	property bool userCancelAndManualRedirect: false
@@ -186,7 +182,7 @@ Controller {
 				changeTransportPin();
 			} else if (userCancelAndManualRedirect) {
 				AuthModel.continueWorkflow();
-			} else if (AuthModel.error && !AuthModel.hasNextWorkflowPending && !AuthModel.shouldSkipResultView()) {
+			} else if (AuthModel.error && !AuthModel.hasNextWorkflowPending) {
 				replace(authResult);
 			} else {
 				AuthModel.continueWorkflow();
@@ -263,10 +259,9 @@ Controller {
 			progressBarVisible: root.workflowProgressVisible
 			progressText: AuthModel.progressMessage
 			progressValue: AuthModel.progressValue
-			smartEidUsed: root.smartEidUsed
 			text: {
 				//: MOBILE Generic status message during the authentication process.
-				if (root.isInitialState || AuthModel.error || root.isSmartWorkflow) {
+				if (root.isInitialState || AuthModel.error) {
 					return qsTr("Please wait a moment.");
 				}
 				if (AuthModel.isBasicReader) {
@@ -307,7 +302,6 @@ Controller {
 			qsTr("Back to setup") :
 			//: MOBILE
 			qsTr("Back to start page")
-			smartEidUsed: root.smartEidUsed
 
 			navigationAction: NavigationAction {
 				action: root.startedByOnboarding ? NavigationAction.Action.Back : NavigationAction.Action.Close
@@ -326,8 +320,6 @@ Controller {
 		id: whiteListSurveyView
 
 		WhiteListSurveyView {
-			smartEidUsed: root.smartEidUsed
-
 			onDone: pUserAccepted => {
 				SurveyModel.setDeviceSurveyPending(pUserAccepted);
 				AuthModel.continueWorkflow();
@@ -338,9 +330,7 @@ Controller {
 		id: authWorkflow
 
 		GeneralWorkflow {
-			autoInsertCard: root.autoInsertCard
 			initialPlugin: root.initialPlugin
-			smartEidUsed: root.smartEidUsed
 			workflowModel: AuthModel
 			workflowTitle: root.title
 		}
@@ -372,7 +362,6 @@ Controller {
 
 		MultiInfoView {
 			infoContent: infoData
-			smartEidUsed: root.smartEidUsed
 
 			onAbortCurrentWorkflow: AuthModel.cancelWorkflow()
 			onClose: pop()
@@ -383,9 +372,8 @@ Controller {
 
 		EnterPasswordView {
 			//: MOBILE A11y button to confirm the PIN and start the provider authentication
-			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || passwordType === NumberModel.PasswordType.SMART_PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
+			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
 			moreInformationText: infoData.linkText
-			smartEidUsed: root.smartEidUsed
 			title: root.title
 
 			navigationAction: NavigationAction {
@@ -409,7 +397,6 @@ Controller {
 
 		AbortedProgressView {
 			networkInterfaceActive: connectivityManager.networkInterfaceActive
-			smartEidUsed: root.smartEidUsed
 			title: root.title
 
 			onCancel: AuthModel.cancelWorkflow()
@@ -419,7 +406,6 @@ Controller {
 		id: confirmAbortedAuthView
 
 		AuthCanceledView {
-			smartEidUsed: root.smartEidUsed
 			startedByOnboarding: root.startedByOnboarding
 			title: root.title
 
@@ -466,19 +452,12 @@ Controller {
 			buttonText: root.startedByOnboarding ? qsTr("Back to setup") : AuthModel.resultViewButtonText
 			errorCode: AuthModel.statusCodeDisplayString
 			errorDescription: AuthModel.errorText
-			firstHintButtonText: AuthModel.statusHintActionText
-			firstHintText: AuthModel.statusHintText
-			firstHintTitle: AuthModel.statusHintTitle
 			//: MOBILE
 			header: qsTr("Authentication failed")
-			hintBoxesTitle: AuthModel.statusHintBoxesTitle
+			hintText: AuthModel.statusHintText
 			//: MOBILE
 			mailButtonText: AuthModel.errorIsMasked ? qsTr("Send log") : ""
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: Utils.getSecondPRSHintText(AuthModel.statusCode)
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
-			smartEidUsed: root.smartEidUsed
+			statusCode: AuthModel.statusCode
 			subheader: AuthModel.errorHeader
 			text: AuthModel.resultString
 			title: root.title
@@ -490,10 +469,7 @@ Controller {
 			}
 
 			onContinueClicked: AuthModel.continueWorkflow()
-			onFirstHintClicked: {
-				AuthModel.continueWorkflow();
-				AuthModel.invokeStatusHintAction();
-			}
+			onLinkAboutToOpen: AuthModel.continueWorkflow()
 			onMailClicked: logModel.mailLogFile("support@ausweisapp.de", AuthModel.getEmailHeader(), AuthModel.getEmailBody())
 
 			LogModel {
@@ -523,7 +499,6 @@ Controller {
 		id: inputErrorView
 
 		InputErrorView {
-			smartEidUsed: root.smartEidUsed
 			title: root.title
 
 			navigationAction: NavigationAction {
@@ -545,7 +520,6 @@ Controller {
 		id: inputSuccessView
 
 		InputSuccessView {
-			smartEidUsed: root.smartEidUsed
 			title: root.title
 
 			navigationAction: NavigationAction {

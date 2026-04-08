@@ -1,0 +1,217 @@
+From 13177246e5aa0cdfa35eac75c4ce4b4c895c776d Mon Sep 17 00:00:00 2001
+From: Michael Weghorn <m.weghorn@posteo.de>
+Date: Tue, 23 Sep 2025 11:37:35 +0200
+Subject: a11y: Extract helpers for getting text at/before/after offset
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Move the existing QAccessibleTextWidget logic to implement
+the QAccessibleTextInterface::textAfterOffset,
+QAccessibleTextInterface::textBeforeOffset and
+QAccessibleTextInterface::textAtOffset interface
+methods using a QTextCursor out of that class to
+3 new QtGuiPrivate helper methods.
+
+This will allow to reuse them in QAccessibleQuickItem
+in qtdeclarative, which implements the exact same logic
+(for one code path).
+
+In a first step, only move the existing logic, i.e.
+no change in behavior is intended by this commit.
+
+In an upcoming commit, the actual logic will be improved,
+which will then fix both, the QAccessibleTextWidget
+and QAccessibleQuickItem implementations without having
+to keep the code in sync manually.
+
+Task-number: QTBUG-140504
+Change-Id: I87690fb6af040d6c9207bf19ddffe2e3eba16b0d
+Reviewed-by: Morten Johan Sørvig <morten.sorvig@qt.io>
+(cherry picked from commit 5866300efee5047f29416354372345d04a1a3ae1)
+---
+ src/gui/accessible/qaccessiblehelper.cpp      | 63 +++++++++++++++++++
+ src/gui/accessible/qaccessiblehelper_p.h      | 18 ++++++
+ src/widgets/accessible/qaccessiblewidgets.cpp | 46 +++-----------
+ 3 files changed, 88 insertions(+), 39 deletions(-)
+
+diff --git x/qtbase/src/gui/accessible/qaccessiblehelper.cpp y/qtbase/src/gui/accessible/qaccessiblehelper.cpp
+index 2ae8ebbac088d047e9becb954c6dd1ebf191748e..40421ef329ade2b32cb9a6f94c9a3989c9c9bf84 100644
+--- x/qtbase/src/gui/accessible/qaccessiblehelper.cpp
++++ y/qtbase/src/gui/accessible/qaccessiblehelper.cpp
+@@ -3,6 +3,8 @@
+ 
+ #include "qaccessiblehelper_p.h"
+ 
++#include <QtGui/qtextcursor.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ using namespace Qt::StringLiterals;
+@@ -48,4 +50,65 @@ QString qt_accStripAmp(const QString &text)
+     return newText.replace("&&"_L1, "&"_L1);
+ }
+ 
++QString qt_accTextBeforeOffsetHelper(const QAccessibleTextInterface &textInterface,
++                                     const QTextCursor &textCursor, int offset,
++                                     QAccessible::TextBoundaryType boundaryType, int *startOffset,
++                                     int *endOffset)
++{
++    Q_ASSERT(startOffset);
++    Q_ASSERT(endOffset);
++
++    QTextCursor cursor = textCursor;
++    cursor.setPosition(offset);
++    std::pair<int, int> boundaries =
++            QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
++    cursor.setPosition(boundaries.first - 1);
++    boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
++
++    *startOffset = boundaries.first;
++    *endOffset = boundaries.second;
++
++    return textInterface.text(boundaries.first, boundaries.second);
++}
++
++QString qt_accTextAfterOffsetHelper(const QAccessibleTextInterface &textInterface,
++                                    const QTextCursor &textCursor, int offset,
++                                    QAccessible::TextBoundaryType boundaryType, int *startOffset,
++                                    int *endOffset)
++{
++    Q_ASSERT(startOffset);
++    Q_ASSERT(endOffset);
++
++    QTextCursor cursor = textCursor;
++    cursor.setPosition(offset);
++    std::pair<int, int> boundaries =
++            QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
++    cursor.setPosition(boundaries.second);
++    boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
++
++    *startOffset = boundaries.first;
++    *endOffset = boundaries.second;
++
++    return textInterface.text(boundaries.first, boundaries.second);
++}
++
++QString qt_accTextAtOffsetHelper(const QAccessibleTextInterface &textInterface,
++                                 const QTextCursor &textCursor, int offset,
++                                 QAccessible::TextBoundaryType boundaryType, int *startOffset,
++                                 int *endOffset)
++{
++    Q_ASSERT(startOffset);
++    Q_ASSERT(endOffset);
++
++    QTextCursor cursor = textCursor;
++    cursor.setPosition(offset);
++    std::pair<int, int> boundaries =
++            QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
++
++    *startOffset = boundaries.first;
++    *endOffset = boundaries.second;
++
++    return textInterface.text(boundaries.first, boundaries.second);
++}
++
+ QT_END_NAMESPACE
+diff --git x/qtbase/src/gui/accessible/qaccessiblehelper_p.h y/qtbase/src/gui/accessible/qaccessiblehelper_p.h
+index 38cc493fdea2016e91bef54214e7cd5c17e51d0f..03cccbbe5396676056d3e3c8a13da130b39d81a3 100644
+--- x/qtbase/src/gui/accessible/qaccessiblehelper_p.h
++++ y/qtbase/src/gui/accessible/qaccessiblehelper_p.h
+@@ -16,12 +16,30 @@
+ //
+ 
+ #include <QtCore/QString>
++#include <QtGui/qaccessible.h>
+ #include <QtGui/qtguiglobal.h>
+ 
++class QTextCursor;
++
+ QT_BEGIN_NAMESPACE
+ 
+ Q_GUI_EXPORT QString qt_accStripAmp(const QString &text);
+ 
++Q_GUI_EXPORT QString qt_accTextBeforeOffsetHelper(const QAccessibleTextInterface &textInterface,
++                                                  const QTextCursor &textCursor, int offset,
++                                                  QAccessible::TextBoundaryType boundaryType,
++                                                  int *startOffset, int *endOffset);
++
++Q_GUI_EXPORT QString qt_accTextAfterOffsetHelper(const QAccessibleTextInterface &textInterface,
++                                                 const QTextCursor &textCursor, int offset,
++                                                 QAccessible::TextBoundaryType boundaryType,
++                                                 int *startOffset, int *endOffset);
++
++Q_GUI_EXPORT QString qt_accTextAtOffsetHelper(const QAccessibleTextInterface &textInterface,
++                                              const QTextCursor &textCursor, int offset,
++                                              QAccessible::TextBoundaryType boundaryType,
++                                              int *startOffset, int *endOffset);
++
+ QT_END_NAMESPACE
+ 
+ #endif // QACCESSIBLEHELPER_P_H
+diff --git x/qtbase/src/widgets/accessible/qaccessiblewidgets.cpp y/qtbase/src/widgets/accessible/qaccessiblewidgets.cpp
+index 608a99b575d0acff76ace6574f89ea4d87ee5893..cd28a61f4276c8c002837bcb6755893bf3be85ba 100644
+--- x/qtbase/src/widgets/accessible/qaccessiblewidgets.cpp
++++ y/qtbase/src/widgets/accessible/qaccessiblewidgets.cpp
+@@ -958,54 +958,22 @@ QPoint QAccessibleTextWidget::scrollBarPosition() const
+ QString QAccessibleTextWidget::textBeforeOffset(int offset, QAccessible::TextBoundaryType boundaryType,
+                                                 int *startOffset, int *endOffset) const
+ {
+-    Q_ASSERT(startOffset);
+-    Q_ASSERT(endOffset);
+-
+-    QTextCursor cursor = textCursor();
+-    cursor.setPosition(offset);
+-    std::pair<int, int> boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
+-    cursor.setPosition(boundaries.first - 1);
+-    boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
+-
+-    *startOffset = boundaries.first;
+-    *endOffset = boundaries.second;
+-
+-    return text(boundaries.first, boundaries.second);
+- }
+-
++    return qt_accTextBeforeOffsetHelper(*this, textCursor(), offset, boundaryType, startOffset,
++                                        endOffset);
++}
+ 
+ QString QAccessibleTextWidget::textAfterOffset(int offset, QAccessible::TextBoundaryType boundaryType,
+                                               int *startOffset, int *endOffset) const
+ {
+-    Q_ASSERT(startOffset);
+-    Q_ASSERT(endOffset);
+-
+-    QTextCursor cursor = textCursor();
+-    cursor.setPosition(offset);
+-    std::pair<int, int> boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
+-    cursor.setPosition(boundaries.second);
+-    boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
+-
+-    *startOffset = boundaries.first;
+-    *endOffset = boundaries.second;
+-
+-    return text(boundaries.first, boundaries.second);
++    return qt_accTextAfterOffsetHelper(*this, textCursor(), offset, boundaryType, startOffset,
++                                       endOffset);
+ }
+ 
+ QString QAccessibleTextWidget::textAtOffset(int offset, QAccessible::TextBoundaryType boundaryType,
+                                             int *startOffset, int *endOffset) const
+ {
+-    Q_ASSERT(startOffset);
+-    Q_ASSERT(endOffset);
+-
+-    QTextCursor cursor = textCursor();
+-    cursor.setPosition(offset);
+-    std::pair<int, int> boundaries = QAccessible::qAccessibleTextBoundaryHelper(cursor, boundaryType);
+-
+-    *startOffset = boundaries.first;
+-    *endOffset = boundaries.second;
+-
+-    return text(boundaries.first, boundaries.second);
++    return qt_accTextAtOffsetHelper(*this, textCursor(), offset, boundaryType, startOffset,
++                                    endOffset);
+ }
+ 
+ void QAccessibleTextWidget::setCursorPosition(int position)

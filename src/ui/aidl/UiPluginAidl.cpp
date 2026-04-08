@@ -206,13 +206,20 @@ JNIEXPORT jboolean JNICALL Java_com_governikus_ausweisapp2_AidlBinder_startReade
 }
 
 
-JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AidlBinder_aidlSend(JNIEnv* pEnv, jobject pObj, jstring pJson)
+JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AidlBinder_aidlSend(JNIEnv* pEnv, jobject pObj, jcharArray pJson)
 {
 	Q_UNUSED(pObj)
 
-	const char* const nativeString = pEnv->GetStringUTFChars(pJson, 0);
-	const QString json = QString::fromUtf8(nativeString);
-	pEnv->ReleaseStringUTFChars(pJson, nativeString);
+	if (pJson == nullptr)
+	{
+		qCCritical(aidl) << "JSON is null";
+		return;
+	}
+
+	const jsize length = pEnv->GetArrayLength(pJson);
+	jchar* const chars = pEnv->GetCharArrayElements(pJson, nullptr);
+	const QString json = QString::fromUtf16(reinterpret_cast<const char16_t*>(chars), length);
+	pEnv->ReleaseCharArrayElements(pJson, chars, JNI_ABORT);
 
 	UiPluginAidl* plugin = UiPluginAidl::getInstance();
 	if (!plugin->isSuccessfullyInitialized())

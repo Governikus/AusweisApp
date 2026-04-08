@@ -243,6 +243,7 @@ void UiPluginWebService::sendWorkflowAlreadyActive(const QSharedPointer<HttpRequ
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), pRequest->getUrl().toString());
 	//: ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_BUTTON"), tr("Try again"));
+	htmlTemplate.setContextParameter(QStringLiteral("AUSWEISAPP_LOGO"), QStringLiteral("/images/html_templates/ausweisapp_logo_%1.svg").arg(LanguageLoader::getLocaleCode()));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
 	HttpResponse response(HTTP_STATUS_CONFLICT);
@@ -252,7 +253,7 @@ void UiPluginWebService::sendWorkflowAlreadyActive(const QSharedPointer<HttpRequ
 }
 
 
-QString UiPluginWebService::sendErrorPage(const QSharedPointer<HttpRequest>& pRequest, http_status pStatusCode, const GlobalStatus& pStatus) const
+QString UiPluginWebService::sendErrorPage(const QSharedPointer<HttpRequest>& pRequest, llhttp_status pStatusCode, const GlobalStatus& pStatus) const
 {
 	if (!pRequest->isConnected())
 	{
@@ -278,6 +279,7 @@ QString UiPluginWebService::sendErrorPage(const QSharedPointer<HttpRequest>& pRe
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocaleCode()));
 	//: ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_BUTTON"), tr("Report now"));
+	htmlTemplate.setContextParameter(QStringLiteral("AUSWEISAPP_LOGO"), QStringLiteral("/images/html_templates/ausweisapp_logo_%1.svg").arg(LanguageLoader::getLocaleCode()));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
 	HttpResponse response(pStatusCode);

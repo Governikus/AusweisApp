@@ -4,8 +4,8 @@
 
 #include "StateStopIfdService.h"
 
-#include "AppSettings.h"
 #include "ReaderManager.h"
+#include "VolatileSettings.h"
 
 using namespace governikus;
 
@@ -33,7 +33,11 @@ void StateStopIfdService::onExit(QEvent* pEvent)
 	server->stop();
 
 	stopNfcScanIfNecessary();
-	Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::SMART);
+
+	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	{
+		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::REMOTE_IFD);
+	}
 
 	AbstractState::onExit(pEvent);
 }

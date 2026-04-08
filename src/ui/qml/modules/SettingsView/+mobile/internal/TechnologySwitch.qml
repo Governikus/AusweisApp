@@ -11,10 +11,9 @@ import Governikus.Type
 GRadioGroup {
 	id: root
 
-	readonly property bool hasSelection: nfcSupported || simulatorEnabled || smartSupported
+	readonly property bool hasSelection: nfcSupported || simulatorEnabled
 	readonly property bool nfcSupported: ApplicationModel.nfcState !== ApplicationModel.NfcState.UNAVAILABLE
 	readonly property bool simulatorEnabled: SettingsModel.enableSimulator
-	readonly property bool smartSupported: ApplicationModel.smartSupported
 
 	tintIcon: true
 	//: MOBILE
@@ -27,13 +26,6 @@ GRadioGroup {
 		name: qsTr("by NFC")
 		value: ReaderManagerPluginType.NFC
 		visible: root.nfcSupported
-	}
-	TechnologyButton {
-		img: "qrc:///images/mobile/icon_smart.svg"
-		//: MOBILE
-		name: qsTr("by Smart-eID")
-		value: ReaderManagerPluginType.SMART
-		visible: root.smartSupported
 	}
 	TechnologyButton {
 		drawBottomCorners: !SettingsModel.enableSimulator

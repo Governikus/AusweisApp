@@ -35,7 +35,7 @@ class test_IfdConnect
 			IfdConnect msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 6);
+			QTRY_COMPARE(logSpy.count(), 6);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
@@ -102,7 +102,7 @@ class test_IfdConnect
 			QCOMPARE(ifdConnect.getSlotName(), QStringLiteral("SlotName"));
 			QVERIFY(ifdConnect.isExclusive());
 
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -138,7 +138,7 @@ class test_IfdConnect
 				QVERIFY(!ifdConnect.isIncomplete());
 				QCOMPARE(ifdConnect.getType(), IfdMessageType::IFDConnect);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -148,14 +148,14 @@ class test_IfdConnect
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
 				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDConnect"_L1));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDConnect"_L1));
 		}
 
@@ -179,7 +179,7 @@ class test_IfdConnect
 			QCOMPARE(ifdConnect.getSlotName(), QString());
 			QVERIFY(!ifdConnect.isExclusive());
 
-			QCOMPARE(logSpy.count(), 2);
+			QTRY_COMPARE(logSpy.count(), 2);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SlotName\" should be of type \"string\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"exclusive\" should be of type \"boolean\""_L1));
 		}

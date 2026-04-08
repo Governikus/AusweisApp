@@ -4,8 +4,11 @@
 
 #include "UiPluginLocalIfd.h"
 
-#include "Env.h"
+#include "AppSettings.h"
 #include "LocalIfdServer.h"
+#ifdef Q_OS_ANDROID
+	#include "RemoteIfdClient.h"
+#endif
 #include "SecureStorage.h"
 #include "context/IfdServiceContext.h"
 #include "controller/IfdServiceController.h"
@@ -18,7 +21,9 @@
 	#include <jni.h>
 #endif
 
+
 Q_DECLARE_LOGGING_CATEGORY(ifd)
+
 
 using namespace governikus;
 
@@ -95,6 +100,8 @@ bool UiPluginLocalIfd::onStartWorkflowRequested(const QString& pPsk)
 		return false;
 	}
 
+	Env::getSingleton<AppSettings>()->getGeneralSettings().generateIfdServiceToken();
+
 	connect(localIfdServer.data(), &IfdServer::fireConnectedChanged, this, &UiPluginLocalIfd::onConnectedChanged);
 	connect(localIfdServer.data(), &IfdServer::fireSocketError, this, &UiPluginLocalIfd::onSocketError);
 	Q_EMIT fireWorkflowRequested(WorkflowRequest::create<IfdServiceController, IfdServiceContext>(localIfdServer));
@@ -109,6 +116,8 @@ void UiPluginLocalIfd::onAbortWorkflowRequested()
 	{
 		mContext->killWorkflow();
 	}
+
+	Env::getSingleton<AppSettings>()->getGeneralSettings().clearIfdServiceToken();
 }
 
 
@@ -135,6 +144,25 @@ JNIEXPORT jboolean JNICALL Java_com_governikus_ausweisapp2_AusweisApp2LocalIfdSe
 			}, Qt::BlockingQueuedConnection, &initialized);
 
 	return initialized;
+}
+
+
+JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AusweisApp2LocalIfdService_notifyEnableLocalIfdDetection(JNIEnv* pEnv, jobject pObj, jboolean pEnable)
+{
+	Q_UNUSED(pObj)
+	Q_UNUSED(pEnv)
+
+	QMetaObject::invokeMethod(QCoreApplication::instance(), [pEnable] {
+				qDebug() << "Change Local IFD detection. Enabled:" << pEnable;
+				if (pEnable)
+				{
+					Env::getSingleton<RemoteIfdClient>()->startDetection();
+				}
+				else
+				{
+					Env::getSingleton<RemoteIfdClient>()->stopDetection();
+				}
+			}, Qt::BlockingQueuedConnection);
 }
 
 

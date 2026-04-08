@@ -1,11 +1,10 @@
 /**
  * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 
 MouseArea {
-	id: root
-
 	readonly property real minSwipeDistance: parent.width * 0.2
 	readonly property real minVelocity: 10
 	property real previousPosX: 0.0

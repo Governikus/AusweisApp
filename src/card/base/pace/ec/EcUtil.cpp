@@ -103,7 +103,7 @@ QSharedPointer<EC_POINT> EcUtil::oct2point(const QSharedPointer<const EC_GROUP>&
 }
 
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
 QByteArray EcUtil::getEncodedPublicKey(const QSharedPointer<EVP_PKEY>& pKey, bool pCompressed)
 {
 	if (pKey.isNull())

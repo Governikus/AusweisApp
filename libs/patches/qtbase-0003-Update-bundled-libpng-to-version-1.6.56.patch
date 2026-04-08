@@ -1,0 +1,1303 @@
+From e29cc8084204aba5d617a57cacd04ffa6e8cfeef Mon Sep 17 00:00:00 2001
+From: Eirik Aavitsland <eirik.aavitsland@qt.io>
+Date: Thu, 12 Feb 2026 07:34:48 +0100
+Subject: Update bundled libpng to version 1.6.56
+
+[ChangeLog][Third-Party Code] libpng was updated to version 1.6.56
+
+Pick-to: 6.11 6.10 6.8 6.5 5.15
+Fixes: QTBUG-145369
+Change-Id: I4361ed01a6234d5ef553a303d642890bb87a7ec9
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+(cherry picked from commit a20dfb6a37a43cd9fe47e166c129a45eece426c7)
+
+1.6.55    22649a763005afa0ca73553ebe95822a124d624f
+---
+ src/3rdparty/libpng/ANNOUNCE            | 53 +++++++++++++-----
+ src/3rdparty/libpng/CHANGES             | 43 ++++++++++++++-
+ src/3rdparty/libpng/README              | 14 ++---
+ src/3rdparty/libpng/libpng-manual.txt   | 12 ++--
+ src/3rdparty/libpng/png.c               | 16 +++---
+ src/3rdparty/libpng/png.h               | 16 +++---
+ src/3rdparty/libpng/pngconf.h           |  2 +-
+ src/3rdparty/libpng/pnglibconf.h        |  2 +-
+ src/3rdparty/libpng/pngpriv.h           |  4 +-
+ src/3rdparty/libpng/pngread.c           | 68 +++++++++++------------
+ src/3rdparty/libpng/pngrtran.c          | 36 ++++++++++--
+ src/3rdparty/libpng/pngrutil.c          | 42 +++++---------
+ src/3rdparty/libpng/pngset.c            | 73 ++++++++++++++++---------
+ src/3rdparty/libpng/pngstruct.h         |  6 +-
+ src/3rdparty/libpng/pngtrans.c          | 40 ++++++++++++--
+ src/3rdparty/libpng/pngwrite.c          | 16 +++++-
+ src/3rdparty/libpng/pngwutil.c          | 49 +----------------
+ src/3rdparty/libpng/qt_attribution.json |  4 +-
+ 18 files changed, 291 insertions(+), 205 deletions(-)
+
+diff --git x/qtbase/src/3rdparty/libpng/ANNOUNCE y/qtbase/src/3rdparty/libpng/ANNOUNCE
+index fb6eee581ac07eec32f9fd834d80f678dd898141..924c61312c2a289e27cbab99fe92f8bd51c3bccb 100644
+--- x/qtbase/src/3rdparty/libpng/ANNOUNCE
++++ y/qtbase/src/3rdparty/libpng/ANNOUNCE
+@@ -1,5 +1,5 @@
+-libpng 1.6.54 - January 12, 2026
+-================================
++libpng 1.6.56 - March 25, 2026
++==============================
+ 
+ This is a public release of libpng, intended for use in production code.
+ 
+@@ -9,10 +9,10 @@ Files available for download
+ 
+ Source files:
+ 
+- * libpng-1.6.54.tar.xz (LZMA-compressed, recommended)
+- * libpng-1.6.54.tar.gz (deflate-compressed)
+- * lpng1654.7z (LZMA-compressed)
+- * lpng1654.zip (deflate-compressed)
++ * libpng-1.6.56.tar.xz (LZMA-compressed, recommended)
++ * libpng-1.6.56.tar.gz (deflate-compressed)
++ * lpng1656.7z (LZMA-compressed)
++ * lpng1656.zip (deflate-compressed)
+ 
+ Other information:
+ 
+@@ -22,18 +22,41 @@ Other information:
+  * TRADEMARK.md
+ 
+ 
+-Changes from version 1.6.53 to version 1.6.54
++Changes from version 1.6.55 to version 1.6.56
+ ---------------------------------------------
+ 
+- * Fixed CVE-2026-22695 (medium severity):
+-   Heap buffer over-read in `png_image_read_direct_scaled.
+-   (Reported and fixed by Petr Simecek.)
+- * Fixed CVE-2026-22801 (medium severity):
+-   Integer truncation causing heap buffer over-read in `png_image_write_*`.
+- * Implemented various improvements in oss-fuzz.
+-   (Contributed by Philippe Antoine.)
++ * Fixed CVE-2026-33416 (high severity):
++   Use-after-free via pointer aliasing in `png_set_tRNS` and `png_set_PLTE`.
++   (Reported by Halil Oktay and Ryo Shimada;
++   fixed by Halil Oktay and Cosmin Truta.)
++ * Fixed CVE-2026-33636 (high severity):
++   Out-of-bounds read/write in the palette expansion on ARM Neon.
++   (Reported by Taegu Ha; fixed by Taegu Ha and Cosmin Truta.)
++ * Fixed uninitialized reads beyond `num_trans` in `trans_alpha` buffers.
++   (Contributed by Halil Oktay.)
++ * Fixed stale `info_ptr->palette` after in-place gamma and background
++   transforms.
++ * Fixed wrong channel indices in `png_image_read_and_map` RGB_ALPHA path.
++   (Contributed by Yuelin Wang.)
++ * Fixed wrong background color in colormap read.
++   (Contributed by Yuelin Wang.)
++ * Fixed dead loop in sPLT write.
++   (Contributed by Yuelin Wang.)
++ * Added missing null pointer checks in four public API functions.
++   (Contributed by Yuelin Wang.)
++ * Validated shift bit depths in `png_set_shift` to prevent infinite loop.
++   (Contributed by Yuelin Wang.)
++ * Avoided undefined behavior in library and tests.
++ * Deprecated the hardly-ever-tested POINTER_INDEXING config option.
++ * Added negative-stride test coverage for the simplified API.
++ * Fixed memory leaks and API misuse in oss-fuzz.
++   (Contributed by Owen Sanzas.)
++ * Implemented various fixes and improvements in oss-fuzz.
++   (Contributed by Bob Friesenhahn and Philippe Antoine.)
++ * Performed various refactorings and cleanups.
++
+ 
+ Send comments/corrections/commendations to png-mng-implement at lists.sf.net.
+ Subscription is required; visit
+-https://lists.sourceforge.net/lists/listinfo/png-mng-implement
++<https://lists.sourceforge.net/lists/listinfo/png-mng-implement>
+ to subscribe.
+diff --git x/qtbase/src/3rdparty/libpng/CHANGES y/qtbase/src/3rdparty/libpng/CHANGES
+index 3bb1baecd23567cb3b925df70cb53c37ce7fe204..673d4d50420f55e1593788d67c2aadbef18d03d6 100644
+--- x/qtbase/src/3rdparty/libpng/CHANGES
++++ y/qtbase/src/3rdparty/libpng/CHANGES
+@@ -5988,7 +5988,7 @@ Version 1.6.32rc01 [August 18, 2017]
+ 
+ Version 1.6.32rc02 [August 22, 2017]
+   Added contrib/oss-fuzz directory which contains files used by the oss-fuzz
+-    project (https://github.com/google/oss-fuzz/tree/master/projects/libpng).
++    project <https://github.com/google/oss-fuzz/tree/master/projects/libpng>.
+ 
+ Version 1.6.32 [August 24, 2017]
+   No changes.
+@@ -6323,15 +6323,52 @@ Version 1.6.53 [December 5, 2025]
+ 
+ Version 1.6.54 [January 12, 2026]
+   Fixed CVE-2026-22695 (medium severity):
+-    Heap buffer over-read in `png_image_read_direct_scaled.
++    Heap buffer over-read in `png_image_read_direct_scaled`.
+     (Reported and fixed by Petr Simecek.)
+   Fixed CVE-2026-22801 (medium severity):
+     Integer truncation causing heap buffer over-read in `png_image_write_*`.
+   Implemented various improvements in oss-fuzz.
+     (Contributed by Philippe Antoine.)
+ 
++Version 1.6.55 [February 9, 2026]
++  Fixed CVE-2026-25646 (high severity):
++    Heap buffer overflow in `png_set_quantize`.
++    (Reported and fixed by Joshua Inscoe.)
++  Resolved an oss-fuzz build issue involving nalloc.
++    (Contributed by Philippe Antoine.)
++
++Version 1.6.56 [March 25, 2026]
++  Fixed CVE-2026-33416 (high severity):
++    Use-after-free via pointer aliasing in `png_set_tRNS` and `png_set_PLTE`.
++    (Reported by Halil Oktay and Ryo Shimada;
++    fixed by Halil Oktay and Cosmin Truta.)
++  Fixed CVE-2026-33636 (high severity):
++    Out-of-bounds read/write in the palette expansion on ARM Neon.
++    (Reported by Taegu Ha; fixed by Taegu Ha and Cosmin Truta.)
++  Fixed uninitialized reads beyond `num_trans` in `trans_alpha` buffers.
++    (Contributed by Halil Oktay.)
++  Fixed stale `info_ptr->palette` after in-place gamma and background
++    transforms.
++  Fixed wrong channel indices in `png_image_read_and_map` RGB_ALPHA path.
++    (Contributed by Yuelin Wang.)
++  Fixed wrong background color in colormap read.
++    (Contributed by Yuelin Wang.)
++  Fixed dead loop in sPLT write.
++    (Contributed by Yuelin Wang.)
++  Added missing null pointer checks in four public API functions.
++    (Contributed by Yuelin Wang.)
++  Validated shift bit depths in `png_set_shift` to prevent infinite loop.
++    (Contributed by Yuelin Wang.)
++  Avoided undefined behavior in library and tests.
++  Deprecated the hardly-ever-tested POINTER_INDEXING config option.
++  Added negative-stride test coverage for the simplified API.
++  Fixed memory leaks and API misuse in oss-fuzz.
++    (Contributed by Owen Sanzas.)
++  Implemented various fixes and improvements in oss-fuzz.
++    (Contributed by Bob Friesenhahn and Philippe Antoine.)
++  Performed various refactorings and cleanups.
+ 
+ Send comments/corrections/commendations to png-mng-implement at lists.sf.net.
+ Subscription is required; visit
+-https://lists.sourceforge.net/lists/listinfo/png-mng-implement
++<https://lists.sourceforge.net/lists/listinfo/png-mng-implement>
+ to subscribe.
+diff --git x/qtbase/src/3rdparty/libpng/README y/qtbase/src/3rdparty/libpng/README
+index 63d1376edf78023d1a92b83fc6cf371dfa972a45..d0b085f793340b0ba70c2ab2a2c269b382f059dc 100644
+--- x/qtbase/src/3rdparty/libpng/README
++++ y/qtbase/src/3rdparty/libpng/README
+@@ -1,4 +1,4 @@
+-README for libpng version 1.6.54
++README for libpng version 1.6.56
+ ================================
+ 
+ See the note about version numbers near the top of `png.h`.
+@@ -24,14 +24,14 @@ for more things than just PNG files.  You can use zlib as a drop-in
+ replacement for `fread()` and `fwrite()`, if you are so inclined.
+ 
+ zlib should be available at the same place that libpng is, or at
+-https://zlib.net .
++<https://zlib.net>.
+ 
+ You may also want a copy of the PNG specification.  It is available
+ as an RFC, a W3C Recommendation, and an ISO/IEC Standard.  You can find
+-these at http://www.libpng.org/pub/png/pngdocs.html .
++these at <http://www.libpng.org/pub/png/pngdocs.html>.
+ 
+-This code is currently being archived at https://libpng.sourceforge.io
+-in the download area, and at http://libpng.download/src .
++This code is currently being archived at <https://libpng.sourceforge.io>
++in the download area, and at <http://libpng.download/src>.
+ 
+ This release, based in a large way on Glenn's, Guy's and Andreas'
+ earlier work, was created and will be supported by myself and the PNG
+@@ -39,12 +39,12 @@ development group.
+ 
+ Send comments, corrections and commendations to `png-mng-implement`
+ at `lists.sourceforge.net`.  (Subscription is required; visit
+-https://lists.sourceforge.net/lists/listinfo/png-mng-implement
++<https://lists.sourceforge.net/lists/listinfo/png-mng-implement>
+ to subscribe.)
+ 
+ Send general questions about the PNG specification to `png-mng-misc`
+ at `lists.sourceforge.net`.  (Subscription is required; visit
+-https://lists.sourceforge.net/lists/listinfo/png-mng-misc
++<https://lists.sourceforge.net/lists/listinfo/png-mng-misc>
+ to subscribe.)
+ 
+ Historical notes
+diff --git x/qtbase/src/3rdparty/libpng/libpng-manual.txt y/qtbase/src/3rdparty/libpng/libpng-manual.txt
+index bef2cb2b498592e60ccbee40fba2a9358907d360..1377e177f8825a8a96ff24851ee8be66e8b4a834 100644
+--- x/qtbase/src/3rdparty/libpng/libpng-manual.txt
++++ y/qtbase/src/3rdparty/libpng/libpng-manual.txt
+@@ -1,6 +1,6 @@
+ libpng-manual.txt - A description on how to use and modify libpng
+ 
+- Copyright (c) 2018-2025 Cosmin Truta
++ Copyright (c) 2018-2026 Cosmin Truta
+  Copyright (c) 1998-2018 Glenn Randers-Pehrson
+ 
+  This document is released under the libpng license.
+@@ -9,7 +9,7 @@ libpng-manual.txt - A description on how to use and modify libpng
+ 
+  Based on:
+ 
+- libpng version 1.6.36, December 2018, through 1.6.54 - January 2026
++ libpng version 1.6.36, December 2018, through 1.6.56 - March 2026
+  Updated and distributed by Cosmin Truta
+  Copyright (c) 2018-2026 Cosmin Truta
+ 
+@@ -2318,7 +2318,7 @@ libpng provides two macros to help you in 1.5 and later versions:
+    png_uint_32 height = PNG_PASS_ROWS(image_height, pass_number);
+ 
+ Respectively these tell you the width and height of the sub-image
+-corresponding to the numbered pass.  'pass' is in in the range 0 to 6 -
++corresponding to the numbered pass.  'pass' is in the range 0 to 6 -
+ this can be confusing because the specification refers to the same passes
+ as 1 to 7!  Be careful, you must check both the width and height before
+ calling png_read_rows() and not call it for that pass if either is zero.
+@@ -2457,7 +2457,7 @@ point to libpng-allocated storage with the following function:
+ 
+ This function may be safely called when the relevant storage has
+ already been freed, or has not yet been allocated, or was allocated
+-by the user and not by libpng,  and will in those cases do nothing.
++by the user and not by libpng, and will in those cases do nothing.
+ The "seq" parameter is ignored if only one item of the selected data
+ type, such as PLTE, is allowed.  If "seq" is not -1, and multiple items
+ are allowed for the data type identified in the mask, such as text or
+@@ -3292,7 +3292,7 @@ disclaimer until after, so viewers working over modem connections
+ don't have to wait for the disclaimer to go over the modem before
+ they start seeing the image.  Finally, keywords should be full
+ words, not abbreviations.  Keywords and text are in the ISO 8859-1
+-(Latin-1) character set (a superset of regular ASCII) and can not
++(Latin-1) character set (a superset of regular ASCII) and cannot
+ contain NUL characters, and should not contain control or other
+ unprintable characters.  To make the comments widely readable, stick
+ with basic ASCII, and avoid machine specific character set extensions
+@@ -3694,7 +3694,7 @@ point to libpng-allocated storage with the following function:
+ 
+ This function may be safely called when the relevant storage has
+ already been freed, or has not yet been allocated, or was allocated
+-by the user  and not by libpng,  and will in those cases do nothing.
++by the user and not by libpng, and will in those cases do nothing.
+ The "seq" parameter is ignored if only one item of the selected data
+ type, such as PLTE, is allowed.  If "seq" is not -1, and multiple items
+ are allowed for the data type identified in the mask, such as text or
+diff --git x/qtbase/src/3rdparty/libpng/png.c y/qtbase/src/3rdparty/libpng/png.c
+index d184a306d543f8300931b76b75bb0032cef609b6..fda0a8e6ae06b42c672d9e5ae476a4259a29e357 100644
+--- x/qtbase/src/3rdparty/libpng/png.c
++++ y/qtbase/src/3rdparty/libpng/png.c
+@@ -13,7 +13,7 @@
+ #include "pngpriv.h"
+ 
+ /* Generate a compiler error if there is an old png.h in the search path. */
+-typedef png_libpng_version_1_6_54 Your_png_h_is_not_version_1_6_54;
++typedef png_libpng_version_1_6_56 Your_png_h_is_not_version_1_6_56;
+ 
+ /* Sanity check the chunks definitions - PNG_KNOWN_CHUNKS from pngpriv.h and the
+  * corresponding macro definitions.  This causes a compile time failure if
+@@ -820,7 +820,7 @@ png_get_copyright(png_const_structrp png_ptr)
+    return PNG_STRING_COPYRIGHT
+ #else
+    return PNG_STRING_NEWLINE \
+-      "libpng version 1.6.54" PNG_STRING_NEWLINE \
++      "libpng version 1.6.56" PNG_STRING_NEWLINE \
+       "Copyright (c) 2018-2026 Cosmin Truta" PNG_STRING_NEWLINE \
+       "Copyright (c) 1998-2002,2004,2006-2018 Glenn Randers-Pehrson" \
+       PNG_STRING_NEWLINE \
+@@ -1170,7 +1170,7 @@ png_xy_from_XYZ(png_xy *xy, const png_XYZ *XYZ)
+       return 1;
+ 
+    /* The reference white is simply the sum of the end-point (X,Y,Z) vectors so
+-    * the fillowing calculates (X+Y+Z) of the reference white (media white,
++    * the following calculates (X+Y+Z) of the reference white (media white,
+     * encoding white) itself:
+     */
+    d = dblue;
+@@ -1215,9 +1215,9 @@ png_XYZ_from_xy(png_XYZ *XYZ, const png_xy *xy)
+     * (-0.0770) because the PNG spec itself requires the xy values to be
+     * unsigned.  whitey is also required to be 5 or more to avoid overflow.
+     *
+-    * Instead the upper limits have been relaxed to accomodate ACES AP1 where
++    * Instead the upper limits have been relaxed to accommodate ACES AP1 where
+     * redz ends up as -600 (-0.006).  ProPhotoRGB was already "in range."
+-    * The new limit accomodates the AP0 and AP1 ranges for z but not AP0 redy.
++    * The new limit accommodates the AP0 and AP1 ranges for z but not AP0 redy.
+     */
+    const png_fixed_point fpLimit = PNG_FP_1+(PNG_FP_1/10);
+    if (xy->redx   < 0 || xy->redx > fpLimit) return 1;
+@@ -1328,7 +1328,7 @@ png_XYZ_from_xy(png_XYZ *XYZ, const png_xy *xy)
+     *    red-scale + green-scale + blue-scale = 1/white-y = white-scale
+     *
+     * So now we have a Cramer's rule solution where the determinants are just
+-    * 3x3 - far more tractible.  Unfortunately 3x3 determinants still involve
++    * 3x3 - far more tractable.  Unfortunately 3x3 determinants still involve
+     * multiplication of three coefficients so we can't guarantee to avoid
+     * overflow in the libpng fixed point representation.  Using Cramer's rule in
+     * floating point is probably a good choice here, but it's not an option for
+@@ -1697,7 +1697,7 @@ png_icc_check_header(png_const_structrp png_ptr, png_const_charp name,
+     * into R, G and B channels.
+     *
+     * Previously it was suggested that an RGB profile on grayscale data could be
+-    * handled.  However it it is clear that using an RGB profile in this context
++    * handled.  However it is clear that using an RGB profile in this context
+     * must be an error - there is no specification of what it means.  Thus it is
+     * almost certainly more correct to ignore the profile.
+     */
+@@ -2915,7 +2915,7 @@ png_gamma_significant(png_fixed_point gamma_val)
+     *
+     *    2.2/(2+51/256) == 1.00035524
+     *
+-    * I.e. vanishly small (<4E-4) but still detectable in 16-bit linear (+/-
++    * I.e. vanishingly small (<4E-4) but still detectable in 16-bit linear (+/-
+     * 23).  Note that the Adobe choice seems to be something intended to give an
+     * exact number with 8 binary fractional digits - it is the closest to 2.2
+     * that is possible a base 2 .8p representation.
+diff --git x/qtbase/src/3rdparty/libpng/png.h y/qtbase/src/3rdparty/libpng/png.h
+index 84ddff1980b126f003acbbfeafc9e9759a4ac0e9..385de4b42d4ef87b37be39f263f0e777846ad9f9 100644
+--- x/qtbase/src/3rdparty/libpng/png.h
++++ y/qtbase/src/3rdparty/libpng/png.h
+@@ -1,6 +1,6 @@
+ /* png.h - header file for PNG reference library
+  *
+- * libpng version 1.6.54
++ * libpng version 1.6.56
+  *
+  * Copyright (c) 2018-2026 Cosmin Truta
+  * Copyright (c) 1998-2002,2004,2006-2018 Glenn Randers-Pehrson
+@@ -14,7 +14,7 @@
+  *   libpng versions 0.89, June 1996, through 0.96, May 1997: Andreas Dilger
+  *   libpng versions 0.97, January 1998, through 1.6.35, July 2018:
+  *     Glenn Randers-Pehrson
+- *   libpng versions 1.6.36, December 2018, through 1.6.54, January 2026:
++ *   libpng versions 1.6.36, December 2018, through 1.6.56, March 2026:
+  *     Cosmin Truta
+  *   See also "Contributing Authors", below.
+  */
+@@ -238,7 +238,7 @@
+  *    ...
+  *    1.5.30                  15    10530  15.so.15.30[.0]
+  *    ...
+- *    1.6.54                  16    10654  16.so.16.54[.0]
++ *    1.6.56                  16    10656  16.so.16.56[.0]
+  *
+  *    Henceforth the source version will match the shared-library major and
+  *    minor numbers; the shared-library major version number will be used for
+@@ -274,7 +274,7 @@
+  */
+ 
+ /* Version information for png.h - this should match the version in png.c */
+-#define PNG_LIBPNG_VER_STRING "1.6.54"
++#define PNG_LIBPNG_VER_STRING "1.6.56"
+ #define PNG_HEADER_VERSION_STRING " libpng version " PNG_LIBPNG_VER_STRING "\n"
+ 
+ /* The versions of shared library builds should stay in sync, going forward */
+@@ -285,7 +285,7 @@
+ /* These should match the first 3 components of PNG_LIBPNG_VER_STRING: */
+ #define PNG_LIBPNG_VER_MAJOR   1
+ #define PNG_LIBPNG_VER_MINOR   6
+-#define PNG_LIBPNG_VER_RELEASE 54
++#define PNG_LIBPNG_VER_RELEASE 56
+ 
+ /* This should be zero for a public release, or non-zero for a
+  * development version.
+@@ -316,7 +316,7 @@
+  * From version 1.0.1 it is:
+  * XXYYZZ, where XX=major, YY=minor, ZZ=release
+  */
+-#define PNG_LIBPNG_VER 10654 /* 1.6.54 */
++#define PNG_LIBPNG_VER 10656 /* 1.6.56 */
+ 
+ /* Library configuration: these options cannot be changed after
+  * the library has been built.
+@@ -426,7 +426,7 @@ extern "C" {
+ /* This triggers a compiler error in png.c, if png.c and png.h
+  * do not agree upon the version number.
+  */
+-typedef char *png_libpng_version_1_6_54;
++typedef char *png_libpng_version_1_6_56;
+ 
+ /* Basic control structions.  Read libpng-manual.txt or libpng.3 for more info.
+  *
+@@ -2341,7 +2341,7 @@ PNG_EXPORT(162, int, png_get_text,
+ #endif
+ 
+ /* Note while png_set_text() will accept a structure whose text,
+- * language, and  translated keywords are NULL pointers, the structure
++ * language, and translated keywords are NULL pointers, the structure
+  * returned by png_get_text will always contain regular
+  * zero-terminated C strings.  They might be empty strings but
+  * they will never be NULL pointers.
+diff --git x/qtbase/src/3rdparty/libpng/pngconf.h y/qtbase/src/3rdparty/libpng/pngconf.h
+index 1f511f57c1f2fd14216c7734b8cd32d5f9a69f63..d878ee84143a07eee964bae40087c5ed1d43f5b1 100644
+--- x/qtbase/src/3rdparty/libpng/pngconf.h
++++ y/qtbase/src/3rdparty/libpng/pngconf.h
+@@ -1,6 +1,6 @@
+ /* pngconf.h - machine-configurable file for libpng
+  *
+- * libpng version 1.6.54
++ * libpng version 1.6.56
+  *
+  * Copyright (c) 2018-2026 Cosmin Truta
+  * Copyright (c) 1998-2002,2004,2006-2016,2018 Glenn Randers-Pehrson
+diff --git x/qtbase/src/3rdparty/libpng/pnglibconf.h y/qtbase/src/3rdparty/libpng/pnglibconf.h
+index d627e1ea1cc3dded3219a03fc081f8f8925c7b14..c5fcebed784a90cf7f3b4bab6681e6ceb345b17c 100644
+--- x/qtbase/src/3rdparty/libpng/pnglibconf.h
++++ y/qtbase/src/3rdparty/libpng/pnglibconf.h
+@@ -1,6 +1,6 @@
+ /* pnglibconf.h - library build configuration */
+ 
+-/* libpng version 1.6.54 */
++/* libpng version 1.6.56 */
+ 
+ /* Copyright (c) 2018-2026 Cosmin Truta */
+ /* Copyright (c) 1998-2002,2004,2006-2018 Glenn Randers-Pehrson */
+diff --git x/qtbase/src/3rdparty/libpng/pngpriv.h y/qtbase/src/3rdparty/libpng/pngpriv.h
+index f91666c700093f4d5db04eb4e4888671b39f28b8..a6c91ac2c7a8ca226cd03cf781c1d461ad255291 100644
+--- x/qtbase/src/3rdparty/libpng/pngpriv.h
++++ y/qtbase/src/3rdparty/libpng/pngpriv.h
+@@ -957,7 +957,7 @@
+  *
+  * At present these index values are not exported (not part of the public API)
+  * so can be changed at will.  For convenience the names are in lexical sort
+- * order but with the critical chunks at the start in the order of occurence in
++ * order but with the critical chunks at the start in the order of occurrence in
+  * a PNG.
+  *
+  * PNG_INFO_ values do not exist for every one of these chunk handles; for
+@@ -2086,7 +2086,7 @@ PNG_INTERNAL_FUNCTION(void, png_ascii_from_fixed,
+  * not valid it will be the index of a character in the supposed number.
+  *
+  * The format of a number is defined in the PNG extensions specification
+- * and this API is strictly conformant to that spec, not anyone elses!
++ * and this API is strictly conformant to that spec, not anyone else's!
+  *
+  * The format as a regular expression is:
+  *
+diff --git x/qtbase/src/3rdparty/libpng/pngread.c y/qtbase/src/3rdparty/libpng/pngread.c
+index af2f44c9ca8eaa40177b2ae5612c0eccc0f625a5..24199689a76b2cac8e75ca8bb37fd67e62d9f53b 100644
+--- x/qtbase/src/3rdparty/libpng/pngread.c
++++ y/qtbase/src/3rdparty/libpng/pngread.c
+@@ -691,7 +691,7 @@ png_read_end(png_structrp png_ptr, png_inforp info_ptr)
+       png_read_finish_IDAT(png_ptr);
+ 
+ #ifdef PNG_READ_CHECK_FOR_INVALID_INDEX_SUPPORTED
+-   /* Report invalid palette index; added at libng-1.5.10 */
++   /* Report invalid palette index; added at libpng-1.5.10 */
+    if (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE &&
+        png_ptr->num_palette_max >= png_ptr->num_palette)
+       png_benign_error(png_ptr, "Read palette index exceeding num_palette");
+@@ -779,21 +779,19 @@ png_read_destroy(png_structrp png_ptr)
+    png_ptr->quantize_index = NULL;
+ #endif
+ 
+-   if ((png_ptr->free_me & PNG_FREE_PLTE) != 0)
+-   {
+-      png_zfree(png_ptr, png_ptr->palette);
+-      png_ptr->palette = NULL;
+-   }
+-   png_ptr->free_me &= ~PNG_FREE_PLTE;
++   /* png_ptr->palette is always independently allocated (not aliased
++    * with info_ptr->palette), so free it unconditionally.
++    */
++   png_free(png_ptr, png_ptr->palette);
++   png_ptr->palette = NULL;
+ 
+ #if defined(PNG_tRNS_SUPPORTED) || \
+     defined(PNG_READ_EXPAND_SUPPORTED) || defined(PNG_READ_BACKGROUND_SUPPORTED)
+-   if ((png_ptr->free_me & PNG_FREE_TRNS) != 0)
+-   {
+-      png_free(png_ptr, png_ptr->trans_alpha);
+-      png_ptr->trans_alpha = NULL;
+-   }
+-   png_ptr->free_me &= ~PNG_FREE_TRNS;
++   /* png_ptr->trans_alpha is always independently allocated (not aliased
++    * with info_ptr->trans_alpha), so free it unconditionally.
++    */
++   png_free(png_ptr, png_ptr->trans_alpha);
++   png_ptr->trans_alpha = NULL;
+ #endif
+ 
+    inflateEnd(&png_ptr->zstream);
+@@ -1256,7 +1254,7 @@ png_image_is_not_sRGB(png_const_structrp png_ptr)
+     * png_struct::chromaticities always exists since the simplified API
+     * requires rgb-to-gray.  The mDCV, cICP and cHRM chunks may all set it to
+     * a non-sRGB value, so it needs to be checked but **only** if one of
+-    * those chunks occured in the file.
++    * those chunks occurred in the file.
+     */
+    /* Highest priority: check to be safe. */
+    if (png_has_chunk(png_ptr, cICP) || png_has_chunk(png_ptr, mDCV))
+@@ -2596,7 +2594,7 @@ png_image_read_colormap(png_voidp argument)
+                   {
+                      r = back_r;
+                      g = back_g;
+-                     b = back_g;
++                     b = back_b;
+                   }
+ 
+                   /* Compare the newly-created color-map entry with the one the
+@@ -2874,9 +2872,9 @@ png_image_read_and_map(png_voidp argument)
+          {
+             png_bytep inrow = png_voidcast(png_bytep, display->local_row);
+             png_bytep outrow = first_row + y * row_step;
+-            png_const_bytep end_row = outrow + width;
++            png_const_bytep row_end = outrow + width;
+ 
+-            /* Read read the libpng data into the temporary buffer. */
++            /* Read the libpng data into the temporary buffer. */
+             png_read_row(png_ptr, inrow, NULL);
+ 
+             /* Now process the row according to the processing option, note
+@@ -2887,7 +2885,7 @@ png_image_read_and_map(png_voidp argument)
+             switch (proc)
+             {
+                case PNG_CMAP_GA:
+-                  for (; outrow < end_row; outrow += stepx)
++                  for (; outrow < row_end; outrow += stepx)
+                   {
+                      /* The data is always in the PNG order */
+                      unsigned int gray = *inrow++;
+@@ -2916,7 +2914,7 @@ png_image_read_and_map(png_voidp argument)
+                   break;
+ 
+                case PNG_CMAP_TRANS:
+-                  for (; outrow < end_row; outrow += stepx)
++                  for (; outrow < row_end; outrow += stepx)
+                   {
+                      png_byte gray = *inrow++;
+                      png_byte alpha = *inrow++;
+@@ -2933,7 +2931,7 @@ png_image_read_and_map(png_voidp argument)
+                   break;
+ 
+                case PNG_CMAP_RGB:
+-                  for (; outrow < end_row; outrow += stepx)
++                  for (; outrow < row_end; outrow += stepx)
+                   {
+                      *outrow = PNG_RGB_INDEX(inrow[0], inrow[1], inrow[2]);
+                      inrow += 3;
+@@ -2941,7 +2939,7 @@ png_image_read_and_map(png_voidp argument)
+                   break;
+ 
+                case PNG_CMAP_RGB_ALPHA:
+-                  for (; outrow < end_row; outrow += stepx)
++                  for (; outrow < row_end; outrow += stepx)
+                   {
+                      unsigned int alpha = inrow[3];
+ 
+@@ -2978,10 +2976,10 @@ png_image_read_and_map(png_voidp argument)
+                          */
+                         if (inrow[0] & 0x80) back_i += 9; /* red */
+                         if (inrow[0] & 0x40) back_i += 9;
+-                        if (inrow[0] & 0x80) back_i += 3; /* green */
+-                        if (inrow[0] & 0x40) back_i += 3;
+-                        if (inrow[0] & 0x80) back_i += 1; /* blue */
+-                        if (inrow[0] & 0x40) back_i += 1;
++                        if (inrow[1] & 0x80) back_i += 3; /* green */
++                        if (inrow[1] & 0x40) back_i += 3;
++                        if (inrow[2] & 0x80) back_i += 1; /* blue */
++                        if (inrow[2] & 0x40) back_i += 1;
+ 
+                         *outrow = (png_byte)back_i;
+                      }
+@@ -3248,18 +3246,18 @@ png_image_read_composite(png_voidp argument)
+          {
+             png_bytep inrow = png_voidcast(png_bytep, display->local_row);
+             png_bytep outrow;
+-            png_const_bytep end_row;
++            png_const_bytep row_end;
+ 
+             /* Read the row, which is packed: */
+             png_read_row(png_ptr, inrow, NULL);
+ 
+             outrow = png_voidcast(png_bytep, display->first_row);
+             outrow += y * row_step;
+-            end_row = outrow + width * channels;
++            row_end = outrow + width * channels;
+ 
+             /* Now do the composition on each pixel in this row. */
+             outrow += startx;
+-            for (; outrow < end_row; outrow += stepx)
++            for (; outrow < row_end; outrow += stepx)
+             {
+                png_byte alpha = inrow[channels];
+ 
+@@ -3432,14 +3430,14 @@ png_image_read_background(png_voidp argument)
+                      png_bytep inrow = png_voidcast(png_bytep,
+                          display->local_row);
+                      png_bytep outrow = first_row + y * row_step;
+-                     png_const_bytep end_row = outrow + width;
++                     png_const_bytep row_end = outrow + width;
+ 
+                      /* Read the row, which is packed: */
+                      png_read_row(png_ptr, inrow, NULL);
+ 
+                      /* Now do the composition on each pixel in this row. */
+                      outrow += startx;
+-                     for (; outrow < end_row; outrow += stepx)
++                     for (; outrow < row_end; outrow += stepx)
+                      {
+                         png_byte alpha = inrow[1];
+ 
+@@ -3477,14 +3475,14 @@ png_image_read_background(png_voidp argument)
+                      png_bytep inrow = png_voidcast(png_bytep,
+                          display->local_row);
+                      png_bytep outrow = first_row + y * row_step;
+-                     png_const_bytep end_row = outrow + width;
++                     png_const_bytep row_end = outrow + width;
+ 
+                      /* Read the row, which is packed: */
+                      png_read_row(png_ptr, inrow, NULL);
+ 
+                      /* Now do the composition on each pixel in this row. */
+                      outrow += startx;
+-                     for (; outrow < end_row; outrow += stepx)
++                     for (; outrow < row_end; outrow += stepx)
+                      {
+                         png_byte alpha = inrow[1];
+ 
+@@ -3567,7 +3565,7 @@ png_image_read_background(png_voidp argument)
+                {
+                   png_const_uint_16p inrow;
+                   png_uint_16p outrow = first_row + y * row_step;
+-                  png_uint_16p end_row = outrow + width * outchannels;
++                  png_uint_16p row_end = outrow + width * outchannels;
+ 
+                   /* Read the row, which is packed: */
+                   png_read_row(png_ptr, png_voidcast(png_bytep,
+@@ -3577,7 +3575,7 @@ png_image_read_background(png_voidp argument)
+                   /* Now do the pre-multiplication on each pixel in this row.
+                    */
+                   outrow += startx;
+-                  for (; outrow < end_row; outrow += stepx)
++                  for (; outrow < row_end; outrow += stepx)
+                   {
+                      png_uint_32 component = inrow[0];
+                      png_uint_16 alpha = inrow[1];
+@@ -4113,7 +4111,7 @@ png_image_finish_read(png_imagep image, png_const_colorp background,
+             row_stride = (png_int_32)/*SAFE*/png_row_stride;
+ 
+          if (row_stride < 0)
+-            check = (png_uint_32)(-row_stride);
++            check = -(png_uint_32)row_stride;
+ 
+          else
+             check = (png_uint_32)row_stride;
+diff --git x/qtbase/src/3rdparty/libpng/pngrtran.c y/qtbase/src/3rdparty/libpng/pngrtran.c
+index fe8f9d32c980597788cd32a6e4117fa43c3c2fb2..978dac588801a111ebd9917a74179e081ea39290 100644
+--- x/qtbase/src/3rdparty/libpng/pngrtran.c
++++ y/qtbase/src/3rdparty/libpng/pngrtran.c
+@@ -1,6 +1,6 @@
+ /* pngrtran.c - transforms the data in a row for PNG readers
+  *
+- * Copyright (c) 2018-2025 Cosmin Truta
++ * Copyright (c) 2018-2026 Cosmin Truta
+  * Copyright (c) 1998-2002,2004,2006-2018 Glenn Randers-Pehrson
+  * Copyright (c) 1996-1997 Andreas Dilger
+  * Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+@@ -230,7 +230,7 @@ png_set_strip_alpha(png_structrp png_ptr)
+  *
+  * Terminology (assuming power law, "gamma", encodings):
+  *    "screen" gamma: a power law imposed by the output device when digital
+- *    samples are converted to visible light output.  The EOTF - volage to
++ *    samples are converted to visible light output.  The EOTF - voltage to
+  *    luminance on output.
+  *
+  *    "file" gamma: a power law used to encode luminance levels from the input
+@@ -495,6 +495,9 @@ png_set_quantize(png_structrp png_ptr, png_colorp palette,
+    if (png_rtran_ok(png_ptr, 0) == 0)
+       return;
+ 
++   if (palette == NULL)
++      return;
++
+    png_ptr->transformations |= PNG_QUANTIZE;
+ 
+    if (full_quantize == 0)
+@@ -708,8 +711,8 @@ png_set_quantize(png_structrp png_ptr, png_colorp palette,
+                          break;
+ 
+                      t->next = hash[d];
+-                     t->left = (png_byte)i;
+-                     t->right = (png_byte)j;
++                     t->left = png_ptr->palette_to_index[i];
++                     t->right = png_ptr->palette_to_index[j];
+                      hash[d] = t;
+                   }
+                }
+@@ -811,7 +814,13 @@ png_set_quantize(png_structrp png_ptr, png_colorp palette,
+    }
+    if (png_ptr->palette == NULL)
+    {
+-      png_ptr->palette = palette;
++      /* Allocate an owned copy rather than aliasing the caller's pointer,
++       * so that png_read_destroy can free png_ptr->palette unconditionally.
++       */
++      png_ptr->palette = png_voidcast(png_colorp, png_calloc(png_ptr,
++          PNG_MAX_PALETTE_LENGTH * (sizeof (png_color))));
++      memcpy(png_ptr->palette, palette, (unsigned int)num_palette *
++          (sizeof (png_color)));
+    }
+    png_ptr->num_palette = (png_uint_16)num_palette;
+ 
+@@ -1364,7 +1373,7 @@ png_resolve_file_gamma(png_const_structrp png_ptr)
+    if (file_gamma != 0)
+       return file_gamma;
+ 
+-   /* If png_reciprocal oveflows it returns 0 which indicates to the caller that
++   /* If png_reciprocal overflows, it returns 0, indicating to the caller that
+     * there is no usable file gamma.  (The checks added to png_set_gamma and
+     * png_set_alpha_mode should prevent a screen_gamma which would overflow.)
+     */
+@@ -2061,6 +2070,21 @@ png_read_transform_info(png_structrp png_ptr, png_inforp info_ptr)
+ {
+    png_debug(1, "in png_read_transform_info");
+ 
++   if (png_ptr->transformations != 0)
++   {
++      if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE &&
++          info_ptr->palette != NULL && png_ptr->palette != NULL)
++      {
++         /* Sync info_ptr->palette with png_ptr->palette.
++          * The function png_init_read_transformations may have modified
++          * png_ptr->palette in place (e.g. for gamma correction or for
++          * background compositing).
++          */
++         memcpy(info_ptr->palette, png_ptr->palette,
++             PNG_MAX_PALETTE_LENGTH * (sizeof (png_color)));
++      }
++   }
++
+ #ifdef PNG_READ_EXPAND_SUPPORTED
+    if ((png_ptr->transformations & PNG_EXPAND) != 0)
+    {
+diff --git x/qtbase/src/3rdparty/libpng/pngrutil.c y/qtbase/src/3rdparty/libpng/pngrutil.c
+index a4eda54c8cb3d36cf1651dba159067b65030e3aa..3a35fe9de2d9e09a15e1ea32a45d558f09f05952 100644
+--- x/qtbase/src/3rdparty/libpng/pngrutil.c
++++ y/qtbase/src/3rdparty/libpng/pngrutil.c
+@@ -436,7 +436,7 @@ png_inflate_claim(png_structrp png_ptr, png_uint_32 owner)
+     * be gained by using this when it is known *if* the zlib stream itself does
+     * not record the number; however, this is an illusion: the original writer
+     * of the PNG may have selected a lower window size, and we really must
+-    * follow that because, for systems with with limited capabilities, we
++    * follow that because, for systems with limited capabilities, we
+     * would otherwise reject the application's attempts to use a smaller window
+     * size (zlib doesn't have an interface to say "this or lower"!).
+     *
+@@ -1006,7 +1006,7 @@ png_handle_PLTE(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
+     * in the case of an 8-bit display with a decoder which controls the palette.
+     *
+     * The alternative here is to ignore the error and store the palette anyway;
+-    * destroying the tRNS will definately cause problems.
++    * destroying the tRNS will definitely cause problems.
+     *
+     * NOTE: the case of PNG_COLOR_TYPE_PALETTE need not be considered because
+     * the png_handle_ routines for the three 'after PLTE' chunks tRNS, bKGD and
+@@ -1053,19 +1053,6 @@ png_handle_PLTE(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
+       /* A valid PLTE chunk has been read */
+       png_ptr->mode |= PNG_HAVE_PLTE;
+ 
+-      /* TODO: png_set_PLTE has the side effect of setting png_ptr->palette to
+-       * its own copy of the palette.  This has the side effect that when
+-       * png_start_row is called (this happens after any call to
+-       * png_read_update_info) the info_ptr palette gets changed.  This is
+-       * extremely unexpected and confusing.
+-       *
+-       * REVIEW: there have been consistent bugs in the past about gamma and
+-       * similar transforms to colour mapped images being useless because the
+-       * modified palette cannot be accessed because of the above.
+-       *
+-       * CONSIDER: Fix this by not sharing the palette in this way.  But does
+-       * this completely fix the problem?
+-       */
+       png_set_PLTE(png_ptr, info_ptr, palette, num);
+       return handled_ok;
+    }
+@@ -1267,7 +1254,7 @@ png_handle_cHRM(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
+ 
+    /* png_set_cHRM may complain about some of the values but this doesn't matter
+     * because it was a cHRM and it did have vaguely (if, perhaps, ridiculous)
+-    * values.  Ridiculousity will be checked if the values are used later.
++    * values.  Ridiculosity will be checked if the values are used later.
+     */
+    png_set_cHRM_fixed(png_ptr, info_ptr, xy.whitex, xy.whitey, xy.redx, xy.redy,
+          xy.greenx, xy.greeny, xy.bluex, xy.bluey);
+@@ -1564,7 +1551,8 @@ static png_handle_result_code /* PRIVATE */
+ png_handle_sPLT(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
+ /* Note: this does not properly handle chunks that are > 64K under DOS */
+ {
+-   png_bytep entry_start, buffer;
++   png_bytep buffer;
++   png_bytep entry_start;
+    png_sPLT_t new_palette;
+    png_sPLT_entryp pp;
+    png_uint_32 data_length;
+@@ -1771,10 +1759,6 @@ png_handle_tRNS(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
+       return handled_error;
+    }
+ 
+-   /* TODO: this is a horrible side effect in the palette case because the
+-    * png_struct ends up with a pointer to the tRNS buffer owned by the
+-    * png_info.  Fix this.
+-    */
+    png_set_tRNS(png_ptr, info_ptr, readbuf, png_ptr->num_trans,
+        &(png_ptr->trans_color));
+    return handled_ok;
+@@ -2033,7 +2017,7 @@ png_handle_eXIf(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
+       return handled_error;
+ 
+    /* PNGv3: the code used to check the byte order mark at the start for MM or
+-    * II, however PNGv3 states that the the first 4 bytes should be checked.
++    * II, however PNGv3 states that the first 4 bytes should be checked.
+     * The caller ensures that there are four bytes available.
+     */
+    {
+@@ -2155,9 +2139,13 @@ png_handle_oFFs(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
+ static png_handle_result_code /* PRIVATE */
+ png_handle_pCAL(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
+ {
++   png_bytep buffer;
++   png_bytep buf;
++   png_bytep endptr;
+    png_int_32 X0, X1;
+-   png_byte type, nparams;
+-   png_bytep buffer, buf, units, endptr;
++   png_byte type;
++   png_byte nparams;
++   png_byte *units;
+    png_charpp params;
+    int i;
+ 
+@@ -3011,7 +2999,7 @@ static const struct
+    png_uint_32 max_length :12; /* Length min, max in bytes */
+    png_uint_32 min_length :8;
+       /* Length errors on critical chunks have special handling to preserve the
+-       * existing behaviour in libpng 1.6.  Anciallary chunks are checked below
++       * existing behaviour in libpng 1.6.  Ancillary chunks are checked below
+        * and produce a 'benign' error.
+        */
+    png_uint_32 pos_before :4; /* PNG_HAVE_ values chunk must precede */
+@@ -3019,7 +3007,7 @@ static const struct
+       /* NOTE: PLTE, tRNS and bKGD require special handling which depends on
+        * the colour type of the base image.
+        */
+-   png_uint_32 multiple   :1; /* Multiple occurences permitted */
++   png_uint_32 multiple   :1; /* Multiple occurrences permitted */
+       /* This is enabled for PLTE because PLTE may, in practice, be optional */
+ }
+ read_chunks[PNG_INDEX_unknown] =
+@@ -3053,7 +3041,7 @@ read_chunks[PNG_INDEX_unknown] =
+ #  define CDIHDR      13U,   13U,  hIHDR,     0,        0
+ #  define CDPLTE  NoCheck,    0U,      0, hIHDR,        1
+       /* PLTE errors are only critical for colour-map images, consequently the
+-       * hander does all the checks.
++       * handler does all the checks.
+        */
+ #  define CDIDAT  NoCheck,    0U,  aIDAT, hIHDR,        1
+ #  define CDIEND  NoCheck,    0U,      0, aIDAT,        0
+diff --git x/qtbase/src/3rdparty/libpng/pngset.c y/qtbase/src/3rdparty/libpng/pngset.c
+index 3e63c2724ec8737482d1746a790cfe0840c3a83e..b9ccb7fb156d134265133541209be1ab12034366 100644
+--- x/qtbase/src/3rdparty/libpng/pngset.c
++++ y/qtbase/src/3rdparty/libpng/pngset.c
+@@ -1,6 +1,6 @@
+ /* pngset.c - storage of image information into info struct
+  *
+- * Copyright (c) 2018-2025 Cosmin Truta
++ * Copyright (c) 2018-2026 Cosmin Truta
+  * Copyright (c) 1998-2018 Glenn Randers-Pehrson
+  * Copyright (c) 1996-1997 Andreas Dilger
+  * Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+@@ -333,7 +333,8 @@ png_set_eXIf_1(png_const_structrp png_ptr, png_inforp info_ptr,
+    png_debug1(1, "in %s storage function", "eXIf");
+ 
+    if (png_ptr == NULL || info_ptr == NULL ||
+-       (png_ptr->mode & PNG_WROTE_eXIf) != 0)
++       (png_ptr->mode & PNG_WROTE_eXIf) != 0 ||
++       exif == NULL)
+       return;
+ 
+    new_exif = png_voidcast(png_bytep, png_malloc_warn(png_ptr, num_exif));
+@@ -388,7 +389,7 @@ png_set_hIST(png_const_structrp png_ptr, png_inforp info_ptr,
+ 
+    png_debug1(1, "in %s storage function", "hIST");
+ 
+-   if (png_ptr == NULL || info_ptr == NULL)
++   if (png_ptr == NULL || info_ptr == NULL || hist == NULL)
+       return;
+ 
+    if (info_ptr->num_palette == 0 || info_ptr->num_palette
+@@ -775,28 +776,38 @@ png_set_PLTE(png_structrp png_ptr, png_inforp info_ptr,
+       png_error(png_ptr, "Invalid palette");
+    }
+ 
+-   /* It may not actually be necessary to set png_ptr->palette here;
+-    * we do it for backward compatibility with the way the png_handle_tRNS
+-    * function used to do the allocation.
+-    *
+-    * 1.6.0: the above statement appears to be incorrect; something has to set
+-    * the palette inside png_struct on read.
+-    */
+    png_free_data(png_ptr, info_ptr, PNG_FREE_PLTE, 0);
+ 
+    /* Changed in libpng-1.2.1 to allocate PNG_MAX_PALETTE_LENGTH instead
+     * of num_palette entries, in case of an invalid PNG file or incorrect
+     * call to png_set_PLTE() with too-large sample values.
++    *
++    * Allocate independent buffers for info_ptr and png_ptr so that the
++    * lifetime of png_ptr->palette is decoupled from the lifetime of
++    * info_ptr->palette.  Previously, these two pointers were aliased,
++    * which caused a use-after-free vulnerability if png_free_data freed
++    * info_ptr->palette while png_ptr->palette was still in use by the
++    * row transform functions (e.g. png_do_expand_palette).
++    *
++    * Both buffers are allocated with png_calloc to zero-fill, because
++    * the ARM NEON palette riffle reads all 256 entries unconditionally,
++    * regardless of num_palette.
+     */
++   png_free(png_ptr, png_ptr->palette);
+    png_ptr->palette = png_voidcast(png_colorp, png_calloc(png_ptr,
+        PNG_MAX_PALETTE_LENGTH * (sizeof (png_color))));
++   info_ptr->palette = png_voidcast(png_colorp, png_calloc(png_ptr,
++       PNG_MAX_PALETTE_LENGTH * (sizeof (png_color))));
++   png_ptr->num_palette = info_ptr->num_palette = (png_uint_16)num_palette;
+ 
+    if (num_palette > 0)
++   {
++      memcpy(info_ptr->palette, palette, (unsigned int)num_palette *
++          (sizeof (png_color)));
+       memcpy(png_ptr->palette, palette, (unsigned int)num_palette *
+           (sizeof (png_color)));
++   }
+ 
+-   info_ptr->palette = png_ptr->palette;
+-   info_ptr->num_palette = png_ptr->num_palette = (png_uint_16)num_palette;
+    info_ptr->free_me |= PNG_FREE_PLTE;
+    info_ptr->valid |= PNG_INFO_PLTE;
+ }
+@@ -1154,28 +1165,40 @@ png_set_tRNS(png_structrp png_ptr, png_inforp info_ptr,
+ 
+    if (trans_alpha != NULL)
+    {
+-       /* It may not actually be necessary to set png_ptr->trans_alpha here;
+-        * we do it for backward compatibility with the way the png_handle_tRNS
+-        * function used to do the allocation.
+-        *
+-        * 1.6.0: The above statement is incorrect; png_handle_tRNS effectively
+-        * relies on png_set_tRNS storing the information in png_struct
+-        * (otherwise it won't be there for the code in pngrtran.c).
+-        */
+-
+        png_free_data(png_ptr, info_ptr, PNG_FREE_TRNS, 0);
+ 
+        if (num_trans > 0 && num_trans <= PNG_MAX_PALETTE_LENGTH)
+        {
+-         /* Changed from num_trans to PNG_MAX_PALETTE_LENGTH in version 1.2.1 */
++          /* Allocate info_ptr's copy of the transparency data.
++           * Initialize all entries to fully opaque (0xff), then overwrite
++           * the first num_trans entries with the actual values.
++           */
+           info_ptr->trans_alpha = png_voidcast(png_bytep,
+               png_malloc(png_ptr, PNG_MAX_PALETTE_LENGTH));
++          memset(info_ptr->trans_alpha, 0xff, PNG_MAX_PALETTE_LENGTH);
+           memcpy(info_ptr->trans_alpha, trans_alpha, (size_t)num_trans);
+-
+           info_ptr->free_me |= PNG_FREE_TRNS;
+           info_ptr->valid |= PNG_INFO_tRNS;
++
++          /* Allocate an independent copy for png_struct, so that the
++           * lifetime of png_ptr->trans_alpha is decoupled from the
++           * lifetime of info_ptr->trans_alpha.  Previously these two
++           * pointers were aliased, which caused a use-after-free if
++           * png_free_data freed info_ptr->trans_alpha while
++           * png_ptr->trans_alpha was still in use by the row transform
++           * functions (e.g. png_do_expand_palette).
++           */
++          png_free(png_ptr, png_ptr->trans_alpha);
++          png_ptr->trans_alpha = png_voidcast(png_bytep,
++              png_malloc(png_ptr, PNG_MAX_PALETTE_LENGTH));
++          memset(png_ptr->trans_alpha, 0xff, PNG_MAX_PALETTE_LENGTH);
++          memcpy(png_ptr->trans_alpha, trans_alpha, (size_t)num_trans);
++       }
++       else
++       {
++          png_free(png_ptr, png_ptr->trans_alpha);
++          png_ptr->trans_alpha = NULL;
+        }
+-       png_ptr->trans_alpha = info_ptr->trans_alpha;
+    }
+ 
+    if (trans_color != NULL)
+@@ -1873,7 +1896,7 @@ png_set_benign_errors(png_structrp png_ptr, int allowed)
+ #endif /* BENIGN_ERRORS */
+ 
+ #ifdef PNG_CHECK_FOR_INVALID_INDEX_SUPPORTED
+-   /* Whether to report invalid palette index; added at libng-1.5.10.
++   /* Whether to report invalid palette index; added at libpng-1.5.10.
+     * It is possible for an indexed (color-type==3) PNG file to contain
+     * pixels with invalid (out-of-range) indexes if the PLTE chunk has
+     * fewer entries than the image's bit-depth would allow. We recover
+diff --git x/qtbase/src/3rdparty/libpng/pngstruct.h y/qtbase/src/3rdparty/libpng/pngstruct.h
+index fe5fa0415548d8dea33c7417b66a6dd07e3f6857..5cd7ddb45a433c2b2a070340cc1c1f8c74a09465 100644
+--- x/qtbase/src/3rdparty/libpng/pngstruct.h
++++ y/qtbase/src/3rdparty/libpng/pngstruct.h
+@@ -1,6 +1,6 @@
+ /* pngstruct.h - internal structures for libpng
+  *
+- * Copyright (c) 2018-2025 Cosmin Truta
++ * Copyright (c) 2018-2026 Cosmin Truta
+  * Copyright (c) 1998-2002,2004,2006-2018 Glenn Randers-Pehrson
+  * Copyright (c) 1996-1997 Andreas Dilger
+  * Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+@@ -106,7 +106,7 @@ typedef enum
+  * TODO: C23: convert these macros to C23 inlines (which are static).
+  */
+ #define png_chunk_flag_from_index(i) (0x80000000U >> (31 - (i)))
+-   /* The flag coresponding to the given png_index enum value.  This is defined
++   /* The flag corresponding to the given png_index enum value.  This is defined
+     * for png_unknown as well (until it reaches the value 32) but this should
+     * not be relied on.
+     */
+@@ -115,7 +115,7 @@ typedef enum
+    (((png_ptr)->chunks & png_chunk_flag_from_index(i)) != 0)
+    /* The chunk has been recorded in png_struct */
+ 
+-#define png_file_add_chunk(pnt_ptr, i)\
++#define png_file_add_chunk(png_ptr, i)\
+    ((void)((png_ptr)->chunks |= png_chunk_flag_from_index(i)))
+    /* Record the chunk in the png_struct */
+ 
+diff --git x/qtbase/src/3rdparty/libpng/pngtrans.c y/qtbase/src/3rdparty/libpng/pngtrans.c
+index 19f5c641b2e8ec4f0bb568bc03b390d712e761d3..32a5fd3c0f4b094389c8d6e374430da39165de47 100644
+--- x/qtbase/src/3rdparty/libpng/pngtrans.c
++++ y/qtbase/src/3rdparty/libpng/pngtrans.c
+@@ -1,6 +1,6 @@
+ /* pngtrans.c - transforms the data in a row (used by both readers and writers)
+  *
+- * Copyright (c) 2018-2024 Cosmin Truta
++ * Copyright (c) 2018-2026 Cosmin Truta
+  * Copyright (c) 1998-2002,2004,2006-2018 Glenn Randers-Pehrson
+  * Copyright (c) 1996-1997 Andreas Dilger
+  * Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+@@ -84,9 +84,38 @@ png_set_shift(png_structrp png_ptr, png_const_color_8p true_bits)
+ {
+    png_debug(1, "in png_set_shift");
+ 
+-   if (png_ptr == NULL)
++   if (png_ptr == NULL || true_bits == NULL)
+       return;
+ 
++   /* Check the shift values before passing them on to png_do_shift. */
++   {
++      png_byte bit_depth = png_ptr->bit_depth;
++      int invalid = 0;
++
++      if ((png_ptr->color_type & PNG_COLOR_MASK_COLOR) != 0)
++      {
++         if (true_bits->red == 0 || true_bits->red > bit_depth ||
++             true_bits->green == 0 || true_bits->green > bit_depth ||
++             true_bits->blue == 0 || true_bits->blue > bit_depth)
++            invalid = 1;
++      }
++      else
++      {
++         if (true_bits->gray == 0 || true_bits->gray > bit_depth)
++            invalid = 1;
++      }
++
++      if ((png_ptr->color_type & PNG_COLOR_MASK_ALPHA) != 0 &&
++          (true_bits->alpha == 0 || true_bits->alpha > bit_depth))
++         invalid = 1;
++
++      if (invalid)
++      {
++         png_app_error(png_ptr, "png_set_shift: invalid shift values");
++         return;
++      }
++   }
++
+    png_ptr->transformations |= PNG_SHIFT;
+    png_ptr->shift = *true_bits;
+ }
+@@ -457,10 +486,9 @@ png_do_packswap(png_row_infop row_info, png_bytep row)
+ 
+    if (row_info->bit_depth < 8)
+    {
++      png_const_bytep table;
+       png_bytep rp;
+-      png_const_bytep end, table;
+-
+-      end = row + row_info->rowbytes;
++      png_bytep row_end = row + row_info->rowbytes;
+ 
+       if (row_info->bit_depth == 1)
+          table = onebppswaptable;
+@@ -474,7 +502,7 @@ png_do_packswap(png_row_infop row_info, png_bytep row)
+       else
+          return;
+ 
+-      for (rp = row; rp < end; rp++)
++      for (rp = row; rp < row_end; rp++)
+          *rp = table[*rp];
+    }
+ }
+diff --git x/qtbase/src/3rdparty/libpng/pngwrite.c y/qtbase/src/3rdparty/libpng/pngwrite.c
+index 362a8c3e16e698f5e7cbb0bea7113c3b360aa33a..2c95eb66ca74963dc84b377f0728f2e28605079d 100644
+--- x/qtbase/src/3rdparty/libpng/pngwrite.c
++++ y/qtbase/src/3rdparty/libpng/pngwrite.c
+@@ -159,7 +159,7 @@ png_write_info_before_PLTE(png_structrp png_ptr, png_const_inforp info_ptr)
+     * them.
+     *
+     * PNG v3: Chunks mDCV and cLLI provide ancillary information for the
+-    * interpretation of the colourspace chunkgs but do not require support for
++    * interpretation of the colourspace chunks but do not require support for
+     * those chunks so are outside the "COLORSPACE" check but before the write of
+     * the colourspace chunks themselves.
+     */
+@@ -1010,6 +1010,16 @@ png_write_destroy(png_structrp png_ptr)
+    png_ptr->chunk_list = NULL;
+ #endif
+ 
++#if defined(PNG_tRNS_SUPPORTED)
++   /* Free the independent copy of trans_alpha owned by png_struct. */
++   png_free(png_ptr, png_ptr->trans_alpha);
++   png_ptr->trans_alpha = NULL;
++#endif
++
++   /* Free the independent copy of the palette owned by png_struct. */
++   png_free(png_ptr, png_ptr->palette);
++   png_ptr->palette = NULL;
++
+    /* The error handling and memory handling information is left intact at this
+     * point: the jmp_buf may still have to be freed.  See png_destroy_png_struct
+     * for how this happens.
+@@ -2020,7 +2030,7 @@ png_image_write_main(png_voidp argument)
+             display->row_stride = (png_int_32)/*SAFE*/png_row_stride;
+ 
+          if (display->row_stride < 0)
+-            check = (png_uint_32)(-display->row_stride);
++            check = -(png_uint_32)display->row_stride;
+ 
+          else
+             check = (png_uint_32)display->row_stride;
+@@ -2219,7 +2229,7 @@ png_image_write_main(png_voidp argument)
+ 
+ 
+ static void (PNGCBAPI
+-image_memory_write)(png_structp png_ptr, png_bytep/*const*/ data, size_t size)
++image_memory_write)(png_structp png_ptr, png_bytep data, size_t size)
+ {
+    png_image_write_control *display = png_voidcast(png_image_write_control*,
+        png_ptr->io_ptr/*backdoor: png_get_io_ptr(png_ptr)*/);
+diff --git x/qtbase/src/3rdparty/libpng/pngwutil.c y/qtbase/src/3rdparty/libpng/pngwutil.c
+index b4b845a7b6b7375251e39209c1ef8d1954dd85f5..e16c387c209f889bc4889d8e20858e79b05f9772 100644
+--- x/qtbase/src/3rdparty/libpng/pngwutil.c
++++ y/qtbase/src/3rdparty/libpng/pngwutil.c
+@@ -1,6 +1,6 @@
+ /* pngwutil.c - utilities to write a PNG file
+  *
+- * Copyright (c) 2018-2025 Cosmin Truta
++ * Copyright (c) 2018-2026 Cosmin Truta
+  * Copyright (c) 1998-2002,2004,2006-2018 Glenn Randers-Pehrson
+  * Copyright (c) 1996-1997 Andreas Dilger
+  * Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+@@ -898,7 +898,6 @@ png_write_PLTE(png_structrp png_ptr, png_const_colorp palette,
+    png_debug1(3, "num_palette = %d", png_ptr->num_palette);
+ 
+    png_write_chunk_header(png_ptr, png_PLTE, (png_uint_32)(num_pal * 3));
+-#ifdef PNG_POINTER_INDEXING_SUPPORTED
+ 
+    for (i = 0, pal_ptr = palette; i < num_pal; i++, pal_ptr++)
+    {
+@@ -908,21 +907,6 @@ png_write_PLTE(png_structrp png_ptr, png_const_colorp palette,
+       png_write_chunk_data(png_ptr, buf, 3);
+    }
+ 
+-#else
+-   /* This is a little slower but some buggy compilers need to do this
+-    * instead
+-    */
+-   pal_ptr=palette;
+-
+-   for (i = 0; i < num_pal; i++)
+-   {
+-      buf[0] = pal_ptr[i].red;
+-      buf[1] = pal_ptr[i].green;
+-      buf[2] = pal_ptr[i].blue;
+-      png_write_chunk_data(png_ptr, buf, 3);
+-   }
+-
+-#endif
+    png_write_chunk_end(png_ptr);
+    png_ptr->mode |= PNG_HAVE_PLTE;
+ }
+@@ -1201,9 +1185,6 @@ png_write_sPLT(png_structrp png_ptr, png_const_sPLT_tp spalette)
+    size_t entry_size = (spalette->depth == 8 ? 6 : 10);
+    size_t palette_size = entry_size * (size_t)spalette->nentries;
+    png_sPLT_entryp ep;
+-#ifndef PNG_POINTER_INDEXING_SUPPORTED
+-   int i;
+-#endif
+ 
+    png_debug(1, "in png_write_sPLT");
+ 
+@@ -1221,7 +1202,6 @@ png_write_sPLT(png_structrp png_ptr, png_const_sPLT_tp spalette)
+    png_write_chunk_data(png_ptr, &spalette->depth, 1);
+ 
+    /* Loop through each palette entry, writing appropriately */
+-#ifdef PNG_POINTER_INDEXING_SUPPORTED
+    for (ep = spalette->entries; ep<spalette->entries + spalette->nentries; ep++)
+    {
+       if (spalette->depth == 8)
+@@ -1244,31 +1224,6 @@ png_write_sPLT(png_structrp png_ptr, png_const_sPLT_tp spalette)
+ 
+       png_write_chunk_data(png_ptr, entrybuf, entry_size);
+    }
+-#else
+-   ep=spalette->entries;
+-   for (i = 0; i>spalette->nentries; i++)
+-   {
+-      if (spalette->depth == 8)
+-      {
+-         entrybuf[0] = (png_byte)ep[i].red;
+-         entrybuf[1] = (png_byte)ep[i].green;
+-         entrybuf[2] = (png_byte)ep[i].blue;
+-         entrybuf[3] = (png_byte)ep[i].alpha;
+-         png_save_uint_16(entrybuf + 4, ep[i].frequency);
+-      }
+-
+-      else
+-      {
+-         png_save_uint_16(entrybuf + 0, ep[i].red);
+-         png_save_uint_16(entrybuf + 2, ep[i].green);
+-         png_save_uint_16(entrybuf + 4, ep[i].blue);
+-         png_save_uint_16(entrybuf + 6, ep[i].alpha);
+-         png_save_uint_16(entrybuf + 8, ep[i].frequency);
+-      }
+-
+-      png_write_chunk_data(png_ptr, entrybuf, entry_size);
+-   }
+-#endif
+ 
+    png_write_chunk_end(png_ptr);
+ }
+@@ -1738,7 +1693,7 @@ png_write_iTXt(png_structrp png_ptr, int compression, png_const_charp key,
+    }
+ 
+    new_key[++key_len] = PNG_COMPRESSION_TYPE_BASE;
+-   ++key_len; /* for the keywod separator */
++   ++key_len; /* for the keyword separator */
+ 
+    /* We leave it to the application to meet PNG-1.0 requirements on the
+     * contents of the text.  PNG-1.0 through PNG-1.2 discourage the use of
+diff --git x/qtbase/src/3rdparty/libpng/qt_attribution.json y/qtbase/src/3rdparty/libpng/qt_attribution.json
+index bb945cb495fe5cebda3f4b675d4abbef6bc1fe1d..7cfc47c77c63ac22c64fdb1349639bc7a8d81338 100644
+--- x/qtbase/src/3rdparty/libpng/qt_attribution.json
++++ y/qtbase/src/3rdparty/libpng/qt_attribution.json
+@@ -7,8 +7,8 @@
+ 
+     "Description": "libpng is the official PNG reference library.",
+     "Homepage": "http://www.libpng.org/pub/png/libpng.html",
+-    "Version": "1.6.54",
+-    "DownloadLocation": "https://download.sourceforge.net/libpng/libpng-1.6.54.tar.xz",
++    "Version": "1.6.56",
++    "DownloadLocation": "https://download.sourceforge.net/libpng/libpng-1.6.56.tar.xz",
+     "PURL": "pkg:github/pnggroup/libpng@v$<VERSION>",
+     "CPE": "cpe:2.3:a:libpng:libpng:$<VERSION>:*:*:*:*:*:*:*",
+ 

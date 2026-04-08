@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import Governikus.ProgressView
 import Governikus.TitleBar

@@ -26,8 +26,6 @@ FlickableSectionPage {
 		visible: subHeader.visible
 	}
 	AnimationLoader {
-		id: animation
-
 		Layout.alignment: Qt.AlignHCenter
 		Layout.bottomMargin: Style.dimens.pane_spacing
 		animated: false
@@ -74,7 +72,7 @@ FlickableSectionPage {
 		visible: root.passwordType === NumberModel.PasswordType.TRANSPORT_PIN
 	}
 	GText {
-		Layout.alignment: subHeader.visible ? Qt.AlignLeft : Qt.AlignHCenter
+		Layout.alignment: subHeader.visible ? Text.AlignLeft : Qt.AlignHCenter
 		horizontalAlignment: subHeader.visible ? Text.AlignLeft : Text.AlignHCenter
 		text: {
 			switch (root.passwordType) {
@@ -98,10 +96,6 @@ FlickableSectionPage {
 				return "";
 			}
 		}
-	}
-	GSpacer {
-		Layout.fillHeight: true
-		visible: Style.is_layout_desktop
 	}
 	GContinueButton {
 		onClicked: root.continueClicked()

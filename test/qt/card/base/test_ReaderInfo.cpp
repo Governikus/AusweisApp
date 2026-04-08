@@ -31,7 +31,6 @@ class test_ReaderInfo
 			QTest::newRow("none") << CardType::NONE << false << false;
 			QTest::newRow("unknown") << CardType::UNKNOWN << true << false;
 			QTest::newRow("eid-card") << CardType::EID_CARD << true << true;
-			QTest::newRow("smart-eid") << CardType::SMART_EID << true << true;
 		}
 
 

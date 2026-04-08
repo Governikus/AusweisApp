@@ -6,6 +6,7 @@
 
 #include "LogHandler.h"
 #include "MockCardConnectionWorker.h"
+#include "TestFileHelper.h"
 
 #include <QtCore>
 #include <QtTest>
@@ -30,6 +31,7 @@ class test_DidAuthenticateEAC1Command
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -45,7 +47,7 @@ class test_DidAuthenticateEAC1Command
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
 			QCOMPARE(response.getStatusCode(), StatusCode::SUCCESS);
 			QCOMPARE(command.getChallenge(), QByteArray());
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Challenge has wrong size. Expect 8 bytes, got"_L1));
 		}
 
@@ -64,30 +66,37 @@ class test_DidAuthenticateEAC1Command
 		}
 
 
-		void test_InternalExecuteFailed()
+		void test_InternalExecuteFailedWrongResponse()
 		{
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			const auto& worker = MockCardConnectionWorker::create();
 
-			ResponseApdu response1(QByteArray::fromHex("63C0"));
-			worker->addResponse(CardReturnCode::PIN_BLOCKED, response1);
-			DidAuthenticateEAC1Command command1(worker);
-			command1.internalExecute();
-			QCOMPARE(command1.getReturnCode(), CardReturnCode::PIN_BLOCKED);
-			QCOMPARE(response1.getStatusCode(), StatusCode::PIN_BLOCKED);
-			QCOMPARE(command1.getChallenge(), QByteArray());
-			QCOMPARE(logSpy.count(), 1);
+			ResponseApdu response(QByteArray::fromHex("6982"));
+			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, response);
+			DidAuthenticateEAC1Command command(worker);
+			command.internalExecute();
+			QCOMPARE(command.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(response.getStatusCode(), StatusCode::ACCESS_DENIED);
+			QCOMPARE(command.getChallenge(), QByteArray());
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("GetChallenge failed"_L1));
+		}
 
-			ResponseApdu response2(QByteArray::fromHex("19191919191919"));
-			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, response2);
-			DidAuthenticateEAC1Command command2(worker);
-			command2.internalExecute();
-			QCOMPARE(command2.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
-			QCOMPARE(response2.getStatusCode(), StatusCode::UNKNOWN);
-			QCOMPARE(command2.getChallenge(), QByteArray());
-			QCOMPARE(logSpy.count(), 3);
-			QVERIFY(logSpy.at(1).at(0).toString().contains("GetChallenge failed"_L1));
+
+		void test_InternalExecuteFailedProtocolError()
+		{
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+			const auto& worker = MockCardConnectionWorker::create();
+
+			ResponseApdu response(QByteArray::fromHex("00000000000000000000"));
+			worker->addResponse(CardReturnCode::OK, response);
+			DidAuthenticateEAC1Command command(worker);
+			command.internalExecute();
+			QCOMPARE(command.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(response.getStatusCode(), StatusCode::UNKNOWN);
+			QCOMPARE(command.getChallenge(), QByteArray());
+			QTRY_COMPARE(logSpy.count(), 1);
+			QVERIFY(TestFileHelper::containsLog(logSpy, "Unexpected StatusCode in GetChallenge"_L1));
 		}
 
 

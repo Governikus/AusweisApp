@@ -173,7 +173,7 @@ void ConnectRequest::onConnected(const QSharedPointer<QWebSocket>& pSocket)
 	}
 
 	const auto rootCert = TlsChecker::getRootCertificate(cfg.peerCertificateChain());
-	if (rootCert.isNull())
+	if (rootCert.isNull() && !mDiscovery.isLocalIfd())
 	{
 		qCCritical(ifd) << "    No root certificate found!";
 		abortConnection = true;

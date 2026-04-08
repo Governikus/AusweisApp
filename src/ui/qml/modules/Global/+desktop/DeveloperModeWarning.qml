@@ -9,8 +9,6 @@ import Governikus.Style
 import Governikus.Type
 
 Item {
-	id: root
-
 	Crossed {
 		anchors.fill: parent
 	}

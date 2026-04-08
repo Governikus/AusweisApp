@@ -1,14 +1,12 @@
-include(Helper)
-
 macro(FIND_DVCS _dest)
 	if(EXISTS "${_dest}/.hg")
-		FIND_HOST_PACKAGE(Hg)
+		find_package(Hg)
 		if(HG_FOUND)
 			set(DVCS_EXECUTABLE ${HG_EXECUTABLE})
 		endif()
 
 	elseif(EXISTS "${_dest}/.git")
-		FIND_HOST_PACKAGE(Git)
+		find_package(Git)
 		if(GIT_FOUND)
 			set(DVCS_EXECUTABLE ${GIT_EXECUTABLE})
 		endif()
@@ -109,14 +107,39 @@ if(DVCS_FOUND)
 	endif()
 endif()
 
-function(CHECK_VERSION _out)
-	if(PROJECT_VERSION_MINOR GREATER_EQUAL 100 OR PROJECT_VERSION_PATCH GREATER_EQUAL 100 OR dvcs_revision)
-		set(${_out} TRUE PARENT_SCOPE)
+function(CHECK_FINAL_VERSION _out)
+	if(PROJECT_VERSION_MINOR LESS 100 AND PROJECT_VERSION_PATCH LESS 100 AND NOT dvcs_revision)
+		set(${_out} true PARENT_SCOPE)
 		return()
 	endif()
 
-	set(${_out} FALSE PARENT_SCOPE)
+	set(${_out} false PARENT_SCOPE)
 endfunction()
 
-CHECK_VERSION(IS_BETA_VERSION)
-message(STATUS "DVCS beta: ${IS_BETA_VERSION}")
+CHECK_FINAL_VERSION(IS_FINAL_VERSION)
+message(STATUS "DVCS final: ${IS_FINAL_VERSION}")
+
+
+set(ARTIFACT_VERSION ${PROJECT_VERSION})
+
+if(CMAKE_ANDROID_ARCH_ABI)
+	set(ARTIFACT_VERSION ${ARTIFACT_VERSION}-${CMAKE_ANDROID_ARCH_ABI})
+endif()
+
+if(DEFINED dvcs_distance)
+	set(ARTIFACT_VERSION ${ARTIFACT_VERSION}+${dvcs_distance})
+endif()
+
+if(DEFINED dvcs_branch)
+	set(ARTIFACT_VERSION ${ARTIFACT_VERSION}-${dvcs_branch})
+endif()
+
+if(DEFINED dvcs_phase)
+	set(ARTIFACT_VERSION ${ARTIFACT_VERSION}-${dvcs_phase})
+endif()
+
+if(DEFINED dvcs_revision)
+	set(ARTIFACT_VERSION ${ARTIFACT_VERSION}-${dvcs_revision})
+endif()
+
+set(ARTIFACT_FILENAME ${PROJECT_NAME}-${ARTIFACT_VERSION})

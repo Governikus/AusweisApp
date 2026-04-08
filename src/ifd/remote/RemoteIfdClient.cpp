@@ -7,6 +7,7 @@
 #include "AppSettings.h"
 #include "Initializer.h"
 #include "ReaderManager.h"
+#include "VolatileSettings.h"
 #include "messages/Discovery.h"
 
 #include <QJsonDocument>
@@ -28,6 +29,26 @@ INIT_FUNCTION([] {
 		})
 
 
+#ifdef Q_OS_ANDROID
+extern "C"
+{
+
+JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AusweisApp2LocalIfdService_notifyLocalIfdDisabled(JNIEnv* pEnv, jobject pObj)
+{
+	Q_UNUSED(pObj)
+	Q_UNUSED(pEnv)
+
+	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
+				qDebug() << "Local IFD detection was stopped. Resetting DatagramHandler.";
+				Env::getSingleton<RemoteIfdClient>()->resetDatagramHandler();
+			}, Qt::BlockingQueuedConnection);
+}
+
+
+}
+#endif
+
+
 RemoteIfdClient::RemoteIfdClient()
 	: IfdClientImpl()
 	, mDatagramHandler()
@@ -36,6 +57,48 @@ RemoteIfdClient::RemoteIfdClient()
 	connect(mIfdList.data(), &IfdList::fireDeviceAppeared, this, &IfdClient::fireDeviceAppeared);
 	connect(mIfdList.data(), &IfdList::fireDeviceUpdated, this, &IfdClient::fireDeviceUpdated);
 	connect(mIfdList.data(), &IfdList::fireDeviceVanished, this, &IfdClient::fireDeviceVanished);
+
+}
+
+
+void RemoteIfdClient::resetDatagramHandler()
+{
+	mDatagramHandler.reset(Env::create<DatagramHandler*>());
+	connect(mDatagramHandler.data(), &DatagramHandler::fireNewMessage, this, &RemoteIfdClient::onNewMessage);
+}
+
+
+bool RemoteIfdClient::enableLocalIfdDetection(bool pEnabled) const
+{
+	const auto& serviceToken = Env::getSingleton<AppSettings>()->getGeneralSettings().getIfdServiceToken();
+	if (serviceToken.isEmpty())
+	{
+		qDebug() << "Local IFD workflow is not running";
+		return false;
+	}
+
+#ifdef Q_OS_ANDROID
+	QJniObject context = QNativeInterface::QAndroidApplication::context();
+	if (!context.isValid())
+	{
+		qWarning() << "Invalid Android context";
+		return false;
+	}
+
+	qDebug() << "Change Local IFD detection. Enabled:" << pEnabled;
+	const auto& jServiceToken = QJniObject::fromString(serviceToken);
+	QJniObject::callStaticMethod<void>(
+			"com/governikus/ausweisapp2/AusweisApp2LocalIfdService",
+			"enableLocalIfdDetection",
+			"(Landroid/content/Context;Ljava/lang/String;Z)V",
+			context.object<jobject>(),
+			jServiceToken.object<jstring>(),
+			pEnabled);
+#else
+	Q_UNUSED(pEnabled)
+#endif
+
+	return true;
 
 }
 
@@ -71,23 +134,39 @@ void RemoteIfdClient::onNewMessage(const QByteArray& pData, const QHostAddress& 
 
 void RemoteIfdClient::startDetection()
 {
-	if (!mDatagramHandler.isNull())
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
-		qCDebug(ifd) << "Detection already started";
-		return;
+		if (!mDatagramHandler.isNull())
+		{
+			qCDebug(ifd) << "Detection already started";
+			return;
+		}
+
+		if (enableLocalIfdDetection(false))
+		{
+			return;
+		}
 	}
 
-	mDatagramHandler.reset(Env::create<DatagramHandler*>());
-	connect(mDatagramHandler.data(), &DatagramHandler::fireNewMessage, this, &RemoteIfdClient::onNewMessage);
-	Q_EMIT fireDetectionChanged();
+	resetDatagramHandler();
 }
 
 
 void RemoteIfdClient::stopDetection()
 {
+	if (mDatagramHandler.isNull())
+	{
+		qCDebug(ifd) << "Detection already stopped";
+		return;
+	}
+
 	mDatagramHandler.reset();
 	mIfdList->clear();
-	Q_EMIT fireDetectionChanged();
+
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	{
+		Q_UNUSED(enableLocalIfdDetection(true))
+	}
 }
 
 

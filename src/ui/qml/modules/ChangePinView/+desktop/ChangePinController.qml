@@ -130,11 +130,6 @@ ProgressView {
 			setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Processing);
 			break;
 		case "FinalState":
-			if (ChangePinModel.shouldSkipResultView()) {
-				ChangePinModel.continueWorkflow();
-				pop(root);
-				break;
-			}
 			d.setWorkflowProgress(progressTracker.steps);
 			if (ChangePinModel.error && ChangePinModel.statusCode === GlobalStatusCode.Card_Pin_Deactivated) {
 				push(root.cardNotActivatedDelegate ? root.cardNotActivatedDelegate : cardNotActivatedView);
@@ -294,12 +289,10 @@ ProgressView {
 					ChangePinModel.continueWorkflow();
 					break;
 				case NumberModel.PasswordType.NEW_PIN:
-				case NumberModel.PasswordType.NEW_SMART_PIN:
 					d.setWorkflowProgress(4);
 					root.rerunCurrentState();
 					break;
 				case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
-				case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
 					if (NumberModel.commitNewPin()) {
 						d.setWorkflowProgress(5);
 						ChangePinModel.continueWorkflow();
@@ -397,16 +390,10 @@ ProgressView {
 			animation: ChangePinModel.statusCodeAnimation
 			//: DESKTOP
 			buttonText: qsTr("Back to start page")
-			firstHintButtonText: ChangePinModel.statusHintActionText
-			firstHintText: ChangePinModel.statusHintText
-			firstHintTitle: ChangePinModel.statusHintTitle
-			hintBoxesTitle: ChangePinModel.statusHintBoxesTitle
+			hintText: ChangePinModel.statusHintText
 			mailButtonVisible: ChangePinModel.errorIsMasked
 			progress: progressTracker
-			secondHintButtonLink: PinResetInformationModel.administrativeSearchUrl
-			secondHintButtonText: PinResetInformationModel.resetPinAtAuthorityActionText
-			secondHintText: Utils.getSecondPRSHintText(ChangePinModel.statusCode)
-			secondHintTitle: PinResetInformationModel.resetPinAtAuthorityHintTitle
+			statusCode: ChangePinModel.statusCode
 			text: ChangePinModel.resultString
 			title: root.title
 
@@ -417,7 +404,6 @@ ProgressView {
 			}
 
 			onEmailButtonPressed: ChangePinModel.sendResultMail()
-			onFirstHintClicked: ChangePinModel.invokeStatusHintAction()
 			onLeaveView: {
 				ChangePinModel.continueWorkflow();
 				pop(root);

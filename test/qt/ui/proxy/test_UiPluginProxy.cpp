@@ -34,10 +34,10 @@ class test_UiPluginProxy
 			QSignalSpy logSpy(&proxy, &UiPluginProxy::fireUiDominationRequest);
 
 			QVERIFY(proxy.initialize());
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 
 			QVERIFY(proxy.initialize());
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 		}
 
 

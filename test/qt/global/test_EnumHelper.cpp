@@ -46,7 +46,7 @@ class test_EnumHelper
 			auto badEnumValue = static_cast<TestEnum1>(pValue);
 			QCOMPARE(Enum<TestEnum1>::getName(badEnumValue), QLatin1String());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			auto result = logSpy.takeFirst();
 			QVERIFY(result.at(0).toString().endsWith(pExpectedOutput));
 		}
@@ -91,14 +91,14 @@ class test_EnumHelper
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			qDebug() << TestEnum1::FIRST;
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, "FIRST"_L1));
 
 			logSpy.takeFirst();
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 
 			qDebug() << QList<TestEnum1>({TestEnum1::FIRST, TestEnum1::SECOND});
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, "(FIRST, SECOND)"_L1));
 		}
 

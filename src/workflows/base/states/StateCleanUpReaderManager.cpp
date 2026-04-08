@@ -24,7 +24,7 @@ void StateCleanUpReaderManager::run()
 	if (const auto& reader = context->getReaderName(); !reader.isEmpty())
 	{
 		const auto& readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo(reader);
-		if (readerInfo.hasCard() && readerInfo.getCardInfo().getCardType() != CardType::SMART_EID)
+		if (readerInfo.hasCard())
 		{
 			context->setRemoveCardFeedback(true);
 		}

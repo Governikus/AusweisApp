@@ -41,8 +41,6 @@ class DidAuthenticateEAC2Command
 		CardReturnCode performChipAuthentication(QSharedPointer<const ChipAuthenticationInfo> pChipAuthInfo,
 				const QByteArray& pEphemeralPublicKey);
 
-		void internalExecuteSoftwareSmartCard();
-
 	protected:
 		void internalExecute() override;
 		~DidAuthenticateEAC2Command() override = default;

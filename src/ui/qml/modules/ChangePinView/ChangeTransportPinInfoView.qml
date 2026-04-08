@@ -23,8 +23,6 @@ FlickableSectionPage {
 		text: qsTr("5-digit Transport PIN")
 	}
 	AnimationLoader {
-		id: animation
-
 		Layout.alignment: Qt.AlignHCenter
 		Layout.bottomMargin: Style.dimens.pane_spacing
 		animated: false

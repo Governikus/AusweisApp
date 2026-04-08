@@ -16,12 +16,10 @@ SectionPage {
 	id: root
 
 	property bool activateUI: true
-	property bool autoInsertCard: false
 	property Component cardNotActivatedDelegate: null
 	property Component errorViewDelegate: null
 	property bool hidePinTypeSelection: false
 	property var initialPlugin: null
-	readonly property bool isSmartWorkflow: ChangePinModel.readerPluginType === ReaderManagerPluginType.SMART
 	property int navigationActionType: NavigationAction.Action.Cancel
 	property bool onlyCheckPin: false
 	property bool skipInfoView: true
@@ -39,7 +37,6 @@ SectionPage {
 	}
 
 	contentIsScrolled: !changePinViewContent.atYBeginning
-	smartEidUsed: isSmartWorkflow
 	//: MOBILE
 	title: qsTr("Change PIN")
 
@@ -80,12 +77,10 @@ SectionPage {
 		id: changePinController
 
 		ChangePinController {
-			autoInsertCard: root.autoInsertCard
 			cardNotActivatedDelegate: root.cardNotActivatedDelegate
 			errorViewDelegate: root.errorViewDelegate
 			navigationActionType: root.navigationActionType
 			skipProgressView: root.skipProgressView
-			smartEidUsed: root.smartEidUsed
 			stackView: root.stackView
 			successViewDelegate: root.successViewDelegate
 			title: root.title

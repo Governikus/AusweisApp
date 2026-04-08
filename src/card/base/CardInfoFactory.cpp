@@ -41,7 +41,7 @@ CardInfo CardInfoFactory::create(const QSharedPointer<CardConnectionWorker>& pCa
 		return CardInfo(CardType::UNKNOWN);
 	}
 
-	const CardInfo cardInfo(efCardAccess->getMobileEIDTypeInfo() ? CardType::SMART_EID : CardType::EID_CARD, application, efCardAccess);
+	const CardInfo cardInfo(CardType::EID_CARD, application, efCardAccess);
 	qCDebug(card) << "Card detected:" << cardInfo;
 	return cardInfo;
 }

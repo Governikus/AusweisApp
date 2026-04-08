@@ -22,64 +22,6 @@ FlickableSectionPage {
 	showTitleBarContent: false
 	title: ""
 
-	DelegateModel {
-		id: tileModel
-
-		delegate: Tile {
-			id: tileDelegate
-
-			required property url imagePath
-			required property int index
-			required property int module
-			required property string titleText
-
-			Accessible.name: titleText + ". " + qsTr("Item %1 of %2").arg(index + 1).arg(tileView.count) + (tileView.allItemsVisible ? "" : " . " + tileView.scrollHint)
-			focusPolicy: ApplicationModel.screenReaderRunning ? Qt.StrongFocus : Qt.TabFocus
-			height: ListView.view.height
-			image: imagePath
-			title: titleText
-			width: tileView.itemWidth
-
-			Accessible.onScrollLeftAction: if (tileView.isIos)
-				tileView.decrementCurrentIndex()
-			Accessible.onScrollRightAction: if (tileView.isIos)
-				tileView.incrementCurrentIndex()
-			Component.onCompleted: tileDelegate.DelegateModel.inItems = module !== UiModule.SMART_EID || ApplicationModel.smartSupported
-			onClicked: root.show(module)
-			onFocusChanged: if (focus && (!tileView.moving || ApplicationModel.screenReaderRunning))
-				tileView.positionViewAtIndex(index, ListView.SnapPosition)
-
-			FocusFrame {
-				marginFactor: -2
-			}
-		}
-		model: ListModel {
-			ListElement {
-				imagePath: "qrc:///images/mobile/device_tile.svg"
-				module: UiModule.CHECK_ID_CARD
-				//: MOBILE
-				titleText: qsTr("Check device and ID card")
-			}
-			ListElement {
-				imagePath: "qrc:///images/lock.svg"
-				module: UiModule.PINMANAGEMENT
-				//: MOBILE
-				titleText: qsTr("Change PIN")
-			}
-			ListElement {
-				imagePath: "qrc:///images/mydata_tile.svg"
-				module: UiModule.SELF_AUTHENTICATION
-				//: MOBILE
-				titleText: qsTr("See my personal data")
-			}
-			ListElement {
-				imagePath: "qrc:///images/mobile/smarteid.svg"
-				module: UiModule.SMART_EID
-				//: MOBILE
-				titleText: qsTr("Smart-eID")
-			}
-		}
-	}
 	GSpacer {
 		Layout.fillHeight: true
 		Layout.minimumHeight: Style.dimens.pane_padding
@@ -127,12 +69,57 @@ FlickableSectionPage {
 		highlightRangeMode: allItemsVisible ? ListView.NoHighlightRange : ListView.StrictlyEnforceRange
 		interactive: !allItemsVisible || UiPluginModel.isChromeOS
 		maximumFlickVelocity: 4 * width
-		model: tileModel
 		orientation: Qt.Horizontal
 		preferredHighlightBegin: width / 2 - itemWidth / 2
 		preferredHighlightEnd: width / 2 + itemWidth / 2
 		reuseItems: true
 		snapMode: ListView.SnapOneItem
+
+		delegate: Tile {
+			required property url imagePath
+			required property int index
+			required property int module
+			required property string titleText
+
+			Accessible.name: titleText + ". " + qsTr("Item %1 of %2").arg(index + 1).arg(tileView.count) + (tileView.allItemsVisible ? "" : " . " + tileView.scrollHint)
+			focusPolicy: ApplicationModel.screenReaderRunning ? Qt.StrongFocus : Qt.TabFocus
+			height: ListView.view.height
+			image: imagePath
+			title: titleText
+			width: tileView.itemWidth
+
+			Accessible.onScrollLeftAction: if (tileView.isIos)
+				tileView.decrementCurrentIndex()
+			Accessible.onScrollRightAction: if (tileView.isIos)
+				tileView.incrementCurrentIndex()
+			onClicked: root.show(module)
+			onFocusChanged: if (focus && (!tileView.moving || ApplicationModel.screenReaderRunning))
+				tileView.positionViewAtIndex(index, ListView.SnapPosition)
+
+			FocusFrame {
+				marginFactor: -2
+			}
+		}
+		model: ListModel {
+			ListElement {
+				imagePath: "qrc:///images/mobile/device_tile.svg"
+				module: UiModule.CHECK_ID_CARD
+				//: MOBILE
+				titleText: qsTr("Check device and ID card")
+			}
+			ListElement {
+				imagePath: "qrc:///images/lock.svg"
+				module: UiModule.PINMANAGEMENT
+				//: MOBILE
+				titleText: qsTr("Change PIN")
+			}
+			ListElement {
+				imagePath: "qrc:///images/mydata_tile.svg"
+				module: UiModule.SELF_AUTHENTICATION
+				//: MOBILE
+				titleText: qsTr("See my personal data")
+			}
+		}
 
 		Component.onCompleted: currentIndex = 1
 		onCountChanged: updateTileLimits()

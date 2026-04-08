@@ -40,7 +40,7 @@ endfunction()
 
 macro(SEARCH_PATCH_CMD)
 	if(NOT DEFINED ENV{FORCE_PATCH_PY})
-		find_program(PATCH_CMD patch CMAKE_FIND_ROOT_PATH_BOTH)
+		find_program(PATCH_CMD patch)
 	endif()
 
 	if(PATCH_CMD)
@@ -59,7 +59,7 @@ endmacro()
 
 
 if(CMAKE_SCRIPT_MODE_FILE)
-	if(COMPONENT MATCHES "qt|openssl")
+	if(COMPONENT MATCHES "qt|openssl|llhttp")
 		SEARCH_PATCH_CMD()
 		PATCH_SOURCES(${COMPONENT})
 	else()

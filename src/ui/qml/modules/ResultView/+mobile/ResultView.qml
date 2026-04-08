@@ -20,28 +20,24 @@ FlickableSectionPage {
 	property alias buttonIcon: buttonContinue.icon.source
 	property alias buttonLayoutDirection: buttonContinue.layoutDirection
 	property alias buttonText: buttonContinue.text
-	property string firstHintButtonLink
-	property alias firstHintButtonText: hintItem.buttonText
-	property alias firstHintText: hintItem.text
-	property alias firstHintTitle: hintItem.title
 	property alias header: paneTitle.text
-	property alias hintBoxesTitle: hintBoxesTitle.text
+	property alias hintBoxesTitle: pinResetHints.title
+	property string hintButtonLink
+	property alias hintButtonText: hintItem.buttonText
+	property alias hintText: hintItem.text
+	property alias hintTitle: hintItem.title
 	property string linkToOpen
 	property alias mailButtonText: mailButton.text
 	default property alias resultData: layout.data
-	property string secondHintButtonLink
-	property alias secondHintButtonText: secondHintItem.buttonText
-	property alias secondHintText: secondHintItem.text
-	property alias secondHintTitle: secondHintItem.title
+	property alias statusCode: pinResetHints.statusCode
 	property alias subheader: subheader.text
 	property alias text: resultText.text
 	property alias textFormat: resultText.textFormat
 
 	signal cancelClicked
 	signal continueClicked
-	signal firstHintClicked
+	signal linkAboutToOpen
 	signal mailClicked
-	signal secondHintClicked
 
 	function confirm() {
 		buttonContinue.clicked();
@@ -59,7 +55,7 @@ FlickableSectionPage {
 		id: d
 
 		property bool buttonCorrectionNeeded: !contentBetweenButtons && mailButton.visible
-		property bool contentBetweenButtons: hintBoxesTitle.visible || hintItem.visible || secondHintItem.visible
+		property bool contentBetweenButtons: hintItem.visible || pinResetHints.visible
 		property real maxButtonWidth: Math.max(buttonContinue.implicitWidth, mailButton.implicitWidth)
 	}
 	PaneTitle {
@@ -90,46 +86,33 @@ FlickableSectionPage {
 			visible: text !== ""
 		}
 	}
-	GButton {
+	SecondaryButton {
 		id: mailButton
 
 		Layout.alignment: Qt.AlignHCenter
 		Layout.maximumWidth: d.buttonCorrectionNeeded ? d.maxButtonWidth : implicitWidth
 		Layout.preferredWidth: d.buttonCorrectionNeeded ? d.maxButtonWidth : implicitWidth
 		icon.source: "qrc:///images/email_icon.svg"
-		style: Style.color.controlOptional
 		tintIcon: true
 		visible: text !== ""
 
 		onClicked: root.mailClicked()
 	}
-	GText {
-		id: hintBoxesTitle
-
-		textStyle: Style.text.subline
-		visible: text !== ""
-	}
 	Hint {
 		id: hintItem
 
 		Layout.fillWidth: true
-		linkToOpen: root.firstHintButtonLink
+		linkToOpen: root.hintButtonLink
 		//: MOBILE
 		title: qsTr("Hint")
 		visible: text !== ""
 
-		onClicked: root.firstHintClicked()
+		onLinkAboutToOpen: root.linkAboutToOpen()
 	}
-	Hint {
-		id: secondHintItem
+	PinResetHints {
+		id: pinResetHints
 
-		Layout.fillWidth: true
-		linkToOpen: root.secondHintButtonLink
-		//: MOBILE
-		title: qsTr("Hint")
-		visible: text !== ""
-
-		onClicked: root.secondHintClicked()
+		onLinkAboutToOpen: root.linkAboutToOpen()
 	}
 	GButton {
 		id: buttonContinue

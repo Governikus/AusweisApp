@@ -18,10 +18,6 @@ else()
 	set(LANGUAGES CXX)
 endif()
 
-if(UNIX AND NOT IOS)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 13.0 CACHE STRING "Required macOS version")
-endif()
-
 if(CMAKE_BUILD_TYPE)
 	string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 else()
@@ -41,7 +37,7 @@ if(isMultiConfig)
 endif()
 
 include(Version)
-project(AusweisApp VERSION ${VERSION} LANGUAGES ${LANGUAGES})
+project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES ${LANGUAGES})
 
 if(ANDROID AND NOT GOVERNIKUS_TOOLCHAIN_FILE)
 	message(FATAL_ERROR "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_DIR}/android.toolchain.cmake is required")
@@ -85,11 +81,6 @@ message(STATUS "VENDOR: ${VENDOR}")
 message(STATUS "VERSION: ${PROJECT_VERSION}")
 
 if(ANDROID)
-	if(NOT BUILD_PREVIEW)
-		set(BUILD_PREVIEW false)
-	endif()
-	message(STATUS "BUILD_PREVIEW: ${BUILD_PREVIEW}")
-
 	if(ANDROID_VERSION_CODE_BASE)
 		if(CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
 			set(COUNTER 0)
@@ -135,6 +126,12 @@ set(BUNDLE_IDENTIFIER com.governikus.ausweisapp2)
 
 if(NOT CONTAINER_SDK)
 	set(VALGRIND_COMMAND_OPTIONS "--tool=memcheck --leak-check=full --show-leak-kinds=definite --errors-for-leak-kinds=definite --track-origins=yes --error-exitcode=1")
+	set(VALGRIND_SUPPRESSIONS "${CMAKE_PREFIX_PATH}/test/valgrind.supp")
+	if(EXISTS "${VALGRIND_SUPPRESSIONS}")
+		message(STATUS "Using valgrind suppressions: ${VALGRIND_SUPPRESSIONS}")
+		set(VALGRIND_COMMAND_OPTIONS "${VALGRIND_COMMAND_OPTIONS} --gen-suppressions=all --suppressions=${VALGRIND_SUPPRESSIONS}")
+	endif()
+
 	include(CTest)
 endif()
 
@@ -147,8 +144,6 @@ if(tools.only)
 	include(Packaging)
 	return()
 endif()
-
-option(USE_SMARTEID "Enable Smart-eID" OFF)
 
 include(Libraries)
 include(PoliciesQt NO_POLICY_SCOPE)
@@ -170,6 +165,9 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/utils")
 endif()
 
 include(Packaging)
+if(VENDOR_GOVERNIKUS AND LIBS_GOVERNIKUS)
+	include(SBOM)
+endif()
 
 if(BUILD_TESTING)
 	configure_file("${CMAKE_DIR}/CTestCustom.cmake.in" "${CMAKE_BINARY_DIR}/CTestCustom.cmake" @ONLY)

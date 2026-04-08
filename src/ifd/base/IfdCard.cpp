@@ -117,7 +117,7 @@ void IfdCard::onDispatcherClosed(GlobalStatus::Code pCloseCode, const QByteArray
 }
 
 
-IfdCard::IfdCard(const QSharedPointer<IfdDispatcherClient>& pDispatcher, const QString& pReaderName)
+IfdCard::IfdCard(const QSharedPointer<IfdDispatcherClient>& pDispatcher, const QString& pReaderName, bool pForwardSdkMessages)
 	: Card()
 	, mWaitingForAnswer(false)
 	, mWaitCondition()
@@ -130,6 +130,7 @@ IfdCard::IfdCard(const QSharedPointer<IfdDispatcherClient>& pDispatcher, const Q
 	, mConnected(false)
 	, mProgressMessage()
 	, mCardRemoved(false)
+	, mForwardSdkMessages(pForwardSdkMessages)
 {
 	Q_ASSERT(mDispatcher);
 
@@ -202,7 +203,7 @@ bool IfdCard::isConnected() const
 
 void IfdCard::setProgressMessage(const QString& pMessage, int pProgress)
 {
-	mProgressMessage = generateProgressMessage(pMessage, pProgress);
+	mProgressMessage = generateProgressMessage(pMessage, pProgress, mForwardSdkMessages);
 }
 
 

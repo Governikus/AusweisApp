@@ -32,7 +32,6 @@ class IfdClient
 		void fireDispatcherChanged(const QSharedPointer<IfdDispatcherClient>& pDispatcher);
 		void fireRemoteDevicesInfo(const QList<QSharedPointer<IfdListEntry>>& pRemoteDevices);
 		void fireDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QByteArray& pId);
-		void fireDetectionChanged();
 		void fireCertificateRemoved(const QString& pDeviceName);
 
 	public:

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import Governikus.Global
 import Governikus.Style

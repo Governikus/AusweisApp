@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.IsoDep;
@@ -24,14 +23,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 
 import org.qtproject.qt.android.QtNative;
 import org.qtproject.qt.android.bindings.QtActivity;
+
+import androidx.core.view.WindowCompat;
 
 
 public class MainActivity extends QtActivity
@@ -114,9 +115,25 @@ public class MainActivity extends QtActivity
 		}
 
 
+		@SuppressWarnings("deprecation")
+		Vibrator vibrator()
+		{
+			return (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		}
+
+
 		void vibrate()
 		{
-			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+			Vibrator v;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) // API 31, Android 12
+			{
+				VibratorManager vibratorManager = (VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+				v = vibratorManager.getDefaultVibrator();
+			}
+			else
+			{
+				v = vibrator();
+			}
 			v.vibrate(VibrationEffect.createOneShot(250, VibrationEffect.DEFAULT_AMPLITUDE));
 		}
 
@@ -166,26 +183,11 @@ public class MainActivity extends QtActivity
 		convertChromeOsIntent(getIntent());
 		LogHandler.getLogger().log(Level.INFO, () -> "onCreate: " + getIntent());
 		super.onCreate(savedInstanceState);
+		WindowCompat.enableEdgeToEdge(getWindow());
 
 		cIntent = getIntent();
 
 		mNfcReaderMode = new NfcReaderMode();
-
-		// Handle systemWindowInsets
-		Window window = getWindow();
-		View rootView = window.getDecorView().findViewById(android.R.id.content);
-
-		// Make statusbar and navigation bar transparent
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) // API 29, Android 10
-		{
-			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-			window.setNavigationBarColor(Color.TRANSPARENT);
-		}
-		else
-		{
-			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-		}
-		window.setStatusBarColor(Color.TRANSPARENT);
 
 		AccessibilityManager accessibilityManager = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
 		refreshAccessibilityState(accessibilityManager);
@@ -374,27 +376,33 @@ public class MainActivity extends QtActivity
 	}
 
 
-	public void setAppearanceLightStatusBars(boolean enable)
+	@SuppressWarnings("deprecation")
+	public void setAppearanceLightStatusBarsDeprecated(boolean enable)
 	{
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) // API 30, Android 11
+		View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+		int currentVisibility = rootView.getSystemUiVisibility();
+		if (enable)
 		{
-			WindowInsetsController controller = getWindow().getInsetsController();
-			controller.setSystemBarsAppearance(enable ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
-			controller.setSystemBarsAppearance(enable ? WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS : 0, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+			rootView.setSystemUiVisibility(currentVisibility | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 		}
 		else
 		{
-			View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
-			int currentVisibility = rootView.getSystemUiVisibility();
-			if (enable)
-			{
-				rootView.setSystemUiVisibility(currentVisibility | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-			}
-			else
-			{
-				rootView.setSystemUiVisibility(currentVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-			}
+			rootView.setSystemUiVisibility(currentVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 		}
+	}
+
+
+	public void setAppearanceLightStatusBars(boolean enable)
+	{
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) // API 30, Android 11
+		{
+			setAppearanceLightStatusBarsDeprecated(enable);
+			return;
+		}
+
+		WindowInsetsController controller = getWindow().getInsetsController();
+		controller.setSystemBarsAppearance(enable ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+		controller.setSystemBarsAppearance(enable ? WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS : 0, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
 	}
 
 

@@ -1,0 +1,6 @@
+set(TRUSTSTORE ${WORKSPACE}/truststore.pem)
+download_file(${TRUSTSTORE} $ENV{TRUSTSTORE_PEM})
+file(GLOB files "${WORKSPACE}/*.msi" "${WORKSPACE}/*.dmg")
+foreach(file ${files})
+	step(curl --fail -i --cacert ${TRUSTSTORE} --ssl-reqd --ftp-ssl-control -u "$ENV{ALLOWLIST_USER}:$ENV{ALLOWLIST_PSW}" --upload-file ${file} "$ENV{ALLOWLIST_URL}")
+endforeach()

@@ -1,6 +1,0 @@
-if(DEFINED ENV{JENKINS_HOME})
-	file(GLOB pkgfile "${T_BUILD_DIR}/*.pkg")
-else()
-	file(GLOB pkgfile "${WORKSPACE}/*.pkg")
-endif()
-step(xcrun altool -t osx --upload-app -u $ENV{APPSTORE_USER} -p @env:APPSTORE_PSW -f ${pkgfile})

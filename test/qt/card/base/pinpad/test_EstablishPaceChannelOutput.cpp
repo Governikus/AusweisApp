@@ -124,10 +124,10 @@ class test_EstablishPaceChannelOutput
 			QTest::newRow("PassiveAuthenticationFailed") << QByteArray("090000E0") << CardReturnCode::UNKNOWN;
 			QTest::newRow("IncorrectTokenForChipAuthentication") << QByteArray("a00000e0") << CardReturnCode::UNKNOWN;
 
-			QTest::newRow("GeneralAuthenticateStep1_4_Warning - Wrong PIN 1 time") << QByteArray("c26306f0") << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("GeneralAuthenticateStep1_4_Warning - Wrong PIN 2 time") << QByteArray("c16306f0") << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("GeneralAuthenticateStep1_4_Warning - Wrong PIN 3 time") << QByteArray("c06306f0") << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("GeneralAuthenticateStep1_4_Warning - Wrong CAN/PUK") << QByteArray("006306f0") << CardReturnCode::INVALID_PASSWORD;
+			QTest::newRow("GeneralAuthenticateStep4_RC2 - Wrong PIN 1 time") << QByteArray("c26306f0") << CardReturnCode::INVALID_PASSWORD;
+			QTest::newRow("GeneralAuthenticateStep4_RC1 - Wrong PIN 2 time") << QByteArray("c16306f0") << CardReturnCode::INVALID_PASSWORD;
+			QTest::newRow("GeneralAuthenticateStep4_RC0 - Wrong PIN 3 time") << QByteArray("c06306f0") << CardReturnCode::INVALID_PASSWORD;
+			QTest::newRow("GeneralAuthenticateStep4 - Wrong CAN/PUK") << QByteArray("006306f0") << CardReturnCode::INVALID_PASSWORD;
 
 			QTest::newRow("CommunicationAbort") << QByteArray("010010f0") << CardReturnCode::COMMAND_FAILED;
 			QTest::newRow("NoCard") << QByteArray("020010f0") << CardReturnCode::CARD_NOT_FOUND;
@@ -296,19 +296,15 @@ class test_EstablishPaceChannelOutput
 
 			QTest::newRow("UNKNOWN") << CardReturnCode::UNKNOWN << QByteArray("020000d0");
 			QTest::newRow("UNDEFINED") << CardReturnCode::UNDEFINED << QByteArray("020000d0");
-			QTest::newRow("NEW_PIN_MISMATCH") << CardReturnCode::NEW_PIN_MISMATCH << QByteArray("020000d0");
-			QTest::newRow("NEW_PIN_INVALID_LENGTH") << CardReturnCode::NEW_PIN_INVALID_LENGTH << QByteArray("020000d0");
-			QTest::newRow("PIN_BLOCKED") << CardReturnCode::PIN_BLOCKED << QByteArray("020000d0");
 			QTest::newRow("PIN_NOT_BLOCKED") << CardReturnCode::PIN_NOT_BLOCKED << QByteArray("020000d0");
-			QTest::newRow("PUK_INOPERATIVE") << CardReturnCode::PUK_INOPERATIVE << QByteArray("020000d0");
 			QTest::newRow("UNEXPECTED_TRANSMIT_STATUS") << CardReturnCode::UNEXPECTED_TRANSMIT_STATUS << QByteArray("020000d0");
 			QTest::newRow("PROTOCOL_ERROR") << CardReturnCode::PROTOCOL_ERROR << QByteArray("020000d0");
 
 			QTest::newRow("INVALID_CAN") << CardReturnCode::INVALID_CAN << QByteArray("006306f0");
 			QTest::newRow("INVALID_PASSWORD") << CardReturnCode::INVALID_PASSWORD << QByteArray("006306f0");
-			QTest::newRow("INVALID_PIN") << CardReturnCode::INVALID_PIN << QByteArray("006306f0");
-			QTest::newRow("INVALID_PIN_2") << CardReturnCode::INVALID_PIN_2 << QByteArray("006306f0");
-			QTest::newRow("INVALID_PIN_3") << CardReturnCode::INVALID_PIN_3 << QByteArray("006306f0");
+			QTest::newRow("INVALID_PIN") << CardReturnCode::INVALID_PIN << QByteArray("c26306f0");
+			QTest::newRow("INVALID_PIN_2") << CardReturnCode::INVALID_PIN_2 << QByteArray("c16306f0");
+			QTest::newRow("INVALID_PIN_3") << CardReturnCode::INVALID_PIN_3 << QByteArray("c06306f0");
 			QTest::newRow("INVALID_PUK") << CardReturnCode::INVALID_PUK << QByteArray("006306f0");
 
 			QTest::newRow("OK") << CardReturnCode::OK << QByteArray("00000000");

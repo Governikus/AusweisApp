@@ -27,6 +27,7 @@ class test_CommandApdu
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -123,7 +124,7 @@ class test_CommandApdu
 
 			CommandApdu apdu(QByteArray::fromHex(header));
 			QCOMPARE(apdu.getINS(), Ins::UNKNOWN);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains(logMsg));
 		}
 
@@ -211,11 +212,11 @@ class test_CommandApdu
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			CommandApdu apdu1(QByteArray("aicd"), QByteArray(65536, 'w'), 1);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Command data exceeds maximum of 0xffff"_L1));
 
 			CommandApdu apdu2(QByteArray("aicd"), QByteArray("abc"), 65537);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Expected length exceeds maximum value of 0x10000"_L1));
 		}
 
@@ -249,7 +250,7 @@ class test_CommandApdu
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			CommandApdu apdu(data);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains(logMessage));
 		}
 
@@ -316,14 +317,14 @@ class test_CommandApdu
 			QCOMPARE(apdu.getData(), data);
 			QCOMPARE(apdu.isExtendedLength(), extendedLength);
 			QCOMPARE(apdu, buffer);
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 
 			CommandApdu apduParse(buffer);
 			QCOMPARE(apduParse.getLe(), le);
 			QCOMPARE(apduParse.getData(), data);
 			QCOMPARE(apduParse.isExtendedLength(), extendedLength);
 			QCOMPARE(apduParse, buffer);
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -332,11 +333,11 @@ class test_CommandApdu
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			qDebug() << CommandApdu(QByteArray::fromHex("01020304"));
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("01020304"_L1));
 
 			qDebug() << CommandApdu(QByteArray::fromHex("0cb0890000000e970200008e08b4332dac29510ece0000"));
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("\"0cb0890000~0000\" (23)"_L1));
 		}
 

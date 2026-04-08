@@ -45,6 +45,7 @@ class test_HttpServer
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -54,7 +55,7 @@ class test_HttpServer
 			auto server = Env::getShared<HttpServer>();
 
 			QVERIFY(server->isListening());
-			QCOMPARE(logSpy.count(), 3);
+			QTRY_COMPARE(logSpy.count(), 3);
 			QVERIFY(server->boundAddresses().size() > 0);
 			QVERIFY(server->boundAddresses().size() < 3);
 
@@ -99,7 +100,7 @@ class test_HttpServer
 			}
 
 			server.reset();
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Shutdown server"_L1));
 		}
@@ -122,7 +123,7 @@ class test_HttpServer
 			HttpServer server;
 
 			QVERIFY(!server.isListening());
-			QCOMPARE(logSpy.count(), 2);
+			QTRY_COMPARE(logSpy.count(), 2);
 			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Cannot start server: \"The address is protected\""_L1));
 		}
@@ -179,6 +180,7 @@ class test_HttpServer
 #endif
 			QVERIFY(requestData.contains("\r\n\r\n"));
 
+			QTRY_COMPARE(logSpy.count(), 13);
 			param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Upgrade to websocket requested"_L1));
 		}
@@ -238,7 +240,7 @@ class test_HttpServer
 			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 503);
 
 			auto noSignalFound = QStringLiteral("No registration found: \"%1\"").arg(signal);
-			QVERIFY(logSpy.takeLast().at(0).toString().contains(noSignalFound));
+			QTRY_VERIFY(logSpy.last().at(0).toString().contains(noSignalFound));
 		}
 
 
@@ -252,11 +254,11 @@ class test_HttpServer
 			QVERIFY(!server.isListening());
 			QCOMPARE(server.boundAddresses().size(), 0);
 
-			auto param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains(QLatin1String("Cannot start server: \"The bound address is already in use")));
-
-			param = logSpy.takeLast();
-			QVERIFY(param.at(0).toString().contains(QLatin1String("Abort init of http server because of fatal error...")));
+			QTRY_VERIFY(!logSpy.isEmpty());
+			QTRY_VERIFY(logSpy.first().at(0).toString().contains(QLatin1String("Cannot start server: \"The bound address is already in use")));
+			logSpy.removeFirst();
+			QTRY_VERIFY(!logSpy.isEmpty());
+			QTRY_VERIFY(logSpy.last().at(0).toString().contains(QLatin1String("Abort init of http server because of fatal error...")));
 		}
 
 

@@ -15,7 +15,6 @@ import Governikus.OnboardingView
 import Governikus.RemoteServiceView
 import Governikus.SelfAuthenticationView
 import Governikus.SettingsView
-import Governikus.SmartView
 import Governikus.Type
 import Governikus.View
 
@@ -28,8 +27,6 @@ Item {
 	readonly property var visibleItem: visibleChildren.filter(item => item instanceof TabBarView)[0]
 
 	TabBarView {
-		id: authView
-
 		anchors.fill: parent
 		visible: root.activeModule === UiModule.IDENTIFY
 
@@ -46,8 +43,6 @@ Item {
 		}
 	}
 	TabBarView {
-		id: mainView
-
 		anchors.fill: parent
 		clip: true
 		visible: root.activeModule === UiModule.DEFAULT
@@ -57,8 +52,6 @@ Item {
 		}
 	}
 	TabBarView {
-		id: selfAuthenticationView
-
 		anchors.fill: parent
 		visible: root.activeModule === UiModule.SELF_AUTHENTICATION
 
@@ -76,8 +69,6 @@ Item {
 		}
 	}
 	TabBarView {
-		id: checkIDCardView
-
 		anchors.fill: parent
 		visible: root.activeModule === UiModule.CHECK_ID_CARD
 
@@ -90,17 +81,6 @@ Item {
 		}
 	}
 	TabBarView {
-		id: smartView
-
-		anchors.fill: parent
-		visible: root.activeModule === UiModule.SMART_EID
-
-		initialItem: SmartView {
-		}
-	}
-	TabBarView {
-		id: changePinView
-
 		anchors.fill: parent
 		visible: root.activeModule === UiModule.PINMANAGEMENT
 
@@ -113,8 +93,6 @@ Item {
 		}
 	}
 	TabBarView {
-		id: remoteView
-
 		anchors.fill: parent
 		visible: root.activeModule === UiModule.REMOTE_SERVICE
 
@@ -123,8 +101,6 @@ Item {
 		}
 	}
 	TabBarView {
-		id: settingsView
-
 		anchors.fill: parent
 		visible: root.activeModule === UiModule.SETTINGS
 
@@ -133,8 +109,6 @@ Item {
 		}
 	}
 	TabBarView {
-		id: helpView
-
 		anchors.fill: parent
 		visible: root.activeModule === UiModule.HELP
 
@@ -145,8 +119,6 @@ Item {
 		}
 	}
 	TabBarView {
-		id: onboardingView
-
 		anchors.fill: parent
 		visible: root.activeModule === UiModule.ONBOARDING
 

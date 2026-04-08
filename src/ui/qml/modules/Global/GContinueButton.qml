@@ -4,9 +4,10 @@
 
 import QtQuick
 import QtQuick.Layouts
+import Governikus.Style
 
 GButton {
-	Layout.alignment: Qt.AlignHCenter
+	Layout.alignment: Style.scanPatternAlignment
 	icon.source: "qrc:///images/material_arrow_right.svg"
 	layoutDirection: Qt.RightToLeft
 

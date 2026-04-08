@@ -50,7 +50,7 @@ RedirectRequest::RedirectRequest(const QSharedPointer<HttpRequest>& pRequest, QO
 			});
 
 	connect(this, &QAbstractSocket::connected, this, [this] {
-				if (qEnvironmentVariableIsSet("AUSWEISAPP2_PROXY_USE_REDIRECT"))
+				if (qEnvironmentVariableIsSet("AUSWEISAPP_PROXY_USE_REDIRECT"))
 				{
 					sendHttpRedirect();
 					answerReceived();
@@ -96,6 +96,7 @@ RedirectRequest::~RedirectRequest()
 		htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), mRequest->getUrl().toString());
 		//: ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.
 		htmlTemplate.setContextParameter(QStringLiteral("CONTENT_BUTTON"), tr("Try again"));
+		htmlTemplate.setContextParameter(QStringLiteral("AUSWEISAPP_LOGO"), QStringLiteral("/images/html_templates/ausweisapp_logo_%1.svg").arg(LanguageLoader::getLocaleCode()));
 		QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
 		HttpResponse response(HTTP_STATUS_BAD_GATEWAY);

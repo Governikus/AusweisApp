@@ -18,8 +18,7 @@ workflow:
     - env
     - !reference [.prepare, pkg]
     - !reference [.prepare, uv]
-    - hg clone -U ${REPOSITORY} source
-    - hg -R source update -r $REVISION
+    - hg clone --stream ${REPOSITORY} -u $REVISION source
   pkg:
     - |
       if command -v apk >/dev/null 2>&1; then
@@ -45,15 +44,22 @@ workflow:
 
         apt-get update
         apt-get install -y mercurial cmake ninja-build make gdb lldb python3 curl ca-certificates
-        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/astral-sh/uv/releases/download/0.9.26/uv-installer.sh | sh
+        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/astral-sh/uv/releases/download/0.11.0/uv-installer.sh | sh
         source $HOME/.local/bin/env
       elif command -v dnf >/dev/null 2>&1; then
+        rm -rf /etc/yum.repos.d/fedora-cisco-openh264.repo /etc/yum.repos.d/fedora-updates-testing.repo
+        if [ -n "$MIRROR_FEDORA" ]; then
+          sed -i -e 's/^metalink=/#metalink=/g' -e "s|^#baseurl=.*|baseurl=$MIRROR_FEDORA/releases/\$releasever/Everything/\$basearch/os/|g" \
+              /etc/yum.repos.d/fedora.repo
+          sed -i -e 's/^metalink=/#metalink=/g' -e "s|^#baseurl=.*|baseurl=$MIRROR_FEDORA/updates/\$releasever/Everything/\$basearch/|g" \
+              /etc/yum.repos.d/fedora-updates.repo
+        fi
         dnf -y install mercurial cmake ninja-build make gdb lldb uv python3
       elif command -v sw_vers >/dev/null 2>&1; then
         export UV_NO_MODIFY_PATH=1
         export UV_INSTALL_DIR=$BINARY_DIR
-        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/astral-sh/uv/releases/download/0.9.26/uv-installer.sh | sh
-        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/ccache/ccache/releases/download/v4.12.2/ccache-4.12.2-darwin.tar.gz \
+        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/astral-sh/uv/releases/download/0.11.0/uv-installer.sh | sh
+        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/ccache/ccache/releases/download/v4.13.2/ccache-4.13.2-darwin.tar.gz \
              | tar -C $BINARY_DIR --strip-components=1 -xz "*/ccache"
         export PATH="$BINARY_DIR/:$PATH"
       fi
@@ -62,7 +68,7 @@ workflow:
     - source $VIRTUAL_ENV/bin/activate
     - |
       if command -v sw_vers >/dev/null 2>&1; then
-        uv pip install mercurial==7.1.2 cmake==4.1.0 ninja==1.13.0
+        uv pip install mercurial==7.1.2 cmake==4.3.0 ninja==1.13.0
       fi
 
 .Base:
@@ -123,7 +129,7 @@ Linux_Debian_Vanilla:
     - chmod 700 "$XDG_RUNTIME_DIR"
     - |
       apt-get install -y g++ pkgconf ccache \
-                     libhttp-parser-dev libpcsclite-dev libssl-dev \
+                     libllhttp-dev libpcsclite-dev libssl-dev \
                      qt6-base-dev qt6-base-private-dev qt6-declarative-dev \
                      qt6-scxml-dev qt6-svg-dev \
                      qt6-tools-dev qt6-websockets-dev qt6-connectivity-dev \
@@ -166,15 +172,38 @@ Linux_Alpine:
         cxx_standard: [20]
       - variant: [App]
         compiler: [g++]
-        cxx_standard: [17]
+        cxx_standard: [23, 26]
   script:
     - apk add clang clazy gnupg gcovr check-jsonschema typos py3-codespell yamllint ruff grype
     - uv pip install sphinx-lint
     - cmake -P source/ci.cmake -- -DCMAKE_CXX_COMPILER=${compiler} -DCMAKE_CXX_STANDARD=${cxx_standard}
   artifacts:
+    paths:
+      - build/sbom/*.spdx
     expire_in: 1 week
     reports:
       junit: build/**/results.*.junit.xml
+
+Linux_Memcheck:
+  extends: Libraries_Linux
+  tags:
+    - $MEDIUM_RUNNER
+  needs:
+    - job: Libraries_Linux
+      artifacts: false
+      optional: true
+  parallel:
+    matrix:
+      - variant: [App]
+        compiler: [g++]
+  script:
+    - apk add valgrind
+    - !reference [Linux_Alpine, script]
+  artifacts:
+    expire_in: 1 week
+    when: always
+    paths:
+      - build/Testing/Temporary/MemoryChecker*
 
 Translations:
   extends: Libraries_Linux
@@ -200,9 +229,32 @@ Linux_OpenSSL:
       - openssl:
           - "1.1.1w"
           - "3.0.18"
+          - "3.5.5"
+        legacy: 'OFF'
+      - openssl:
+          - "3.6.1"
+        legacy: 'ON'
   script:
     - apk add gcovr
-    - cmake -DOPENSSL=${openssl} -P source/ci.cmake
+    - cmake -DPROPAGATE=ON -DOPENSSL=${openssl} -P source/ci.cmake -- -DUSE_LEGACY_OPENSSL_API=${legacy}
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: build/**/results.*.junit.xml
+
+Linux_Fedora_Vanilla:
+  extends: .Base
+  tags:
+    - $MEDIUM_RUNNER
+  image: ${DOCKER_REGISTRY_MIRROR}/fedora:43
+  script:
+    - |
+      dnf -y install gcc-c++ libxkbcommon-devel libudev-devel \
+                     ccache llhttp-devel pcsc-lite-devel openssl-devel \
+                     qt6-qtbase-devel qt6-qtbase-private-devel \
+                     qt6-qtscxml-devel qt6-qtshadertools-devel qt6-qtsvg-devel \
+                     qt6-qttools-devel qt6-qtwebsockets-devel qt6-qtconnectivity-devel
+    - cmake -P source/ci.cmake -- -DUSE_LEGACY_OPENSSL_API=ON
   artifacts:
     expire_in: 1 week
     reports:
@@ -217,7 +269,7 @@ SonarQube:
     LANG: "C.UTF-8"
     LC_ALL: "C.UTF-8"
   cache:
-    - key: "${CI_JOB_NAME}-${REV}"
+    - key: "${CI_JOB_NAME}-${REVIEWBOARD_REVIEW_BRANCH}"
       paths:
         - sonar
       when: always
@@ -246,6 +298,7 @@ Formatting:
       optional: true
   script:
     - apk add dos2unix uncrustify ruff yamlfmt
+    - uv pip install python-hglib
     - cmake -P source/ci.cmake | tee output.log
     - if grep -q "FORMATTING FAILED" output.log; then exit 1; fi
 
@@ -259,13 +312,14 @@ Linux_Debian_Qt:
           - 6.8.0
           - 6.9.0
           - 6.10.0
+          - 6.11.0
   image: ${DOCKER_REGISTRY_MIRROR}/debian:stable-slim
   variables:
     LANG: "C.UTF-8"
     LC_ALL: "C.UTF-8"
   script:
     - |
-      apt-get install -y g++ pkgconf ccache libpcsclite-dev libssl-dev libudev-dev \
+      apt-get install -y g++ pkgconf ccache libpcsclite-dev libssl-dev libllhttp-dev libudev-dev \
                          libglib2.0-0 libvulkan-dev libegl1-mesa-dev libxkbcommon0 libdbus-1-3 \
                          libfontconfig1
     - uv pip install aqtinstall
@@ -279,8 +333,8 @@ Linux_Debian_Qt:
   extends: .Base
   variables:
     ANDROID_CMDLINE_TOOLS: 13114758
-    ANDROID_NDK_VERSION: 28.2.13676358
-    ANDROID_COMPONENTS: '"cmdline-tools;19.0" "build-tools;36.1.0" "platforms;android-35" "ndk;${ANDROID_NDK_VERSION}"'
+    ANDROID_NDK_VERSION: 29.0.14206865
+    ANDROID_COMPONENTS: '"cmdline-tools;19.0" "build-tools;36.1.0" "platforms;android-36" "ndk;${ANDROID_NDK_VERSION}"'
     ANDROID_SDK_ROOT: $CI_PROJECT_DIR/android-sdk
     ANDROID_NDK_ROOT: $ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION
     ANDROID_CMDLINE_TOOLS_ZIP: commandlinetools-linux-${ANDROID_CMDLINE_TOOLS}_latest.zip
@@ -379,20 +433,14 @@ Android_APK:
       junit: build/lint-results-junit.xml
 
 Docs:
-  image:
-    name: ${DOCKER_REGISTRY_MIRROR}/pandoc/latex:3.6.4-alpine
-    entrypoint: [""]
   extends: .Base
   script:
     - |
       apk add py3-setuptools icu poppler zziplib enscript ghostscript \
-              py3-sphinx py3-sphinx_rtd_theme py3-sphinx-copybutton py3-sphinxcontrib-tabs
+              py3-sphinx py3-sphinx_rtd_theme py3-sphinx-copybutton py3-sphinxcontrib-tabs \
+              pandoc texlive texmf-dist-latexrecommended texmf-dist-fontsrecommended texmf-dist-latexextra \
+              texmf-dist-langgerman
     - uv pip install doc8
-    - |
-      tlmgr --repository=https://ftp.tu-chemnitz.de/pub/tug/historic/systems/texlive/2024/tlnet-final install \
-            latexmk cmap fncychap float wrapfig capt-of framed upquote needspace tabulary varwidth parskip titlesec \
-            pdfmanagement-testphase tagpdf xcolor sectsty pdflscape fancyvrb tcolorbox booktabs mdwtools caption \
-            babel-german csquotes tex-gyre l3experimental
     - cmake -P source/ci.cmake
   artifacts:
     expire_in: 1 week
@@ -552,6 +600,7 @@ MacOS:
   artifacts:
     expire_in: 1 week
     paths:
+      - build/*.zip
       - build/*.dmg*
       - build/*.pkg*
     reports:
@@ -560,9 +609,9 @@ MacOS:
 .Windows:
   extends: .Base
   variables:
-    UV_VERSION: 0.9.26
+    UV_VERSION: 0.11.0
     NINJA_VERSION: 1.13.2
-    CCACHE_VERSION: 4.12.2
+    CCACHE_VERSION: 4.13.1
     JOM_VERSION: "1_1_5"
     PERL_VERSION: 5.42.0.1
     MSYS2_VERSION: 20251213
@@ -610,11 +659,10 @@ MacOS:
       }
     - uv venv $env:VIRTUAL_ENV --python 3.12
     - '& "$env:VIRTUAL_ENV/Scripts/activate.ps1"'
-    - uv pip install mercurial==7.1.2 cmake==4.2.0
+    - uv pip install mercurial==7.1.2 cmake==4.3.0
     # https://foss.heptapod.net/mercurial/mercurial-devel/-/issues/6635
     - $env:PATH = "$env:PATH;$env:VIRTUAL_ENV/Lib/site-packages"
-    - hg clone -U $REPOSITORY source
-    - hg update -r $REVISION -R source
+    - hg clone --stream ${REPOSITORY} -u $REVISION source
   script:
     - cmake -P source/ci.cmake
   artifacts:
@@ -689,7 +737,7 @@ Deploy_Final_Framework:
   needs:
     - job: iOS_SwiftPackage
   script:
-    - apk add github-cli
+    - apk add github-cli gnupg
     - !reference [.Deploy, script]
 
 Deploy_MacOS_PKG:
@@ -722,6 +770,12 @@ Deploy_Android_AAR:
 Deploy_Archive:
   extends: .Deploy
   needs:
+    - job: Linux_Alpine
+      parallel:
+        matrix:
+          - variant: [App]
+            compiler: [g++]
+            cxx_standard: [20]
     - job: Android_APK
     - job: Android_Merged-AAR
     - job: iOS_SwiftPackage
@@ -750,6 +804,7 @@ Deploy_Archive:
           - target: SDK
   script:
     - apk add samba-client
+    - uv pip install python-gitlab
     - !reference [.Deploy, script]
 
 Deploy_Allowlist:
@@ -819,7 +874,7 @@ Deploy_Final_GitHub:
             compiler: cl
     - job: Docs
   script:
-    - apk add github-cli
+    - apk add github-cli gnupg
     - !reference [.Deploy, script]
 
 Light_Configuration:
@@ -829,6 +884,7 @@ Light_Configuration:
       artifacts: false
       optional: true
   script:
+    - apk add check-jsonschema typos py3-codespell yamllint ruff
     - cmake -P source/ci.cmake
 
 Light_Packages:

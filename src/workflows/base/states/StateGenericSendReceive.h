@@ -31,7 +31,6 @@ class StateGenericSendReceive
 	private:
 		const PaosType mExpectedResponseType;
 		const QList<PaosType> mOtherResponseTypes;
-		const bool mPersonalization;
 		QSharedPointer<QNetworkReply> mReply;
 
 		void logRawData(const QByteArray& pMessage);
@@ -46,8 +45,7 @@ class StateGenericSendReceive
 		explicit StateGenericSendReceive(
 			const QSharedPointer<WorkflowContext>& pContext,
 			PaosType pExpectedResponseType,
-			const QList<PaosType>& pOtherResponseTypes = {},
-			bool pPersonalization = false);
+			const QList<PaosType>& pOtherResponseTypes = {});
 
 		virtual QSharedPointer<ResponseType> getAsResponse() = 0;
 		virtual QSharedPointer<PaosCreator> getAsCreator() = 0;

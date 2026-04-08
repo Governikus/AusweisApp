@@ -18,15 +18,6 @@ QtObject {
 		}
 		return findGFlickable(pItem.parent);
 	}
-	function getSecondPRSHintText(pGlobalStatusCode) {
-		if (PinResetInformationModel.hasPinResetService && pGlobalStatusCode === GlobalStatusCode.Card_Pin_Deactivated)
-			return PinResetInformationModel.activateOnlineFunctionAtAuthorityHint;
-
-		if (PinResetInformationModel.hasPinResetService && pGlobalStatusCode === GlobalStatusCode.Card_Puk_Blocked)
-			return PinResetInformationModel.resetPinAtAuthorityHint;
-
-		return "";
-	}
 	function platformAgnosticLinkOpenText(pLink, pName) {
 		if (Qt.platform.os === "ios" || Qt.platform.os === "android") {
 			//: MOBILE Hint that a link is present, which will open in the browser

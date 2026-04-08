@@ -5,14 +5,11 @@
 #include "WorkflowModel.h"
 
 #include "AppSettings.h"
-#include "ApplicationModel.h"
 #include "Email.h"
 #include "Env.h"
 #include "FuncUtils.h"
 #include "Initializer.h"
-#include "PinResetInformationModel.h"
 #include "ReaderManager.h"
-#include "SmartModel.h"
 #include "context/AuthContext.h"
 
 #include <QDesktopServices>
@@ -20,24 +17,30 @@
 
 using namespace governikus;
 
+
 INIT_FUNCTION([] {
 			qRegisterMetaType<QList<int>>("QList<ReaderManagerPluginType>");
 		})
 
+
+#if defined(Q_OS_IOS)
+	#define DETECTION_ONLY false
+#else
+	#define DETECTION_ONLY true
+#endif
+
+
 WorkflowModel::WorkflowModel()
 	: QObject()
 	, mContext()
-#if defined(Q_OS_IOS)
-	, mRemoteScanWasRunning(false)
-#endif
+	, mRemoteIfdManager([this]() {
+				return !mContext.isNull();
+			}, DETECTION_ONLY)
 {
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardInserted, this, &WorkflowModel::fireHasCardChanged);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardRemoved, this, &WorkflowModel::fireHasCardChanged);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderAdded, this, &WorkflowModel::fireHasCardChanged);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderRemoved, this, &WorkflowModel::fireHasCardChanged);
-	connect(Env::getSingleton<SmartModel>(), &SmartModel::fireStateChanged, this, &WorkflowModel::fireIsCurrentSmartCardAllowedChanged);
-
-	connect(Env::getSingleton<ApplicationModel>(), &ApplicationModel::fireApplicationStateChanged, this, &WorkflowModel::onApplicationStateChanged);
 
 	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireDeveloperOptionsChanged, this, &WorkflowModel::fireSupportedPluginTypesChanged);
 }
@@ -56,7 +59,6 @@ void WorkflowModel::resetWorkflowContext(const QSharedPointer<WorkflowContext>& 
 		connect(mContext.data(), &WorkflowContext::fireReaderPluginTypesChanged, this, &WorkflowModel::fireHasCardChanged);
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &WorkflowModel::fireSelectedReaderChanged);
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &WorkflowModel::fireHasCardChanged);
-		connect(mContext.data(), &WorkflowContext::fireEidTypeMismatchChanged, this, &WorkflowModel::fireIsCurrentSmartCardAllowedChanged);
 		connect(mContext.data(), &WorkflowContext::fireEidTypeMismatchChanged, this, &WorkflowModel::fireEidTypeMismatchErrorChanged);
 		connect(mContext.data(), &WorkflowContext::fireNextWorkflowPending, this, &WorkflowModel::fireNextWorkflowPendingChanged);
 		connect(mContext.data(), &WorkflowContext::fireRemoveCardFeedbackChanged, this, &WorkflowModel::fireRemoveCardFeedbackChanged);
@@ -151,12 +153,6 @@ void WorkflowModel::insertCard(ReaderManagerPluginType pType) const
 }
 
 
-void WorkflowModel::insertSmartCard() const
-{
-	insertCard(ReaderManagerPluginType::SMART);
-}
-
-
 void WorkflowModel::insertSimulator() const
 {
 	insertCard(ReaderManagerPluginType::SIMULATOR);
@@ -235,13 +231,6 @@ bool WorkflowModel::hasCard() const
 }
 
 
-bool WorkflowModel::isCurrentSmartCardAllowed() const
-{
-	const auto& mobileEidType = Env::getSingleton<SmartModel>()->getMobileEidType();
-	return mContext && mContext->isMobileEidTypeAllowed(mobileEidType);
-}
-
-
 QList<ReaderManagerPluginType> WorkflowModel::getSupportedReaderPluginTypes() const
 {
 	auto supported = Enum<ReaderManagerPluginType>::getList();
@@ -250,10 +239,6 @@ QList<ReaderManagerPluginType> WorkflowModel::getSupportedReaderPluginTypes() co
 	{
 		supported.removeOne(ReaderManagerPluginType::SIMULATOR);
 	}
-
-#if !__has_include("SmartManager.h")
-	supported.removeOne(ReaderManagerPluginType::SMART);
-#endif
 
 	return supported;
 }
@@ -303,7 +288,6 @@ GAnimation WorkflowModel::getStatusCodeAnimation() const
 		case GlobalStatus::Code::Card_Cancellation_By_User:
 		case GlobalStatus::Code::Card_Input_TimeOut:
 		case GlobalStatus::Code::Card_Pin_Deactivated:
-		case GlobalStatus::Code::Card_Pin_Blocked:
 		case GlobalStatus::Code::Card_Pin_Not_Blocked:
 		case GlobalStatus::Code::Card_NewPin_Mismatch:
 		case GlobalStatus::Code::Card_NewPin_Invalid_Length:
@@ -330,107 +314,12 @@ GAnimation WorkflowModel::getStatusCodeAnimation() const
 
 QString WorkflowModel::getStatusHintText() const
 {
-	switch (getStatusCode())
+	if (getStatusCode() == GlobalStatus::Code::Card_ValidityVerificationFailed)
 	{
-		case GlobalStatus::Code::Card_Puk_Blocked:
-		{
-			auto pinResetModel = Env::getSingleton<PinResetInformationModel>();
-			return pinResetModel->hasPinResetService() ? pinResetModel->getResetPinWithPRSHint() : pinResetModel->getResetPinAtAuthorityHint();
-		}
-
-		case GlobalStatus::Code::Card_Pin_Deactivated:
-		{
-			auto pinResetModel = Env::getSingleton<PinResetInformationModel>();
-			return pinResetModel->hasPinResetService() ? pinResetModel->getActivateOnlineFunctionForPRSHint() : pinResetModel->getActivateOnlineFunctionAtAuthorityHint();
-		}
-
-		case GlobalStatus::Code::Card_ValidityVerificationFailed:
-			return tr("Contact your local citizens' office (B\u00FCrgeramt) to apply for a new ID card or to unblock the ID card.");
-
-		case GlobalStatus::Code::Card_Smart_Invalid:
-			//: MOBILE The hint text that is shown right above the redirect button that appears when a user tried to usa an unusable Smart-eID
-			return tr("Renew your Smart-eID and set a new PIN in the Smart-eID menu.");
-
-		default:
-			return QString();
+		return tr("Contact your local citizens' office (B\u00FCrgeramt) to apply for a new ID card or to unblock the ID card.");
 	}
-}
 
-
-QString WorkflowModel::getStatusHintTitle() const
-{
-	switch (getStatusCode())
-	{
-		case GlobalStatus::Code::Card_Puk_Blocked:
-		case GlobalStatus::Code::Card_Pin_Deactivated:
-		{
-			auto pinResetModel = Env::getSingleton<PinResetInformationModel>();
-			return pinResetModel->hasPinResetService() ? pinResetModel->getResetPinWithPRSHintTitle() : pinResetModel->getResetPinAtAuthorityHintTitle();
-		}
-
-		default:
-			return QString();
-	}
-}
-
-
-QString WorkflowModel::getStatusHintBoxesTitle() const
-{
-	switch (getStatusCode())
-	{
-		case GlobalStatus::Code::Card_Puk_Blocked:
-			//: ALL_PLATFORMS Hint title to assist the user on how to set a new PIN
-			return tr("My PUK is used up. How do I set a new PIN?");
-
-		case GlobalStatus::Code::Card_Pin_Deactivated:
-			//: ALL_PLATFORMS Hint title to assist the user on how to set a new PIN
-			return tr("How do I activate the eID function?");
-
-		default:
-			return QString();
-	}
-}
-
-
-QString WorkflowModel::getStatusHintActionText() const
-{
-	switch (getStatusCode())
-	{
-		case GlobalStatus::Code::Card_Puk_Blocked:
-		{
-			auto pinResetModel = Env::getSingleton<PinResetInformationModel>();
-			return pinResetModel->hasPinResetService() ? pinResetModel->getResetPinWithPRSActionText() : pinResetModel->getResetPinAtAuthorityActionText();
-		}
-
-		case GlobalStatus::Code::Card_Pin_Deactivated:
-			return Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionActionText();
-
-		case GlobalStatus::Code::Card_Smart_Invalid:
-			//: MOBILE The text on the redirect button that appears when the user tried to use an unusable Smart-eID
-			return tr("Go to Smart-eID menu");
-
-		default:
-			return QString();
-	}
-}
-
-
-bool WorkflowModel::invokeStatusHintAction()
-{
-	switch (getStatusCode())
-	{
-		case GlobalStatus::Code::Card_Puk_Blocked:
-		case GlobalStatus::Code::Card_Pin_Deactivated:
-			QDesktopServices::openUrl(Env::getSingleton<PinResetInformationModel>()->getPinResetUrl());
-			return true;
-
-		case GlobalStatus::Code::Card_Smart_Invalid:
-			Q_EMIT fireShowUiRequest(UiModule::SMART_EID);
-			return true;
-
-		default:
-			return false;
-	}
+	return QString();
 }
 
 
@@ -468,18 +357,6 @@ void WorkflowModel::setInitialPluginType()
 	}
 	mContext->setReaderPluginTypes({ReaderManagerPluginType::PCSC, ReaderManagerPluginType::REMOTE_IFD, ReaderManagerPluginType::SIMULATOR});
 #endif
-}
-
-
-bool WorkflowModel::shouldSkipResultView() const
-{
-	if (!mContext)
-	{
-		return false;
-	}
-	// We deliberately don't want to use GlobalStatus::isCancellationByUser(), because that would also skip the
-	// ResultView when the user pressed Cancel on his card reader.
-	return mContext->getStatus().getStatusCode() == GlobalStatus::Code::Workflow_Cancellation_By_User;
 }
 
 
@@ -527,36 +404,6 @@ void WorkflowModel::sendResultMail() const
 }
 
 
-void WorkflowModel::onApplicationStateChanged(bool pIsAppInForeground)
-{
-	if (!mContext)
-	{
-		return;
-	}
-
-#if defined(Q_OS_IOS)
-	if (pIsAppInForeground)
-	{
-		if (mRemoteScanWasRunning)
-		{
-			Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPluginType::REMOTE_IFD);
-			mRemoteScanWasRunning = false;
-		}
-	}
-	else
-	{
-		mRemoteScanWasRunning = Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::REMOTE_IFD).isScanRunning();
-		if (mRemoteScanWasRunning)
-		{
-			Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::REMOTE_IFD);
-		}
-	}
-#else
-	Q_UNUSED(pIsAppInForeground)
-#endif
-}
-
-
 void WorkflowModel::onPaceResultUpdated()
 {
 	if (mContext->getLastPaceResult() == CardReturnCode::OK_PUK)
@@ -579,22 +426,8 @@ QString WorkflowModel::eidTypeMismatchError() const
 {
 	if (mContext && mContext->eidTypeMismatch())
 	{
-		if (mContext->isSmartCardUsed())
-		{
-			if (mContext->getAcceptedEidTypes().contains(AcceptedEidType::CARD_CERTIFIED))
-			{
-				//: ALL_PLATFORMS
-				return tr("The used Smart-eID is not accepted by the server. Please restart the remote service on your connected smartphone and try again with a physical ID card.");
-			}
-			else
-			{
-				//: ALL_PLATFORMS
-				return tr("The used Smart-eID is not accepted by the server. Please stop the remote service and use another Smart-eID or contact the service provider.");
-			}
-		}
-
 		//: ALL_PLATFORMS
-		return tr("The used ID card is not accepted by the server. Please remove the ID card from your device or card reader and use a Smart-eID or contact the service provider.");
+		return tr("The used ID card is not accepted by the server. Please remove the ID card from your device or card reader and use a suitable ID card or contact the service provider.");
 	}
 
 	return QString();

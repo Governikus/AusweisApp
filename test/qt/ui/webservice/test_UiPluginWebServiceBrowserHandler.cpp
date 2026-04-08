@@ -89,7 +89,7 @@ class test_UiPluginWebServiceBrowserHandler
 
 			QTest::ignoreMessage(QtDebugMsg, "Send error page to browser, error code 404");
 			QCOMPARE(ui.sendRedirect(mRequest, mAuthContext), QString());
-			QCOMPARE(split(mSocket->mWriteBuffer), "HTTP/1.0 404 Not Found");
+			QCOMPARE(split(mSocket->mWriteBuffer), "HTTP/1.0 404 NOT_FOUND");
 		}
 
 
@@ -100,7 +100,7 @@ class test_UiPluginWebServiceBrowserHandler
 
 			QTest::ignoreMessage(QtDebugMsg, "Send error page to browser, error code 500");
 			QCOMPARE(ui.sendRedirect(mRequest, mAuthContext), QString());
-			QCOMPARE(split(mSocket->mWriteBuffer), "HTTP/1.0 500 Internal Server Error");
+			QCOMPARE(split(mSocket->mWriteBuffer), "HTTP/1.0 500 INTERNAL_SERVER_ERROR");
 		}
 
 
@@ -112,7 +112,7 @@ class test_UiPluginWebServiceBrowserHandler
 			QTest::ignoreMessage(QtDebugMsg, "Invalid redirect URL: QUrl(\"\")");
 			QTest::ignoreMessage(QtDebugMsg, "Send error page to browser, error code 400");
 			QCOMPARE(ui.sendRedirect(mRequest, mAuthContext), QString());
-			QCOMPARE(split(mSocket->mWriteBuffer), "HTTP/1.0 400 Bad Request");
+			QCOMPARE(split(mSocket->mWriteBuffer), "HTTP/1.0 400 BAD_REQUEST");
 		}
 
 
@@ -124,7 +124,7 @@ class test_UiPluginWebServiceBrowserHandler
 
 			QTest::ignoreMessage(QtDebugMsg, "Perform redirect to URL: QUrl(\"http://dummy?ResultMajor=ok\")");
 			QCOMPARE(ui.sendRedirect(mRequest, mAuthContext), QString());
-			QCOMPARE(split(mSocket->mWriteBuffer), "HTTP/1.0 303 See Other");
+			QCOMPARE(split(mSocket->mWriteBuffer), "HTTP/1.0 303 SEE_OTHER");
 			QVERIFY(mSocket->mWriteBuffer.contains("Location: http://dummy?ResultMajor=ok"));
 		}
 

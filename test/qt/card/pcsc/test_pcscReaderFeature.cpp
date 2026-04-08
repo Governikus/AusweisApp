@@ -44,6 +44,7 @@ class test_pcscReaderFeature
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
 		}
 
 
@@ -53,7 +54,7 @@ class test_pcscReaderFeature
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << readerFeature;
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("()")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("()")));
 
 			QCOMPARE(getFeatureCount(readerFeature), 0);
 		}
@@ -66,7 +67,7 @@ class test_pcscReaderFeature
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << readerFeature;
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("(TLV_PROPERTIES)")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("(TLV_PROPERTIES)")));
 
 			QCOMPARE(getFeatureCount(readerFeature), 1);
 			QVERIFY(readerFeature.contains(FeatureID::TLV_PROPERTIES));
@@ -81,7 +82,7 @@ class test_pcscReaderFeature
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << readerFeature;
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("(VERIFY_PIN_DIRECT, MODIFY_PIN_DIRECT, MCT_READERDIRECT, MCT_UNIVERSAL, EXECUTE_PACE)")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("(VERIFY_PIN_DIRECT, MODIFY_PIN_DIRECT, MCT_READERDIRECT, MCT_UNIVERSAL, EXECUTE_PACE)")));
 
 			QCOMPARE(getFeatureCount(readerFeature), 5);
 			QVERIFY(readerFeature.contains(FeatureID::VERIFY_PIN_DIRECT));

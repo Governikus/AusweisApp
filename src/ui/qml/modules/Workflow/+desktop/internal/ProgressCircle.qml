@@ -1,7 +1,9 @@
 /**
  * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
+
 import Governikus.Style
 import Governikus.Type
 
@@ -41,9 +43,11 @@ Item {
 	]
 	transitions: [
 		Transition {
+			enabled: SettingsModel.useAnimations
+
 			SequentialAnimation {
 				PauseAnimation {
-					duration: 200
+					duration: Style.animation_duration
 				}
 				PropertyAction {
 					property: "enabled"
@@ -67,8 +71,6 @@ Item {
 		readonly property int stepWidth: UiPluginModel.scaleFactor * 150
 	}
 	Rectangle {
-		id: line1
-
 		anchors.left: circle1.horizontalCenter
 		anchors.leftMargin: Style.dimens.pane_spacing + circle1.maximumHeight / 2
 		anchors.right: circle2.horizontalCenter
@@ -79,8 +81,6 @@ Item {
 		width: d.stepWidth
 	}
 	Rectangle {
-		id: line2
-
 		anchors.left: circle2.horizontalCenter
 		anchors.leftMargin: Style.dimens.pane_spacing + circle2.maximumHeight / 2
 		anchors.right: circle3.horizontalCenter

@@ -14,8 +14,13 @@ using namespace governikus;
 
 void WebSocketHelper::connectWebsocket(int pPort)
 {
-	const QString address = QStringLiteral("ws://localhost:%1/eID-Kernel").arg(pPort);
-	mWebSocket.open(QUrl(address));
+	const QUrl address(QStringLiteral("ws://localhost:%1/eID-Kernel").arg(pPort));
+	QNetworkRequest request(address);
+	if (!mOrigin.isNull())
+	{
+		request.setRawHeader("origin", mOrigin);
+	}
+	mWebSocket.open(request);
 }
 
 
@@ -25,9 +30,15 @@ void WebSocketHelper::onTextMessageReceived(const QString& pMessage)
 }
 
 
-WebSocketHelper::WebSocketHelper(int pPort, int pConnectionTimeout)
+WebSocketHelper::WebSocketHelper(int pPort, const QByteArray& pOrigin, int pConnectionTimeout)
 	: mConnectionTimeout(pConnectionTimeout)
+	, mInput()
+	, mError(QAbstractSocket::UnknownSocketError)
+	, mOrigin(pOrigin)
 {
+	connect(&mWebSocket, &QWebSocket::errorOccurred, this, [this](QAbstractSocket::SocketError pError) {
+				mError = pError;
+			});
 	connect(&mWebSocket, &QWebSocket::textMessageReceived, this, &WebSocketHelper::onTextMessageReceived);
 	connectWebsocket(pPort);
 }
@@ -36,6 +47,12 @@ WebSocketHelper::WebSocketHelper(int pPort, int pConnectionTimeout)
 bool WebSocketHelper::isConnected() const
 {
 	return mWebSocket.state() == QAbstractSocket::SocketState::ConnectedState;
+}
+
+
+QAbstractSocket::SocketError WebSocketHelper::getError() const
+{
+	return mError;
 }
 
 

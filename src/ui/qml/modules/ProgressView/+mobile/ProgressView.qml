@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Animations
@@ -53,7 +54,6 @@ FlickableSectionPage {
 
 		Accessible.name: root.progressBarA11yText
 		Layout.alignment: Qt.AlignHCenter
-		Layout.fillWidth: true
 		Layout.topMargin: 2 * Style.dimens.pane_spacing
 		visible: false
 	}

@@ -66,8 +66,6 @@ RoundedRectangle {
 			}
 		}
 		GButton {
-			id: delegate
-
 			readonly property bool shouldPair: root.isPairing && !root.hasCustomContent
 			readonly property bool shouldUnpair: root.isPaired && !root.isPairing && !root.hasCustomContent
 
@@ -88,6 +86,7 @@ RoundedRectangle {
 			id: customContentLoader
 
 			Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+			Layout.leftMargin: (item as Item)?.visible ? 0 : -rowLayout.spacing
 			visible: root.hasCustomContent
 		}
 	}

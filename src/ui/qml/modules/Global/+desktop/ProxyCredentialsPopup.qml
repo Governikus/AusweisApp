@@ -9,8 +9,6 @@ import Governikus.Type
 import Governikus.Style
 
 ConfirmationPopup {
-	id: root
-
 	property ProxyCredentials credentials
 
 	//: DESKTOP Text of the button in the proxy credentials popup.

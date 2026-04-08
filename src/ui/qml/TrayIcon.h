@@ -47,6 +47,7 @@ class TrayIcon
 
 	Q_SIGNALS:
 		void fireShow();
+		void fireMessageClicked();
 		void fireQuit();
 };
 

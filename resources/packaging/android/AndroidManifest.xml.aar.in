@@ -20,7 +20,6 @@
 
     <queries>
         <package android:name="com.governikus.ausweisapp2" />
-        <package android:name="com.governikus.ausweisapp2.dev" />
     </queries>
 
     <application>

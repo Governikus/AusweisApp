@@ -132,8 +132,19 @@ void UiPluginWebSocket::onUiDominationReleased()
 
 void UiPluginWebSocket::onNewWebSocketRequest(const QSharedPointer<HttpRequest>& pRequest)
 {
-	const auto& url = pRequest->getUrl();
+	const auto& origin = pRequest->getHeader(QByteArray("origin"));
+	if (!origin.isNull())
+	{
+		const auto regex = qEnvironmentVariable("AUSWEISAPP_WEBSOCKET_ORIGIN");
+		if (regex.isEmpty() || !QRegularExpression(regex).match(QString::fromLatin1(origin)).hasMatch())
+		{
+			qCDebug(websocket) << "Access via a web browser is not permitted. Found origin:" << origin;
+			pRequest->send(HTTP_STATUS_FORBIDDEN);
+			return;
+		}
+	}
 
+	const auto& url = pRequest->getUrl();
 	const QRegularExpression path(QStringLiteral("^/eID-Kernel(/)?$"));
 	if (!path.match(url.path()).hasMatch())
 	{

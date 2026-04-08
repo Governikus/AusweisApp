@@ -63,8 +63,6 @@ FlickableSectionPage {
 			switch (root.passwordType) {
 			case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
 			case NumberModel.PasswordType.NEW_PIN:
-			case NumberModel.PasswordType.NEW_SMART_PIN:
-			case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
 				return AnimationLoader.Type.NEW_PIN;
 			}
 			return AnimationLoader.Type.NONE;
@@ -86,9 +84,7 @@ FlickableSectionPage {
 			case CardReturnCode.INVALID_PIN_3:
 				return root.isTransportPin ?
 				//: ALL_PLATFORMS
-				qsTr("Wrong Transport PIN") : root.smartEidUsed ?
-				//: ALL_PLATFORMS
-				qsTr("Wrong Smart-eID PIN") :
+				qsTr("Wrong Transport PIN") :
 				//: ALL_PLATFORMS
 				qsTr("Wrong ID card PIN");
 			}
@@ -97,10 +93,6 @@ FlickableSectionPage {
 			case NumberModel.PasswordType.NEW_PIN:
 				//: ALL_PLATFORMS
 				return qsTr("Wrong new ID card PIN confirmation");
-			case NumberModel.PasswordType.NEW_SMART_PIN:
-			case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
-				//: ALL_PLATFORMS
-				return qsTr("Wrong new Smart-eID PIN confirmation");
 			}
 			return "";
 		}
@@ -113,7 +105,21 @@ FlickableSectionPage {
 	MoreInformationLink {
 		Layout.alignment: Qt.AlignHCenter
 		text: infoData.linkText
-		visible: text !== "" && (root.returnCode === CardReturnCode.INVALID_PUK || infoData.contentType === MultiInfoData.Type.TRANSPORT_PIN_NOT_WORKING)
+		visible: {
+			if (text === "") {
+				return false;
+			}
+
+			switch (root.returnCode) {
+			case CardReturnCode.INVALID_PIN_2:
+			case CardReturnCode.INVALID_PIN_3:
+			case CardReturnCode.INVALID_CAN:
+			case CardReturnCode.INVALID_PUK:
+				return true;
+			default:
+				return infoData.contentType === MultiInfoData.Type.TRANSPORT_PIN_NOT_WORKING;
+			}
+		}
 
 		onClicked: root.passwordInfoRequested()
 	}
@@ -125,10 +131,6 @@ FlickableSectionPage {
 		tintColor: Style.color.image
 		tintEnabled: false
 		visible: !root.isTransportPin && (root.returnCode === CardReturnCode.INVALID_PIN_2 || root.returnCode === CardReturnCode.INVALID_CAN)
-	}
-	GSpacer {
-		Layout.fillHeight: true
-		visible: Style.is_layout_desktop
 	}
 	GContinueButton {
 		onClicked: root.continueClicked()

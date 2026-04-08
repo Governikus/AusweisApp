@@ -71,7 +71,7 @@
                                 Program="[INSTALL_ROOT][ProductName].exe"
                                 Scope="any"
                                 Outbound="yes"
-                                Name="AusweisApp"
+                                Name="AusweisApp-Outbound"
                                 Description="AusweisApp firewall rule" />
 
             <!-- Add/remove SaC listening port to/from Windows Firewall -->

@@ -99,8 +99,9 @@ class test_ReaderConfiguration
 
 			QTest::newRow("Remote card reader") << UsbId(0x0000, 0x0000) << "NFC-abcdef1234567890" << QStringLiteral("Smartphone als Kartenleser") << "img_RemoteReader" << "^NFC.*"; // codespell:ignore
 
-			QTest::newRow("PersoSim SaC") << UsbId(0x0000, 0x0001) << "PersoSimHandshake 00 00" << QStringLiteral("PersoSim") << "img_PersoSim" << "^PersoSim.*";
-			QTest::newRow("PersoSim native") << UsbId(0x0000, 0x0001) << "PersoSim Virtual Card Reader 0" << QStringLiteral("PersoSim") << "img_PersoSim" << "^PersoSim.*";
+			QTest::newRow("PersoSim SaC") << UsbId(0x0000, 0x0001) << "PersoSimHandshake 00 00" << QStringLiteral("PersoSim") << "img_PersoSim" << "^(PersoSim|FIDELIO).*";
+			QTest::newRow("PersoSim native 1") << UsbId(0x0000, 0x0001) << "PersoSim Virtual Card Reader 0" << QStringLiteral("PersoSim") << "img_PersoSim" << "^(PersoSim|FIDELIO).*";
+			QTest::newRow("PersoSim native 2") << UsbId(0x0000, 0x0001) << "FIDELIO Virtual PCSC Reader 0" << QStringLiteral("PersoSim") << "img_PersoSim" << "^(PersoSim|FIDELIO).*";
 
 			QTest::newRow("Simulator") << UsbId(0x0000, 0x0002) << "Simulator" << "Simulator" << "img_Simulator" << "^Simulator$";
 
@@ -186,7 +187,7 @@ class test_ReaderConfiguration
 			QTest::newRow("REINER SCT cyberJack RFID standard-macosx-12-15") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard" << "REINER SCT cyberJack RFID standard";
 
 			QTest::newRow("REINER SCT cyberJack RFID basis-windows-10-11") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis 0" << "REINER SCT cyberJack RFID basis";
-			QTest::newRow("REINER SCT cyberJack RFID basis-macosx-11-15") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis";
+			QTest::newRow("REINER SCT cyberJack RFID basis-macosx-13-26") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis";
 
 			QTest::newRow("REINER SCT cyberJack wave-windows-10-11-1") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave 0" << "REINER SCT cyberJack wave";
 			QTest::newRow("REINER SCT cyberJack wave-windows-10-11-1") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave 1" << "REINER SCT cyberJack wave";

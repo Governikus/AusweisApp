@@ -43,7 +43,6 @@ class UrlUtil
 		 */
 		static bool isMatchingSameOriginPolicy(const QUrl& pUrl1, const QUrl& pUrl2);
 
-		static void setHiddenSettings(const QUrlQuery& pUrl);
 		static std::pair<UrlQueryRequest, QString> getRequest(const QUrlQuery& pUrl);
 
 		template<typename T>

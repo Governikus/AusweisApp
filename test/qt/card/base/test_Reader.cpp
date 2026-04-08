@@ -89,7 +89,7 @@ class test_Reader
 			QSignalSpy spy(mReader, &Reader::fireCardInfoChanged);
 
 			QTest::ignoreMessage(QtDebugMsg, "StatusCode: SUCCESS");
-			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false , PIN initial:  false ");
+			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false ");
 			QTest::ignoreMessage(QtDebugMsg, "fireCardInfoChanged");
 			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::OK);
 			QCOMPARE(mReader->getReaderInfo().getRetryCounter(), 3);
@@ -116,7 +116,7 @@ class test_Reader
 			QSignalSpy spy(mReader, &Reader::fireCardInfoChanged);
 
 			QTest::ignoreMessage(QtDebugMsg, "StatusCode: SUCCESS");
-			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false , PIN initial:  false ");
+			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false ");
 			QTest::ignoreMessage(QtDebugMsg, "fireCardInfoChanged");
 			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::OK);
 			QCOMPARE(mReader->getReaderInfo().getRetryCounter(), 3);
@@ -126,24 +126,6 @@ class test_Reader
 			const auto& commands = mWorker->getCommands();
 			QCOMPARE(commands.size(), 1);
 			QCOMPARE(commands.at(0), QByteArray::fromHex("0022C1A40F800A04007F00070202040202830103"));
-		}
-
-
-		void test_UpdateRetryCounter_InitialPinChanged()
-		{
-			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"_L1));
-			auto efCardAccess = EFCardAccess::decode(bytes);
-			CardInfo cInfo(CardType::UNKNOWN, FileRef(), efCardAccess, 3, true, false);
-			ReaderInfo rInfo(mReaderName, ReaderManagerPluginType::UNKNOWN, cInfo);
-			mReader->setReaderInfo(rInfo);
-			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("63D3"));
-			QSignalSpy spy(mReader, &Reader::fireCardInfoChanged);
-
-			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 3 , PIN deactivated: false , PIN initial:  true ");
-			QTest::ignoreMessage(QtDebugMsg, "fireCardInfoChanged");
-			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::OK);
-			QVERIFY(mReader->getReaderInfo().getCardInfo().isPinInitial());
-			QCOMPARE(spy.count(), 1);
 		}
 
 
@@ -157,8 +139,6 @@ class test_Reader
 
 			QTest::newRow("NONE") << CardType::NONE << -1 << 0 << 0 << false;
 			QTest::newRow("EID_CARD") << CardType::EID_CARD << 3 << 1 << 0 << true;
-			QTest::newRow("SMART_EID_RC3") << CardType::SMART_EID << 3 << 1 << 0 << true;
-			QTest::newRow("SMART_EID_RC0") << CardType::SMART_EID << 0 << 0 << 1 << false;
 		}
 
 

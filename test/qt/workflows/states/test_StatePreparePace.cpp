@@ -77,23 +77,6 @@ class test_StatePreparePace
 		}
 
 
-		void test_Run_RetryCounter0_Smart()
-		{
-			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
-			mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
-
-			const CardInfo cardInfo(CardType::SMART_EID, FileRef(), QSharedPointer<const EFCardAccess>(), 0);
-			const ReaderInfo readerInfo(QString(), ReaderManagerPluginType::REMOTE_IFD, cardInfo);
-			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
-
-			QSignalSpy spyAbort(mState.data(), &StatePreparePace::fireAbort);
-			mContext->setStateApproved();
-			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mContext->getStatus().getStatusCode(), GlobalStatus::Code::Card_Smart_Invalid);
-			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Prepace_Pace_Smart_Eid_Invalidated);
-		}
-
-
 		void test_Run_RetryCounter0_data()
 		{
 			QTest::addColumn<ReaderManagerPluginType>("type");

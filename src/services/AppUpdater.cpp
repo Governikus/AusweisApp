@@ -187,6 +187,12 @@ void AppUpdater::setAppUpdateJsonUrl(const QUrl& pUrl)
 }
 
 
+void AppUpdater::setAppUpdateData(const AppUpdateData& pData)
+{
+	mAppUpdateData = pData;
+}
+
+
 #endif
 
 
@@ -206,7 +212,7 @@ void AppUpdater::onDownloadFinished(const QUrl& pUpdateUrl, const QDateTime& pNe
 
 	if (pUpdateUrl == mAppUpdateJsonUrl)
 	{
-		handleVersionInfoDownloadFinished(pData);
+		handleVersionInfoDownloadFinished(AppUpdateData(pData));
 	}
 	else if (pUpdateUrl == mAppUpdateData.getChecksumUrl())
 	{
@@ -223,12 +229,11 @@ void AppUpdater::onDownloadFinished(const QUrl& pUpdateUrl, const QDateTime& pNe
 }
 
 
-void AppUpdater::handleVersionInfoDownloadFinished(const QByteArray& pData)
+void AppUpdater::handleVersionInfoDownloadFinished(const AppUpdateData& pData)
 {
-	AppUpdateData newData(pData);
-	if (newData.isValid())
+	if (pData.isValid())
 	{
-		mAppUpdateData = newData;
+		mAppUpdateData = pData;
 		const auto& version = mAppUpdateData.getVersion();
 
 		if (VersionNumber(version) > VersionNumber::getApplicationVersion())
@@ -244,7 +249,7 @@ void AppUpdater::handleVersionInfoDownloadFinished(const QByteArray& pData)
 	}
 	else
 	{
-		Q_EMIT fireAppcastCheckFinished(false, newData.getParsingResult().getStatusCode());
+		Q_EMIT fireAppcastCheckFinished(false, pData.getParsingResult().getStatusCode());
 	}
 	clearDownloaderConnection();
 }

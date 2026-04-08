@@ -10,6 +10,7 @@ import QtQuick.Layouts
 import Governikus.Animations
 import Governikus.Global
 import Governikus.ResultView
+import Governikus.Style
 import Governikus.Type
 
 ResultView {
@@ -124,7 +125,7 @@ ResultView {
 			GButton {
 				Accessible.description: Utils.platformAgnosticLinkOpenText(PinResetInformationModel.pinResetActivationUrl, Accessible.name)
 				Accessible.role: Accessible.Link
-				Layout.alignment: Qt.AlignHCenter
+				Layout.alignment: Style.scanPatternAlignment
 				icon.source: "qrc:///images/open_website.svg"
 				//: ALL_PLATFORMS
 				text: qsTr("Enter activation code")

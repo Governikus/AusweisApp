@@ -32,10 +32,6 @@
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 
-#if __has_include("context/PersonalizationContext.h")
-	#include "context/PersonalizationContext.h"
-	#include "messages/MsgHandlerPersonalization.h"
-#endif
 
 #include <QLoggingCategory>
 #include <QScopeGuard>
@@ -69,13 +65,6 @@ Msg MessageDispatcher::init(const QSharedPointer<WorkflowContext>& pWorkflowCont
 	mContext.clear();
 	mContext.setWorkflowContext(pWorkflowContext);
 
-#if __has_include("context/PersonalizationContext.h")
-	if (mContext.getContext<PersonalizationContext>())
-	{
-		return MsgHandlerPersonalization();
-	}
-#endif
-
 	if (mContext.getContext<AuthContext>())
 	{
 		return MsgHandlerAuth();
@@ -106,13 +95,6 @@ Msg MessageDispatcher::finish()
 	const auto guard = qScopeGuard([this] {
 				reset();
 			});
-
-#if __has_include("context/PersonalizationContext.h")
-	if (auto personalizationContext = mContext.getContext<PersonalizationContext>())
-	{
-		return MsgHandlerPersonalization(personalizationContext);
-	}
-#endif
 
 	if (auto authContext = mContext.getContext<AuthContext>())
 	{
@@ -298,15 +280,6 @@ MsgHandler MessageDispatcher::createForCommand(const QJsonObject& pObj)
 
 		case MsgCmdType::RUN_AUTH:
 			return mContext.isActiveWorkflow() ? MsgHandler(MsgHandlerBadState(requestType)) : MsgHandler(MsgHandlerAuth(pObj, mContext));
-
-		case MsgCmdType::RUN_PERSONALIZATION:
-#if __has_include("context/PersonalizationContext.h")
-			return mContext.isActiveWorkflow() ? MsgHandler(MsgHandlerBadState(requestType)) : MsgHandler(MsgHandlerPersonalization(pObj, mContext));
-
-#else
-			return MsgHandlerUnknownCommand(requestType);
-
-#endif
 
 		case MsgCmdType::RUN_CHANGE_PIN:
 			return mContext.isActiveWorkflow() ? MsgHandler(MsgHandlerBadState(requestType)) : MsgHandler(MsgHandlerChangePin(pObj, mContext));

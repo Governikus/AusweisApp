@@ -90,10 +90,11 @@ void Reader::setTimerId(int pTimerId)
 
 void Reader::insertCard(const QVariant& pData)
 {
-	const bool skipCheck = pData.typeId() == QMetaType::Bool && pData.toBool();
-	if (!skipCheck && !mReaderInfo.isInsertable())
+	Q_UNUSED(pData)
+
+	if (!mReaderInfo.isInsertable())
 	{
-		qCDebug(card) << "Skipping insert because at least the personalization is missing";
+		qCDebug(card) << "Skipping insert because card is not insertable";
 		return;
 	}
 
@@ -182,15 +183,14 @@ void Reader::timerEvent(QTimerEvent* pEvent)
 
 CardReturnCode Reader::updateRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 {
-	auto [returnCode, newRetryCounter, newPinDeactivated, newPinInitial] = getRetryCounter(pCardConnectionWorker);
+	auto [returnCode, newRetryCounter, newPinDeactivated] = getRetryCounter(pCardConnectionWorker);
 	if (returnCode == CardReturnCode::OK)
 	{
-		bool emitSignal = mReaderInfo.isRetryCounterDetermined() && ((newRetryCounter != mReaderInfo.getRetryCounter()) || (newPinDeactivated != mReaderInfo.isPinDeactivated()) || (newPinInitial != mReaderInfo.getCardInfo().isPinInitial()));
+		bool emitSignal = mReaderInfo.isRetryCounterDetermined() && ((newRetryCounter != mReaderInfo.getRetryCounter()) || (newPinDeactivated != mReaderInfo.isPinDeactivated()));
 
-		qCInfo(support) << "retrieved retry counter:" << newRetryCounter << ", was:" << mReaderInfo.getRetryCounter() << ", PIN deactivated:" << newPinDeactivated << ", PIN initial: " << newPinInitial;
+		qCInfo(support) << "retrieved retry counter:" << newRetryCounter << ", was:" << mReaderInfo.getRetryCounter() << ", PIN deactivated:" << newPinDeactivated;
 		mReaderInfo.mCardInfo.mRetryCounter = newRetryCounter;
 		mReaderInfo.mCardInfo.mPinDeactivated = newPinDeactivated;
-		mReaderInfo.mCardInfo.mPinInitial = newPinInitial;
 
 		if (emitSignal)
 		{
@@ -239,7 +239,5 @@ Reader::RetryCounterResult Reader::getRetryCounter(QSharedPointer<CardConnection
 	}
 
 	const bool pinDeactivated = PacePinStatus::isDeactivated(mseSetAtResponse.getStatusCode());
-	const bool pinInitial = PacePinStatus::isInitial(mseSetAtResponse.getStatusCode());
-
-	return {CardReturnCode::OK, retryCounter, pinDeactivated, pinInitial};
+	return {CardReturnCode::OK, retryCounter, pinDeactivated};
 }

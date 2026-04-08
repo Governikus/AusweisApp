@@ -23,6 +23,13 @@ class test_UiPluginWebSocket
 
 		QScopedPointer<QProcess> mApp2;
 		QScopedPointer<WebSocketHelper> mHelper;
+		quint16 mWebSocketPort = 0;
+
+		void connect()
+		{
+			mHelper.reset(new WebSocketHelper(mWebSocketPort));
+			QTRY_VERIFY_WITH_TIMEOUT(mHelper->isConnected(), PROCESS_TIMEOUT);
+		}
 
 	private Q_SLOTS:
 		void initTestCase()
@@ -50,6 +57,11 @@ class test_UiPluginWebSocket
 			mApp2->setProgram(app);
 			mApp2->setWorkingDirectory(path);
 			mApp2->setArguments(args);
+			mApp2->setProcessChannelMode(QProcess::ForwardedChannels);
+
+			QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+			env.insert(QStringLiteral("AUSWEISAPP_WEBSOCKET_ORIGIN"), QStringLiteral(".*Origin"));
+			mApp2->setProcessEnvironment(env);
 
 			mApp2->start();
 			mApp2->waitForStarted(PROCESS_TIMEOUT);
@@ -59,12 +71,8 @@ class test_UiPluginWebSocket
 			QTRY_COMPARE_WITH_TIMEOUT(portInfoFile.exists(), true, PROCESS_TIMEOUT); // clazy:exclude=qstring-allocations
 			QVERIFY(portInfoFile.open(QIODevice::ReadOnly));
 
-			quint16 webSocketPort = 0;
-			QTextStream(&portInfoFile) >> webSocketPort;
-			QVERIFY(webSocketPort > 0);
-
-			mHelper.reset(new WebSocketHelper(webSocketPort));
-			QTRY_VERIFY_WITH_TIMEOUT(mHelper->isConnected(), PROCESS_TIMEOUT);
+			QTextStream(&portInfoFile) >> mWebSocketPort;
+			QVERIFY(mWebSocketPort > 0);
 		}
 
 
@@ -106,13 +114,48 @@ class test_UiPluginWebSocket
 		}
 
 
+		void origin_data()
+		{
+			QTest::addColumn<QByteArray>("origin");
+			QTest::addColumn<bool>("forbidden");
+
+			QTest::newRow("forbidden") << QByteArray("TEST") << true;
+			QTest::newRow("empty") << QByteArray("") << true;
+			QTest::newRow("null") << QByteArray("null") << true;
+			QTest::newRow("allowed") << QByteArray("MyOrigin") << false;
+		}
+
+
+		void origin()
+		{
+			QFETCH(QByteArray, origin);
+			QFETCH(bool, forbidden);
+
+			mHelper.reset(new WebSocketHelper(mWebSocketPort, origin));
+
+			if (forbidden)
+			{
+				QCOMPARE(mHelper->getState(), QAbstractSocket::ConnectingState);
+				QTRY_COMPARE(mHelper->getState(), QAbstractSocket::UnconnectedState);
+				QCOMPARE(mHelper->getError(), QAbstractSocket::ConnectionRefusedError);
+			}
+			else
+			{
+				QTRY_VERIFY_WITH_TIMEOUT(mHelper->isConnected(), PROCESS_TIMEOUT);
+			}
+		}
+
+
 		void runAndStop()
 		{
+			connect();
 		}
 
 
 		void getInfoAndApiLevel()
 		{
+			connect();
+
 			mHelper->sendMessage("{\"cmd\": \"GET_INFO\"}"_L1);
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
 						return pMessage["msg"_L1] == "INFO"_L1 &&
@@ -133,6 +176,7 @@ class test_UiPluginWebSocket
 			QSKIP("Not supported");
 #endif
 
+			connect();
 			mHelper->sendMessage("{\"cmd\": \"RUN_AUTH\", \"tcTokenURL\" : \"https://localhost/\"}"_L1);
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
 						return pMessage["msg"_L1] == "AUTH"_L1;

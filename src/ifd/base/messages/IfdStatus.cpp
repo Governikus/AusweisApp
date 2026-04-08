@@ -98,7 +98,7 @@ IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo, bool pPublishCard)
 	switch (pReaderInfo.getPluginType())
 	{
 		case ReaderManagerPluginType::NFC:
-		case ReaderManagerPluginType::SMART:
+		case ReaderManagerPluginType::REMOTE_IFD:
 			mHasPinPad = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
 			break;
 

@@ -6,6 +6,7 @@
 
 #include "CardReturnCode.h"
 #include "ReaderManagerPluginInfo.h"
+#include "RemoteIfdManager.h"
 #include "UiPlugin.h"
 #include "context/WorkflowContext.h"
 
@@ -13,7 +14,9 @@
 #include <QSharedPointer>
 #include <QString>
 
+
 class test_WorkflowModel;
+
 
 namespace governikus
 {
@@ -46,15 +49,11 @@ class WorkflowModel
 	Q_PROPERTY(QList<ReaderManagerPluginType> supportedPluginTypes READ getSupportedReaderPluginTypes NOTIFY fireSupportedPluginTypesChanged)
 	Q_PROPERTY(bool isBasicReader READ isBasicReader NOTIFY fireSelectedReaderChanged)
 	Q_PROPERTY(bool isRemoteReader READ isRemoteReader NOTIFY fireSelectedReaderChanged)
-	Q_PROPERTY(bool isCurrentSmartCardAllowed READ isCurrentSmartCardAllowed NOTIFY fireIsCurrentSmartCardAllowedChanged)
 	Q_PROPERTY(QString eidTypeMismatchError READ eidTypeMismatchError NOTIFY fireEidTypeMismatchErrorChanged)
 	Q_PROPERTY(bool hasNextWorkflowPending READ getNextWorkflowPending NOTIFY fireNextWorkflowPendingChanged)
 	Q_PROPERTY(governikus::EnumGlobalStatusCode::GlobalStatusCode statusCode READ getStatusCode NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusCodeDisplayString READ getStatusCodeDisplayString NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintText READ getStatusHintText NOTIFY fireResultChanged)
-	Q_PROPERTY(QString statusHintTitle READ getStatusHintTitle NOTIFY fireResultChanged)
-	Q_PROPERTY(QString statusHintBoxesTitle READ getStatusHintBoxesTitle NOTIFY fireResultChanged)
-	Q_PROPERTY(QString statusHintActionText READ getStatusHintActionText NOTIFY fireResultChanged)
 	Q_PROPERTY(governikus::EnumGAnimation::GAnimation statusCodeAnimation READ getStatusCodeAnimation NOTIFY fireResultChanged)
 	Q_PROPERTY(bool showRemoveCardFeedback READ showRemoveCardFeedback NOTIFY fireRemoveCardFeedbackChanged)
 	Q_PROPERTY(bool cardInitiallyAppeared READ getCardInitiallyAppeared NOTIFY fireHasCardChanged)
@@ -64,9 +63,8 @@ class WorkflowModel
 
 	private:
 		QSharedPointer<WorkflowContext> mContext;
-#if defined(Q_OS_IOS)
-		bool mRemoteScanWasRunning;
-#endif
+		RemoteIfdManager mRemoteIfdManager;
+
 		void insertCard(ReaderManagerPluginType pType) const;
 
 	protected:
@@ -91,8 +89,6 @@ class WorkflowModel
 		[[nodiscard]] bool getCardInitiallyAppeared() const;
 		[[nodiscard]] bool hasCard() const;
 
-		[[nodiscard]] bool isCurrentSmartCardAllowed() const;
-
 		[[nodiscard]] virtual QList<ReaderManagerPluginType> getSupportedReaderPluginTypes() const;
 
 		[[nodiscard]] bool getNextWorkflowPending() const;
@@ -102,20 +98,14 @@ class WorkflowModel
 		[[nodiscard]] virtual GAnimation getStatusCodeAnimation() const;
 
 		[[nodiscard]] QString getStatusHintText() const;
-		[[nodiscard]] QString getStatusHintTitle() const;
-		[[nodiscard]] QString getStatusHintBoxesTitle() const;
-		[[nodiscard]] QString getStatusHintActionText() const;
-		[[nodiscard]] Q_INVOKABLE bool invokeStatusHintAction();
 
 		[[nodiscard]] bool showRemoveCardFeedback() const;
 
-		Q_INVOKABLE void insertSmartCard() const;
 		Q_INVOKABLE void insertSimulator() const;
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE void startScanExplicitly();
 		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void setInitialPluginType();
-		[[nodiscard]] Q_INVOKABLE bool shouldSkipResultView() const;
 		[[nodiscard]] Q_INVOKABLE bool isCancellationByUser() const;
 		[[nodiscard]] Q_INVOKABLE QString getEmailHeader() const;
 		[[nodiscard]] Q_INVOKABLE QString getEmailBody(bool pPercentEncoding = false, bool pAddLogNotice = false) const;
@@ -124,7 +114,6 @@ class WorkflowModel
 		[[nodiscard]] QString eidTypeMismatchError() const;
 
 	private Q_SLOTS:
-		void onApplicationStateChanged(bool pIsAppInForeground);
 		void onPaceResultUpdated();
 
 	Q_SIGNALS:
@@ -134,7 +123,6 @@ class WorkflowModel
 		void fireResultChanged();
 		void fireReaderPluginTypeChanged(bool pExplicitStart = false);
 		void fireSelectedReaderChanged();
-		void fireIsCurrentSmartCardAllowedChanged();
 		void fireReaderImageChanged();
 		void fireNextWorkflowPendingChanged();
 		void fireSupportedPluginTypesChanged();

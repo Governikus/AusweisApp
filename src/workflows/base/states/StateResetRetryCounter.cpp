@@ -4,6 +4,8 @@
 
 #include "states/StateResetRetryCounter.h"
 
+#include "apdu/ResponseApdu.h"
+
 #include <QLoggingCategory>
 
 
@@ -27,7 +29,7 @@ void StateResetRetryCounter::run()
 	auto cardConnection = getContext()->getCardConnection();
 	if (!cardConnection)
 	{
-		qCDebug(statemachine) << "No card connection available.";
+		qCDebug(statemachine) << "No card connection available";
 		Q_EMIT fireNoCardConnection();
 		return;
 	}
@@ -39,26 +41,31 @@ void StateResetRetryCounter::run()
 
 void StateResetRetryCounter::onResetRetryCounterDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	const auto& returnCode = pCommand->getReturnCode();
-	switch (returnCode)
+	auto resetRetryCounterCommand = pCommand.staticCast<ResetRetryCounterCommand>();
+	const auto& returnCode = resetRetryCounterCommand->getReturnCode();
+	if (returnCode == CardReturnCode::OK)
 	{
-		case CardReturnCode::OK:
-			getContext()->setExpectedRetryCounter(-1);
-			Q_EMIT fireContinue();
-			return;
+		switch (const auto code = resetRetryCounterCommand->getStatusCode(); code)
+		{
+			case StatusCode::SUCCESS:
+				getContext()->setExpectedRetryCounter(-1);
+				Q_EMIT fireContinue();
+				return;
 
-		case CardReturnCode::PUK_INOPERATIVE:
-			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Channel_Puk_Inoperative);
-			return;
+			case StatusCode::ACCESS_DENIED:
+				updateStatus(GlobalStatus::Code::Card_Puk_Blocked);
+				Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Channel_Puk_Inoperative);
+				return;
 
-		default:
-			qCCritical(statemachine).nospace() << "An error (" << returnCode << ") occurred while communicating with the card reader, cannot reset retry counter, abort state";
-			getContext()->resetCardConnection();
-			Q_EMIT fireNoCardConnection();
-			return;
-
+			default:
+				qCCritical(statemachine).nospace() << "Received an unexpected StatusCode (" << code << "), cannot reset retry counter";
+		}
+	}
+	else
+	{
+		qCCritical(statemachine).nospace() << "An error (" << returnCode << ") occurred while communicating with the card reader";
 	}
 
-	Q_UNREACHABLE();
+	getContext()->resetCardConnection();
+	Q_EMIT fireNoCardConnection();
 }

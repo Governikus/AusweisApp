@@ -20,8 +20,6 @@ GLink {
 	textStyle: Style.text.navigation
 
 	MouseArea {
-		id: mouseArea
-
 		anchors.fill: parent
 
 		onClicked: root.clicked()

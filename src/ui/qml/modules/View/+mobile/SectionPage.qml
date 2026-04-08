@@ -13,7 +13,6 @@ Controller {
 	property var navigationAction: null
 	property Component rightTitleBarAction: null
 	property bool showTitleBarContent: true
-	property bool smartEidUsed: false
 	required property string title
 
 	Connections {

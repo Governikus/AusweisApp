@@ -21,24 +21,13 @@ class StartPaosResponse
 		QString mResultMajor;
 		QString mResultMinor;
 		QString mResultMessage;
-		int mStatusCode;
-		int mRemainingDays;
-		int mRemainingAttempts;
-		QString mBlockingCode;
 
 	public:
 		explicit StartPaosResponse(const QByteArray& pXmlData);
 
-		[[nodiscard]] int getStatusCode() const;
-		[[nodiscard]] int getRemainingDays() const;
-		[[nodiscard]] int getRemainingAttempts() const;
-		[[nodiscard]] const QString& getBlockingCode() const;
-
 	private:
 		void parse();
 		bool handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
-
-		int valuetoInt(const QString& pValue) const;
 };
 
 } // namespace governikus

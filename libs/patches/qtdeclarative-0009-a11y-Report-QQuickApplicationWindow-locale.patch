@@ -1,0 +1,155 @@
+From e916093dcc57b4a0371dea45ed51b499e2334369 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Wed, 26 Nov 2025 11:23:40 +0100
+Subject: a11y: Report QQuickApplicationWindow locale
+
+Similar to the support for QQuickControl introduced in
+245f4d1d8b71375ff8900a53b876fdcf2c85c422, this adds support for the
+locale set in QQuickApplicationWindow for the a11y layer.
+
+Task-number: QTBUG-141701
+Pick-to: 6.11
+Change-Id: I258dc8ad022c9a998d5441c25cde49a1e7c32d16
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+(Cherry-picked from commit 18de5bc509c673c16a323b18252b4be53addfe30)
+---
+ src/quicktemplates/CMakeLists.txt             |  1 +
+ .../qaccessiblequickapplicationwindow.cpp     | 43 ++++++++++++++++++
+ .../qaccessiblequickapplicationwindow_p.h     | 44 +++++++++++++++++++
+ .../qtquicktemplates2global.cpp               |  3 ++
+ 4 files changed, 91 insertions(+)
+ create mode 100644 src/quicktemplates/accessible/qaccessiblequickapplicationwindow.cpp
+ create mode 100644 src/quicktemplates/accessible/qaccessiblequickapplicationwindow_p.h
+
+diff --git x/qtdeclarative/src/quicktemplates/CMakeLists.txt y/qtdeclarative/src/quicktemplates/CMakeLists.txt
+index 2666df1a9fb67623cbd1dc3e8ecb1569fc1815f8..96e54d0a068cbccc8cee64c3765f2a3787169df6 100644
+--- x/qtdeclarative/src/quicktemplates/CMakeLists.txt
++++ y/qtdeclarative/src/quicktemplates/CMakeLists.txt
+@@ -143,6 +143,7 @@ qt_internal_extend_target(QuickTemplates2 CONDITION TARGET Qt::QmlModels
+ 
+ qt_internal_extend_target(QuickTemplates2 CONDITION QT_FEATURE_accessibility
+     SOURCES
++        accessible/qaccessiblequickapplicationwindow.cpp accessible/qaccessiblequickapplicationwindow_p.h
+         accessible/qaccessiblequickcontrol.cpp accessible/qaccessiblequickcontrol_p.h
+         accessible/qaccessiblequickpage.cpp accessible/qaccessiblequickpage_p.h
+         accessible/qaccessiblequickpopupitem.cpp accessible/qaccessiblequickpopupitem_p.h
+diff --git x/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickapplicationwindow.cpp y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickapplicationwindow.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..02e7ba18b14d71dd2a570e242f05a3adfb503646
+--- /dev/null
++++ y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickapplicationwindow.cpp
+@@ -0,0 +1,43 @@
++// Copyright (C) 2026 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++// Qt-Security score:significant reason:default
++
++#include "qaccessiblequickapplicationwindow_p.h"
++
++QT_BEGIN_NAMESPACE
++
++QAccessibleQuickApplicationWindow::QAccessibleQuickApplicationWindow(
++        QQuickApplicationWindow *window)
++    : QAccessibleQuickWindow(window)
++{
++}
++
++void *QAccessibleQuickApplicationWindow::interface_cast(QAccessible::InterfaceType t)
++{
++    if (t == QAccessible::AttributesInterface)
++        return static_cast<QAccessibleAttributesInterface *>(this);
++
++    return QAccessibleQuickWindow::interface_cast(t);
++}
++
++QList<QAccessible::Attribute> QAccessibleQuickApplicationWindow::attributeKeys() const
++{
++    return { QAccessible::Attribute::Locale };
++}
++
++QVariant QAccessibleQuickApplicationWindow::attributeValue(QAccessible::Attribute key) const
++{
++    if (key == QAccessible::Attribute::Locale) {
++        Q_ASSERT(applicationWindow());
++        return QVariant::fromValue(applicationWindow()->locale());
++    }
++
++    return QVariant();
++}
++
++QQuickApplicationWindow *QAccessibleQuickApplicationWindow::applicationWindow() const
++{
++    return static_cast<QQuickApplicationWindow *>(object());
++}
++
++QT_END_NAMESPACE
+diff --git x/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickapplicationwindow_p.h y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickapplicationwindow_p.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..35c01bcce4c278ff190d7dd2237593f91c9f5edd
+--- /dev/null
++++ y/qtdeclarative/src/quicktemplates/accessible/qaccessiblequickapplicationwindow_p.h
+@@ -0,0 +1,44 @@
++// Copyright (C) 2026 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++
++#ifndef QACCESSIBLEQUICKAPPLICATIONWINDOW_H
++#define QACCESSIBLEQUICKAPPLICATIONWINDOW_H
++
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++#include "qquickapplicationwindow_p.h"
++
++#include <QtGui/qaccessible.h>
++#include <QtQuick/private/qaccessiblequickview_p.h>
++
++QT_BEGIN_NAMESPACE
++
++class QAccessibleQuickApplicationWindow : public QAccessibleQuickWindow,
++                                          public QAccessibleAttributesInterface
++{
++public:
++    QAccessibleQuickApplicationWindow(QQuickApplicationWindow *window);
++
++    // QAccessibleInterface
++    void *interface_cast(QAccessible::InterfaceType t) override;
++
++    // QAccessibleAttributesInterface
++    virtual QList<QAccessible::Attribute> attributeKeys() const override;
++    virtual QVariant attributeValue(QAccessible::Attribute key) const override;
++
++private:
++    QQuickApplicationWindow *applicationWindow() const;
++};
++
++QT_END_NAMESPACE
++
++#endif // QACCESSIBLEQUICKAPPLICATIONWINDOW_H
+diff --git x/qtdeclarative/src/quicktemplates/qtquicktemplates2global.cpp y/qtdeclarative/src/quicktemplates/qtquicktemplates2global.cpp
+index a9d7c9d39744652845730420285f1b418650def8..671ea1119a20904a08d2f3580014d14e151ca4e1 100644
+--- x/qtdeclarative/src/quicktemplates/qtquicktemplates2global.cpp
++++ y/qtdeclarative/src/quicktemplates/qtquicktemplates2global.cpp
+@@ -9,6 +9,7 @@
+ #if QT_CONFIG(accessibility)
+ #include "qquickpage_p.h"
+ #include "qquickpopupitem_p_p.h"
++#include "accessible/qaccessiblequickapplicationwindow_p.h"
+ #include "accessible/qaccessiblequickcontrol_p.h"
+ #include "accessible/qaccessiblequickpage_p.h"
+ #include "accessible/qaccessiblequickpopupitem_p.h"
+@@ -25,6 +26,8 @@ static QAccessibleInterface *qQuickAccessibleFactory(const QString &classname, Q
+         return new QAccessibleQuickControl(qobject_cast<QQuickControl *>(object));
+     if (classname == u"QQuickPopupItem")
+         return new QAccessibleQuickPopupItem(qobject_cast<QQuickPopupItem *>(object));
++    if (classname == u"QQuickApplicationWindow")
++        return new QAccessibleQuickApplicationWindow(qobject_cast<QQuickApplicationWindow *>(object));
+ 
+     return nullptr;
+ }

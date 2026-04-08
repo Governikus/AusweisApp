@@ -25,6 +25,13 @@ class test_ConnectivityManager
 		}
 
 
+		void cleanup()
+		{
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
+		}
+
+
 		void test_Active()
 		{
 			ConnectivityManager manager;
@@ -34,24 +41,24 @@ class test_ConnectivityManager
 			QVERIFY(!manager.isNetworkInterfaceActive());
 
 			manager.setActive(true);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("A network interface is now available"_L1));
 			QCOMPARE(signalSpy.count(), 1);
 			QVERIFY(manager.isNetworkInterfaceActive());
 
 			manager.setActive(true);
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 			QCOMPARE(signalSpy.count(), 1);
 			QVERIFY(manager.isNetworkInterfaceActive());
 
 			manager.setActive(false);
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("An active network interface is no longer available"_L1));
 			QCOMPARE(signalSpy.count(), 2);
 			QVERIFY(!manager.isNetworkInterfaceActive());
 
 			manager.setActive(false);
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 			QCOMPARE(signalSpy.count(), 2);
 			QVERIFY(!manager.isNetworkInterfaceActive());
 		}

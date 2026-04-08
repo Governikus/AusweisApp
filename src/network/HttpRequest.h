@@ -13,7 +13,7 @@
 #include <QTcpSocket>
 #include <QUrl>
 
-#include <http_parser.h>
+#include <llhttp.h>
 
 #include <memory>
 
@@ -32,13 +32,12 @@ class HttpRequest
 	friend class ::test_HttpRequest;
 
 	private:
-		[[nodiscard]] static int onMessageBegin(http_parser* pParser);
-		[[nodiscard]] static int onMessageComplete(http_parser* pParser);
-		[[nodiscard]] static int onHeadersComplete(http_parser* pParser);
-		[[nodiscard]] static int onHeaderField(http_parser* pParser, const char* const pPos, size_t pLength);
-		[[nodiscard]] static int onHeaderValue(http_parser* pParser, const char* const pPos, size_t pLength);
-		[[nodiscard]] static int onBody(http_parser* pParser, const char* const pPos, size_t pLength);
-		[[nodiscard]] static int onUrl(http_parser* pParser, const char* const pPos, size_t pLength);
+		[[nodiscard]] static int onMessageComplete(llhttp_t* pParser);
+		[[nodiscard]] static int onHeadersComplete(llhttp_t* pParser);
+		[[nodiscard]] static int onHeaderField(llhttp_t* pParser, const char* const pPos, size_t pLength);
+		[[nodiscard]] static int onHeaderValue(llhttp_t* pParser, const char* const pPos, size_t pLength);
+		[[nodiscard]] static int onBody(llhttp_t* pParser, const char* const pPos, size_t pLength);
+		[[nodiscard]] static int onUrl(llhttp_t* pParser, const char* const pPos, size_t pLength);
 
 		static inline void add(QByteArray& pDest, const char* const pPos, size_t pLength)
 		{
@@ -50,8 +49,8 @@ class HttpRequest
 		QMap<QByteArray, QByteArray> mHeader;
 		QByteArray mBody;
 		QPointer<QTcpSocket> mSocket;
-		http_parser mParser;
-		http_parser_settings mParserSettings;
+		llhttp_t mParser;
+		llhttp_settings_t mParserSettings;
 
 		bool mFinished;
 		QByteArray mCurrentHeaderField;
@@ -66,7 +65,7 @@ class HttpRequest
 		[[nodiscard]] bool isConnected() const;
 
 		[[nodiscard]] QByteArray getMethod() const;
-		[[nodiscard]] http_method getHttpMethod() const;
+		[[nodiscard]] llhttp_method getHttpMethod() const;
 		[[nodiscard]] bool isUpgrade() const;
 		[[nodiscard]] QByteArray getHeader(const QByteArray& pKey) const;
 		[[nodiscard]] const QMap<QByteArray, QByteArray>& getHeader() const;
@@ -76,7 +75,7 @@ class HttpRequest
 		[[nodiscard]] quint16 getLocalPort() const;
 		void triggerSocketBuffer();
 
-		bool send(http_status pStatus);
+		bool send(llhttp_status pStatus);
 		bool send(const HttpResponse& pResponse);
 		bool send(const QByteArray& pResponse);
 

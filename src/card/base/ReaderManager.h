@@ -187,7 +187,14 @@ class ReaderManager
 		template<typename T>
 		QMetaObject::Connection callCreateCardConnectionCommand(const QString& pReaderName, const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pSlot)
 		{
+			if (!mThread.isRunning())
+			{
+				qCWarning(getLoggingCategory()) << "Cannot call CreateCardConnectionCommand if ReaderManager-Thread is not active";
+				return QMetaObject::Connection();
+			}
+
 			auto* command = new CreateCardConnectionCommand(pReaderName, mWorker);
+			command->moveToThread(&mThread);
 			QMetaObject::Connection connection = connect(command, &CreateCardConnectionCommand::fireCommandDone, pReceiver, pSlot);
 			if (connection)
 			{

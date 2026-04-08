@@ -10,10 +10,6 @@
 #include "ReaderManager.h"
 #include "context/ChangePinContext.h"
 
-#if __has_include("context/PersonalizationContext.h")
-	#include "context/PersonalizationContext.h"
-#endif
-
 #include "MockReaderManagerPlugin.h"
 
 #include <QtPlugin>
@@ -141,10 +137,6 @@ class test_MsgHandlerEnterNewPin
 			QTest::addColumn<QSharedPointer<WorkflowContext>>("ctx");
 
 			QTest::newRow("ChangePinContext") << QSharedPointer<ChangePinContext>::create().objectCast<WorkflowContext>();
-
-#if __has_include("context/PersonalizationContext.h")
-			QTest::newRow("PersonalizationContext") << QSharedPointer<PersonalizationContext>::create("dummy"_L1).objectCast<WorkflowContext>();
-#endif
 		}
 
 

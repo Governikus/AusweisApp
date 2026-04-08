@@ -13,7 +13,6 @@ CheckBox {
 	id: root
 
 	property alias focusFrameVisible: focusFrame.visible
-	property alias layoutDirection: contentLayout.layoutDirection
 	property alias maximumLineCount: description.maximumLineCount
 	readonly property color preferredBackgroundColor: colors.controlPreferredPaneBackground
 	property alias textStyle: description.textStyle
@@ -23,8 +22,6 @@ CheckBox {
 	verticalPadding: Style.dimens.pane_spacing / 2
 
 	contentItem: RowLayout {
-		id: contentLayout
-
 		spacing: root.spacing
 
 		Rectangle {

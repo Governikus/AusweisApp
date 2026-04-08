@@ -51,7 +51,7 @@
 				"0x0001"
 			],
 			"Name": "PersoSim",
-			"Pattern": "^PersoSim.*",
+			"Pattern": "^(PersoSim|FIDELIO).*",
 			"Icon": "img_PersoSim.png",
 			"Drivers": [
 				{
@@ -66,7 +66,7 @@
 							"os": "unknown"
 						}
 					],
-					"URL": "https://persosim.secunet.com"
+					"URL": "https://persosim.github.io"
 				}
 			]
 		},
@@ -333,6 +333,12 @@
 							"EN": "up to macOS 13",
 							"os": "mac",
 							"max": "13"
+						},
+						{
+							"DE": "ab macOS 26",
+							"EN": "from macOS 26",
+							"os": "mac",
+							"min": "26"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
@@ -341,10 +347,11 @@
 				{
 					"Platforms": [
 						{
-							"DE": "ab macOS 14",
-							"EN": "from macOS 14",
+							"DE": "ab macOS 14 bis macOS 15",
+							"EN": "from macOS 14 up to macOS 15",
 							"os": "mac",
-							"min": "14"
+							"min": "14",
+							"max": "15"
 						}
 					],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",

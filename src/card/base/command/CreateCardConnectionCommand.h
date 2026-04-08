@@ -28,6 +28,7 @@ class CreateCardConnectionCommand
 	private:
 		const QString mReaderName;
 		QPointer<ReaderManagerWorker> mReaderManagerWorker;
+		QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		QSharedPointer<CardConnection> mCardConnection;
 
 		Q_INVOKABLE void execute();
@@ -36,11 +37,8 @@ class CreateCardConnectionCommand
 		explicit CreateCardConnectionCommand(const QString& pReaderName, const QPointer<ReaderManagerWorker>& pReaderManagerWorker);
 
 		void run();
-		[[nodiscard]] QSharedPointer<CardConnection> getCardConnection() const;
+		[[nodiscard]] QSharedPointer<CardConnection> getCardConnection();
 		[[nodiscard]] const QString& getReaderName() const;
-
-	private Q_SLOTS:
-		void onCardConnectionWorkerCreated(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 	Q_SIGNALS:
 		void fireCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand);

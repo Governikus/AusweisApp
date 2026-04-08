@@ -119,7 +119,13 @@ QString PinResetInformationModel::getResetPinAtAuthorityHintTitle() const
 
 QString PinResetInformationModel::getResetPinWithPRSHint() const
 {
-	return hasPinResetService() ?
+	return getResetPinWithPRSHint(hasPinResetService());
+}
+
+
+QString PinResetInformationModel::getResetPinWithPRSHint(bool pHasPRS) const
+{
+	return pHasPRS ?
 	       //: ALL_PLATFORMS
 		   tr("You may request a PIN Reset Letter with a new PIN and it's according activation code on the following website.") :
 	       //This is required to hide the Hints if no PRS is available. Otherwise every caller has to do this.

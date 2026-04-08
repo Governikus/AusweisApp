@@ -49,7 +49,7 @@ class test_Discovery
 			QCOMPARE(msg.getSupportedApis(), QList<IfdVersion::Version>());
 			QCOMPARE(msg.isPairing(), false);
 
-			QCOMPARE(logSpy.count(), 6);
+			QTRY_COMPARE(logSpy.count(), 6);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"msg\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be REMOTE_IFD")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"IFDName\"")));
@@ -315,7 +315,7 @@ class test_Discovery
 			QCOMPARE(discovery.isIncomplete(), incomplete);
 			QCOMPARE(discovery.isPairing(), pairing);
 
-			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
+			QTRY_COMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
 			{
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"pairing\"")));
@@ -356,7 +356,7 @@ class test_Discovery
 			QVERIFY(discovery.isIncomplete());
 			QCOMPARE(discovery.getType(), IfdMessageType::UNDEFINED);
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be REMOTE_IFD")));
 		}
 
@@ -385,7 +385,7 @@ class test_Discovery
 			QVERIFY(!discovery.isIncomplete());
 			QCOMPARE(discovery.getContextHandle(), QString());
 
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -413,7 +413,7 @@ class test_Discovery
 			QCOMPARE(discovery.getSupportedApis(), QList<IfdVersion::Version>());
 			QCOMPARE(discovery.isPairing(), false);
 
-			QCOMPARE(logSpy.count(), 6);
+			QTRY_COMPARE(logSpy.count(), 6);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"IFDName\" should be of type \"string\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"IFDID\" should be of type \"string\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"port\" should be of type \"number\"")));
@@ -446,7 +446,7 @@ class test_Discovery
 			QVERIFY(discovery.isIncomplete());
 			QVERIFY(discovery.getSupportedApis().isEmpty());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("At least one entry is required for \"SupportedAPI\"")));
 		}
 
@@ -476,7 +476,7 @@ class test_Discovery
 			QVERIFY(discovery.isIncomplete());
 			QCOMPARE(discovery.getSupportedApis(), QList<IfdVersion::Version>({IfdVersion::Version::v0}));
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"SupportedAPI\" should be of type \"string array\"")));
 		}
 
@@ -504,7 +504,7 @@ class test_Discovery
 			QVERIFY(discovery.isIncomplete());
 			QVERIFY(discovery.getAddresses().isEmpty());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("At least one entry is required for \"addresses\"")));
 		}
 
@@ -538,7 +538,7 @@ class test_Discovery
 			QVERIFY(discovery.isIncomplete());
 			QCOMPARE(discovery.getAddresses(), {QUrl("wss://192.168.1.42:24728"_L1)});
 
-			QCOMPARE(logSpy.count(), 5);
+			QTRY_COMPARE(logSpy.count(), 5);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"addresses\" should be of type \"string\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"addresses\" should be of type \"url\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Found \"addresses\" entry with wrong scheme: abs://192.168.1.42:24728")));
@@ -616,7 +616,7 @@ class test_Discovery
 			QCOMPARE(discovery.isIncomplete(), incomplete);
 			QCOMPARE(discovery.getIfdId(), ifdid);
 
-			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
+			QTRY_COMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
 			{
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of IFDID should not be empty")));

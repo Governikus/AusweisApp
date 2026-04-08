@@ -4,7 +4,7 @@ pdfsubject: Release Notes
 pdfkeywords: release, notes
 author: @VENDOR@
 documenttitle: @PROJECT_NAME@ Release Notes
-subtitle: @VERSION_DVCS@
+subtitle: @ARTIFACT_VERSION@
 language_iso639: de
 language_babel: ngerman
 tocdepth: 2

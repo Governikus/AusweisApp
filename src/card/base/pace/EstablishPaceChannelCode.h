@@ -53,9 +53,14 @@ defineTypedEnumType(EstablishPaceChannelErrorCode, quint32,
 		//		General Authenticate Step 1 - 4
 		//		  0xF003SW1SW2 - 0xF006SW1SW2
 
-		// A specific case with "SW1 == 0x63 == warning" and a "dummy SW2".
-		GeneralAuthenticateStep1_4_Warning
+		GeneralAuthenticateStep4
 			= 0xF0066300,
+		GeneralAuthenticateStep4_RC0
+			= 0xF00663C0,
+		GeneralAuthenticateStep4_RC1
+			= 0xF00663C1,
+		GeneralAuthenticateStep4_RC2
+			= 0xF00663C2,
 
 		// APDU created by PCD for terminal/chip authentication reports error (status code SW1SW2)
 		//		MSE: Set DST (first certificate)

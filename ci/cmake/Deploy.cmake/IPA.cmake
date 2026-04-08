@@ -1,7 +1,0 @@
-if(DEFINED ENV{JENKINS_HOME})
-	file(GLOB ipafile "${T_BUILD_DIR}/*.ipa")
-else()
-	file(GLOB ipafile "${WORKSPACE}/*.ipa")
-endif()
-step(xcrun altool -t ios --validate-app --verbose -u $ENV{APPSTORE_USER} -p @env:APPSTORE_PSW -f ${ipafile})
-step(xcrun altool -t ios --upload-app -u $ENV{APPSTORE_USER} -p @env:APPSTORE_PSW -f ${ipafile})

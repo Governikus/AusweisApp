@@ -97,8 +97,6 @@ GAbstractButton {
 			tintColor: colors.controlContent
 		}
 		GText {
-			id: label
-
 			Accessible.ignored: true
 			anchors.verticalCenter: parent.verticalCenter
 			color: colors.controlContent

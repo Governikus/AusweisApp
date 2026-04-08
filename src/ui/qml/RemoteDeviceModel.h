@@ -6,6 +6,7 @@
 
 #include "GlobalStatus.h"
 #include "RemoteDeviceModelEntry.h"
+#include "RemoteIfdManager.h"
 #include "RemoteServiceSettings.h"
 
 #include <QAbstractListModel>
@@ -41,9 +42,7 @@ class RemoteDeviceModel
 		RemoteServiceSettings::RemoteInfo mLastPairedDevice;
 		QTimer mTimer;
 		bool mIsDetectingRemoteDevices;
-#if defined(Q_OS_IOS)
-		bool mRemoteDetectionWasRunning;
-#endif
+		RemoteIfdManager mRemoteIfdManager;
 
 		[[nodiscard]] bool indexIsValid(const QModelIndex& pIndex) const;
 		[[nodiscard]] QString getStatus(const RemoteDeviceModelEntry& pRemoteDeviceModelEntry) const;
@@ -56,11 +55,6 @@ class RemoteDeviceModel
 		bool addOrUpdateReader(const RemoteDeviceModelEntry& pModelEntry);
 
 	private Q_SLOTS:
-#ifdef Q_OS_IOS
-		void onApplicationStateChanged(bool pIsAppInForeground);
-#else
-		void onApplicationStateChanged(bool pIsAppInForeground) const;
-#endif
 		void onUpdateReaderList();
 
 	public Q_SLOTS:

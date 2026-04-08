@@ -54,7 +54,9 @@ IfdServiceController::IfdServiceController(QSharedPointer<IfdServiceContext> pCo
 	sProcessIfdMessages->addTransition(sProcessIfdMessages, &AbstractState::fireContinue, sClearPacePasswordsBeforeStop);
 	sProcessIfdMessages->addTransition(sProcessIfdMessages, &AbstractState::fireAbort, sClearPacePasswordsBeforeStop);
 	sProcessIfdMessages->addTransition(sProcessIfdMessages, &StateProcessIfdMessages::fireEstablishPaceChannel, sUpdateRetryCounter);
+	sProcessIfdMessages->addTransition(sProcessIfdMessages, &StateProcessIfdMessages::fireEstablishPaceChannelPinPad, sEstablishPaceChannelIfd);
 	sProcessIfdMessages->addTransition(sProcessIfdMessages, &StateProcessIfdMessages::fireModifyPin, sPrepareChangePinIfd);
+	sProcessIfdMessages->addTransition(sProcessIfdMessages, &StateProcessIfdMessages::fireModifyPinPinPad, sChangePinIfd);
 	sProcessIfdMessages->addTransition(sProcessIfdMessages, &StateProcessIfdMessages::fireSecureMessagingStopped, sClearPacePasswords);
 
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireContinue, sVerifyRetryCounter);

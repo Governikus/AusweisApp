@@ -224,12 +224,6 @@ void WorkflowContext::resetCardConnection()
 }
 
 
-bool WorkflowContext::isSmartCardUsed() const
-{
-	return getCardConnection() && getCardConnection()->getReaderInfo().getCardType() == CardType::SMART_EID;
-}
-
-
 bool WorkflowContext::isNpaRepositioningRequired() const
 {
 	if (mCardVanishedDuringPacePinCount >= 10)

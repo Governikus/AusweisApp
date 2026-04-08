@@ -46,7 +46,6 @@ class ChangePinModel
 
 		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin, bool pActivateUi = true, bool pOnlyCheckPin = false);
 		[[nodiscard]] QString getResultString() const override;
-		[[nodiscard]] QList<ReaderManagerPluginType> getSupportedReaderPluginTypes() const override;
 		[[nodiscard]] GAnimation getStatusCodeAnimation() const override;
 		[[nodiscard]] bool isRequestTransportPin() const;
 		[[nodiscard]] bool isOnlyCheckPin() const;

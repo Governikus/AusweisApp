@@ -9,7 +9,8 @@ extend-exclude = [
     "resources/**",
     "libs/**",
     "test/fixture/**",
-    "utils/aa2-copyright/target/**",
+    "publiccode.yml",
+    "cmake/sbombuilder.cmake"
 ]
 ignore-hidden = true
 ignore-files = true

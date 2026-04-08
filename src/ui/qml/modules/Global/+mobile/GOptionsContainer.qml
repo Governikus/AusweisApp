@@ -9,8 +9,6 @@ import Governikus.Global
 import Governikus.Style
 
 ColumnLayout {
-	id: root
-
 	default property alias containerData: contentLayout.data
 	property alias containerPadding: contentLayout.anchors.margins
 	property alias containerSpacing: contentLayout.spacing

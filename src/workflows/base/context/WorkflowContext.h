@@ -22,7 +22,6 @@ defineEnumType(Action,
 		AUTH,
 		SELF_AUTH,
 		CHANGE_PIN,
-		PERSONALIZATION,
 		REMOTE_SERVICE)
 
 class WorkflowContext
@@ -118,8 +117,6 @@ class WorkflowContext
 
 		[[nodiscard]] const QString& getCurrentState() const;
 		void setCurrentState(const QString& pNewState);
-
-		[[nodiscard]] bool isSmartCardUsed() const;
 
 		[[nodiscard]] const QList<ReaderManagerPluginType>& getReaderPluginTypes() const;
 		void setReaderPluginTypes(const QList<ReaderManagerPluginType>& pReaderPluginTypes);

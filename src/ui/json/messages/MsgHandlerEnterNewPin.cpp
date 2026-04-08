@@ -5,9 +5,6 @@
 #include "MsgHandlerEnterNewPin.h"
 
 #include "context/ChangePinContext.h"
-#if __has_include("context/PersonalizationContext.h")
-	#include "context/PersonalizationContext.h"
-#endif
 
 using namespace governikus;
 
@@ -27,13 +24,6 @@ MsgHandlerEnterNewPin::MsgHandlerEnterNewPin(const QJsonObject& pObj, MsgContext
 					pinCtx->setNewPin(pNumber);
 					pinCtx->setStateApproved();
 				}
-#if __has_include("context/PersonalizationContext.h")
-				else if (auto persoCtx = pContext.getContext<PersonalizationContext>(); persoCtx)
-				{
-					persoCtx->setNewPin(pNumber);
-					persoCtx->setStateApproved();
-				}
-#endif
 				else
 				{
 					Q_ASSERT(false);

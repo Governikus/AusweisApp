@@ -5,8 +5,11 @@
 #include "messages/IfdModifyPinResponse.h"
 
 #include "LogHandler.h"
+#include "apdu/ResponseApdu.h"
+
 
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -35,7 +38,7 @@ class test_IfdModifyPinResponse
 			IfdModifyPinResponse msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 8);
+			QTRY_COMPARE(logSpy.count(), 8);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
@@ -114,7 +117,7 @@ class test_IfdModifyPinResponse
 			QVERIFY(!ifdModifyPinResponse.resultHasError());
 			QCOMPARE(ifdModifyPinResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 		}
 
 
@@ -152,7 +155,7 @@ class test_IfdModifyPinResponse
 				QVERIFY(!ifdModifyPinResponse.isIncomplete());
 				QCOMPARE(ifdModifyPinResponse.getType(), IfdMessageType::IFDModifyPINResponse);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -162,14 +165,14 @@ class test_IfdModifyPinResponse
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
 				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDModifyPINResponse"_L1));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDModifyPINResponse"_L1));
 		}
 
@@ -197,9 +200,56 @@ class test_IfdModifyPinResponse
 			QVERIFY(!ifdModifyPinResponse.resultHasError());
 			QCOMPARE(ifdModifyPinResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), 2);
+			QTRY_COMPARE(logSpy.count(), 2);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SlotHandle\" should be of type \"string\""_L1));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"OutputData\" should be of type \"string\""_L1));
+		}
+
+
+		void minorMismatchData_data()
+		{
+			QTest::addColumn<ECardApiResult::Minor>("minor");
+			QTest::addColumn<StatusCode>("statusCodeIn");
+			QTest::addColumn<StatusCode>("statusCodeOut");
+
+			QTest::newRow("match - differ") << ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch << StatusCode::PASSWORDS_DIFFER << StatusCode::PASSWORDS_DIFFER;
+			QTest::newRow("mismatch - differ") << ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch << StatusCode::SUCCESS << StatusCode::PASSWORDS_DIFFER;
+			QTest::newRow("match - length") << ECardApiResult::Minor::IFDL_IO_UnknownPINFormat << StatusCode::PASSWORD_OUTOF_RANGE << StatusCode::PASSWORD_OUTOF_RANGE;
+			QTest::newRow("mismatch - length") << ECardApiResult::Minor::IFDL_IO_UnknownPINFormat << StatusCode::SUCCESS << StatusCode::PASSWORD_OUTOF_RANGE;
+		}
+
+
+		void minorMismatchData()
+		{
+			QFETCH(ECardApiResult::Minor, minor);
+			QFETCH(StatusCode, statusCodeIn);
+			QFETCH(StatusCode, statusCodeOut);
+
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+
+			QByteArray message("{\n"
+							   "    \"ContextHandle\": \"TestContext\",\n"
+							   "    \"OutputData\": \"%1\",\n"
+							   "    \"ResultMajor\": \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error\",\n"
+							   "    \"ResultMinor\": \"%2\",\n"
+							   "    \"SlotHandle\": \"SlotHandle\",\n"
+							   "    \"msg\": \"IFDModifyPINResponse\"\n"
+							   "}\n");
+			message.replace("%1", QByteArray(ResponseApdu(statusCodeIn)).toHex());
+			message.replace("%2", ECardApiResult::getMinorString(minor).toUtf8());
+			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
+			const IfdModifyPinResponse ifdModifyPinResponse(obj);
+			QVERIFY(!ifdModifyPinResponse.isIncomplete());
+			QVERIFY(!ifdModifyPinResponse.resultHasError());
+			QCOMPARE(ResponseApdu(ifdModifyPinResponse.getOutputData()).getStatusCode(), statusCodeOut);
+			QCOMPARE(ifdModifyPinResponse.getResultMinor(), ECardApiResult::Minor::null);
+
+			if (statusCodeIn != statusCodeOut)
+			{
+				QTRY_COMPARE(logSpy.count(), 1);
+				const auto& expectedStatusCode = QString::fromUtf8(QByteArray(ResponseApdu(statusCodeOut)).toHex());
+				QVERIFY(logSpy.at(0).at(0).toString().contains(QStringLiteral("OutputData doesn't match result minor! Expected: %1 , given: 9000").arg(expectedStatusCode)));
+			}
 		}
 
 
@@ -208,10 +258,11 @@ class test_IfdModifyPinResponse
 			QTest::addColumn<ECardApiResult::Minor>("minor");
 			QTest::addColumn<CardReturnCode>("code");
 
+			QTest::newRow("success") << ECardApiResult::Minor::null << CardReturnCode::OK;
 			QTest::newRow("timeout") << ECardApiResult::Minor::IFDL_Timeout_Error << CardReturnCode::INPUT_TIME_OUT;
 			QTest::newRow("cancellation") << ECardApiResult::Minor::IFDL_CancellationByUser << CardReturnCode::CANCELLATION_BY_USER;
-			QTest::newRow("mismatch") << ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch << CardReturnCode::NEW_PIN_MISMATCH;
-			QTest::newRow("unknownPinFormat") << ECardApiResult::Minor::IFDL_IO_UnknownPINFormat << CardReturnCode::NEW_PIN_INVALID_LENGTH;
+			QTest::newRow("mismatch") << ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch << CardReturnCode::COMMAND_FAILED;
+			QTest::newRow("unknownPinFormat") << ECardApiResult::Minor::IFDL_IO_UnknownPINFormat << CardReturnCode::COMMAND_FAILED;
 			QTest::newRow("unknownApiFunction") << ECardApiResult::Minor::AL_Unknown_API_Function << CardReturnCode::PROTOCOL_ERROR;
 			QTest::newRow("unknownError") << ECardApiResult::Minor::AL_Unknown_Error << CardReturnCode::UNKNOWN;
 			QTest::newRow("default") << ECardApiResult::Minor::SAL_Invalid_Key << CardReturnCode::COMMAND_FAILED;
@@ -222,14 +273,9 @@ class test_IfdModifyPinResponse
 		{
 			QFETCH(ECardApiResult::Minor, minor);
 			QFETCH(CardReturnCode, code);
-			const QString slotHandle = QStringLiteral("slothandle");
-			const QByteArray output("output");
 
-			const IfdModifyPinResponse response1(slotHandle, output, ECardApiResult::Minor::null);
-			const IfdModifyPinResponse response2(slotHandle, output, minor);
-
-			QCOMPARE(response1.getReturnCode(), CardReturnCode::OK);
-			QCOMPARE(response2.getReturnCode(), code);
+			const IfdModifyPinResponse response(QStringLiteral("slothandle"), QByteArray("output"), minor);
+			QCOMPARE(response.getReturnCode(), code);
 		}
 
 

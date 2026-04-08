@@ -4,14 +4,6 @@ task sourcesJar(type: Jar) {
     archiveClassifier = "sources"
 }
 
-allprojects {
-    repositories {
-        maven {
-            url = "https://repo.govkg.de/repository/maven-3rd-party"
-        }
-    }
-}
-
 android {
     packagingOptions {
         merges -= ['/META-INF/services/**']
@@ -26,13 +18,6 @@ android {
         exclude 'META-INF/license/**'
         exclude '**/libplugins_tls_qcertonlybackend_*.so'
         exclude '**/libplugins_networkinformation_*.so'
-        exclude '**/libplugins_imageformats_qgif_*.so'
-        exclude '**/libplugins_imageformats_qicns_*.so'
-        exclude '**/libplugins_imageformats_qico_*.so'
-        exclude '**/libplugins_imageformats_qtga_*.so'
-        exclude '**/libplugins_imageformats_qtiff_*.so'
-        exclude '**/libplugins_imageformats_qwebp_*.so'
-        exclude '**/libplugins_imageformats_qwbmp_*.so'
     }
 
     lint {

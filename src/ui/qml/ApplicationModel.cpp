@@ -13,6 +13,7 @@
 	#include "BuildHelper.h"
 #endif
 #include "Env.h"
+#include "FileCopy.h"
 #include "LanguageLoader.h"
 #include "Randomizer.h"
 #include "ReaderFilter.h"
@@ -21,9 +22,6 @@
 #include "SecureStorage.h"
 #include "VersionNumber.h"
 
-#if __has_include("context/PersonalizationContext.h")
-	#include "context/PersonalizationContext.h"
-#endif
 
 #include <QClipboard>
 #include <QFile>
@@ -184,19 +182,6 @@ bool ApplicationModel::isExtendedLengthApdusUnsupported() const
 }
 
 
-bool ApplicationModel::isSmartSupported() const
-{
-#if __has_include("SmartManager.h")
-	return true;
-
-#else
-	return false;
-
-#endif
-
-}
-
-
 bool ApplicationModel::isWifiEnabled() const
 {
 	return mWifiEnabled;
@@ -213,12 +198,6 @@ ApplicationModel::Workflow ApplicationModel::getCurrentWorkflow() const
 	{
 		return Workflow::SELF_AUTHENTICATION;
 	}
-#if __has_include("context/PersonalizationContext.h")
-	if (mContext.objectCast<PersonalizationContext>())
-	{
-		return Workflow::SMART;
-	}
-#endif
 	if (mContext.objectCast<AuthContext>())
 	{
 		return Workflow::AUTHENTICATION;
@@ -386,9 +365,12 @@ void ApplicationModel::saveEmbeddedConfig(const QUrl& pFilename) const
 	}
 	if (success)
 	{
-		success = QFile::copy(Env::getSingleton<SecureStorage>()->getEmbeddedConfig(), pFilename.toLocalFile());
+		success = FileCopy::copyFile(Env::getSingleton<SecureStorage>()->getEmbeddedConfig(), pFilename.toLocalFile());
 	}
-	Env::getSingleton<ApplicationModel>()->showFeedback((success ? tr("Successfully saved config to \"%1\"") : tr("Error while saving config to \"%1\"")).arg(pFilename.toLocalFile()));
+	if (!success)
+	{
+		Env::getSingleton<ApplicationModel>()->showFeedback(tr("Error while saving config to \"%1\"").arg(pFilename.toLocalFile()));
+	}
 }
 
 

@@ -28,10 +28,13 @@ class AppUpdateDataModel
 	Q_PROPERTY(bool valid READ isValid NOTIFY fireAppUpdateDataChanged)
 	Q_PROPERTY(bool compatible READ isCompatible NOTIFY fireAppUpdateDataChanged)
 	Q_PROPERTY(bool appcastRunning READ isAppcastRunning NOTIFY fireDownloadProgressChanged)
+	Q_PROPERTY(bool appcastFailed READ getAppcastFailed NOTIFY fireAppUpdateDataChanged)
 	Q_PROPERTY(bool downloadRunning READ isDownloadRunning NOTIFY fireDownloadProgressChanged)
 	Q_PROPERTY(int appcastProgress READ getAppcastProgress NOTIFY fireDownloadProgressChanged)
 	Q_PROPERTY(int appcastTotal READ getAppcastTotal NOTIFY fireDownloadProgressChanged)
-	Q_PROPERTY(QString appcastStatus READ getAppcastStatus NOTIFY fireAppcastStatusChanged)
+	Q_PROPERTY(QString appcastUpdateText READ getAppcastUpdateText NOTIFY fireAppcastUpdateTextChanged)
+	Q_PROPERTY(QString appcastNoUpdateText READ getAppcastNoUpdateText NOTIFY fireAppcastNoUpdateTextChanged)
+	Q_PROPERTY(QString appcastErrorText READ getAppcastErrorText NOTIFY fireAppcastErrorTextChanged)
 	Q_PROPERTY(int downloadProgress READ getDownloadProgress NOTIFY fireDownloadProgressChanged)
 	Q_PROPERTY(int downloadTotal READ getDownloadTotal NOTIFY fireDownloadProgressChanged)
 
@@ -54,6 +57,13 @@ class AppUpdateDataModel
 		QString supportInfoFromStatusCode(GlobalStatus::Code pCode) const;
 		[[nodiscard]] QString getDownloadFolder() const;
 
+		[[nodiscard]] QDateTime lastAppcastDate() const;
+		void setLastAppcastDate(const QDateTime& pDate);
+
+		[[nodiscard]] QString lastAppcastVersion() const;
+		void setLastAppcastVersion(const QString& pVersion);
+		[[nodiscard]] bool lastAppcastUpdateAvailable() const;
+
 #ifndef QT_NO_DEBUG
 
 	public:
@@ -72,14 +82,17 @@ class AppUpdateDataModel
 		[[nodiscard]] bool isValid() const;
 		[[nodiscard]] bool isCompatible() const;
 		[[nodiscard]] bool isAppcastRunning() const;
+		[[nodiscard]] bool getAppcastFailed() const;
 		[[nodiscard]] bool isDownloadRunning() const;
 		[[nodiscard]] int getAppcastProgress() const;
 		[[nodiscard]] int getAppcastTotal() const;
-		[[nodiscard]] QString getAppcastStatus() const;
+		[[nodiscard]] QString getAppcastUpdateText() const;
+		[[nodiscard]] QString getAppcastNoUpdateText() const;
+		[[nodiscard]] QString getAppcastErrorText() const;
 		[[nodiscard]] int getDownloadProgress() const;
 		[[nodiscard]] int getDownloadTotal() const;
 		[[nodiscard]] const QDateTime& getDate() const;
-		[[nodiscard]] const QString& getVersion() const;
+		[[nodiscard]] QString getVersion() const;
 		[[nodiscard]] const QUrl& getUrl() const;
 		[[nodiscard]] int getSize() const;
 		[[nodiscard]] const QUrl& getChecksumUrl() const;
@@ -92,7 +105,9 @@ class AppUpdateDataModel
 		void fireAppUpdateAborted();
 		void fireAppUpdateFailed(const QString& pError, const QString& pSupportInfo);
 		void fireAppDownloadFinished();
-		void fireAppcastStatusChanged();
+		void fireAppcastUpdateTextChanged();
+		void fireAppcastNoUpdateTextChanged();
+		void fireAppcastErrorTextChanged();
 };
 
 } // namespace governikus

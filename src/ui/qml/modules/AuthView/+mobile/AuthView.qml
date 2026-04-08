@@ -11,7 +11,6 @@ import Governikus.Type
 SectionPage {
 	id: root
 
-	property bool autoInsertCard: false
 	property var initialPlugin: null
 	property bool startedByOnboarding: false
 
@@ -41,7 +40,6 @@ SectionPage {
 		id: authController
 
 		AuthController {
-			autoInsertCard: root.autoInsertCard
 			initialPlugin: root.initialPlugin
 			stackView: root.stackView
 			startedByOnboarding: root.startedByOnboarding

@@ -1,0 +1,87 @@
+From 86e56fc56751655b7cfbe44bfd93dfc0460d3450 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Wed, 10 Sep 2025 11:55:58 +0200
+Subject: Consider new Switch role introduced in qtbase
+
+Task-number: QTBUG-139676
+Change-Id: Iea39ae7c18e71956e7a101a86425c84d876e8730
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+(cherry picked from commit a91e02ad06afe603d5296bb104b35657d4906a57)
+---
+ src/quick/accessible/qaccessiblequickitem.cpp | 9 +++++++--
+ src/quick/items/qquickaccessibleattached.cpp  | 9 +++++----
+ 2 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+index 60121b6c7f01bbf87217a20160263db7a02bdfa7..f756d32d99ca7b2731c60ee1cdf714a3e1d36323 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+@@ -447,7 +447,10 @@ QAccessible::State QAccessibleQuickItem::state() const
+         state.invisible = true;
+     if (!viewRect_.intersects(itemRect))
+         state.offscreen = true;
+-    if ((role() == QAccessible::CheckBox || role() == QAccessible::RadioButton) && object()->property("checked").toBool())
++    if ((role() == QAccessible::CheckBox
++         || role() == QAccessible::RadioButton
++         || role() == QAccessible::Switch)
++        && object()->property("checked").toBool())
+         state.checked = true;
+     if (item()->activeFocusOnTab() || isTextRole(role()))
+         state.focusable = true;
+@@ -525,6 +528,7 @@ QStringList QAccessibleQuickItem::actionNames() const
+         break;
+     case QAccessible::RadioButton:
+     case QAccessible::CheckBox:
++    case QAccessible::Switch:
+         actions << QAccessibleActionInterface::toggleAction()
+                 << QAccessibleActionInterface::pressAction();
+         break;
+@@ -573,7 +577,8 @@ void QAccessibleQuickItem::doAction(const QString &actionName)
+     //   Value-based roles : (via the value interface: value, minimumValue, maximumValue), stepSize
+     switch (role()) {
+     case QAccessible::RadioButton:
+-    case QAccessible::CheckBox: {
++    case QAccessible::CheckBox:
++    case QAccessible::Switch: {
+         QVariant checked = object()->property("checked");
+         if (checked.isValid()) {
+             if (actionName == QAccessibleActionInterface::toggleAction() ||
+diff --git x/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp y/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
+index 626a3aaf538b1f2af5fb4a2a30a66f48043229a3..7f618687731cdb37094f466afb8b57dc835cbae2 100644
+--- x/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
++++ y/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
+@@ -100,13 +100,13 @@ QT_BEGIN_NAMESPACE
+             that run on touch-only devices since screen readers often implement a virtual focus that
+             can be moved from item to item.
+     \row
+-        \li Button, CheckBox, RadioButton
++        \li Button, CheckBox, RadioButton, Switch
+         \li \l {Accessible::pressAction}{Accessible.pressAction}
+         \li A button should have a signal handler with the name \c onPressAction.
+             This signal may be emitted by an assistive tool such as a screen-reader.
+             The implementation needs to behave the same as a mouse click or tap on the button.
+     \row
+-       \li CheckBox, RadioButton
++       \li CheckBox, RadioButton, Switch
+        \li \l checkable, \l checked, \l {Accessible::toggleAction}{Accessible.toggleAction}
+ 
+        \li The check state of the check box. Updated on Press, Check and Uncheck actions.
+@@ -134,8 +134,8 @@ QT_BEGIN_NAMESPACE
+     \brief This property holds whether this item is focusable.
+ 
+     By default, this property is \c false except for items where the role is one of
+-    \c CheckBox, \c RadioButton, \c Button, \c MenuItem, \c PageTab, \c EditableText, \c SpinBox, \c ComboBox,
+-    \c Terminal or \c ScrollBar.
++    \c CheckBox, \c RadioButton, \c Switch, \c Button, \c MenuItem, \c PageTab,
++    \c EditableText, \c SpinBox, \c ComboBox, \c Terminal or \c ScrollBar.
+     \sa focused
+ */
+ /*! \qmlproperty bool QtQuick::Accessible::focused
+@@ -409,6 +409,7 @@ void QQuickAccessibleAttached::setRole(QAccessible::Role role)
+         switch (role) {
+         case QAccessible::CheckBox:
+         case QAccessible::RadioButton:
++        case QAccessible::Switch:
+             if (!m_stateExplicitlySet.focusable)
+                 m_state.focusable = true;
+             if (!m_stateExplicitlySet.checkable)

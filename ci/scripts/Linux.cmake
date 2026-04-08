@@ -1,0 +1,36 @@
+block(PROPAGATE LIBS_GOVERNIKUS)
+	include(Libraries)
+endblock()
+
+if("Integrated" IN_LIST NAMES)
+	set(INTEGRATED ON)
+endif()
+
+if(INTEGRATED)
+	set(PRESET ci-integrated)
+else()
+	set(PRESET ci-linux)
+endif()
+
+if("Memcheck" IN_LIST NAMES)
+	set(MEMCHECK ON)
+	set(SANITIZER -DSANITIZER=OFF)
+endif()
+
+step(${T_CFG} --preset ${PRESET} ${SANITIZER})
+step(${T_BUILD})
+if(MEMCHECK)
+	step(${T_CTEST} -T memcheck -L qt ENV QT_PLUGIN_PATH=${WORKSPACE}/libs/dist/plugins)
+else()
+	step(${T_CTEST} ENV QT_PLUGIN_PATH=${WORKSPACE}/libs/dist/plugins QML2_IMPORT_PATH=${WORKSPACE}/libs/dist/qml)
+	step(${CMAKE_COMMAND} --install ${T_BUILD_DIR} ENV DESTDIR=${WORKSPACE}/install)
+
+	if(LIBS_GOVERNIKUS)
+		step(${T_TARGET} gcovr)
+	endif()
+endif()
+
+LIST_PATCH_FILES(PATCH_FILES)
+if(DAILY OR (REVIEW AND ".grype.yml" IN_LIST PATCH_FILES))
+	step(${T_CTEST} -C periodic -L grype)
+endif()

@@ -1,0 +1,147 @@
+From 5932fbfdd32f6df548700a1e8b62ad700d37c3dc Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Thu, 6 Nov 2025 08:58:59 +0100
+Subject: a11y Android: Inform TalkBack about used language
+
+This is helpful if the app's language is different from the OS language.
+Without this change english texts are read with a german accent if
+the OS language is set to German and the app language to English.
+
+For now, only QAccessibleWidget, QAccessibleQuickControl, and
+QAccessibleQuickItem return useful values for Attribute::Locale.
+All three rely on specific setter (QWidget::setLocale,
+Control.locale, ApplicationWindow.locale for the QML Item) and
+do not consider other application wide means of setting the
+language (like installed QTranslator or QJSEngine::uiLanguage).
+
+Task-number: QTBUG-141701
+Pick-to: 6.11
+Change-Id: Id4bf0280469229c202ab3cf2480903212d351c2b
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(Cherry-picked from commit 215f55c974862b47cd9d24c0c339e9407c1f338f)
+---
+ .../qt/android/QtAccessibilityDelegate.java   | 20 ++++++++++++++--
+ .../qt/android/QtNativeAccessibility.java     |  1 +
+ .../android/androidjniaccessibility.cpp       | 24 +++++++++++++++++++
+ 3 files changed, 43 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+index 93407d52e95d65f0835edde555624c85f332514e..06fb0d1ee4af716c44586328c3b55c3a4fe10f68 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+@@ -8,6 +8,9 @@ import android.graphics.Rect;
+ import android.os.Build;
+ import android.os.Bundle;
+ import android.system.Os;
++import android.text.SpannableString;
++import android.text.Spanned;
++import android.text.style.LocaleSpan;
+ import android.text.TextUtils;
+ import android.util.Log;
+ import android.view.MotionEvent;
+@@ -19,6 +22,7 @@ import android.view.accessibility.AccessibilityManager;
+ import android.view.accessibility.AccessibilityNodeInfo;
+ import android.view.accessibility.AccessibilityNodeInfo.CollectionInfo;
+ import android.view.accessibility.AccessibilityNodeProvider;
++import java.util.Locale;
+ 
+ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+ {
+@@ -165,6 +169,15 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+         return true;
+     }
+ 
++    SpannableString addLocaleSpan(int viewId, String value)
++    {
++        SpannableString localeValue = new SpannableString(value);
++        LocaleSpan localeSpan =
++                new LocaleSpan(Locale.forLanguageTag(QtNativeAccessibility.languageTag(viewId)));
++        localeValue.setSpan(localeSpan, 0, localeValue.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
++        return localeValue;
++    }
++
+     void notifyScrolledEvent(int viewId)
+     {
+         QtNative.runAction(() -> sendEventForVirtualViewId(viewId,
+@@ -250,7 +263,7 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+ 
+             event.setEnabled(true);
+             event.setClassName(className);
+-            event.setContentDescription(value);
++            event.setContentDescription(addLocaleSpan(viewId, value));
+ 
+             if (event.getText().isEmpty() && TextUtils.isEmpty(event.getContentDescription())) {
+                 Log.w(TAG, "No value to announce for " + event.getClassName());
+@@ -357,7 +370,9 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+         event.setEnabled(true);
+         event.setClassName(getNodeForVirtualViewId(virtualViewId).getClassName());
+ 
+-        event.setContentDescription(QtNativeAccessibility.descriptionForAccessibleObject(virtualViewId));
++        String description = QtNativeAccessibility.descriptionForAccessibleObject(virtualViewId);
++        event.setContentDescription(addLocaleSpan(virtualViewId, description));
++
+         if (event.getText().isEmpty() && TextUtils.isEmpty(event.getContentDescription()))
+             Log.w(TAG, "AccessibilityEvent with empty description");
+ 
+@@ -459,6 +474,7 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+ 
+         // set only if valid, otherwise we return a node that is invalid and will crash when accessed
+         node.setSource(m_view, virtualViewId);
++        node.setContentDescription(addLocaleSpan(virtualViewId, node.getContentDescription().toString()));
+ 
+         if (TextUtils.isEmpty(node.getText()) && TextUtils.isEmpty(node.getContentDescription()))
+             Log.w(TAG, "AccessibilityNodeInfo with empty contentDescription: " + virtualViewId);
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNativeAccessibility.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNativeAccessibility.java
+index 4e077d58bc8c5aa81c1ec924335ffc7a633e4529..97d135f217bbf325ab93a2046d61d53d4a43961c 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNativeAccessibility.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNativeAccessibility.java
+@@ -13,6 +13,7 @@ class QtNativeAccessibility
+     static native int[] childIdListForAccessibleObject(int objectId);
+     static native int parentId(int objectId);
+     static native String descriptionForAccessibleObject(int objectId);
++    static native String languageTag(int objectId);
+     static native Rect screenRect(int objectId);
+     static native int hitTest(float x, float y);
+     static native boolean clickAction(int objectId);
+diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+index 3868e54396f807556369e9df207d7c853b02c229..e9d9efc4db3b903c06664d32a443e143b3862ede 100644
+--- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+@@ -646,6 +646,29 @@ namespace QtAndroidAccessibility
+         return env->NewString((jchar*) desc.constData(), (jsize) desc.size());
+     }
+ 
++    static QString languageTag_helper(int objectId)
++    {
++        QAccessibleInterface *iface = interfaceFromId(objectId);
++        if (!iface || !iface->isValid())
++            return QString();
++
++        QAccessibleAttributesInterface *attributesIface = iface->attributesInterface();
++        if (!attributesIface || !attributesIface->attributeKeys().contains(QAccessible::Attribute::Locale))
++            return QString();
++
++        return attributesIface->attributeValue(QAccessible::Attribute::Locale).toLocale().bcp47Name();
++    }
++
++    static jstring languageTag(JNIEnv *env, jobject /*thiz*/, jint objectId)
++    {
++        QString tag;
++        if (m_accessibilityContext) {
++            runInObjectContext(m_accessibilityContext, [objectId]() {
++                return languageTag_helper(objectId);
++            }, &tag);
++        }
++        return env->NewString((jchar*)tag.constData(), (jsize)tag.size());
++    }
+ 
+     struct NodeInfo
+     {
+@@ -795,6 +818,7 @@ namespace QtAndroidAccessibility
+         {"childIdListForAccessibleObject", "(I)[I", (jintArray)childIdListForAccessibleObject},
+         {"parentId", "(I)I", (void*)parentId},
+         {"descriptionForAccessibleObject", "(I)Ljava/lang/String;", (jstring)descriptionForAccessibleObject},
++        {"languageTag", "(I)Ljava/lang/String;", (jstring)languageTag},
+         {"screenRect", "(I)Landroid/graphics/Rect;", (jobject)screenRect},
+         {"hitTest", "(FF)I", (void*)hitTest},
+         {"populateNode", "(ILandroid/view/accessibility/AccessibilityNodeInfo;)Z", (void*)populateNode},

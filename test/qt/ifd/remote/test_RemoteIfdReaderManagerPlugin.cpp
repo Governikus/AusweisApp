@@ -749,7 +749,7 @@ class test_RemoteIfdReaderManagerPlugin
 			QTest::ignoreMessage(QtDebugMsg, "Card shelved");
 			mPlugin->getReader(QStringLiteral("NFC Reader#TestContext"))->shelveCard();
 
-			QTest::ignoreMessage(QtInfoMsg, "Card inserted: {Type: UNKNOWN, Retry counter: -1, PIN deactivated: false, PIN initial: false}");
+			QTest::ignoreMessage(QtInfoMsg, "Card inserted: {Type: UNKNOWN, Retry counter: -1, PIN deactivated: false}");
 			mPlugin->insert(QStringLiteral("NFC Reader#TestContext"), QVariant());
 
 			QTest::ignoreMessage(QtDebugMsg, "Card shelved");

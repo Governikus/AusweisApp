@@ -53,17 +53,13 @@ BaseOnboardingView {
 		}
 
 		//: ALL_PLATFORMS %1 and %2 are replaced with bold emphasis.
-		readonly property string restartOnboardingText: qsTr("You may restart the setup anytime under %1Help > Setup%2.").arg("<b>").arg("</b>")
+		readonly property string restartOnboardingText: qsTr("You may restart the setup anytime under %1Help%2.").arg("<b>").arg("</b>")
 
 		Layout.topMargin: Style.dimens.text_spacing
 		text: abortText + " " + restartOnboardingText
 	}
-	GSpacer {
-		Layout.fillHeight: true
-		visible: Style.is_layout_desktop
-	}
 	GButton {
-		Layout.alignment: Qt.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
 		Layout.topMargin: Style.dimens.pane_spacing
 		//: MOBILE
 		text: qsTr("Abort setup")
@@ -72,7 +68,8 @@ BaseOnboardingView {
 		onClicked: root.continueOnboarding()
 	}
 	GContinueButton {
-		Layout.alignment: Qt.AlignHCenter
+		Layout.alignment: Style.scanPatternAlignment
+		Layout.topMargin: Style.dimens.pane_spacing
 		visible: d.continuesToAutoStart
 
 		onClicked: root.continueOnboarding()

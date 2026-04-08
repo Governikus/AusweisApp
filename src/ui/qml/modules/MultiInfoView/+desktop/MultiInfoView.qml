@@ -17,17 +17,9 @@ FlickableSectionPage {
 
 	readonly property list<MultiInfoContentBlock> contentList: infoContent.contentList
 	property string continueButtonText
-	readonly property string firstHint: infoContent.firstHint
-	readonly property url firstHintButtonLink: infoContent.firstHintButtonLink
-	readonly property string firstHintButtonText: infoContent.firstHintButtonText
-	readonly property string firstHintTitle: infoContent.firstHintTitle
 	readonly property string hintBoxesTitle: infoContent.hintBoxesTitle
 	property MultiInfoData infoContent: MultiInfoData {
 	}
-	readonly property url secondHintButtonLink: infoContent.secondHintButtonLink
-	readonly property string secondHintButtonText: infoContent.secondHintButtonText
-	readonly property string secondHintText: infoContent.secondHintText
-	readonly property string secondHintTitle: infoContent.secondHintTitle
 
 	signal abortCurrentWorkflow
 	signal continueClicked
@@ -69,8 +61,6 @@ FlickableSectionPage {
 				spacing: Style.dimens.groupbox_spacing
 
 				Subheading {
-					Layout.alignment: Qt.AlignLeft
-					horizontalAlignment: Text.AlignLeft
 					text: dataRow.modelData.blockTitle
 					visible: text !== ""
 				}
@@ -91,41 +81,22 @@ FlickableSectionPage {
 			}
 		}
 	}
-	GSpacer {
-		Layout.fillHeight: true
-	}
-	GText {
-		text: root.hintBoxesTitle
-		textStyle: Style.text.subline
-		visible: text !== ""
-	}
 	Hint {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		buttonText: root.firstHintButtonText
-		buttonTooltip: root.firstHintButtonLink
-		linkToOpen: root.firstHintButtonLink
-		text: root.firstHint
-		//: DESKTOP
-		title: root.firstHintTitle !== "" ? root.firstHintTitle : qsTr("Hint")
+		buttonText: root.infoContent.infoContent.multiInfoHintContent.buttonText
+		linkToOpen: root.infoContent.infoContent.multiInfoHintContent.linkToOpen
+		text: root.infoContent.infoContent.multiInfoHintContent.text
+		title: root.infoContent.infoContent.multiInfoHintContent.title
 		visible: text !== ""
 
 		onLinkAboutToOpen: root.abortCurrentWorkflow()
 	}
-	Hint {
-		Layout.alignment: Qt.AlignHCenter
+	PinResetHints {
 		Layout.fillWidth: true
-		buttonText: root.secondHintButtonText
-		linkToOpen: root.secondHintButtonLink
-		text: root.secondHintText
-		//: DESKTOP
-		title: root.secondHintTitle !== "" ? root.secondHintTitle : qsTr("Hint")
-		visible: text !== ""
+		title: root.hintBoxesTitle
 
 		onLinkAboutToOpen: root.abortCurrentWorkflow()
-	}
-	GSpacer {
-		Layout.fillHeight: true
 	}
 	GContinueButton {
 		id: continueButton

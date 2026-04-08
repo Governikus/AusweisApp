@@ -317,8 +317,6 @@ class test_WorkflowContext
 
 			QTest::addRow("ID card allowed") << createCardConnection(CardType::EID_CARD) << allow_all_types() << false;
 			QTest::addRow("ID card not allowed") << createCardConnection(CardType::EID_CARD) << allow_all_types_but(AcceptedEidType::CARD_CERTIFIED) << true;
-
-			QTest::addRow("Smart-eID with unknown EidType not allowed") << createCardConnection(CardType::SMART_EID) << allow_only({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED}) << true;
 		}
 
 

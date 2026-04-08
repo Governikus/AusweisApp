@@ -1,0 +1,120 @@
+From 206c1b8a45af7b72f74c0090ecbcc2be77c392bd Mon Sep 17 00:00:00 2001
+From: Jens Trillmann <jens.trillmann@governikus.de>
+Date: Thu, 18 Sep 2025 09:42:52 +0200
+Subject: A11y: Prepend new items in ItemView based on modelIndex
+
+When traversing list elements with a screen reader backwards the elements become
+unordered as new elements are only appended to the list. By prepending new items when necessary the elements are correctly ordered.
+
+Task-number: QTBUG-140463
+Pick-to: 6.10
+Change-Id: I76e6bd8247a4d37d4508fb0f79cd39e7594858ca
+---
+ src/quick/items/qquickitem.cpp     | 13 ++++++++-----
+ src/quick/items/qquickitem.h       |  2 +-
+ src/quick/items/qquickitem_p.h     |  2 +-
+ src/quick/items/qquickitemview.cpp | 10 ++++++++--
+ 4 files changed, 18 insertions(+), 9 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/items/qquickitem.cpp y/qtdeclarative/src/quick/items/qquickitem.cpp
+index 7de3a911e963ff72d673591c1ab707064bd71912..5ac06118d35802618fb34a8bd924e9923afee59c 100644
+--- x/qtdeclarative/src/quick/items/qquickitem.cpp
++++ y/qtdeclarative/src/quick/items/qquickitem.cpp
+@@ -2732,7 +2732,7 @@ QQuickItem *QQuickItem::parentItem() const
+     return d->parentItem;
+ }
+ 
+-void QQuickItem::setParentItem(QQuickItem *parentItem)
++void QQuickItem::setParentItem(QQuickItem *parentItem, bool prepend)
+ {
+     Q_D(QQuickItem);
+     if (parentItem == d->parentItem)
+@@ -2804,7 +2804,7 @@ void QQuickItem::setParentItem(QQuickItem *parentItem)
+         auto oldParentItem = d->parentItem;
+         d->parentItem = parentItem;
+         if (d->parentItem) {
+-            QQuickItemPrivate::get(d->parentItem)->addChild(this);
++            QQuickItemPrivate::get(d->parentItem)->addChild(this, prepend);
+             alreadyAddedChild = true;
+         }
+         if (d->window) {
+@@ -2824,7 +2824,7 @@ void QQuickItem::setParentItem(QQuickItem *parentItem)
+     d->dirty(QQuickItemPrivate::ParentChanged);
+ 
+     if (d->parentItem && !alreadyAddedChild)
+-        QQuickItemPrivate::get(d->parentItem)->addChild(this);
++        QQuickItemPrivate::get(d->parentItem)->addChild(this, prepend);
+     else if (d->window && !alreadyAddedChild)
+         QQuickWindowPrivate::get(d->window)->parentlessItems.insert(this);
+ 
+@@ -3014,13 +3014,16 @@ QList<QQuickItem *> QQuickItemPrivate::paintOrderChildItems() const
+     return childItems;
+ }
+ 
+-void QQuickItemPrivate::addChild(QQuickItem *child)
++void QQuickItemPrivate::addChild(QQuickItem *child, bool prepend)
+ {
+     Q_Q(QQuickItem);
+ 
+     Q_ASSERT(!childItems.contains(child));
+ 
+-    childItems.append(child);
++    if (prepend)
++        childItems.prepend(child);
++    else
++        childItems.append(child);
+ 
+     QQuickItemPrivate *childPrivate = QQuickItemPrivate::get(child);
+ 
+diff --git x/qtdeclarative/src/quick/items/qquickitem.h y/qtdeclarative/src/quick/items/qquickitem.h
+index 0d656c2de0818fe3baa2f384d49982c5ba0902fd..f1f7ff5a2c03ed19dc31889f8b9ac532a60db3ac 100644
+--- x/qtdeclarative/src/quick/items/qquickitem.h
++++ y/qtdeclarative/src/quick/items/qquickitem.h
+@@ -183,7 +183,7 @@ public:
+ 
+     QQuickWindow *window() const;
+     QQuickItem *parentItem() const;
+-    void setParentItem(QQuickItem *parent);
++    void setParentItem(QQuickItem *parent, bool prepend = false);
+     void stackBefore(const QQuickItem *);
+     void stackAfter(const QQuickItem *);
+ 
+diff --git x/qtdeclarative/src/quick/items/qquickitem_p.h y/qtdeclarative/src/quick/items/qquickitem_p.h
+index 3ca5a168d43553cd37bb1ae9d46bd6b919829385..57df76933328c533124c295f2945c1c9222c32e1 100644
+--- x/qtdeclarative/src/quick/items/qquickitem_p.h
++++ y/qtdeclarative/src/quick/items/qquickitem_p.h
+@@ -610,7 +610,7 @@ public:
+     QList<QQuickItem *> childItems;
+     mutable QList<QQuickItem *> *sortedChildItems;
+     QList<QQuickItem *> paintOrderChildItems() const;
+-    void addChild(QQuickItem *);
++    void addChild(QQuickItem *, bool prepend = false);
+     void removeChild(QQuickItem *);
+     void siblingOrderChanged();
+ 
+diff --git x/qtdeclarative/src/quick/items/qquickitemview.cpp y/qtdeclarative/src/quick/items/qquickitemview.cpp
+index 736c4f7d4fe063c6d52a8553fd84348b718efb42..b66af50424ffb4422c2ec50b73506ed633c37fd4 100644
+--- x/qtdeclarative/src/quick/items/qquickitemview.cpp
++++ y/qtdeclarative/src/quick/items/qquickitemview.cpp
+@@ -2577,13 +2577,19 @@ void QQuickItemView::createdItem(int index, QObject* object)
+     }
+ }
+ 
+-void QQuickItemView::initItem(int, QObject *object)
++void QQuickItemView::initItem(int index, QObject *object)
+ {
++    Q_D(QQuickItemView);
+     QQuickItem* item = qmlobject_cast<QQuickItem*>(object);
+     if (item) {
+         if (qFuzzyIsNull(item->z()))
+             item->setZ(1);
+-        item->setParentItem(contentItem());
++        FxViewItem* firstItem = d->firstItemInView();
++        bool prepend = false;
++        if (firstItem)
++            prepend = index < firstItem->index;
++
++        item->setParentItem(contentItem(), prepend);
+         QQuickItemPrivate::get(item)->setCulled(true);
+     }
+ }

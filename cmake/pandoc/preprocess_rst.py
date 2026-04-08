@@ -130,7 +130,7 @@ def translate_lines(input_lines, translation_file_path):
     Translate the input_lines using the .po file at translation_file_path.
     """
     try:
-        with open(translation_file_path, 'r', encoding='utf-8') as infile:
+        with open(translation_file_path, encoding='utf-8') as infile:
             translation_data = infile.read()
     except FileNotFoundError:
         print(f'Error: Input file "{translation_file_path}" not found.')
@@ -309,7 +309,7 @@ def flatten_files(input_filepath, starting_level, translate):
 
     # read the input file
     try:
-        with open(input_filepath, 'r', encoding='utf-8') as infile:
+        with open(input_filepath, encoding='utf-8') as infile:
             input_lines = infile.readlines()
     except FileNotFoundError:
         print(f'Error: Input file "{input_filepath}" not found.')

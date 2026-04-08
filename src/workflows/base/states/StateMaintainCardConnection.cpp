@@ -45,7 +45,6 @@ void StateMaintainCardConnection::run()
 	switch (lastPaceResult)
 	{
 		case CardReturnCode::CANCELLATION_BY_USER:
-		case CardReturnCode::PUK_INOPERATIVE:
 		case CardReturnCode::INPUT_TIME_OUT:
 		case CardReturnCode::UNKNOWN:
 		case CardReturnCode::UNDEFINED:
@@ -70,10 +69,7 @@ void StateMaintainCardConnection::run()
 		case CardReturnCode::INVALID_PIN_2:
 		case CardReturnCode::INVALID_PIN_3:
 		case CardReturnCode::INVALID_PUK:
-		case CardReturnCode::NEW_PIN_MISMATCH:
-		case CardReturnCode::NEW_PIN_INVALID_LENGTH:
 		case CardReturnCode::PIN_NOT_BLOCKED:
-		case CardReturnCode::PIN_BLOCKED:
 		{
 			Q_ASSERT(CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
 

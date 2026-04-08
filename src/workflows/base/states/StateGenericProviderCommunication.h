@@ -19,7 +19,6 @@
 
 class test_StateGenericProviderCommunication;
 class test_StateGetSelfAuthenticationData;
-class test_StatePreparePersonalization;
 class test_StateGetSessionId;
 class test_StateGetChallenge;
 
@@ -34,7 +33,6 @@ class StateGenericProviderCommunication
 	Q_OBJECT
 	friend class ::test_StateGenericProviderCommunication;
 	friend class ::test_StateGetSelfAuthenticationData;
-	friend class ::test_StatePreparePersonalization;
 	friend class ::test_StateGetSessionId;
 	friend class ::test_StateGetChallenge;
 

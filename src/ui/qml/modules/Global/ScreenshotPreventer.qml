@@ -9,31 +9,25 @@ import Governikus.Type
 Item {
 	id: root
 
+	required property bool preventScreenshots
 	property bool resetState: false
 
 	function notifyScreenRecording() {
-		if (SettingsModel.screenPrivacy && ApplicationModel.screenRecording) {
-			//: ANDROID
+		if (preventScreenshots && SettingsModel.screenPrivacy && ApplicationModel.screenRecording) {
+			//: MOBILE
 			ApplicationModel.showFeedback(qsTr("Attention: Screen Recording in progress"));
 		}
 	}
 
-	Component.onCompleted: {
-		if (SettingsModel.screenPrivacy) {
-			ApplicationModel.preventScreenshot(true);
-			resetState = true;
-		}
-		notifyScreenRecording();
-	}
-	onVisibleChanged: {
-		if (visible) {
+	onPreventScreenshotsChanged: {
+		Qt.callLater(notifyScreenRecording);
+		if (preventScreenshots) {
 			if (SettingsModel.screenPrivacy) {
 				ApplicationModel.preventScreenshot(true);
 				resetState = true;
 			}
-			notifyScreenRecording();
 		}
-		if (!visible && resetState) {
+		if (!preventScreenshots && resetState) {
 			ApplicationModel.preventScreenshot(false);
 		}
 	}
@@ -44,7 +38,7 @@ Item {
 			ApplicationModel.showFeedback(qsTr("Attention: Screenshot taken"));
 		}
 
-		enabled: root.visible
+		enabled: root.preventScreenshots
 		target: ApplicationModel
 	}
 }

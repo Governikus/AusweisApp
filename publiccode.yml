@@ -1,0 +1,60 @@
+# This repository adheres to the publiccode.yml standard by including this
+# metadata file that makes public software easily discoverable.
+# More info at https://github.com/italia/publiccode.yml
+
+publiccodeYmlVersion: '0.2'
+name: AusweisApp
+url: 'https://github.com/Governikus/AusweisApp'
+releaseDate: '2026-04-08'
+developmentStatus: stable
+platforms:
+  - windows
+  - mac
+  - linux
+  - ios
+  - android
+softwareType: standalone/mobile
+categories:
+  - identity-management
+  - security
+  - authentication
+maintenance:
+  type: contract
+  contacts:
+    - name: Governikus Support
+      email: support@ausweisapp.de
+legal:
+  license: EUPL-1.2
+  mainCopyrightOwner: Bundesamtes für Sicherheit in der Informationstechnik (BSI)
+  repoOwner: Governikus
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - de
+    - en
+    - uk
+    - ru
+description:
+  de:
+    genericName: eID-Client
+    shortDescription: >-
+      Der offizielle eID-Client des Bundes.
+    longDescription: >
+      Die AusweisApp ist eine Open-Source-Anwendung zur Nutzung der
+      Online-Ausweisfunktion (eID) des deutschen Personalausweises, des
+      elektronischen Aufenthaltstitels sowie der eID-Karte für
+      EU-/EWR-Bürgerinnen und -Bürger.
+
+      Sie ermöglicht eine sichere Authentisierung gegenüber Online-Diensten von
+      Behörden und Unternehmen. Die Kommunikation erfolgt verschlüsselt nach den
+      Vorgaben des Bundesamts für Sicherheit in der Informationstechnik (BSI).
+
+      Die Anwendung unterstützt NFC-fähige Smartphones sowie Kartenlesegeräte am
+      Desktop und steht für Windows, macOS, iOS, Android und inoffiziell für Linux
+      zur Verfügung.
+    features:
+      - Nutzung der Online-Ausweisfunktion (eID)
+      - Unterstützung von NFC-Schnittstellen
+      - Integration externer Kartenlesegeräte
+      - Plattformübergreifende Verfügbarkeit
+      - Open-Source-Entwicklung

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25)
 macro(provide_dependency method name)
 	set(ARGS ${ARGN})
 
-	if("${name}" MATCHES "Qt" OR "${name}" MATCHES "OpenSSL" OR "${name}" MATCHES "Governikus")
+	if("${name}" MATCHES "Qt" OR "${name}" MATCHES "OpenSSL" OR "${name}" MATCHES "Governikus" OR "${name}" MATCHES "llhttp")
 		set(PREFIX_PATH "${CMAKE_BINARY_DIR}/provider")
 		if(NOT EXISTS "${PREFIX_PATH}")
 			execute_process(COMMAND ${CMAKE_COMMAND} -DNAME=Provider -DPROVIDER=${PROVIDER} -P ${CMAKE_SOURCE_DIR}/ci.cmake

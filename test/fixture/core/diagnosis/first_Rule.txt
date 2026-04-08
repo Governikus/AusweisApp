@@ -1,6 +1,6 @@
 
 Name                  : {DEA54BD7-0422-4C23-8499-C442CA99CD29}
-DisplayName           : AusweisApp
+DisplayName           : AusweisApp-Outbound
 Description           : AusweisApp firewall rule
 DisplayGroup          :
 Group                 :

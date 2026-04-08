@@ -9,7 +9,7 @@
 #include "NetworkManager.h"
 #include "TlsChecker.h"
 
-#include <http_parser.h>
+#include <llhttp.h>
 
 Q_DECLARE_LOGGING_CATEGORY(secure)
 Q_DECLARE_LOGGING_CATEGORY(network)

@@ -8,7 +8,7 @@
 
 #include "HttpResponse.h"
 
-#include <http_parser.h>
+#include <llhttp.h>
 
 
 namespace governikus
@@ -16,12 +16,12 @@ namespace governikus
 
 struct MockKey
 {
-	http_method method;
+	llhttp_method method;
 	QByteArray url;
 
 	operator QString() const
 	{
-		const QByteArray methodStr = http_method_str(method);
+		const QByteArray methodStr = llhttp_method_name(method);
 		return QStringLiteral("Method: %1, Url: %2").arg(QString::fromLatin1(methodStr), QString::fromUtf8((url)));
 	}
 };
@@ -46,7 +46,7 @@ class MockHttpServer
 		MockHttpServer();
 
 		void reset();
-		void addMock(const QByteArray& pUrl, const HttpResponse& pResponse, const http_method& pHttpMethod = HTTP_POST);
+		void addMock(const QByteArray& pUrl, const HttpResponse& pResponse, const llhttp_method& pHttpMethod = HTTP_POST);
 		[[nodiscard]] QUrl getAddress(const QString& pPath = QString()) const;
 
 	private Q_SLOTS:

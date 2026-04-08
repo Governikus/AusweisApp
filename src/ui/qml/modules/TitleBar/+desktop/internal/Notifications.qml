@@ -44,8 +44,6 @@ Item {
 		onTriggered: d.fadeIn = false
 	}
 	Rectangle {
-		id: logList
-
 		anchors.left: parent.left
 		anchors.leftMargin: d.fadeIn ? -(width + Style.dimens.pane_spacing) : 0
 		anchors.top: parent.top

@@ -1,0 +1,61 @@
+From c61f114078f5cd8f244fa616c2db047b0ccb8c15 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Thu, 20 Nov 2025 09:39:01 +0100
+Subject: a11y iOS: Inform VoiceOver about used language
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The property accessibilityLanguage is used by VoiceOver on iOS and
+allows to tell the screen reader which language package to use. This
+is helpful if the app's language is different from the OS language.
+Without this change english texts are read with a german accent if
+the OS language is set to German and the app language to English.
+
+On macOS VoiceOver does not evaluate this property and texts are
+always read with the OS language.
+
+For now, only QAccessibleWidget, QAccessibleQuickControl, and
+QAccessibleQuickItem return useful values for Attribute::Locale.
+All three rely on on specific setter (QWidget::setLocale,
+Control.locale, ApplicationWindow.locale for the QML Item) and
+do not consider other application wide means of setting the
+language (like installed QTranslator or QJSEngine::uiLanguage).
+
+Task-number: QTBUG-141701
+Pick-to: 6.11
+Change-Id: I469652ff44f9d788ce6e6bdfa6c34d1570f2e439
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+Reviewed-by: Lars Schmertmann <SmallLars@t-online.de>
+(Cherry-picked from commit a0d6b63e3d611acd52fb3455c73043959df52fc6)
+---
+ .../platforms/ios/quiaccessibilityelement.mm      | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+index 72f2b8cfd9af3711e4502bb26325ce971e97469b..bf4351d2ecec9233312648d2cb776a776bc31739 100644
+--- x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+@@ -273,6 +273,21 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+     return NO;
+ }
+ 
++- (NSString *)accessibilityLanguage
++{
++    QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || !iface->isValid()) {
++        qWarning() << "invalid accessible interface for: " << self.axid;
++        return @"";
++    }
++    QAccessibleAttributesInterface *attributesIface = iface->attributesInterface();
++    if (!attributesIface || !attributesIface->attributeKeys().contains(QAccessible::Attribute::Locale))
++        return @"";
++
++    const auto &localeVariant = attributesIface->attributeValue(QAccessible::Attribute::Locale);
++    return localeVariant.toLocale().bcp47Name().toNSString();
++}
++
+ @end
+ 
+ #endif

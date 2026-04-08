@@ -31,6 +31,13 @@ QJsonObject IfdMessageResponse::createMessageBody(const QString& pContextHandle)
 }
 
 
+void IfdMessageResponse::clearError()
+{
+	mResultMajor = ECardApiResult::Major::Ok;
+	mResultMinor = ECardApiResult::Minor::null;
+}
+
+
 IfdMessageResponse::IfdMessageResponse(IfdMessageType pMessageType, ECardApiResult::Minor pResultMinor)
 	: IfdMessage(pMessageType)
 	, mResultMajor(pResultMinor == ECardApiResult::Minor::null ? ECardApiResult::Major::Ok : ECardApiResult::Major::Error)

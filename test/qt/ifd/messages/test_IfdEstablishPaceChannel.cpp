@@ -47,7 +47,7 @@ class test_IfdEstablishPaceChannel
 			IfdEstablishPaceChannel msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 6);
+			QTRY_COMPARE(logSpy.count(), 6);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"msg\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"ContextHandle\"")));
@@ -165,7 +165,7 @@ class test_IfdEstablishPaceChannel
 			}
 			QCOMPARE(ifdEstablishPaceChannel.getExpectedPinLength(), 6);
 
-			QCOMPARE(logSpy.count(), incomplete ? v0Supported ? 3 : 2 : 0);
+			QTRY_COMPARE(logSpy.count(), incomplete ? v0Supported ? 3 : 2 : 0);
 			if (incomplete)
 			{
 				if (v0Supported)
@@ -214,7 +214,7 @@ class test_IfdEstablishPaceChannel
 				QVERIFY(!ifdEstablishPaceChannel.isIncomplete());
 				QCOMPARE(ifdEstablishPaceChannel.getType(), IfdMessageType::IFDEstablishPACEChannel);
 
-				QCOMPARE(logSpy.count(), 0);
+				QTRY_COMPARE(logSpy.count(), 0);
 
 				return;
 			}
@@ -224,14 +224,14 @@ class test_IfdEstablishPaceChannel
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"UNDEFINED\"")));
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDEstablishPACEChannel")));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDEstablishPACEChannel")));
 		}
 
@@ -257,7 +257,7 @@ class test_IfdEstablishPaceChannel
 			QCOMPARE(ifdEstablishPaceChannel.getInputData(), EstablishPaceChannel());
 			QCOMPARE(ifdEstablishPaceChannel.getExpectedPinLength(), 0);
 
-			QCOMPARE(logSpy.count(), 3);
+			QTRY_COMPARE(logSpy.count(), 3);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"SlotHandle\" should be of type \"string\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"InputData\" should be of type \"string\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"ExpectedPINLength\" should be of type \"number\"")));
@@ -285,7 +285,7 @@ class test_IfdEstablishPaceChannel
 			QCOMPARE(ifdEstablishPaceChannel.getSlotHandle(), QStringLiteral("SlotHandle"));
 			QCOMPARE(ifdEstablishPaceChannel.getInputData(), EstablishPaceChannel());
 
-			QCOMPARE(logSpy.count(), v0Supported ? 3 : 2);
+			QTRY_COMPARE(logSpy.count(), v0Supported ? 3 : 2);
 			if (v0Supported)
 			{
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("(v0) The value of InputData should be as defined in TR-03119 section D.3")));

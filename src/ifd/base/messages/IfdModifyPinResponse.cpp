@@ -3,6 +3,7 @@
  */
 
 #include "IfdModifyPinResponse.h"
+#include "apdu/ResponseApdu.h"
 
 #include <QLoggingCategory>
 
@@ -19,6 +20,32 @@ VALUE_NAME(OUTPUT_DATA, "OutputData")
 } // namespace
 
 
+void IfdModifyPinResponse::ensureOutputData(ECardApiResult::Minor pMinor)
+{
+	ResponseApdu response;
+	switch (pMinor)
+	{
+		case ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch:
+			response = ResponseApdu(StatusCode::PASSWORDS_DIFFER);
+			break;
+
+		case ECardApiResult::Minor::IFDL_IO_UnknownPINFormat:
+			response = ResponseApdu(StatusCode::PASSWORD_OUTOF_RANGE);
+			break;
+
+		default:
+			return;
+	}
+
+	clearError();
+	if (const QByteArray& outputData = response; mOutputData != outputData)
+	{
+		qCCritical(ifd).noquote() << "OutputData doesn't match result minor! Expected:" << outputData.toHex() << ", given:" << mOutputData.toHex();
+		mOutputData = response;
+	}
+}
+
+
 IfdModifyPinResponse::IfdModifyPinResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor)
 	: IfdSlotHandle<IfdMessageResponse>(IfdMessageType::IFDModifyPINResponse, pSlotHandle, pResultMinor)
 	, mOutputData(pOutputData)
@@ -30,10 +57,14 @@ IfdModifyPinResponse::IfdModifyPinResponse(const QJsonObject& pMessageObject)
 	: IfdSlotHandle<IfdMessageResponse>(pMessageObject)
 	, mOutputData()
 {
-	const QString& inputData = getStringValue(pMessageObject, OUTPUT_DATA());
-	mOutputData = QByteArray::fromHex(inputData.toUtf8());
+	const QString& outputData = getStringValue(pMessageObject, OUTPUT_DATA());
+	mOutputData = QByteArray::fromHex(outputData.toUtf8());
 
 	ensureType(IfdMessageType::IFDModifyPINResponse);
+	if (resultHasError())
+	{
+		ensureOutputData(getResultMinor());
+	}
 }
 
 
@@ -57,12 +88,6 @@ CardReturnCode IfdModifyPinResponse::getReturnCode() const
 
 		case ECardApiResult::Minor::IFDL_CancellationByUser:
 			return CardReturnCode::CANCELLATION_BY_USER;
-
-		case ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch:
-			return CardReturnCode::NEW_PIN_MISMATCH;
-
-		case ECardApiResult::Minor::IFDL_IO_UnknownPINFormat:
-			return CardReturnCode::NEW_PIN_INVALID_LENGTH;
 
 		case ECardApiResult::Minor::IFDL_Terminal_NoCard:
 		case ECardApiResult::Minor::IFDL_InvalidSlotHandle:

@@ -7,8 +7,6 @@ import QtQuick
 import Governikus.ResultView
 
 ResultView {
-	id: root
-
 	property alias model: resultRepeater.model
 	required property int pluginType
 	required property int result

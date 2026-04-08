@@ -11,9 +11,6 @@ import Governikus.View
 import Governikus.Workflow
 
 BaseController {
-	id: root
-
-	property bool smartEidUsed: false
 	readonly property var stackView: StackView.view
 	required property string title
 	property TitleBarSettings titleBarSettings: TitleBarSettings {
@@ -59,17 +56,9 @@ BaseController {
 		}
 	}
 	function setActive() {
-		timer.start();
+		Qt.callLater(updateFocus);
 	}
 
 	Component.onCompleted: setActive()
 	onVisibleChanged: setActive()
-
-	Timer {
-		id: timer
-
-		interval: 0
-
-		onTriggered: root.updateFocus()
-	}
 }

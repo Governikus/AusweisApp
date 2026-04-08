@@ -139,6 +139,26 @@ class test_PinResetInformationModel
 		}
 
 
+		void test_getResetPinWithPRSHint()
+		{
+			auto* config = Env::getSingleton<ProviderConfiguration>();
+
+			config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
+			const auto noPrsNoParam = Env::getSingleton<PinResetInformationModel>()->getResetPinWithPRSHint();
+			const auto noPrs = Env::getSingleton<PinResetInformationModel>()->getResetPinWithPRSHint(false);
+			QVERIFY(noPrsNoParam == QString());
+			QVERIFY(noPrsNoParam == noPrs);
+
+			config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
+			const auto prsNoParam = Env::getSingleton<PinResetInformationModel>()->getResetPinWithPRSHint();
+			const auto prs = Env::getSingleton<PinResetInformationModel>()->getResetPinWithPRSHint(true);
+			QVERIFY(prsNoParam == QStringLiteral("You may request a PIN Reset Letter with a new PIN and it's according activation code on the following website."));
+			QVERIFY(prsNoParam == prs);
+
+			QVERIFY(noPrs != prs);
+		}
+
+
 		void test_stringReturnerNotNull()
 		{
 			auto res = Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionForPRSHint();

@@ -4,7 +4,7 @@ pdfsubject: Extended documentation for administrators and developers
 pdfkeywords: installation, integration
 author: @VENDOR@
 documenttitle: @PROJECT_NAME@ Extended documentation for administrators and developers
-subtitle: @VERSION_DVCS@
+subtitle: @ARTIFACT_VERSION@
 language_iso639: en
 language_babel: english
 tocdepth: 3

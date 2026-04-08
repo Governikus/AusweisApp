@@ -192,8 +192,7 @@ CertificateType BuildHelper::fetchCertificateType()
 		{
 			return CertificateType::PRODUCTION;
 		}
-		else if (hash == QByteArrayLiteral("f96fd6bba899845e06d3e6522f0843217681d473b6b09f1e313dea1a21d6b8e7")
-				|| hash == QByteArrayLiteral("f4a4d85a22103ebb5f4d35aede5117f40e591ab5ddf43df39c953d08e3895138"))
+		else if (hash == QByteArrayLiteral("f4a4d85a22103ebb5f4d35aede5117f40e591ab5ddf43df39c953d08e3895138"))
 		{
 			return CertificateType::DEVELOPER;
 		}

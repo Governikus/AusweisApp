@@ -46,7 +46,7 @@ class UiPluginWebService
 		[[nodiscard]] ExistingAppResult handleExistingApp(quint16 pPort, const QHostAddress& pHost) const;
 
 		void setCommonHeaders(HttpResponse& pResponse) const;
-		QString sendErrorPage(const QSharedPointer<HttpRequest>& pRequest, http_status pStatusCode, const GlobalStatus& pStatus) const;
+		QString sendErrorPage(const QSharedPointer<HttpRequest>& pRequest, llhttp_status pStatusCode, const GlobalStatus& pStatus) const;
 		QString sendRedirect(const QSharedPointer<HttpRequest>& pRequest, const QUrl& pRedirectAddress) const;
 		QString sendRedirect(const QSharedPointer<HttpRequest>& pRequest, const QSharedPointer<AuthContext>& pContext) const;
 

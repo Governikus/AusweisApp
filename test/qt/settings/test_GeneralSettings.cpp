@@ -103,6 +103,32 @@ class test_GeneralSettings
 		}
 
 
+		void testLastAppcastDate()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			const auto datetime = QDateTime(QDate(2024, 01, 01), QTime(12, 34));
+			settings.setLastAppcastDate(datetime);
+			QCOMPARE(settings.lastAppcastDate(), datetime);
+
+			settings.setLastAppcastDate(QDateTime());
+			QVERIFY(settings.lastAppcastDate().isNull());
+		}
+
+
+		void testLastAppcastVersion()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			const auto version = QStringLiteral("1.1.1");
+			settings.setLastAppcastVersion(version);
+			QCOMPARE(settings.lastAppcastVersion(), version);
+
+			settings.setLastAppcastVersion(QString());
+			QVERIFY(settings.lastAppcastVersion().isNull());
+		}
+
+
 		void testAutoStart_data()
 		{
 			QTest::addColumn<bool>("useSdkMode");
@@ -501,39 +527,6 @@ class test_GeneralSettings
 		}
 
 
-		void testSmartUpdate()
-		{
-			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-			QSignalSpy smartSpy(&settings, &GeneralSettings::fireSmartAvailableChanged);
-
-			QCOMPARE(smartSpy.count(), 0);
-			QCOMPARE(settings.doSmartUpdate(), true);
-			QCOMPARE(settings.isSmartAvailable(), false);
-
-			settings.setSmartAvailable(false);
-			QCOMPARE(smartSpy.count(), 0);
-			QCOMPARE(settings.doSmartUpdate(), false);
-			QCOMPARE(settings.isSmartAvailable(), false);
-
-			settings.setSmartAvailable(true);
-			QCOMPARE(smartSpy.count(), 1);
-			QCOMPARE(smartSpy.at(0).at(0), true);
-			QCOMPARE(settings.doSmartUpdate(), false);
-			QCOMPARE(settings.isSmartAvailable(), true);
-
-			settings.setSmartAvailable(true);
-			QCOMPARE(smartSpy.count(), 1);
-			QCOMPARE(settings.doSmartUpdate(), false);
-			QCOMPARE(settings.isSmartAvailable(), true);
-
-			settings.setSmartAvailable(false);
-			QCOMPARE(smartSpy.count(), 2);
-			QCOMPARE(smartSpy.at(1).at(0), false);
-			QCOMPARE(settings.doSmartUpdate(), false);
-			QCOMPARE(settings.isSmartAvailable(), false);
-		}
-
-
 		void testUseSystemFont()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
@@ -621,6 +614,35 @@ class test_GeneralSettings
 			settings.setScreenPrivacy(initial);
 			QCOMPARE(spy.count(), 2);
 			QCOMPARE(settings.isScreenPrivacy(), initial);
+		}
+
+
+		void testIfdServiceToken()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			QVERIFY(settings.getIfdServiceToken().isNull());
+			QVERIFY(QUuid(settings.getIfdServiceToken()).isNull());
+
+			QTest::ignoreMessage(QtDebugMsg, "Clear IFD Service token");
+			settings.clearIfdServiceToken();
+			QVERIFY(settings.getIfdServiceToken().isNull());
+			QVERIFY(QUuid(settings.getIfdServiceToken()).isNull());
+
+			QTest::ignoreMessage(QtDebugMsg, "Generate IFD Service token");
+			settings.generateIfdServiceToken();
+			const auto& uuid1 = QUuid(settings.getIfdServiceToken());
+			QVERIFY(!uuid1.isNull());
+
+			QTest::ignoreMessage(QtDebugMsg, "Generate IFD Service token");
+			settings.generateIfdServiceToken();
+			const auto& uuid2 = QUuid(settings.getIfdServiceToken());
+			QVERIFY(!uuid2.isNull());
+			QVERIFY(uuid1 != uuid2);
+
+			QTest::ignoreMessage(QtDebugMsg, "Clear IFD Service token");
+			settings.clearIfdServiceToken();
+			QVERIFY(settings.getIfdServiceToken().isNull());
+			QVERIFY(QUuid(settings.getIfdServiceToken()).isNull());
 		}
 
 

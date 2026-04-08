@@ -4,7 +4,7 @@ pdfsubject: Erweiterte Dokumentation für Administratoren und Entwickler
 pdfkeywords: installation, integration
 author: @VENDOR@
 documenttitle: @PROJECT_NAME@ Erweiterte Dokumentation für Administratoren und Entwickler
-subtitle: @VERSION_DVCS@
+subtitle: @ARTIFACT_VERSION@
 language_iso639: de
 language_babel: ngerman
 tocdepth: 3

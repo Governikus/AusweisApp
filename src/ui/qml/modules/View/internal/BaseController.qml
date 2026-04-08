@@ -7,11 +7,13 @@ import QtQuick.Controls
 
 import Governikus.TitleBar
 import Governikus.Global
+import Governikus.Type
 
 Item {
 	id: root
 
 	property bool contentIsScrolled: false
+	property bool preventScreenshots: false
 	property ProgressTracker progress: null
 	property bool skipFocusUpdate: false
 
@@ -27,7 +29,6 @@ Item {
 		}
 		let menuBar = (ApplicationWindow.menuBar as TitleBar);
 		if (menuBar && menuBar.setActiveFocus) {
-			console.warn("No focus item found using TitleBar");
 			menuBar.setActiveFocus();
 		} else {
 			console.warn("No focus item or TitleBar found");
@@ -38,7 +39,7 @@ Item {
 		id: d
 
 		function forceFocusFirstA11yItem(view) {
-			if (!view.visible) {
+			if (!view.visible || !ApplicationModel.screenReaderRunning) {
 				return false;
 			}
 			let isA11yFocusable = view.Accessible && view.Accessible.focusable && !view.Accessible.ignored;

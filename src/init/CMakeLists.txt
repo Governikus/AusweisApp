@@ -24,14 +24,6 @@ function(CONFIGURE_CONFIG_H)
 		set(VENDOR_DOMAIN)
 	endif()
 
-	if(VERSION_DVCS)
-		set(VERSION ${VERSION_DVCS})
-	else()
-		set(VERSION ${PROJECT_VERSION})
-	endif()
-
-	set(PRODUCT ${PROJECT_NAME})
-
 	configure_file(config.h.in config.h @ONLY)
 endfunction()
 

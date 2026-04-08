@@ -5,7 +5,6 @@
 import QtQuick
 
 import Governikus.TitleBar
-import Governikus.Style
 
 Row {
 	id: root
@@ -18,7 +17,7 @@ Row {
 	signal removeAllClicked
 	signal shareClicked(point popupPosition)
 
-	spacing: Style.dimens.pane_spacing
+	spacing: 0
 
 	TitleBarAction {
 		id: filterButton

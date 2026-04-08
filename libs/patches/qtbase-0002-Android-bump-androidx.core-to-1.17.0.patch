@@ -1,0 +1,45 @@
+From 6ac7bfba110fd5d181b4022162a3b8206afdaa2e Mon Sep 17 00:00:00 2001
+From: Rami Potinkara <rami.potinkara@qt.io>
+Date: Fri, 12 Sep 2025 22:33:03 +0300
+Subject: Android: bump androidx.core to 1.17.0
+
+This patch bumps androidx.core from version 1.16.0
+to version 1.17.0.
+
+Task-number: QTBUG-138551
+Task-number: QTBUG-138549
+Change-Id: I5c6c90478e34919cdff27410ceac284a2641830c
+Reviewed-by: Rami Potinkara <rami.potinkara@qt.io>
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit fd9eccb60de608ecd38533ed16b556c215c2e2e7)
+---
+ src/android/templates/build.gradle                              | 2 +-
+ .../platform/android_legacy_packaging/testdata/build.gradle     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/android/templates/build.gradle y/qtbase/src/android/templates/build.gradle
+index b6c4797fde7df6afe9e8a8233811e7e197b7b1eb..5c51bb90724b21f5366401a36fb202d0a1aede49 100644
+--- x/qtbase/src/android/templates/build.gradle
++++ y/qtbase/src/android/templates/build.gradle
+@@ -20,7 +20,7 @@ apply plugin: qtGradlePluginType
+ dependencies {
+     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+     //noinspection GradleDependency
+-    implementation 'androidx.core:core:1.16.0'
++    implementation 'androidx.core:core:1.17.0'
+ }
+ 
+ android {
+diff --git x/qtbase/tests/auto/corelib/platform/android_legacy_packaging/testdata/build.gradle y/qtbase/tests/auto/corelib/platform/android_legacy_packaging/testdata/build.gradle
+index 1d796d9b6b9cc22897128c1081171e219d80dd55..37d8e8f3c24d30d97e262d55d570a40c52f88aac 100644
+--- x/qtbase/tests/auto/corelib/platform/android_legacy_packaging/testdata/build.gradle
++++ y/qtbase/tests/auto/corelib/platform/android_legacy_packaging/testdata/build.gradle
+@@ -18,7 +18,7 @@ apply plugin: qtGradlePluginType
+ 
+ dependencies {
+     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+-    implementation 'androidx.core:core:1.16.0'
++    implementation 'androidx.core:core:1.17.0'
+ }
+ 
+ android {

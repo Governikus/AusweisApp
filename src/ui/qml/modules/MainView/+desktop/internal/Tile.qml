@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
@@ -14,7 +15,6 @@ GAbstractButton {
 	Accessible.name: ApplicationModel.stripHtmlTags(text)
 	Accessible.role: Accessible.Button
 	Layout.fillHeight: true
-	Layout.fillWidth: true
 	implicitHeight: 1
 	implicitWidth: 1
 	padding: 2 * Style.dimens.pane_padding

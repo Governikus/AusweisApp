@@ -129,10 +129,6 @@ void MsgHandlerAccessRights::fillAccessRights(const QSharedPointer<const AuthCon
 	chat[QLatin1String("effective")] = getAccessRights(accessRightManager->getEffectiveAccessRights());
 	setValue(QLatin1String("chat"), chat);
 
-#if __has_include("SmartManager.h")
-	setValue(QLatin1String("acceptedEidTypes"), getAcceptedEidTypes(pContext));
-#endif
-
 	if (const auto& transactionInfo = pContext->getDidAuthenticateEac1()->getTransactionInfo(); !transactionInfo.isEmpty())
 	{
 		setValue(QLatin1String("transactionInfo"), transactionInfo);

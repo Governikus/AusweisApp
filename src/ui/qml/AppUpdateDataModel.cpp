@@ -4,7 +4,9 @@
 
 #include "AppUpdateDataModel.h"
 
+#include "AppSettings.h"
 #include "AppUpdater.h"
+#include "LanguageLoader.h"
 #include "SettingsModel.h"
 
 #include <QDir>
@@ -34,8 +36,8 @@ AppUpdateDataModel::AppUpdateDataModel()
 	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppDownloadFinished, this, &AppUpdateDataModel::onAppDownloadFinished);
 	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireDownloadTypeChanged, this, &AppUpdateDataModel::fireDownloadProgressChanged);
 
-	connect(this, &AppUpdateDataModel::fireAppUpdateDataChanged, this, &AppUpdateDataModel::fireAppcastStatusChanged);
-	connect(this, &AppUpdateDataModel::fireDownloadProgressChanged, this, &AppUpdateDataModel::fireAppcastStatusChanged);
+	connect(this, &AppUpdateDataModel::fireAppUpdateDataChanged, this, &AppUpdateDataModel::fireAppcastUpdateTextChanged);
+	connect(this, &AppUpdateDataModel::fireAppUpdateDataChanged, this, &AppUpdateDataModel::fireAppcastErrorTextChanged);
 }
 
 
@@ -87,6 +89,14 @@ void AppUpdateDataModel::onAppcastFinished(bool pUpdateAvailable, const GlobalSt
 
 	mAppcastFinished = pStatus.getStatusCode() != GlobalStatus::Code::Downloader_Aborted;
 	mUpdateAvailable = pUpdateAvailable;
+	if (mAppcastFinished)
+	{
+		setLastAppcastDate(QDateTime::currentDateTime());
+	}
+	if (pStatus.getStatusCode() == GlobalStatus::Code::No_Error && isValid())
+	{
+		setLastAppcastVersion(Env::getSingleton<AppUpdater>()->getUpdateData().getVersion());
+	}
 	mMissingPlatform = pStatus.getStatusCode() == GlobalStatus::Code::Downloader_Missing_Platform;
 	Q_EMIT fireAppUpdateDataChanged();
 }
@@ -157,7 +167,7 @@ void AppUpdateDataModel::onAppDownloadFinished(const GlobalStatus& pError)
 
 bool AppUpdateDataModel::isUpdateAvailable() const
 {
-	return mUpdateAvailable;
+	return mUpdateAvailable || lastAppcastUpdateAvailable();
 }
 
 
@@ -185,29 +195,47 @@ int AppUpdateDataModel::getAppcastTotal() const
 }
 
 
-QString AppUpdateDataModel::getAppcastStatus() const
+QString AppUpdateDataModel::getAppcastUpdateText() const
 {
-	if (isAppcastRunning())
+	const auto& version = getVersion();
+	if (version.isNull())
 	{
-		//: DESKTOP
-		return tr("Searching for software updates...");
+		return {};
 	}
 
-	if (!mAppcastFinished)
+	//: DESKTOP %1 is replaced with the version number of the software update
+	return tr("An update is available (version %1).").arg(version);
+}
+
+
+QString AppUpdateDataModel::getAppcastNoUpdateText() const
+{
+	const auto& date = lastAppcastDate();
+	if (date.isNull())
 	{
-		return QString();
+		return {};
 	}
 
-	if (isValid())
-	{
-		if (mUpdateAvailable)
-		{
-			//: DESKTOP An update is available, the new version is supplied to the user.
-			return tr("An update is available (version %1).").arg(getVersion());
-		}
+	//: DESKTOP Date format according to https://doc.qt.io/qt/qdate.html#toString
+	const auto& dateString = LanguageLoader::getInstance().getUsedLocale().toString(date, tr("dd.MM.yyyy"));
 
-		//: DESKTOP %1 is replaced with the version number of the software and %2 is replaced with the application name.
-		return tr("Your version %1 of %2 is up to date.").arg(QCoreApplication::applicationVersion(), QCoreApplication::applicationName());
+	//: DESKTOP Time format according to https://doc.qt.io/qt/qtime.html#toString
+	const auto& timeString = LanguageLoader::getInstance().getUsedLocale().toString(date, tr("hh:mm AP"));
+
+	//: DESKTOP %1 will be replaced with the date and %2 with the time of the last search.
+	const auto& lastSearch = tr("Last search on %1 at %2").arg(dateString, timeString);
+
+	//: DESKTOP %1 is replaced with the version number of the software and %2 is replaced with the application name.
+	return tr("Your version %1 of %2 is up to date.").arg(QCoreApplication::applicationVersion(), QCoreApplication::applicationName())
+		   + QStringLiteral("<br><i>%1</i>").arg(lastSearch);
+}
+
+
+QString AppUpdateDataModel::getAppcastErrorText() const
+{
+	if (!getAppcastFailed())
+	{
+		return {};
 	}
 
 	if (mMissingPlatform)
@@ -230,6 +258,12 @@ QString AppUpdateDataModel::getAppcastStatus() const
 bool AppUpdateDataModel::isAppcastRunning() const
 {
 	return Env::getSingleton<AppUpdater>()->getDownloadType() == AppUpdater::DownloadType::UPDATEINFO;
+}
+
+
+bool AppUpdateDataModel::getAppcastFailed() const
+{
+	return mAppcastFinished && !isValid();
 }
 
 
@@ -266,9 +300,14 @@ const QDateTime& AppUpdateDataModel::getDate() const
 }
 
 
-const QString& AppUpdateDataModel::getVersion() const
+QString AppUpdateDataModel::getVersion() const
 {
-	return Env::getSingleton<AppUpdater>()->getUpdateData().getVersion();
+	if (isValid())
+	{
+		return Env::getSingleton<AppUpdater>()->getUpdateData().getVersion();
+	}
+
+	return lastAppcastVersion();
 }
 
 
@@ -304,4 +343,43 @@ bool AppUpdateDataModel::abortDownload()
 	mDownloadProgress = 0;
 	Q_EMIT fireDownloadProgressChanged();
 	return success;
+}
+
+
+QDateTime AppUpdateDataModel::lastAppcastDate() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().lastAppcastDate();
+}
+
+
+void AppUpdateDataModel::setLastAppcastDate(const QDateTime& pDate)
+{
+	Env::getSingleton<AppSettings>()->getGeneralSettings().setLastAppcastDate(pDate);
+	Q_EMIT fireAppcastNoUpdateTextChanged();
+}
+
+
+QString AppUpdateDataModel::lastAppcastVersion() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().lastAppcastVersion();
+}
+
+
+void AppUpdateDataModel::setLastAppcastVersion(const QString& pVersion)
+{
+	Env::getSingleton<AppSettings>()->getGeneralSettings().setLastAppcastVersion(pVersion);
+	Q_EMIT fireAppcastUpdateTextChanged();
+}
+
+
+bool AppUpdateDataModel::lastAppcastUpdateAvailable() const
+{
+	const auto& versionString = lastAppcastVersion();
+	if (versionString.isNull())
+	{
+		return false;
+	}
+
+	const auto& appcastVersion = VersionNumber(versionString);
+	return !appcastVersion.getVersionNumber().isNull() && appcastVersion > VersionNumber::getApplicationVersion();
 }

@@ -109,7 +109,6 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Card_Not_Found, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Communication_Error, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Input_TimeOut, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Card_Pin_Blocked, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Pin_Not_Blocked, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_NewPin_Mismatch, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_ValidityVerificationFailed, Minor::SAL_MEAC_DocumentValidityVerificationFailed);
@@ -124,18 +123,10 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Downloader_Missing_Platform, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Downloader_Aborted, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Update_Execution_Failed, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Card_Smart_Invalid, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Unavailable, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Authentication_Failed, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_ServiceInformation_Query_Failed, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_PrePersonalization_Failed, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed, Minor::AL_Unknown_Error);
 
 	addConversionElement(GlobalStatus::Code::Workflow_No_Permission_Error, Minor::AL_No_Permission);
 	addConversionElement(GlobalStatus::Code::Card_Pin_Deactivated, Minor::AL_No_Permission);
 	addConversionElement(GlobalStatus::Code::Card_Puk_Blocked, Minor::AL_No_Permission);
-	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Denied, Minor::AL_No_Permission);
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Internal_Error, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity, Minor::AL_Internal_Error);

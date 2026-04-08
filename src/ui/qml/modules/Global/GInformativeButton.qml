@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Style
@@ -29,8 +30,6 @@ GAbstractButton {
 		}
 	}
 	contentItem: RowLayout {
-		id: rowLayout
-
 		spacing: Style.dimens.pane_spacing
 
 		TintableIcon {

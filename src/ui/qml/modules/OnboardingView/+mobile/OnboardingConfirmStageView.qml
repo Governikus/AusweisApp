@@ -17,8 +17,6 @@ BaseOnboardingView {
 	}
 
 	OnboardingConfirmStageBaseView {
-		id: baseView
-
 		progress: root.progress
 		stage: root.stage
 

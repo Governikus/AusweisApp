@@ -6,9 +6,6 @@
 
 #include "context/ChangePinContext.h"
 #include "context/IfdServiceContext.h"
-#if __has_include("context/PersonalizationContext.h")
-	#include "context/PersonalizationContext.h"
-#endif
 
 #include "LanguageLoader.h"
 #include "MockCardConnectionWorker.h"
@@ -444,23 +441,6 @@ class test_NumberModel
 
 			mModel->setNewPinConfirmation(pin);
 			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::NEW_PIN_CONFIRMATION);
-		}
-
-
-		void test_GetPasswordTypeNewSmartPin()
-		{
-#if __has_include("context/PersonalizationContext.h")
-			const QSharedPointer<WorkflowContext> context(new PersonalizationContext(QString()));
-			mModel->resetContext(context);
-			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::PIN);
-
-			auto personalizationContext = context.objectCast<PersonalizationContext>();
-			QVERIFY(personalizationContext);
-			personalizationContext->setSessionIdentifier(QUuid::createUuid());
-			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::NEW_SMART_PIN);
-			mModel->setNewPin(QStringLiteral("123456"));
-			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::NEW_SMART_PIN_CONFIRMATION);
-#endif
 		}
 
 

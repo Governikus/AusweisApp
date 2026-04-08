@@ -4,11 +4,13 @@
 
 #include "ResetRetryCounterCommand.h"
 
+
 using namespace governikus;
 
 
 ResetRetryCounterCommand::ResetRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 	: BaseCardCommand(pCardConnectionWorker)
+	, mStatusCode(StatusCode::UNKNOWN)
 {
 }
 
@@ -18,9 +20,21 @@ void ResetRetryCounterCommand::internalExecute()
 	const CommandApdu cmdApdu(Ins::RESET_RETRY_COUNTER, CommandApdu::UNBLOCK, CommandApdu::PIN);
 	auto [returnCode, response] = getCardConnectionWorker()->transmit(cmdApdu);
 	setReturnCode(returnCode);
-	if (getReturnCode() == CardReturnCode::OK && response.getSW1() == SW1::ERROR_COMMAND_NOT_ALLOWED)
+
+	if (getReturnCode() != CardReturnCode::OK)
+	{
+		return;
+	}
+
+	mStatusCode = response.getStatusCode();
+	if (mStatusCode == StatusCode::ACCESS_DENIED)
 	{
 		getCardConnectionWorker()->setPukInoperative();
-		setReturnCode(CardReturnCode::PUK_INOPERATIVE);
 	}
+}
+
+
+StatusCode ResetRetryCounterCommand::getStatusCode() const
+{
+	return mStatusCode;
 }

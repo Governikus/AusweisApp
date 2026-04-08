@@ -146,8 +146,9 @@ class test_FormattedTextModel
 
 			PairList fileSeparator;
 			fileSeparator << std::make_pair(QString(), FormattedTextModel::LineType::EMPTY);
+			fileSeparator << std::make_pair(QString(), FormattedTextModel::LineType::EMPTY);
 
-			QTest::addRow("formattedText.txt") << ":/qml/formattedText.txt" << 35 << fileContent + fileSeparator + fileContent;
+			QTest::addRow("formattedText.txt") << ":/qml/formattedText.txt" << 36 << fileContent + fileSeparator + fileContent;
 		}
 
 

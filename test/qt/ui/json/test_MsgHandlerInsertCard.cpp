@@ -130,18 +130,6 @@ class test_MsgHandlerInsertCard
 
 			msg = R"({"cmd": "SET_CARD", "name": "dummy"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"Unknown reader name","msg":"INSERT_CARD"})"));
-
-			const auto& reader = MockReaderManagerPlugin::getInstance().addReader("MockReaderSmart"_L1, ReaderManagerPluginType::SMART);
-
-			msg = R"({"cmd": "SET_CARD", "name": "MockReaderSmart"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"Card is not insertable","msg":"INSERT_CARD"})"));
-
-			auto info = reader->getReaderInfo();
-			info.setCardInfo(CardInfo(CardType::EID_CARD));
-			info.shelveCard();
-			reader->setReaderInfo(info);
-
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
 		}
 
 

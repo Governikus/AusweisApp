@@ -40,6 +40,13 @@ class test_IfdEstablishPaceChannelResponse
 		}
 
 
+		void cleanup()
+		{
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			qApp->processEvents();
+		}
+
+
 		void invalidJson()
 		{
 			const bool v0Supported = IfdVersion(IfdVersion::Version::v0).isSupported();
@@ -52,7 +59,7 @@ class test_IfdEstablishPaceChannelResponse
 			IfdEstablishPaceChannelResponse msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), v0Supported ? 8 : 9);
+			QTRY_COMPARE(logSpy.count(), v0Supported ? 8 : 9);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"msg\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"\"")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"ContextHandle\"")));
@@ -189,7 +196,7 @@ class test_IfdEstablishPaceChannelResponse
 			QVERIFY(!ifdEstablishPaceChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), !v0Supported && !withResultCode ? 1 : incomplete && withResultCode ? 6 : 4);
+			QTRY_COMPARE(logSpy.count(), !v0Supported && !withResultCode ? 1 : incomplete && withResultCode ? 6 : 4);
 			if (incomplete)
 			{
 				if (!v0Supported && !withResultCode)
@@ -248,7 +255,7 @@ class test_IfdEstablishPaceChannelResponse
 				QVERIFY(!ifdEstablishPaceChannelResponse.isIncomplete());
 				QCOMPARE(ifdEstablishPaceChannelResponse.getType(), IfdMessageType::IFDEstablishPACEChannelResponse);
 
-				QCOMPARE(logSpy.count(), 4);
+				QTRY_COMPARE(logSpy.count(), 4);
 
 				return;
 			}
@@ -258,14 +265,14 @@ class test_IfdEstablishPaceChannelResponse
 
 			if (type == IfdMessageType::UNDEFINED)
 			{
-				QCOMPARE(logSpy.count(), 2);
+				QTRY_COMPARE(logSpy.count(), 2);
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"UNDEFINED\"")));
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDEstablishPACEChannelResponse")));
 
 				return;
 			}
 
-			QCOMPARE(logSpy.count(), 5);
+			QTRY_COMPARE(logSpy.count(), 5);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDEstablishPACEChannelResponse")));
 		}
 
@@ -295,9 +302,9 @@ class test_IfdEstablishPaceChannelResponse
 			QVERIFY(!ifdEstablishPaceChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"SlotHandle\" should be of type \"string\"")));
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"ResultCode\" should be of type \"string\"")));
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"OutputData\" should be of type \"string\"")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"SlotHandle\" should be of type \"string\"")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"ResultCode\" should be of type \"string\"")));
+			QTRY_VERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"OutputData\" should be of type \"string\"")));
 		}
 
 
@@ -327,7 +334,7 @@ class test_IfdEstablishPaceChannelResponse
 			QVERIFY(!ifdEstablishPaceChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of ResultCode should be as defined in the result value table of [PC/SC], Part 10 AMD1, section 2.5.12")));
 		}
 
@@ -374,7 +381,7 @@ class test_IfdEstablishPaceChannelResponse
 			QVERIFY(!ifdEstablishPaceChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getResultMinor(), ECardApiResult::Minor::null);
 
-			QCOMPARE(logSpy.count(), withResultCode ? 3 : 2);
+			QTRY_COMPARE(logSpy.count(), withResultCode ? 3 : 2);
 			if (!v0Supported || withResultCode)
 			{
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of OutputData should be as defined in the result value table of [PC/SC], Part 10 AMD1, section 2.6.16")));

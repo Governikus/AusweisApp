@@ -49,7 +49,9 @@ class StateProcessIfdMessages
 
 	Q_SIGNALS:
 		void fireEstablishPaceChannel();
+		void fireEstablishPaceChannelPinPad();
 		void fireModifyPin();
+		void fireModifyPinPinPad();
 		void fireSecureMessagingStopped();
 };
 

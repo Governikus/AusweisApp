@@ -59,6 +59,15 @@ class test_CardConnectionWorker
 		}
 
 
+		void test_Transmit_CardReturnsEmptyResponseApdu()
+		{
+			const CommandApdu dummyCommand;
+			mReader->setCard(MockCardConfig({TransmitConfig(CardReturnCode::OK, QByteArray())}));
+
+			QCOMPARE(mWorker->transmit(dummyCommand), ResponseApduResult({CardReturnCode::COMMAND_FAILED}));
+		}
+
+
 		void test_EstablishPaceChannel_data()
 		{
 			QTest::addColumn<int>("retryCounter");
@@ -242,21 +251,23 @@ class test_CardConnectionWorker
 		}
 
 
+		void test_readFile_ProtocolError()
+		{
+			mReader->setCard(MockCardConfig({TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("deadbeef"))}));
+
+			QByteArray fileContent;
+			const auto cardReturnCode = mWorker->readFile(FileRef::efCardSecurity(), fileContent);
+
+			QCOMPARE(cardReturnCode, CardReturnCode::PROTOCOL_ERROR);
+		}
+
+
 		void test_getChallenge()
 		{
 			QCOMPARE(mWorker->getChallenge(), ResponseApduResult{CardReturnCode::CARD_NOT_FOUND});
 
 			mReader->setCard(MockCardConfig());
 			QCOMPARE(mWorker->getChallenge(), ResponseApduResult{CardReturnCode::COMMAND_FAILED});
-		}
-
-
-		void test_prepareIdentification()
-		{
-			QCOMPARE(mWorker->prepareIdentification(QByteArray()), EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND));
-
-			mReader->setCard(MockCardConfig());
-			QCOMPARE(mWorker->prepareIdentification(QByteArray()), EstablishPaceChannelOutput{CardReturnCode::COMMAND_FAILED});
 		}
 
 

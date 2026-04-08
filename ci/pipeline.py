@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import argparse
-import hashlib
 import json
 import logging
 import os
 import subprocess
 import sys
+import zlib
 
 import gitlab
 import requests
@@ -126,6 +126,11 @@ notes:
             const=' ',
         )
         self.add_argument(
+            '--download-logs',
+            help='Download all logs from pipeline (CI_PIPELINE_ID)',
+            action='store_true',
+        )
+        self.add_argument(
             '--show',
             help='Show list of pipelines and exit',
             nargs='?',
@@ -166,6 +171,7 @@ notes:
             and not self.args.files
             and not self.args.show
             and not self.args.packages
+            and not self.args.download_logs
         ):
             self.error('Provide revision for the pipeline')
         if not self.args.token:
@@ -215,9 +221,13 @@ def run(cmd):
 
 def export():
     if parser.patch == 'w':
-        return run(['hg', 'diff', '--nodates', '-g'])
+        return (run(['hg', 'diff', '--nodates', '-g']), ['wdir'])
     else:
-        return run(['hg', 'export', '--nodates', '-g', '-r', parser.patch])
+        nodes = run(['hg', 'log', '-T', '{node|short} ', '-r', parser.patch])
+        return (
+            run(['hg', 'export', '--nodates', '-g', '-r', parser.patch]),
+            nodes.stdout.strip().split() if nodes else ['unknown'],
+        )
 
 
 def patch():
@@ -226,13 +236,13 @@ def patch():
             'bundle.mainreporoot'
         ) or os.path.dirname(os.path.realpath(__file__))
     log.debug('Use working directory: %s', parser.repository)
-    result = export()
+    result, nodes = export()
 
     if not result or not result.stdout.strip():
         log.error('Patch is empty or cannot be generated')
         return None
 
-    urlInfo = upload(result.stdout)
+    urlInfo = upload(result.stdout, nodes)
     if urlInfo is not None and parser.rev is None:
         branch = run(['hg', 'branch'])
         if branch is None:
@@ -242,9 +252,11 @@ def patch():
     return urlInfo
 
 
-def upload(content):
-    file = hashlib.md5(content.encode('utf-8')).hexdigest()
-    url = get_url() + f'/packages/generic/patches/drafts/{file}.patch'
+def upload(content, nodes):
+    crc = zlib.crc32(content.encode('utf-8'))
+    url = (
+        f'{get_url()}/packages/generic/patch/{crc:08x}/{"_".join(nodes)}.patch'
+    )
     if parser.dry_run:
         log.info(content)
         log.info(f'Upload patch: {url}')
@@ -266,10 +278,9 @@ def upload(content):
             log.error(f'Cannot upload patch file: {e}')
             return None
 
-    identifier = f'{parser.patch} / {file}'
     return [
         {'key': 'PATCH_URL', 'value': url},
-        {'key': 'PATCH_IDENTIFIER', 'value': identifier},
+        {'key': 'PATCH_IDENTIFIER', 'value': ' '.join(nodes)},
     ]
 
 
@@ -285,6 +296,8 @@ def pipeline(variables, inputs):
         log.info(f'Pipeline started: {pipeline.web_url}')
     except Exception as e:
         log.error(f'Cannot start pipeline: {e}')
+        return False
+    return True
 
 
 def api(url, stdout=True):
@@ -293,14 +306,14 @@ def api(url, stdout=True):
         response = requests.get(url, headers=parser.headers())
         log.debug(f'HTTP Code: {response.status_code}')
         log.debug(json.dumps(dict(response.headers), indent=2))
-        if 'application/json' in response.headers.get('Content-Type'):
+        if 'application/json' in response.headers.get('Content-Type', ''):
             content = json.dumps(response.json(), indent=2)
         else:
             content = response.text
         if stdout:
             log_stdout.info(content)
 
-        if response.status_code > 400:
+        if response.status_code >= 400:
             raise requests.HTTPError(f'HTTP Error {response.status_code}')
 
         return (response.headers, content)
@@ -362,12 +375,97 @@ def packages():
                                 'Deletion of package failed: '
                                 f'{response.status_code} {response.text}'
                             )
+                            return False
                 else:
                     log.info(
                         f'Package relevant: {entry["id"]} '
                         f'| {entry["version"]} '
                         f'| {entry["name"]}'
                     )
+    return True
+
+
+def download_logs():
+    pipeline_id = os.environ.get('CI_PIPELINE_ID')
+    if not pipeline_id:
+        log.error(
+            'CI_PIPELINE_ID environment variable not set. This must run within a GitLab CI job.'
+        )
+        return 1
+
+    log_dir = os.path.join(os.getcwd(), 'logs')
+    os.makedirs(log_dir, exist_ok=True)
+    log.info(f'Saving logs to: {log_dir}')
+
+    all_jobs = []
+    page = 1
+    per_page = 100  # Max allowed by GitLab API
+
+    while True:
+        url = (
+            get_url()
+            + f'/pipelines/{pipeline_id}/jobs?page={page}&per_page={per_page}'
+        )
+        log.debug(f'Fetching page {page}...')
+
+        try:
+            response = requests.get(url, headers=parser.headers())
+            if response.status_code != 200:
+                log.error(
+                    f'Failed to fetch pipeline jobs: {response.status_code} {response.text}'
+                )
+                return 1
+
+            jobs = response.json()
+            if not jobs:
+                break
+
+            all_jobs.extend(jobs)
+            log.debug(f'Page {page}: {len(jobs)} jobs')
+
+            next_page = response.headers.get('X-Next-Page')
+            if not next_page:
+                break
+
+            page += 1
+
+        except Exception as e:
+            log.error(f'Error fetching pipeline jobs (page {page}): {e}')
+            return 1
+
+    log.info(f'Found {len(all_jobs)} jobs in pipeline {pipeline_id}')
+
+    for job in all_jobs:
+        job_id = job['id']
+        job_name = job['name']
+        job_status = job['status']
+
+        # Sanitize job name for filename
+        safe_name = ''.join(
+            c if c.isalnum() or c in ('-', '_') else '_' for c in job_name
+        )
+        log_file = os.path.join(log_dir, f'{safe_name}_{job_id}.log')
+
+        log.info(
+            f'Downloading log: {job_name} (ID: {job_id}, Status: {job_status})'
+        )
+
+        log_url = get_url() + f'/jobs/{job_id}/trace'
+        try:
+            log_response = requests.get(log_url, headers=parser.headers())
+            if log_response.status_code == 200:
+                with open(log_file, 'w', encoding='utf-8') as f:
+                    f.write(log_response.text)
+                log.info(f'   Saved to: {log_file}')
+            else:
+                log.warning(
+                    f'   Could not download log: {log_response.status_code}'
+                )
+        except Exception as e:
+            log.error(f'   Error downloading log for {job_name}: {e}')
+
+    log.info(f'Successfully downloaded {len(all_jobs)} logs to {log_dir}')
+    return 0
 
 
 def main():
@@ -385,6 +483,9 @@ def main():
 
     if parser.packages:
         return packages()
+
+    if parser.download_logs:
+        return download_logs()
 
     variables = []
     inputs = {}
@@ -421,7 +522,7 @@ def main():
         log.info(variables)
         log.info(inputs)
     else:
-        pipeline(variables, inputs)
+        return pipeline(variables, inputs)
 
 
 if __name__ == '__main__':

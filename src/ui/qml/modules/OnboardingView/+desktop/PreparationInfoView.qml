@@ -56,7 +56,7 @@ BaseOnboardingView {
 		text: qsTr("You have received a one-time PIN, the %1Transport PIN%2, as a letter from your competent authority. You can replace this with a%1 6-digit card PIN%2 in the %3 or at the Citizens' Registration Office. If you do not have a PIN or do not remember your card PIN, click here:").arg("<b>").arg("</b>").arg(Qt.application.name)
 	}
 	MoreInformationLink {
-		Layout.bottomMargin: Style.dimens.pane_spacing * 2
+		Layout.bottomMargin: Style.dimens.pane_spacing
 		//: DESKTOP
 		text: qsTr("I can't recall my PIN")
 
@@ -69,8 +69,6 @@ BaseOnboardingView {
 		id: multiInfoView
 
 		MultiInfoView {
-			id: infoView
-
 			//: DESKTOP
 			continueButtonText: qsTr("Abort setup")
 			progress: root.progress

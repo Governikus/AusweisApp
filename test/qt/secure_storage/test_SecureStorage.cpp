@@ -260,52 +260,17 @@ class test_SecureStorage
 		}
 
 
-		void testSmartPersonalizationUrl()
-		{
-			const auto& secureStorage = Env::getSingleton<SecureStorage>();
-
-			if (secureStorage->getVendor().contains(QLatin1String("Governikus")))
-			{
-				QVERIFY(secureStorage->getSmartPersonalizationUrl().contains(QLatin1String("/%1")));
-				QVERIFY(secureStorage->getSmartPersonalizationUrl(true).contains(QLatin1String("/%1")));
-			}
-			else
-			{
-				QVERIFY(secureStorage->getSmartPersonalizationUrl().isEmpty());
-				QVERIFY(secureStorage->getSmartPersonalizationUrl(true).isEmpty());
-			}
-		}
-
-
-		void testSmartService()
-		{
-			const auto& secureStorage = Env::getSingleton<SecureStorage>();
-
-			if (secureStorage->getVendor().contains(QLatin1String("Governikus")))
-			{
-				QVERIFY(!secureStorage->getSmartServiceId().isEmpty());
-				QVERIFY(!secureStorage->getSmartSsdAid().isEmpty());
-			}
-			else
-			{
-				QVERIFY(secureStorage->getSmartServiceId().isEmpty());
-				QVERIFY(secureStorage->getSmartSsdAid().isEmpty());
-			}
-		}
-
-
 		void testLocalIfdConfig()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			QCOMPARE(secureStorage->getLocalIfdPackageName(), "com.governikus.ausweisapp2.dev"_L1);
-			QCOMPARE(secureStorage->getLocalIfdMinVersion(), "1.100.0"_L1);
+			QCOMPARE(secureStorage->getLocalIfdPackageName(), "com.governikus.ausweisapp2"_L1);
+			QCOMPARE(secureStorage->getLocalIfdMinVersion(), "2.4.105"_L1);
 			QCOMPARE(secureStorage->getLocalIfdMinPskSize(), 256);
 
 			const auto& certificateHashes = secureStorage->getLocalIfdAllowedCertificateHashes();
-			QCOMPARE(certificateHashes.size(), 3);
+			QCOMPARE(certificateHashes.size(), 2);
 			QVERIFY(certificateHashes.contains(QByteArray::fromHex(QByteArrayLiteral("B02AC76B50A497AE810AEAC22598187B3D4290277D0851A7FA8E1AEA5A979870"))));
 			QVERIFY(certificateHashes.contains(QByteArray::fromHex(QByteArrayLiteral("F4A4D85A22103EBB5F4D35AEDE5117F40E591AB5DDF43DF39C953D08E3895138"))));
-			QVERIFY(certificateHashes.contains(QByteArray::fromHex(QByteArrayLiteral("F96FD6BBA899845E06D3E6522F0843217681D473B6B09F1E313DEA1A21D6B8E7"))));
 		}
 
 
@@ -369,7 +334,7 @@ class test_SecureStorage
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 			const auto& ciphersForwardSecrecy = secureStorage->getTlsConfig().getCiphers();
 			QCOMPARE(ciphersForwardSecrecy.first(), QSslCipher("ECDHE-ECDSA-AES256-GCM-SHA384"_L1));
-			QCOMPARE(ciphersForwardSecrecy.last(), QSslCipher("DHE-RSA-AES128-SHA256"_L1));
+			QCOMPARE(ciphersForwardSecrecy.last(), QSslCipher("DHE-RSA-AES128-GCM-SHA256"_L1));
 
 			const auto& ciphersPsk = secureStorage->getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers();
 			QVERIFY(ciphersPsk.count() > 0);
@@ -399,10 +364,20 @@ class test_SecureStorage
 			QCOMPARE(ciphersEcLocalIfd.count(), 5);
 			QCOMPARE(ciphersEcLocalIfd.first(), QSslEllipticCurve::fromLongName("brainpoolP512r1"_L1));
 			QCOMPARE(ciphersEcLocalIfd.last(), QSslEllipticCurve::fromLongName("prime256v1"_L1));
+
 			const auto& ciphersLocalIfd = localIfdConfig.getCiphers();
-			QVERIFY(ciphersLocalIfd.count() == 2);
-			QCOMPARE(ciphersLocalIfd.first(), QSslCipher("ECDHE-PSK-AES128-CBC-SHA256"_L1));
-			QCOMPARE(ciphersLocalIfd.last(), QSslCipher("ECDHE-PSK-AES256-CBC-SHA384"_L1));
+
+			if (QSysInfo::prettyProductName().contains(QLatin1String("Fedora")))
+			{
+				QCOMPARE(ciphersLocalIfd.count(), 1);
+				QCOMPARE(ciphersLocalIfd.first(), QSslCipher("ECDHE-PSK-AES128-CBC-SHA256"_L1));
+			}
+			else
+			{
+				QCOMPARE(ciphersLocalIfd.count(), 2);
+				QCOMPARE(ciphersLocalIfd.first(), QSslCipher("ECDHE-PSK-AES128-CBC-SHA256"_L1));
+				QCOMPARE(ciphersLocalIfd.last(), QSslCipher("ECDHE-PSK-AES256-CBC-SHA384"_L1));
+			}
 		}
 
 
@@ -434,11 +409,12 @@ class test_SecureStorage
 
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 
-			QTest::newRow("ciphers non PSK") << secureStorage->getTlsConfig().getConfiguration() << 12;
-			QTest::newRow("ciphers for PSK") << secureStorage->getTlsConfig(SecureStorage::TlsSuite::PSK).getConfiguration() << 5;
-			QTest::newRow("remote ifd") << secureStorage->getTlsConfigRemoteIfd().getConfiguration() << 7;
-			QTest::newRow("remote ifd pairing") << secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getConfiguration() << 5;
-			QTest::newRow("local ifd") << secureStorage->getTlsConfigLocalIfd().getConfiguration() << 2;
+			const bool fedora = QSysInfo::prettyProductName().contains(QLatin1String("Fedora"));
+			QTest::newRow("ciphers non PSK") << secureStorage->getTlsConfig().getConfiguration() << 6;
+			QTest::newRow("ciphers for PSK") << secureStorage->getTlsConfig(SecureStorage::TlsSuite::PSK).getConfiguration() << 3;
+			QTest::newRow("remote ifd") << secureStorage->getTlsConfigRemoteIfd().getConfiguration() << 3;
+			QTest::newRow("remote ifd pairing") << secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getConfiguration() << 3;
+			QTest::newRow("local ifd") << secureStorage->getTlsConfigLocalIfd().getConfiguration() << (fedora ? 1 : 2);
 		}
 
 

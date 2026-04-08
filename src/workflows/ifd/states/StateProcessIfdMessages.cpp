@@ -84,11 +84,11 @@ void StateProcessIfdMessages::onConnectedChanged(bool pConnected) const
 
 	if (pConnected && !getContext()->getIfdServer()->isPairingConnection())
 	{
-		Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPluginType::SMART);
+		Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPluginType::REMOTE_IFD);
 	}
 	else
 	{
-		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::SMART);
+		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::REMOTE_IFD);
 	}
 }
 
@@ -127,10 +127,11 @@ void StateProcessIfdMessages::onEstablishPaceChannel(const QSharedPointer<const 
 	const auto& context = getContext();
 	context->setEstablishPaceChannel(pMessage);
 	context->setCardConnection(pConnection);
-	context->setReaderName(pConnection->getReaderInfo().getName());
+	const auto& readerInfo = pConnection->getReaderInfo();
+	context->setReaderName(readerInfo.getName());
 	mResetContextOnDisconnect = true;
 
-	Q_EMIT fireEstablishPaceChannel();
+	readerInfo.isBasicReader() ? Q_EMIT fireEstablishPaceChannel() : Q_EMIT fireEstablishPaceChannelPinPad();
 }
 
 
@@ -141,9 +142,10 @@ void StateProcessIfdMessages::onModifyPin(const QSharedPointer<const IfdModifyPi
 	const auto& context = getContext();
 	context->setModifyPinMessage(pMessage);
 	context->setCardConnection(pConnection);
-	context->setReaderName(pConnection->getReaderInfo().getName());
+	const auto& readerInfo = pConnection->getReaderInfo();
+	context->setReaderName(readerInfo.getName());
 
-	Q_EMIT fireModifyPin();
+	readerInfo.isBasicReader() ? Q_EMIT fireModifyPin() : Q_EMIT fireModifyPinPinPad();
 }
 
 

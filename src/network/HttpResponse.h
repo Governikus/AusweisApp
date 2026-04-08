@@ -6,7 +6,7 @@
 
 #include <QByteArray>
 #include <QMap>
-#include <http_parser.h>
+#include <llhttp.h>
 
 namespace governikus
 {
@@ -14,14 +14,14 @@ namespace governikus
 class HttpResponse
 {
 	private:
-		http_status mStatus;
+		llhttp_status mStatus;
 		QMap<QByteArray, QByteArray> mHeader;
 		QByteArray mBody;
 
 		[[nodiscard]] QByteArray getStatusMessage() const;
 
 	public:
-		explicit HttpResponse(http_status pStatus = HTTP_STATUS_INTERNAL_SERVER_ERROR,
+		explicit HttpResponse(llhttp_status pStatus = HTTP_STATUS_INTERNAL_SERVER_ERROR,
 				const QByteArray& pBody = QByteArray(),
 				const QByteArray& pContentType = QByteArray());
 
@@ -29,8 +29,8 @@ class HttpResponse
 		[[nodiscard]] const QMap<QByteArray, QByteArray>& getHeaders() const;
 		void setHeader(const QByteArray& pKey, const QByteArray& pValue);
 
-		[[nodiscard]] http_status getStatus() const;
-		void setStatus(http_status pStatus);
+		[[nodiscard]] llhttp_status getStatus() const;
+		void setStatus(llhttp_status pStatus);
 
 		[[nodiscard]] const QByteArray& getBody() const;
 		void setBody(const QByteArray& pBody, const QByteArray& pContentType = QByteArray());

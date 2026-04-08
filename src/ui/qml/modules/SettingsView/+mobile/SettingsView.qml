@@ -11,7 +11,6 @@ import QtQuick.Window
 import Governikus.Global
 import Governikus.View
 import Governikus.RemoteServiceView
-import Governikus.SmartView
 import Governikus.Type
 import Governikus.Style
 
@@ -39,8 +38,6 @@ FlickableSectionPage {
 			title: qsTr("Change language")
 
 			LanguageButtons {
-				id: languageButtons
-
 				onButtonClicked: languageCollapsible.onOptionSelected()
 			}
 		}
@@ -58,8 +55,6 @@ FlickableSectionPage {
 			title: qsTr("Appearance")
 
 			DarkModeButtons {
-				id: modeButtons
-
 				width: parent.width
 
 				onButtonClicked: appearanceCollapsible.onOptionSelected()
@@ -68,7 +63,6 @@ FlickableSectionPage {
 		SettingsViewSeparator {
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			//: MOBILE
 			description: qsTr("Toggling will restart the %1").arg(Qt.application.name)
 			//: MOBILE
@@ -122,7 +116,6 @@ FlickableSectionPage {
 		title: qsTr("Accessibility")
 
 		GSwitch {
-			Layout.fillWidth: true
 			checked: !SettingsModel.useAnimations
 			drawTopCorners: true
 
@@ -134,7 +127,6 @@ FlickableSectionPage {
 		SettingsViewSeparator {
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.visualPrivacy
 			//: MOBILE
 			text: qsTr("Hide key animations when entering PIN")
@@ -144,7 +136,6 @@ FlickableSectionPage {
 		SettingsViewSeparator {
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: !SettingsModel.autoRedirectAfterAuthentication
 			//: MOBILE
 			description: qsTr("After identification, you will only be redirected back to the provider after confirmation. Otherwise, you will be redirected automatically after a few seconds.")
@@ -175,7 +166,6 @@ FlickableSectionPage {
 					SettingsModel.deviceName = text;
 				}
 
-				Layout.fillWidth: true
 				Layout.margins: Style.dimens.pane_spacing
 				maximumLength: 33
 				text: SettingsModel.deviceName
@@ -188,7 +178,6 @@ FlickableSectionPage {
 		SettingsViewSeparator {
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.pinPadMode
 
 			//: MOBILE
@@ -199,7 +188,6 @@ FlickableSectionPage {
 		SettingsViewSeparator {
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.showAccessRights
 			enabled: SettingsModel.pinPadMode
 
@@ -239,7 +227,6 @@ FlickableSectionPage {
 		title: qsTr("Security and privacy")
 
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.shuffleScreenKeyboard
 			//: MOBILE
 			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
@@ -253,7 +240,6 @@ FlickableSectionPage {
 		SettingsViewSeparator {
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.visualPrivacy
 			//: MOBILE
 			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
@@ -267,7 +253,6 @@ FlickableSectionPage {
 		SettingsViewSeparator {
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.screenPrivacy
 			description: {
 				if (Qt.platform.os === "android") {
@@ -294,34 +279,10 @@ FlickableSectionPage {
 	GOptionsContainer {
 		Layout.fillWidth: true
 		//: MOBILE
-		title: qsTr("Smart-eID")
-		visible: ApplicationModel.smartSupported
-
-		GMenuItem {
-			Layout.fillWidth: true
-			//: MOBILE
-			description: qsTr("Reset Smart-eID data on your device")
-			//: MOBILE
-			title: qsTr("Reset Smart-eID")
-
-			onClicked: root.push(smartDeleteView)
-
-			Component {
-				id: smartDeleteView
-
-				SmartResetView {
-				}
-			}
-		}
-	}
-	GOptionsContainer {
-		Layout.fillWidth: true
-		//: MOBILE
 		title: qsTr("On-site reading")
 		visible: SettingsModel.advancedSettings
 
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.enableCanAllowed
 			drawTopCorners: true
 
@@ -333,7 +294,6 @@ FlickableSectionPage {
 		SettingsViewSeparator {
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.skipRightsOnCanAllowed
 			drawBottomCorners: true
 			enabled: SettingsModel.enableCanAllowed
@@ -351,8 +311,6 @@ FlickableSectionPage {
 		visible: SettingsModel.advancedSettings
 
 		GSwitch {
-			id: testUriSwitch
-
 			Layout.fillWidth: true
 			checked: SettingsModel.useSelfauthenticationTestUri
 			//: MOBILE
@@ -367,7 +325,6 @@ FlickableSectionPage {
 		SettingsViewSeparator {
 		}
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.enableSimulator
 			//: MOBILE
 			description: qsTr("Simulate a test sample card in authentications")
@@ -387,7 +344,6 @@ FlickableSectionPage {
 		visible: UiPluginModel.debugBuild
 
 		GSwitch {
-			Layout.fillWidth: true
 			checked: SettingsModel.developerMode
 			//: MOBILE
 			description: qsTr("Use a more tolerant mode")
@@ -424,11 +380,10 @@ FlickableSectionPage {
 			padding: Style.dimens.pane_padding
 			spacing: Style.dimens.pane_spacing
 
-			GButton {
+			SecondaryButton {
 				Layout.minimumWidth: implicitHeight
 				checkable: true
 				checked: SettingsModel.appendTransportPin === ""
-				style: Style.color.controlOptional
 				//: MOBILE
 				text: qsTr("Disable")
 
@@ -437,13 +392,12 @@ FlickableSectionPage {
 			Repeater {
 				model: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
-				GButton {
+				SecondaryButton {
 					required property string modelData
 
 					Layout.minimumWidth: implicitHeight
 					checkable: true
 					checked: SettingsModel.appendTransportPin === modelData
-					style: Style.color.controlOptional
 					text: modelData
 
 					onClicked: SettingsModel.appendTransportPin = modelData

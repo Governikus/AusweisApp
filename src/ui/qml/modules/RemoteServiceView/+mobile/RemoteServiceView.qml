@@ -63,11 +63,10 @@ FlickableSectionPage {
 		target: RemoteServiceModel
 	}
 	RemoteServiceController {
-		id: controller
-
 		stackView: root.stackView
 	}
 	ColumnLayout {
+		Layout.alignment: Style.scanPatternAlignment
 		Layout.topMargin: -root.spacing
 		spacing: root.spacing
 		visible: root.nfcState !== ApplicationModel.NfcState.UNAVAILABLE
@@ -201,8 +200,6 @@ FlickableSectionPage {
 		}
 	}
 	GText {
-		id: pairingCodeHeader
-
 		Accessible.ignored: true
 		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
@@ -318,8 +315,6 @@ FlickableSectionPage {
 		}
 	}
 	NfcWorkflow {
-		id: nfcWorkflow
-
 		Layout.fillHeight: true
 		Layout.fillWidth: true
 		Layout.topMargin: -root.spacing
@@ -393,7 +388,6 @@ FlickableSectionPage {
 	GProgressBar {
 		//: MOBILE Name of an progress indicator during the pairing process read by screen readers
 		Accessible.name: qsTr("Pairing progress")
-		Layout.fillWidth: true
 		value: RemoteServiceModel.percentage
 		visible: progressText.visible
 	}

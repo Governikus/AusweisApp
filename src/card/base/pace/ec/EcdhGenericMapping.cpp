@@ -49,7 +49,7 @@ bool EcdhGenericMapping::generateEphemeralDomainParameters(const QByteArray& pRe
 		return false;
 	}
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
 	const QSharedPointer<const EC_POINT> localPubKeyPtr = EcUtil::oct2point(mCurve, EcUtil::getEncodedPublicKey(mLocalKey));
 	const EC_POINT* localPubKey = localPubKeyPtr.data();
 #else

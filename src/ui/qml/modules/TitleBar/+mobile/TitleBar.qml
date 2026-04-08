@@ -18,7 +18,6 @@ Rectangle {
 	required property real safeAreaTopMargin
 	property alias showContent: contentLayout.visible
 	property bool showSeparator: false
-	property bool smartEidUsed: false
 	property alias title: titleText.text
 
 	function setActiveFocus() {
@@ -36,7 +35,7 @@ Rectangle {
 	Rectangle {
 		id: statusBarBackground
 
-		color: root.smartEidUsed ? Style.color.card_smart : Style.color.background
+		color: Style.color.background
 		height: root.safeAreaTopMargin
 
 		Behavior on color {
@@ -72,8 +71,6 @@ Rectangle {
 			horizontalCenter: parent.horizontalCenter
 		}
 		TitleBarNavigation {
-			id: leftAction
-
 			Layout.minimumHeight: Style.dimens.small_icon_size
 			Layout.topMargin: Style.dimens.titlebar_padding
 			enabled: root.navigationAction ? root.navigationAction.enabled : false

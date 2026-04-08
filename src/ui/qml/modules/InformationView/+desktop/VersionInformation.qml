@@ -12,8 +12,6 @@ import Governikus.Style
 import Governikus.Type
 
 ColumnLayout {
-	id: root
-
 	spacing: Style.dimens.pane_spacing
 
 	GPane {
@@ -59,8 +57,6 @@ ColumnLayout {
 			anchors.fill: parent
 
 			Repeater {
-				id: repeater
-
 				model: VersionInformationModel
 
 				delegate: LabeledText {

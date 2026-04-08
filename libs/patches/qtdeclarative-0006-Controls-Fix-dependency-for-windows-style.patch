@@ -1,0 +1,30 @@
+From 7dae1b4d14d61d2ff283246398c2fd9fb20fc21a Mon Sep 17 00:00:00 2001
+From: Ulf Hermann <ulf.hermann@qt.io>
+Date: Wed, 14 Jan 2026 10:13:30 +0100
+Subject: Controls: Fix dependency for windows style
+
+The windows style depends on the fusion style, not the basic style.
+
+Pick-to: 6.11 6.10 6.8
+Fixes: QTBUG-143374
+Change-Id: I10b96b3422220195afc9563aa4de14f05a281c9f
+Reviewed-by: Mitch Curtis <mitch.curtis@qt.io>
+Reviewed-by: Lars Schmertmann <SmallLars@t-online.de>
+(cherry picked from commit 1911fe0cef73f1fe2516870cb32b5103d116c9e6)
+---
+ src/quickcontrols/configure.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtdeclarative/src/quickcontrols/configure.cmake y/qtdeclarative/src/quickcontrols/configure.cmake
+index 62da4f2fb741a2213d9ccb9c8c32138b3eaac739..25c4425d0bc60cb3f05887c2ab4dce89871b98fb 100644
+--- x/qtdeclarative/src/quickcontrols/configure.cmake
++++ y/qtdeclarative/src/quickcontrols/configure.cmake
+@@ -66,7 +66,7 @@ qt_feature("quickcontrols2-windows" PRIVATE
+     SECTION "Quick Controls 2"
+     LABEL "Windows"
+     PURPOSE "Provides a native Windows desktop style."
+-    CONDITION QT_FEATURE_quickcontrols2_basic AND WIN32
++    CONDITION QT_FEATURE_quickcontrols2_fusion AND WIN32
+ )
+ qt_configure_add_summary_section(NAME "Qt Quick Controls 2")
+ qt_configure_add_summary_entry(

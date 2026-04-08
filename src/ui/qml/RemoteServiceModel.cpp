@@ -272,13 +272,7 @@ void RemoteServiceModel::connectToRememberedServer(const QByteArray& pServerPsk)
 
 QList<ReaderManagerPluginType> RemoteServiceModel::getSupportedReaderPluginTypes() const
 {
-#if __has_include("SmartManager.h")
-	return {ReaderManagerPluginType::NFC, ReaderManagerPluginType::SMART};
-
-#else
 	return {ReaderManagerPluginType::NFC};
-
-#endif
 }
 
 

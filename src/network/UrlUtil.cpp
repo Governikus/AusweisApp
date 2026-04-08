@@ -4,9 +4,6 @@
 
 #include "UrlUtil.h"
 
-#include "AppSettings.h"
-#include "Env.h"
-
 #include <QHostAddress>
 #include <QLoggingCategory>
 #include <QRegularExpression>
@@ -62,26 +59,6 @@ bool UrlUtil::isMatchingSameOriginPolicy(const QUrl& pUrl1, const QUrl& pUrl2)
 	bool sameOriginPolicyCheckResult = (urlOrigin1 == urlOrigin2);
 	qCDebug(network) << "SOP-Check(" << urlOrigin1.toString() << "," << urlOrigin2.toString() << ")=" << sameOriginPolicyCheckResult;
 	return sameOriginPolicyCheckResult;
-}
-
-
-void UrlUtil::setHiddenSettings(const QUrlQuery& pUrl)
-{
-	const auto queryUseTestUri = QLatin1String("useTestUri");
-	if (pUrl.hasQueryItem(queryUseTestUri))
-	{
-		const auto value = pUrl.queryItemValue(queryUseTestUri);
-		const bool useTestUri = QVariant(value).toBool();
-		Env::getSingleton<AppSettings>()->getGeneralSettings().setUseSelfauthenticationTestUri(useTestUri);
-	}
-
-	const auto queryEnableSimulator = QLatin1String("enableSimulator");
-	if (pUrl.hasQueryItem(queryEnableSimulator))
-	{
-		const auto value = pUrl.queryItemValue(queryEnableSimulator);
-		const bool enableSimulator = QVariant(value).toBool();
-		Env::getSingleton<AppSettings>()->getSimulatorSettings().setEnabled(enableSimulator);
-	}
 }
 
 

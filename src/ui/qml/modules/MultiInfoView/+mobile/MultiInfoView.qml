@@ -17,18 +17,10 @@ FlickableSectionPage {
 
 	readonly property var contentList: infoContent.contentList
 	property string continueButtonText
-	readonly property string firstHint: infoContent.firstHint
-	readonly property url firstHintButtonLink: infoContent.firstHintButtonLink
-	readonly property string firstHintButtonText: infoContent.firstHintButtonText
-	readonly property string firstHintTitle: infoContent.firstHintTitle
 	readonly property string hintBoxesTitle: infoContent.hintBoxesTitle
 	property MultiInfoData infoContent: MultiInfoData {
 	}
 	readonly property string infoContentTitle: infoContent.title
-	readonly property url secondHintButtonLink: infoContent.secondHintButtonLink
-	readonly property string secondHintButtonText: infoContent.secondHintButtonText
-	readonly property string secondHintText: infoContent.secondHintText
-	readonly property string secondHintTitle: infoContent.secondHintTitle
 
 	signal abortCurrentWorkflow
 	signal close
@@ -45,8 +37,6 @@ FlickableSectionPage {
 
 	Column {
 		Layout.fillWidth: true
-		Layout.leftMargin: Style.dimens.pane_padding
-		Layout.rightMargin: Style.dimens.pane_padding
 		spacing: Style.dimens.pane_spacing
 
 		GRepeater {
@@ -110,35 +100,21 @@ FlickableSectionPage {
 			}
 		}
 	}
-	GText {
-		Layout.topMargin: Style.dimens.pane_spacing
-		text: root.hintBoxesTitle
-		textStyle: Style.text.subline
-		visible: text !== ""
-	}
 	Hint {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		Layout.topMargin: Style.dimens.pane_spacing
-		buttonText: root.firstHintButtonText
-		linkToOpen: root.firstHintButtonLink
-		text: root.firstHint
-		//: MOBILE
-		title: root.firstHintTitle !== "" ? root.firstHintTitle : qsTr("Hint")
+		buttonText: root.infoContent.infoContent.multiInfoHintContent.buttonText
+		linkToOpen: root.infoContent.infoContent.multiInfoHintContent.linkToOpen
+		text: root.infoContent.infoContent.multiInfoHintContent.text
+		title: root.infoContent.infoContent.multiInfoHintContent.title
 		visible: text !== ""
 
 		onLinkAboutToOpen: root.abortCurrentWorkflow()
 	}
-	Hint {
+	PinResetHints {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		Layout.topMargin: Style.dimens.pane_spacing
-		buttonText: root.secondHintButtonText
-		linkToOpen: root.secondHintButtonLink
-		text: root.secondHintText
-		//: MOBILE
-		title: root.secondHintTitle !== "" ? root.secondHintTitle : qsTr("Hint")
-		visible: text !== ""
+		title: root.hintBoxesTitle
 
 		onLinkAboutToOpen: root.abortCurrentWorkflow()
 	}

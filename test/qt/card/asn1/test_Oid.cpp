@@ -55,7 +55,7 @@ class test_Oid
 			QCOMPARE(oid.operator QByteArray(), QByteArray());
 			QCOMPARE(QByteArray(oid), QByteArray());
 
-			QCOMPARE(logSpy.count(), 0);
+			QTRY_COMPARE(logSpy.count(), 0);
 
 		}
 
@@ -81,7 +81,7 @@ class test_Oid
 			Oid source(oid);
 			Oid target(source);
 			QCOMPARE(source, target);
-			QCOMPARE(logSpy.count() > 0, warnings);
+			QTRY_COMPARE(logSpy.count() > 0, warnings);
 		}
 
 
@@ -110,7 +110,7 @@ class test_Oid
 			QVERIFY(source.mObject == nullptr);
 			QVERIFY(target.mObject != nullptr);
 			QVERIFY(target.mObject == checkPtr);
-			QCOMPARE(logSpy.count() > 0, warnings);
+			QTRY_COMPARE(logSpy.count() > 0, warnings);
 		}
 
 
@@ -136,7 +136,7 @@ class test_Oid
 			Oid target;
 			target = source;
 			QCOMPARE(source, target);
-			QCOMPARE(logSpy.count() > 0, warnings);
+			QTRY_COMPARE(logSpy.count() > 0, warnings);
 		}
 
 
@@ -166,7 +166,7 @@ class test_Oid
 			QVERIFY(source.mObject == nullptr);
 			QVERIFY(target.mObject != nullptr);
 			QVERIFY(target.mObject == checkPtr);
-			QCOMPARE(logSpy.count() > 0, warnings);
+			QTRY_COMPARE(logSpy.count() > 0, warnings);
 		}
 
 
@@ -194,9 +194,9 @@ class test_Oid
 			qDebug() << oidObject;
 
 			QCOMPARE(QByteArray(oidObject), oid);
-			QVERIFY(logSpy.count() > 0);
+			QTRY_VERIFY(logSpy.count() > 0);
 			QVERIFY(TestFileHelper::containsLog(logSpy, logging));
-			QCOMPARE(logSpy.count() > 1, warnings);
+			QTRY_COMPARE(logSpy.count() > 1, warnings);
 		}
 
 
@@ -376,7 +376,7 @@ class test_Oid
 
 			QCOMPARE(QByteArray(oidFromEnum), bin);
 
-			QVERIFY(logSpy.count() == 0);
+			QTRY_VERIFY(logSpy.count() == 0);
 
 			mOidsToTest.remove(knownOid);
 		}

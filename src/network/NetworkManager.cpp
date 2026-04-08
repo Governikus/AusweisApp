@@ -15,7 +15,7 @@
 #include <QLoggingCategory>
 #include <QNetworkProxyFactory>
 #include <QStringBuilder>
-#include <http_parser.h>
+#include <llhttp.h>
 
 
 using namespace governikus;
@@ -371,8 +371,6 @@ bool NetworkManager::prepareConnection(QNetworkRequest& pRequest) const
 		auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig().getConfiguration();
 		pRequest.setSslConfiguration(cfg);
 	}
-
-	pRequest.setAttribute(QNetworkRequest::Http2AllowedAttribute, false);
 
 	return true;
 }

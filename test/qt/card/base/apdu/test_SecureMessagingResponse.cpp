@@ -45,7 +45,7 @@ class test_SecureMessagingResponse
 			QCOMPARE(response.getSecuredStatusCodeBytes(), QByteArray());
 			QCOMPARE(response.getSecuredStatusCodeObjectEncoded(), QByteArray());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));
 		}
 
@@ -65,7 +65,7 @@ class test_SecureMessagingResponse
 			QCOMPARE(response.getSecuredStatusCodeBytes(), QByteArray());
 			QCOMPARE(response.getSecuredStatusCodeObjectEncoded(), QByteArray());
 
-			QCOMPARE(logSpy.count(), 1);
+			QTRY_COMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));
 		}
 

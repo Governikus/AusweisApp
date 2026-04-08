@@ -234,7 +234,7 @@ B. ZUSATZVEREINBARUNGEN
 (3) Die AusweisApp wird von der Governikus GmbH & Co. KG (Governikus) als Erfüllungsgehilfe des Bundes überlassen.
 
 § 3 Verwendungszweck
-Die AusweisApp und alle ihre Bestandteile dienen ausschließlich dazu, im Zusammenhang mit der Nutzung der Online-Ausweisfunktion des Personalausweises, des elektronischen Aufenthaltstitels, der eID-Karte für Bürgerinnen und Bürger der EU und des EWR und der Übermittlung der damit verbundenen Daten gemäß den gesetzlichen Vorgaben verwendet zu werden. Ebenso dient die AusweisApp zur Einrichtung und Nutzung der Online-Ausweisfunktion mit einem mobilen Endgerät (Smart-eID) auf Basis eines der vorgenannten Dokumente.
+Die AusweisApp und alle ihre Bestandteile dienen ausschließlich dazu, im Zusammenhang mit der Nutzung der Online-Ausweisfunktion des Personalausweises, des elektronischen Aufenthaltstitels, der eID-Karte für Bürgerinnen und Bürger der EU und des EWR und der Übermittlung der damit verbundenen Daten gemäß den gesetzlichen Vorgaben verwendet zu werden.
 
 § 4 Empfehlungen zum Einsatz
 (1) Es liegt im Interesse des Nutzers, dass in Verbindung mit der AusweisApp genutzte Hard- und Software immer auf dem neuesten Stand der Sicherheitstechnik (System- und Firmware Update, Virenscanner,  Firewall usw.) sind.
@@ -260,18 +260,18 @@ Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedin
 
 OpenSSL
   Lizenz: Apache 2.0
-  Version: 3.5.5
+  Version: 3.6.1
   Adresse: https://www.openssl.org/
 
 Qt
   Lizenz: LGPL v3
-  Version: 6.9.2
+  Version: 6.10.2
   Adresse: https://www.qt.io/
 
-http_parser
+llhttp
   Lizenz: MIT
-  Version: 2.9.4
-  Adresse: https://github.com/nodejs/http-parser/
+  Version: 9.3.1
+  Adresse: https://github.com/nodejs/llhttp/
 
 
 
@@ -370,14 +370,26 @@ If the Library as you received it specifies that a proxy can decide future versi
 
 
 MIT License
+Copyright Fedor Indutny, 2018.
 
-Copyright Joyent, Inc. and other Node contributors.
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the
+following conditions:
 
-Permission is hereby granted, free of charge, to any person obtaining a copy this software and associated documentation files (the "Software"), to in the Software without restriction, including without limitation the to use, copy, modify, merge, publish, distribute, sublicense, and/or copies of the Software, and to permit persons to whom the Software is to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
 
-The above copyright notice and this permission notice shall be included in copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR , INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER , WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING , OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 

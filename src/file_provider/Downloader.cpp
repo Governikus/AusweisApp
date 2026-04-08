@@ -11,7 +11,7 @@
 #include <QLocale>
 #include <QLoggingCategory>
 #include <QScopeGuard>
-#include <http_parser.h>
+#include <llhttp.h>
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 Q_DECLARE_LOGGING_CATEGORY(fileprovider)

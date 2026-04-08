@@ -26,6 +26,7 @@ BaseOnboardingView {
 		text: qsTr("Set up smartphone as card reader")
 	}
 	GridLayout {
+		Layout.bottomMargin: Style.dimens.pane_spacing
 		columnSpacing: Style.dimens.pane_spacing
 		columns: 2
 		rowSpacing: Style.dimens.pane_spacing
@@ -39,16 +40,9 @@ BaseOnboardingView {
 			Layout.row: 1
 		}
 	}
-	GSpacer {
-		Layout.fillHeight: true
-	}
-	GButton {
-		Layout.alignment: Qt.AlignHCenter
-		icon.source: "qrc:///images/material_arrow_right.svg"
-		layoutDirection: Qt.RightToLeft
+	GContinueButton {
 		//: DESKTOP
 		text: qsTr("Continue pairing")
-		tintIcon: true
 
 		onClicked: root.continueOnboarding()
 	}

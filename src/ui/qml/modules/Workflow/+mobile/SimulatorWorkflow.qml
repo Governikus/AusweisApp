@@ -19,8 +19,6 @@ GFlickableColumnLayout {
 	topMargin: 0
 
 	TechnologyInfo {
-		id: technologyInfo
-
 		Layout.alignment: Qt.AlignHCenter
 		//: MOBILE
 		enableButtonText: qsTr("Continue")
@@ -56,30 +54,19 @@ GFlickableColumnLayout {
 			//: MOBILE
 			text: qsTr("Switch to:")
 		}
-		GButton {
+		SecondaryButton {
 			Layout.alignment: Qt.AlignHCenter
-			style: Style.color.controlOptional
 			//: MOBILE
 			text: qsTr("NFC")
 
 			onClicked: root.workflowModel.readerPluginType = ReaderManagerPluginType.NFC
 		}
-		GButton {
+		SecondaryButton {
 			Layout.alignment: Qt.AlignHCenter
-			style: Style.color.controlOptional
 			//: MOBILE
 			text: qsTr("WiFi")
 
 			onClicked: root.workflowModel.readerPluginType = ReaderManagerPluginType.REMOTE_IFD
-		}
-		GButton {
-			Layout.alignment: Qt.AlignHCenter
-			style: Style.color.controlOptional
-			//: MOBILE
-			text: qsTr("SMART")
-			visible: ApplicationModel.smartSupported
-
-			onClicked: root.workflowModel.readerPluginType = ReaderManagerPluginType.SMART
 		}
 		GSpacer {
 			Layout.fillHeight: true

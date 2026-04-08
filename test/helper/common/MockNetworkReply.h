@@ -7,7 +7,7 @@
 #include "MockSocket.h"
 
 #include <QNetworkReply>
-#include <http_parser.h>
+#include <llhttp.h>
 
 
 namespace governikus
@@ -23,7 +23,7 @@ class MockNetworkReply
 		MockSocket mSocket;
 
 	public:
-		MockNetworkReply(const QByteArray& pData = QByteArray(), http_status pStatusCode = HTTP_STATUS_OK, QObject* pParent = nullptr);
+		MockNetworkReply(const QByteArray& pData = QByteArray(), llhttp_status pStatusCode = HTTP_STATUS_OK, QObject* pParent = nullptr);
 		~MockNetworkReply() override;
 
 		void abort() override

@@ -35,7 +35,7 @@ QString AbstractSettings::getOrganization()
 }
 
 
-void AbstractSettings::save(const QSharedPointer<QSettings>& pSettings)
+void AbstractSettings::sync(const QSharedPointer<QSettings>& pSettings)
 {
 	pSettings->sync();
 	Backup::disable(pSettings);
@@ -52,8 +52,9 @@ QSharedPointer<QSettings> AbstractSettings::getStore(QSettings::Scope pScope, co
 			mTestDir.reset(new QTemporaryDir());
 			Q_ASSERT(mTestDir->isValid());
 		}
-		QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, mTestDir->path());
-		return QSharedPointer<QSettings>::create(QSettings::IniFormat, QSettings::UserScope, getOrganization(), QCoreApplication::applicationName());
+		QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, mTestDir->filePath(QStringLiteral("user")));
+		QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, mTestDir->filePath(QStringLiteral("system")));
+		return QSharedPointer<QSettings>::create(QSettings::IniFormat, pScope, getOrganization(), QCoreApplication::applicationName());
 	}
 #endif
 

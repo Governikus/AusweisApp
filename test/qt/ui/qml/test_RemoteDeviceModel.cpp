@@ -7,6 +7,7 @@
 #include "AppSettings.h"
 #include "PortFile.h"
 #include "RemoteIfdClient.h"
+#include "VolatileSettings.h"
 
 #include "HttpServer.h"
 
@@ -349,8 +350,20 @@ class test_RemoteDeviceModel
 		}
 
 
+		void test_startStopDetection_data()
+		{
+			QTest::addColumn<bool>("sdk");
+
+			QTest::newRow("sdk") << true;
+			QTest::newRow("app") << false;
+		}
+
+
 		void test_startStopDetection()
 		{
+			QFETCH(bool, sdk);
+			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(sdk);
+
 			QVERIFY(!Env::getSingleton<RemoteIfdClient>()->isDetecting());
 			QTest::ignoreMessage(QtDebugMsg, "Starting Remote Device Detection");
 			QTest::ignoreMessage(QtDebugMsg, QRegularExpression(QStringLiteral("Bound on port: ")));
@@ -365,7 +378,10 @@ class test_RemoteDeviceModel
 			mModel->stopDetection(true);
 			QVERIFY(Env::getSingleton<RemoteIfdClient>()->isDetecting());
 			QTest::ignoreMessage(QtDebugMsg, "Starting Remote Device Detection");
-			QTest::ignoreMessage(QtDebugMsg, "Detection already started");
+			if (!sdk)
+			{
+				QTest::ignoreMessage(QtDebugMsg, "Detection already started");
+			}
 			mModel->startDetection();
 			QVERIFY(Env::getSingleton<RemoteIfdClient>()->isDetecting());
 			QTest::ignoreMessage(QtDebugMsg, "Stopping Remote Device Detection");

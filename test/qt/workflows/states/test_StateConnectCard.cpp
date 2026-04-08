@@ -28,13 +28,13 @@ class test_StateConnectCard
 	ReaderInfo mReaderInfo;
 
 	private:
-		QSharedPointer<CreateCardConnectionCommand> createCardConnectionCommand(const QString& readerName, QSharedPointer<CardConnection> cardConnection = nullptr)
+		QSharedPointer<CreateCardConnectionCommand> createCardConnectionCommand(const QString& readerName, QSharedPointer<CardConnectionWorker> cardConnectionWorker = nullptr)
 		{
 			const QSharedPointer<CreateCardConnectionCommand> command(new CreateCardConnectionCommand(readerName, QPointer<ReaderManagerWorker>()));
 
-			if (cardConnection)
+			if (cardConnectionWorker)
 			{
-				command->mCardConnection = cardConnection;
+				command->mCardConnectionWorker = cardConnectionWorker;
 			}
 
 			return command;
@@ -110,15 +110,13 @@ class test_StateConnectCard
 				QPointer<MockReader> reader = new MockReader();
 				reader->setReaderInfo(ReaderInfo(rName, ReaderManagerPluginType::NFC, CardInfo(CardType::EID_CARD)));
 				auto connectionWorker = MockCardConnectionWorker::create(&workerThread, reader);
-				auto cardConnection = QSharedPointer<CardConnection>(new CardConnection(connectionWorker));
 
-				mState->onCommandDone(createCardConnectionCommand(rName, cardConnection));
-				QCOMPARE(mContext->getCardConnection(), cardConnection);
+				mState->onCommandDone(createCardConnectionCommand(rName, connectionWorker));
+				QVERIFY(mContext->getCardConnection() != nullptr);
 				QCOMPARE(spyContinue.count(), eidTypeMismatch ? 0 : 1);
 				QVERIFY(mState->getContext()->getCardInitiallyAppeared());
 
 				mContext->resetCardConnection();
-				cardConnection.reset();
 			}
 		}
 

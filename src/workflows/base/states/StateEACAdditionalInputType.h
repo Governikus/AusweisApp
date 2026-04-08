@@ -23,7 +23,7 @@ class StateEACAdditionalInputType
 		void run() override;
 
 	Q_SIGNALS:
-		void fireSendDidAuthenticatResponse();
+		void fireSendDidAuthenticateResponse();
 };
 
 } // namespace governikus

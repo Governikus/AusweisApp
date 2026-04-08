@@ -46,15 +46,6 @@ class CardPosition
 
 #ifndef QT_NO_DEBUG
 		bool operator==(const CardPosition& pOther) const;
-
-	#if __cplusplus < 202002L
-		inline bool operator!=(const CardPosition& pOther)
-		{
-			return !(*this == pOther);
-		}
-
-
-	#endif
 #endif
 
 

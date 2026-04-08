@@ -23,10 +23,6 @@ Q_IMPORT_PLUGIN(UiPluginWebService)
 Q_IMPORT_PLUGIN(UiPluginProxy)
 	#endif
 
-	#if defined(USE_SMARTEID) && (defined(CONTAINER_SDK) || !defined(QT_NO_DEBUG))
-Q_IMPORT_PLUGIN(SmartReaderManagerPlugin)
-	#endif
-
 #endif
 
 
@@ -35,11 +31,7 @@ Q_IMPORT_PLUGIN(NfcReaderManagerPlugin)
 
 	#ifndef INTEGRATED_SDK
 Q_IMPORT_PLUGIN(UiPluginScheme)
-
-		#ifdef USE_SMARTEID
 Q_IMPORT_PLUGIN(UiPluginLocalIfd)
-Q_IMPORT_PLUGIN(SmartReaderManagerPlugin)
-		#endif
 
 	#else
 Q_IMPORT_PLUGIN(LocalIfdReaderManagerPlugin)
@@ -53,11 +45,6 @@ Q_IMPORT_PLUGIN(NfcReaderManagerPlugin)
 
 	#ifndef INTEGRATED_SDK
 Q_IMPORT_PLUGIN(UiPluginScheme)
-
-		#ifdef USE_SMARTEID
-Q_IMPORT_PLUGIN(SmartReaderManagerPlugin)
-		#endif
-
 Q_IMPORT_PLUGIN(QJpegPlugin)
 Q_IMPORT_PLUGIN(QSvgPlugin)
 	#endif

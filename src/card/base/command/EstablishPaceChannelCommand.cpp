@@ -45,14 +45,6 @@ void EstablishPaceChannelCommand::internalExecute()
 		return;
 	}
 
-	if (getCardConnectionWorker()->getReaderInfo().isSoftwareSmartEid())
-	{
-		Q_ASSERT(mPacePasswordId == PacePasswordId::PACE_PIN);
-		mPaceOutput = getCardConnectionWorker()->prepareIdentification(mEffectiveChat);
-	}
-	else
-	{
-		mPaceOutput = getCardConnectionWorker()->establishPaceChannel(mPacePasswordId, mPacePassword, mEffectiveChat, mCertificateDescription);
-	}
+	mPaceOutput = getCardConnectionWorker()->establishPaceChannel(mPacePasswordId, mPacePassword, mEffectiveChat, mCertificateDescription);
 	setReturnCode(mPaceOutput.getPaceReturnCode());
 }

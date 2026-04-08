@@ -5,8 +5,11 @@
 #pragma once
 
 #include "BaseCardCommand.h"
+#include "apdu/ResponseApdu.h"
+
 
 class test_ResetRetryCounterCommand;
+
 
 namespace governikus
 {
@@ -17,12 +20,16 @@ class ResetRetryCounterCommand
 	Q_OBJECT
 	friend class ::test_ResetRetryCounterCommand;
 
+	private:
+		StatusCode mStatusCode;
+
 	protected:
 		void internalExecute() override;
 		~ResetRetryCounterCommand() override = default;
 
 	public:
 		explicit ResetRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		[[nodiscard]] StatusCode getStatusCode() const;
 
 };
 

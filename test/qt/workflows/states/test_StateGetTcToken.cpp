@@ -106,7 +106,7 @@ class test_StateGetTcToken
 		void test_HttpError_FailureCode_data()
 		{
 			QTest::addColumn<QNetworkReply::NetworkError>("errorCode");
-			QTest::addColumn<http_status>("httpStatusCode");
+			QTest::addColumn<llhttp_status>("httpStatusCode");
 			QTest::addColumn<FailureCode>("failureCode");
 
 			QTest::newRow("see other") << QNetworkReply::NoError << HTTP_STATUS_SEE_OTHER << FailureCode(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
@@ -129,7 +129,7 @@ class test_StateGetTcToken
 		void test_HttpError_FailureCode()
 		{
 			QFETCH(QNetworkReply::NetworkError, errorCode);
-			QFETCH(http_status, httpStatusCode);
+			QFETCH(llhttp_status, httpStatusCode);
 			QFETCH(FailureCode, failureCode);
 
 			const QSharedPointer<AuthContext> context(new AuthContext());
@@ -178,7 +178,7 @@ class test_StateGetTcToken
 			reply->setAttribute(QNetworkRequest::RedirectionTargetAttribute, QVariant(target));
 			state.mReply = reply;
 
-			QTest::ignoreMessage(QtDebugMsg, "Status Code: 302 \"Found\"");
+			QTest::ignoreMessage(QtDebugMsg, "Status Code: 302 \"FOUND\"");
 			state.onNetworkReply();
 			QCOMPARE(state.mReply->request().url(), QUrl(redirect));
 

@@ -18,7 +18,6 @@ Control {
 
 	signal show(int pModule)
 
-	Layout.fillWidth: true
 	Layout.maximumWidth: Style.dimens.max_text_width
 	Layout.minimumWidth: navigationRow.Layout.minimumWidth + leftPadding + rightPadding
 	Layout.preferredHeight: Math.ceil(implicitHeight)
@@ -54,7 +53,7 @@ Control {
 				required property string desc
 				required property url image
 				required property int index
-				readonly property var mainViewSubViews: [UiModule.IDENTIFY, UiModule.SELF_AUTHENTICATION, UiModule.PINMANAGEMENT, UiModule.CHECK_ID_CARD, UiModule.SMART_EID]
+				readonly property var mainViewSubViews: [UiModule.IDENTIFY, UiModule.SELF_AUTHENTICATION, UiModule.PINMANAGEMENT, UiModule.CHECK_ID_CARD]
 				required property int module
 				//: MOBILE Relative position of current navigation tab in navigation view. %1 is replaced with the current tab's index, %2 with the total count of tabs
 				readonly property string tabPositionA11y: qsTr("%1 of %2").arg(index + 1).arg(repeater.count)
