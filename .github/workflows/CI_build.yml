@@ -20,7 +20,7 @@ jobs:
 
       - name: Install openssl dev, ninja, wix
         run: |
-          choco install openssl --version=3.5.4
+          choco install openssl --version=3.6.2
           choco install ninja
           dotnet tool install --global wix
 
@@ -37,7 +37,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.9.*'
+          version: '6.10.*'
           modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
           setup-python: 'false'
 
@@ -68,13 +68,13 @@ jobs:
 
       - name: Install packages via apt
         run: |
-          sudo apt update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev \
+          sudo apt update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libllhttp-dev libpcsclite-dev \
                                                      libgl1-mesa-dev qt6-l10n-tools ninja-build
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.9.*'
+          version: '6.10.*'
           modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity'
           setup-python: 'false'
 
@@ -110,7 +110,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.9.*'
+          version: '6.10.*'
           modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
 
       - name: generate cmake
