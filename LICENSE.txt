@@ -228,7 +228,7 @@ Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedin
 
 OpenSSL
   Lizenz: Apache 2.0
-  Version: 3.6.1
+  Version: 3.6.2
   Adresse: https://www.openssl.org/
 
 Qt

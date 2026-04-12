@@ -28,13 +28,19 @@ step(${CMD} login -u $ENV{CI_REGISTRY_USER} -p $ENV{CI_REGISTRY_PASSWORD} $ENV{C
 
 set(CACHE_REGISTRY $ENV{CI_REGISTRY_IMAGE}/cache/${TARGET})
 
+foreach(entry CCACHE_REMOTE_STORAGE MIRROR_ALPINE MIRROR_GITHUB MIRROR_QT)
+	if(DEFINED ENV{${entry}})
+		list(APPEND BUILD_ARGS --build-arg "${entry}=$ENV{${entry}}")
+	endif()
+endforeach()
+
 step(${CMD} build
 	--pull
 	--layers
 	--cache-from ${CACHE_REGISTRY}
 	--cache-to ${CACHE_REGISTRY}
 	-t ${IMAGE}
-	--build-arg CCACHE_REMOTE_STORAGE=$ENV{CCACHE_REMOTE_STORAGE}
+	${BUILD_ARGS}
 	${Dockerfile}
 	${CMAKE_SOURCE_DIR}
 )

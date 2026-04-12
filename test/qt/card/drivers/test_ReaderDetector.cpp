@@ -17,7 +17,7 @@ namespace
 #if defined(Q_OS_WIN)
 const QLatin1String KOMFORT_DRIVER_URL("https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304822&q=driver#choice5");
 #elif defined(Q_OS_MACOS)
-const QLatin1String KOMFORT_DRIVER_URL("https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304822&q=driver#choice5");
+const QLatin1String KOMFORT_DRIVER_URL("https://help.reiner-sct.com/de/support/solutions/articles/101000480002");
 #else
 const QLatin1String KOMFORT_DRIVER_URL("https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304822&q=driver#choice5");
 #endif
