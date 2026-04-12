@@ -6,6 +6,7 @@ Versionszweig 2.5
 .. toctree::
    :maxdepth: 1
 
+   2.5.1
    2.5.0
 
 

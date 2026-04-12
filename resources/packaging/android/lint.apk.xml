@@ -2,17 +2,6 @@
 <issues format="6" by="lint 8.10.1" type="baseline" client="gradle" dependencies="false" name="AGP (8.10.1)" variant="all" version="8.10.1">
 
     <issue
-        id="AndroidGradlePluginVersion"
-        message="A newer version of Gradle than 8.14.3 is available: 8.14.4"
-        errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.3-bin.zip"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="gradle/wrapper/gradle-wrapper.properties"
-            line="3"
-            column="17"/>
-    </issue>
-
-    <issue
         id="ChromeOsAbiSupport"
         message="Missing x86_64 ABI support for ChromeOS"
         errorLine1="        ndk.abiFilters = qtTargetAbiList.split(&quot;,&quot;)"

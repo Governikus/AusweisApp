@@ -15,9 +15,10 @@ platforms:
   - android
 softwareType: standalone/mobile
 categories:
+  - citizen-services
   - identity-management
-  - security
-  - authentication
+  - it-security
+  - service-consolidation
 maintenance:
   type: contract
   contacts:

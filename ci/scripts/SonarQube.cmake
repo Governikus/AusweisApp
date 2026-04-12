@@ -10,10 +10,10 @@ if(NOT PACKAGES_DIR)
 endif()
 message(STATUS "Use PACKAGES_DIR: ${PACKAGES_DIR}")
 
-set(SONARSCANNERCLI_VERSION 7.3.0.5189) # https://binaries.sonarsource.com/?prefix=Distribution/sonar-scanner-cli/
+set(SONARSCANNERCLI_VERSION 8.0.1.6346) # https://binaries.sonarsource.com/?prefix=Distribution/sonar-scanner-cli/
 set(SONARSCANNERCLI_ZIP_NAME sonar-scanner-cli-${SONARSCANNERCLI_VERSION}.zip)
 set(SONARSCANNERCLI_URL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/${SONARSCANNERCLI_ZIP_NAME})
-set(SONARSCANNERCLI_HASH a251d0793cb6bd889e4fd30299bb5dc4e07433e57133b16fc227aca98f8d2c2d)
+set(SONARSCANNERCLI_HASH 8fbfb1eb546b734a60fc3e537108f06e389a8ca124fbab3a16236a8a51edcc15)
 
 set(SONARQUBETOOLS_DIR ${WORKSPACE}/sonarqubetools)
 step(${CMAKE_COMMAND} -E make_directory ${SONARQUBETOOLS_DIR})

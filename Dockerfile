@@ -2,7 +2,13 @@ ARG ALPINE_VERSION=3.23
 
 FROM alpine:$ALPINE_VERSION AS builder
 # Install development stuff
-RUN apk --no-cache upgrade -a && \
+ARG MIRROR_ALPINE=""
+ARG MIRROR_GITHUB=""
+ARG MIRROR_QT=""
+RUN if [ -n "$MIRROR_ALPINE" ]; then \
+        sed -i "s|https://[^/]*/alpine/|$MIRROR_ALPINE/|g" /etc/apk/repositories; \
+    fi && \
+    apk --no-cache upgrade -a && \
     apk --no-cache add patch cmake ccache make ninja g++ pkgconf pcsc-lite-dev binutils-gold eudev-libs perl python3 linux-headers
 
 # Use optional remote ccache

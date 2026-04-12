@@ -178,13 +178,13 @@ class test_ReaderConfiguration
 			QTest::newRow("Simulator") << UsbId(0x0000, 0x0002) << "Simulator" << "Simulator";
 
 			QTest::newRow("REINER SCT cyberJack RFID komfort-windows-10-11") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort USB 1" << "REINER SCT cyberJack RFID komfort";
-			QTest::newRow("REINER SCT cyberJack RFID komfort-macosx-12-15") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort" << "REINER SCT cyberJack RFID komfort";
+			QTest::newRow("REINER SCT cyberJack RFID komfort-macosx-13-26") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort" << "REINER SCT cyberJack RFID komfort";
 
 			QTest::newRow("REINER SCT cyberJack RFID komfort-FON-windows-7-10") << UsbId(0x0C4B, 0x2007) << "REINER SCT cyberJack RFID komfort FON USB 52" << "REINER SCT cyberJack RFID komfort FON";
 			QTest::newRow("REINER SCT cyberJack RFID komfort-FON-macosx-10.13-11.0") << UsbId(0x0C4B, 0x2007) << "REINER SCT cyberJack RFID komfort FON" << "REINER SCT cyberJack RFID komfort FON";
 
 			QTest::newRow("REINER SCT cyberJack RFID standard-windows-10-11") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard USB 1" << "REINER SCT cyberJack RFID standard";
-			QTest::newRow("REINER SCT cyberJack RFID standard-macosx-12-15") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard" << "REINER SCT cyberJack RFID standard";
+			QTest::newRow("REINER SCT cyberJack RFID standard-macosx-13-26") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard" << "REINER SCT cyberJack RFID standard";
 
 			QTest::newRow("REINER SCT cyberJack RFID basis-windows-10-11") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis 0" << "REINER SCT cyberJack RFID basis";
 			QTest::newRow("REINER SCT cyberJack RFID basis-macosx-13-26") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis";

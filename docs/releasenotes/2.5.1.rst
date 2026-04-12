@@ -1,0 +1,16 @@
+AusweisApp 2.5.1
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 11. April 2026
+
+
+Anwender
+""""""""
+- Fehlerkorrektur der minimal unterstützten macOS Version.
+
+
+Entwickler
+""""""""""
+- Aktualisierung von OpenSSL auf die Version 3.6.2.
+
+- Unter Android enthielt die Version irrtümlich die Architektur.

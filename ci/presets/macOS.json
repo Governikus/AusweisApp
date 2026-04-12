@@ -18,6 +18,7 @@
       "name": "ci-macos-release",
       "inherits": "ci-with-libs",
       "generator": "Xcode",
+      "toolchainFile": "${sourceDir}/cmake/macOS.toolchain.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "MinSizeRel"
       }

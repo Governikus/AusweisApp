@@ -68,7 +68,7 @@ file(GLOB files
 	"${WORKSPACE}/*.dmg"
 	"${WORKSPACE}/*.dmg.sha*"
 	"${WORKSPACE}/*-ReleaseNotes.pdf"
-	"${WORKSPACE}/*-NetInstallation_Integration.pdf"
+	"${WORKSPACE}/*-NetInstallation_Integration_*.pdf"
 	"${WORKSPACE}/*-SDK.pdf"
 	"${WORKSPACE}/*-Lizenz.txt"
 )

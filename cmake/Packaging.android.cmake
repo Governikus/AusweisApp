@@ -42,6 +42,18 @@ else()
 endif()
 
 
+if(DEFINED ENV{MIRROR_GITHUB})
+	file(READ "${QT_INSTALL_ARCHDATA}/src/3rdparty/gradle/gradle/wrapper/gradle-wrapper.properties" BUILD_GRADLE_WRAPPER_PROPERTIES)
+	string(REGEX MATCH "gradle-([0-9]+\\.[0-9]+\\.[0-9]+)-bin\\.zip" _match "${BUILD_GRADLE_WRAPPER_PROPERTIES}")
+	set(GRADLE_VERSION "${CMAKE_MATCH_1}")
+
+	set(GRADLE_WRAPPER_URL "$ENV{MIRROR_GITHUB}/gradle/gradle-distributions/releases/download/v${GRADLE_VERSION}/gradle-${GRADLE_VERSION}-bin.zip")
+	string(REGEX REPLACE "distributionUrl=.*" "distributionUrl=${GRADLE_WRAPPER_URL}" BUILD_GRADLE_WRAPPER_PROPERTIES "${BUILD_GRADLE_WRAPPER_PROPERTIES}")
+	string(REPLACE "://" "\\://" BUILD_GRADLE_WRAPPER_PROPERTIES "${BUILD_GRADLE_WRAPPER_PROPERTIES}")
+
+	file(WRITE "${ANDROID_BUILD_DIR}/gradle/wrapper/gradle-wrapper.properties" "${BUILD_GRADLE_WRAPPER_PROPERTIES}")
+endif()
+
 set(QT_BUILD_GRADLE "${QT_INSTALL_ARCHDATA}/src/android/templates/build.gradle")
 set(BUILD_GRADLE_APPEND "${PACKAGING_DIR}/android/build.gradle.append")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${QT_BUILD_GRADLE}")
@@ -76,7 +88,7 @@ endif()
 if(INTEGRATED_SDK)
 	set(ANDROID_FILE_EXT aar)
 	file(APPEND "${ANDROID_BUILD_DIR}/build.gradle" "android.defaultConfig.consumerProguardFiles 'consumer-rules.pro'\n")
-	if(DEFINED dvcs_revision)
+	if(USE_ARTIFACT_DEV_VERSION)
 		set(POM_SNAPSHOT "-SNAPSHOT")
 	endif()
 	configure_file(${PACKAGING_DIR}/android/pom.xml.in ${ANDROID_BUILD_DIR}/${CPACK_PACKAGE_FILE_NAME}.pom @ONLY)

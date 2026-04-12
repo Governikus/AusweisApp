@@ -2,7 +2,11 @@ ARG ALPINE_VERSION=3.23
 
 FROM alpine:$ALPINE_VERSION AS builder
 # Install development stuff
-RUN apk --no-cache upgrade -a && \
+ARG MIRROR_ALPINE=""
+RUN if [ -n "$MIRROR_ALPINE" ]; then \
+        sed -i "s|https://[^/]*/alpine/|$MIRROR_ALPINE/|g" /etc/apk/repositories; \
+    fi && \
+    apk --no-cache upgrade -a && \
     apk --no-cache add patch cmake ccache make ninja g++ pkgconf pcsc-lite-dev binutils-gold eudev-libs \
         llhttp-dev openssl-dev \
         qt6-qtbase-dev qt6-qtsvg-dev qt6-qtwebsockets-dev qt6-qttools-dev qt6-qtdeclarative-dev qt6-qtscxml-dev qt6-qtconnectivity-dev qt6-qtimageformats-dev qt6-qtimageformats
@@ -46,7 +50,10 @@ COPY --from=builder /usr/local/lib /usr/local/lib
 COPY --from=builder /usr/local/share /usr/local/share
 COPY --from=builder /usr/local/bin/AusweisApp /usr/local/bin/AusweisApp
 
-RUN apk --no-cache upgrade -a && \
+RUN if [ -n "$MIRROR_ALPINE" ]; then \
+        sed -i "s|https://[^/]*/alpine/|$MIRROR_ALPINE/|g" /etc/apk/repositories; \
+    fi && \
+    apk --no-cache upgrade -a && \
     apk --no-cache add tini pcsc-lite-libs eudev-libs doas ttf-freefont \
         llhttp qt6-qtbase qt6-qtsvg qt6-qtwebsockets qt6-qtdeclarative qt6-qtscxml qt6-qtconnectivity qt6-qtimageformats && \
     echo 'permit nopass :wheel' > /etc/doas.d/wheel.conf && \
