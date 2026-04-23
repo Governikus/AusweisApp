@@ -213,7 +213,7 @@ enableCanAllowed         ENABLECANALLOWED
 skipRightsOnCanAllowed   SKIPRIGHTSONCANALLOWED
 ======================== =======================
 
-Nach Änderung der Datei kann es notwending sein, ein erneutes Laden der vom
+Nach Änderung der Datei kann es notwendig sein, ein erneutes Laden der vom
 Betriebssystem gecachten Daten zu erzwingen: :code:`killall -u $USER cfprefsd`
 
 .. [#msiexecreturnvalues] https://docs.microsoft.com/de-de/windows/desktop/msi/error-codes
