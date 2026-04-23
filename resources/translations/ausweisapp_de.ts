@@ -266,7 +266,7 @@ MOBILE</extracomment>
     <message>
         <source>Optimize your settings for screen reading</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Optimieren Sie ihre Einstellung für das Bildschirmlesen</translation>
+        <translation>Optimieren Sie Ihre Einstellung für das Bildschirmlesen</translation>
     </message>
     <message>
         <source>Do not display this message in future.</source>
@@ -745,7 +745,7 @@ MOBILE</extracomment>
     <message>
         <source>You have to enter the Transport PIN only when activating the ID card for the first time. Your own card PIN is linked on all devices with your ID card as soon as you have set it.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Sie müssen die Transport-PIN nur bei der erstmaligen Aktivierung des Ausweises eingeben. Sobald Sie eine eigene Karten-PIN festgelegt haben, ist diese auf allen Geräten mit ihrem Ausweis verknüpft.</translation>
+        <translation>Sie müssen die Transport-PIN nur bei der erstmaligen Aktivierung des Ausweises eingeben. Sobald Sie eine eigene Karten-PIN festgelegt haben, ist diese auf allen Geräten mit Ihrem Ausweis verknüpft.</translation>
     </message>
     <message>
         <source>In this case, tap on Back and choose 6-digit PIN.</source>
@@ -1295,7 +1295,7 @@ MOBILE</extracomment>
     <message>
         <source>Currently there are no log entries matching your filter.</source>
         <extracomment>DESKTOP No log entries, placeholder text.</extracomment>
-        <translation>Derzeit gibt es keine Einträge im Log die zu Ihrem Filter passen.</translation>
+        <translation>Derzeit gibt es keine Einträge im Log, die zu Ihrem Filter passen.</translation>
     </message>
     <message>
         <source>Filter. Activated.</source>
@@ -5182,7 +5182,7 @@ MOBILE</extracomment>
     <message>
         <source>Download progress</source>
         <extracomment>DESKTOP Name of an progress indicator during a download read by screen readers</extracomment>
-        <translation>Dowloadfortschritt</translation>
+        <translation>Downloadfortschritt</translation>
     </message>
     <message>
         <source>The update (version %1) is being performed...</source>
@@ -6664,7 +6664,7 @@ ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires
     <message>
         <source>%1An incorrect PIN has been entered 2 times%2 at the last use of your ID card.</source>
         <extracomment>ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. %1 + %2 are used to emphasize. Part 1/2</extracomment>
-        <translation>Bei der letzten Nutzung ihres Online-Ausweises wurde%1 2 Mal eine falsche Karten-PIN%2 eingegeben.</translation>
+        <translation>Bei der letzten Nutzung Ihres Online-Ausweises wurde%1 2 Mal eine falsche Karten-PIN%2 eingegeben.</translation>
     </message>
     <message>
         <source>For a 3rd attempt, the%1 6-digit Card Access Number (CAN)%2 must be entered first. You can find your CAN %1in the bottom right on the front of your ID card%2.</source>
@@ -6674,7 +6674,7 @@ ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires
     <message>
         <source>%1An incorrect PIN has been entered 3 times%2 at the last use of your ID card.</source>
         <extracomment>ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. %1 + %2 are used to emphasize. Part 1/2</extracomment>
-        <translation>Bei der letzten Nutzung ihres Online-Ausweises wurde%1 3 Mal eine falsche Karten-PIN%2 eingegeben.</translation>
+        <translation>Bei der letzten Nutzung Ihres Online-Ausweises wurde%1 3 Mal eine falsche Karten-PIN%2 eingegeben.</translation>
     </message>
     <message>
         <source>Therefore you have to enter the %1PUK%2 first to %1unlock the ID card PIN%2.</source>
