@@ -1,4 +1,4 @@
-From fb756ac1af7c755fc496a2d7ff2daac15ec7f932 Mon Sep 17 00:00:00 2001
+From bdb84efe1ff4b9891d67ec41b7ff87a16994de13 Mon Sep 17 00:00:00 2001
 From: Jan Moeller <Jan.Moeller@governikus.de>
 Date: Tue, 10 Jun 2025 11:24:14 +0200
 Subject: iOS: Add dynamic locking of screen orientation

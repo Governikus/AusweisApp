@@ -1,4 +1,4 @@
-From d648eae2f438b7bd5bc7e73c221f7e2749367e95 Mon Sep 17 00:00:00 2001
+From 574b8e5eab3a2763130806546ad1f32b9d6d5894 Mon Sep 17 00:00:00 2001
 From: Jan Moeller <Jan.Moeller@governikus.de>
 Date: Tue, 9 Sep 2025 08:13:29 +0200
 Subject: Introduce signal ScrollingPositionChanged to signal ongoing scrolling

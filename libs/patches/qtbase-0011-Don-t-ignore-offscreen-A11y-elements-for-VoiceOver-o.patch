@@ -1,4 +1,4 @@
-From 693b0c55939bcf40fc7f63bba73c86baed4a044d Mon Sep 17 00:00:00 2001
+From c0c9810ba5301f2f4232f5068f89b9a0b073f936 Mon Sep 17 00:00:00 2001
 From: Timon Sassor <timon.sassor@governikus.de>
 Date: Tue, 29 Apr 2025 09:22:56 +0200
 Subject: Don't ignore offscreen A11y elements for VoiceOver on macOS

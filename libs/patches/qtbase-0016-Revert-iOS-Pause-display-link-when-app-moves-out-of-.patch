@@ -1,4 +1,4 @@
-From a49964f665d992547d83c258043e96c2f66bc9ff Mon Sep 17 00:00:00 2001
+From 71349210e5ff836d985ad4fa9112d3a5183111aa Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Mon, 29 Sep 2025 09:11:38 +0200
 Subject: Revert "iOS: Pause display link when app moves out of active state"

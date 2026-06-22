@@ -1,0 +1,9 @@
+AusweisApp 2.5.2
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 18. Juni 2026
+
+
+Anmerkung
+"""""""""
+- Version wurde auf Grund von Regressionen ausgesetzt.

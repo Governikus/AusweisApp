@@ -1,0 +1,13 @@
+AusweisApp 2.5.3
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 19. Juni 2026
+
+
+Anwender
+""""""""
+
+
+Entwickler
+""""""""""
+- Aktualisierung von OpenSSL auf die Version 3.6.3.

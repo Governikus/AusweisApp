@@ -1,4 +1,4 @@
-From 947fcdf04feffd1f0fe39bd3aa3228d9db461aab Mon Sep 17 00:00:00 2001
+From f239e17a9c0bef73543c1e26be82b7dc033170ef Mon Sep 17 00:00:00 2001
 From: Jens Trillmann <jens.trillmann@governikus.de>
 Date: Wed, 3 Sep 2025 14:20:06 +0200
 Subject: Pass through iOS focusing events to QMacAccessibilityElement

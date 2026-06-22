@@ -1,4 +1,4 @@
-From 3170ff9515edbb0b858cb2f6b59a8225842af486 Mon Sep 17 00:00:00 2001
+From adaacc03f2070315ceb396b8634badda8c653aae Mon Sep 17 00:00:00 2001
 From: Timon Sassor <timon.sassor@governikus.de>
 Date: Fri, 12 Sep 2025 14:20:50 +0200
 Subject: a11y iOS: Enable granular text navigation for editable components

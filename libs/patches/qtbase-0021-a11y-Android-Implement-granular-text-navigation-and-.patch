@@ -1,4 +1,4 @@
-From 96dc0abd2fa0804d5b95bf06904517d21288a2fb Mon Sep 17 00:00:00 2001
+From ce75d809249c25c2c2d84b424b34464e5e567414 Mon Sep 17 00:00:00 2001
 From: Timon Sassor <timon.sassor@governikus.de>
 Date: Thu, 12 Feb 2026 09:40:23 +0100
 Subject: a11y Android: Implement granular text navigation and selection
