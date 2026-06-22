@@ -232,7 +232,7 @@ Linux_OpenSSL:
           - "3.5.6"
         legacy: 'OFF'
       - openssl:
-          - "3.6.2"
+          - "3.6.3"
         legacy: 'ON'
   script:
     - apk add gcovr

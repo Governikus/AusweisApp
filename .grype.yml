@@ -1,7 +1,4 @@
 ignore:
-  - vulnerability: CVE-2026-2673
-    reason: 'Patch was added to our OpenSSL build.'
-
   - package:
       name: Core_Attribution_tika-mimetypes
     reason: 'Only used by Android in a safe way.'

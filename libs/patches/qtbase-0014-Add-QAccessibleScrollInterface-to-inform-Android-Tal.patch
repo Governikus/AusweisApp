@@ -1,4 +1,4 @@
-From fc7a98a5848b198be9f5c6f2a1cd975ddb77fac3 Mon Sep 17 00:00:00 2001
+From dee0f8fffa220c224d0098b806fa6386c6d198df Mon Sep 17 00:00:00 2001
 From: Jan Moeller <Jan.Moeller@governikus.de>
 Date: Thu, 4 Sep 2025 08:48:59 +0200
 Subject: Add QAccessibleScrollInterface to inform Android TalkBack about
