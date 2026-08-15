@@ -34,10 +34,10 @@ jobs:
         run: Remove-Item -Path C:\Strawberry\c\bin\patch.exe -Force
 
       - name: Checkout repo
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.01
 
       - name: Add nmake
-        uses: TheMrMilchmann/setup-msvc-dev@v4
+        uses: TheMrMilchmann/setup-msvc-dev@368ef7d1ee4d1171b31d4a7f67f4d954f903f5a9  # v4.1.0
         with:
           arch: x64
 
@@ -65,7 +65,7 @@ jobs:
           ctest --test-dir "${{ env.BUILD_DIR_APP_WIN }}" --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
 
       - name: Report Test results
-        uses: dorny/test-reporter@v3
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2  # v3.0.0
         if: success() || failure()
         with:
           name: ctest Tests
@@ -83,7 +83,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.01
 
       - name: Install packages via apt
         run: |
@@ -114,7 +114,7 @@ jobs:
           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
 
       - name: Report Test results
-        uses: dorny/test-reporter@v3
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2  # v3.0.0
         if: success() || failure()
         with:
           name: ctest Tests
@@ -132,7 +132,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.01
 
       - name: Install packages via apt
         run: |
@@ -166,7 +166,7 @@ jobs:
           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
 
       - name: Report Test results
-        uses: dorny/test-reporter@v3
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2  # v3.0.0
         if: success() || failure()
         with:
           name: ctest Tests
@@ -184,7 +184,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.01
 
       - name: install ninja
         run: |
@@ -214,7 +214,7 @@ jobs:
           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
 
       - name: Report Test results
-        uses: dorny/test-reporter@v3
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2  # v3.0.0
         if: success() || failure()
         with:
           name: ctest Tests
@@ -232,7 +232,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.01
 
       - name: install ninja
         run: |
@@ -263,7 +263,7 @@ jobs:
           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
 
       - name: Report Test results
-        uses: dorny/test-reporter@v3
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2  # v3.0.0
         if: success() || failure()
         with:
           name: ctest Tests
