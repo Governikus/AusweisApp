@@ -25,6 +25,13 @@
       }
     },
     {
+      "name": "ci-macos-release-arm64",
+      "inherits": "ci-macos-release",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64"
+      }
+    },
+    {
       "name": "ci-macos-integrated",
       "inherits": "ci-with-libs",
       "cacheVariables": {

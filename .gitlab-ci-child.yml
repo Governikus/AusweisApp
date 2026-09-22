@@ -587,6 +587,10 @@ Libraries_MacOS:
   extends: .Base
   tags:
     - macOS
+  parallel:
+    matrix:
+      - ARCH: x86_64
+      - ARCH: arm64
   script:
     - cmake -P source/ci.cmake
 
@@ -600,8 +604,16 @@ MacOS:
     matrix:
       - target: DMG_PKG
         USE_DISTRIBUTION_PROFILE: 'ON'
+        ARCH: x86_64
+      - target: DMG_PKG
+        USE_DISTRIBUTION_PROFILE: 'ON'
+        ARCH: arm64
       - target: DMG_PKG
         USE_DISTRIBUTION_PROFILE: 'OFF'
+        ARCH: x86_64
+      - target: DMG_PKG
+        USE_DISTRIBUTION_PROFILE: 'OFF'
+        ARCH: arm64
       - target: Tests
       - target: Integrated
   script:
@@ -764,6 +776,7 @@ Deploy_MacOS_PKG:
         matrix:
           - target: DMG_PKG
             USE_DISTRIBUTION_PROFILE: 'ON'
+            ARCH: [x86_64, arm64]
 
 Deploy_Android_APK:
   extends: .Deploy
@@ -797,8 +810,10 @@ Deploy_Archive:
         matrix:
           - target: DMG_PKG
             USE_DISTRIBUTION_PROFILE: 'ON'
+            ARCH: [x86_64, arm64]
           - target: DMG_PKG
             USE_DISTRIBUTION_PROFILE: 'OFF'
+            ARCH: [x86_64, arm64]
     - job: Win_MSVC
       parallel:
         matrix:
@@ -828,6 +843,7 @@ Deploy_Allowlist:
         matrix:
           - target: DMG_PKG
             USE_DISTRIBUTION_PROFILE: 'OFF'
+            ARCH: [x86_64, arm64]
   script:
     - apk add curl
     - !reference [.Deploy, script]
@@ -845,6 +861,7 @@ Deploy_Cloud:
         matrix:
           - target: DMG_PKG
             USE_DISTRIBUTION_PROFILE: 'OFF'
+            ARCH: [x86_64, arm64]
     - job: Win_MSVC
       parallel:
         matrix:
@@ -875,6 +892,7 @@ Deploy_Final_GitHub:
         matrix:
           - target: DMG_PKG
             USE_DISTRIBUTION_PROFILE: 'OFF'
+            ARCH: [x86_64, arm64]
     - job: Win_MSVC
       parallel:
         matrix:

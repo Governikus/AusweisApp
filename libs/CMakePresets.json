@@ -57,6 +57,13 @@
       }
     },
     {
+      "name": "ci-macos-arm64",
+      "inherits": "ci-macos",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64"
+      }
+    },
+    {
       "name": "ci-android",
       "inherits": "ci",
       "toolchainFile": "${sourceParentDir}/cmake/android.toolchain.cmake",
