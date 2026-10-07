@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteDeviceModelEntry.h"
@@ -25,22 +25,20 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QSharedPointer<IfdListEntry
 }
 
 
-RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceNameEscaped,
-		const QByteArray& pId,
+RemoteDeviceModelEntry::RemoteDeviceModelEntry(const RemoteServiceSettings::RemoteInfo& pRemoteInfo,
 		bool pNetworkVisible,
 		bool pConnected,
 		bool pSupported,
 		bool pIsPairing,
-		const QDateTime& pLastConnected,
 		const QSharedPointer<IfdListEntry>& pRemoteDeviceListEntry)
-	: mDeviceName(pDeviceNameEscaped)
-	, mId(pId)
+	: mDeviceName(pRemoteInfo.getNameEscaped())
+	, mId(pRemoteInfo.getFingerprint())
 	, mPaired(true)
 	, mIsPairing(pIsPairing)
 	, mNetworkVisible(pNetworkVisible)
 	, mConnected(pConnected)
 	, mSupported(pSupported)
-	, mLastConnected(pLastConnected)
+	, mLastConnected(pRemoteInfo.getLastConnected())
 	, mRemoteDeviceListEntry(pRemoteDeviceListEntry)
 {
 	Q_ASSERT(!mDeviceName.contains(QLatin1Char('<')));

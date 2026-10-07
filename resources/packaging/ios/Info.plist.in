@@ -114,6 +114,6 @@
 	<key>NFCReaderUsageDescription</key>
 	<string>AusweisApp needs NFC to access the ID card.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>AusweisApp needs access to the local network in order to use "Smartphone as card reader (SaC)".</string>
+	<string></string>
 </dict>
 </plist>

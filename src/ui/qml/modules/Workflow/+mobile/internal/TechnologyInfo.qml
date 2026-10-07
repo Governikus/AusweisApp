@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -55,6 +55,7 @@ ColumnLayout {
 	GButton {
 		id: enableButton
 
+		Accessible.id: "TechnologyInfo_enableButton"
 		Layout.alignment: Qt.AlignHCenter
 		visible: text !== ""
 

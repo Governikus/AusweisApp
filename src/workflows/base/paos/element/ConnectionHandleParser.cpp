@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "ConnectionHandleParser.h"
@@ -16,18 +16,15 @@ using namespace std::placeholders;
 Q_DECLARE_LOGGING_CATEGORY(paos)
 
 
-ConnectionHandleParser::ConnectionHandleParser(QSharedPointer<QXmlStreamReader> pXmlReader)
-	: ElementParser(pXmlReader)
+ConnectionHandleParser::ConnectionHandleParser(const QSharedPointer<ElementParser>& pParser)
+	: mParser(pParser)
 {
 }
 
 
-ConnectionHandleParser::~ConnectionHandleParser() = default;
-
-
 void ConnectionHandleParser::parseUniqueElementText(const std::function<void(const QString&)>& pFunc, QString& pText)
 {
-	if (readUniqueElementText(pText))
+	if (mParser->readUniqueElementText(pText))
 	{
 		pFunc(pText);
 	}
@@ -43,9 +40,9 @@ ConnectionHandle ConnectionHandleParser::parse()
 	QString slotIndex;
 	QString cardApplication;
 	QString slotHandle;
-	while (readNextStartElement())
+	while (mParser->readNextStartElement())
 	{
-		const auto& name = getElementName();
+		const auto& name = mParser->getElementName();
 		if (name == QLatin1String("ContextHandle"))
 		{
 			parseUniqueElementText(std::bind(&ConnectionHandle::setContextHandle, &connectionHandle, _1), contexthandle);
@@ -74,13 +71,13 @@ ConnectionHandle ConnectionHandleParser::parse()
 		if (name == QLatin1String("RecognitionInfo"))
 		{
 			qCWarning(paos) << "Unsupported element:" << name;
-			skipCurrentElement();
+			mParser->skipCurrentElement();
 			continue;
 		}
 
 		qCWarning(paos) << "Unknown element:" << name;
-		skipCurrentElement();
+		mParser->skipCurrentElement();
 	}
 
-	return parserFailed() ? ConnectionHandle() : connectionHandle;
+	return mParser->parserFailed() ? ConnectionHandle() : connectionHandle;
 }

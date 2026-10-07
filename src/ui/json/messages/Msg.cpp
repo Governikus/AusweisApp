@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "Msg.h"
@@ -35,14 +35,3 @@ Msg::operator bool() const
 {
 	return !mData.isEmpty();
 }
-
-
-#if !defined(QT_NO_DEBUG) && __has_include(<QTest>)
-	#include <QTest>
-char* governikus::toString(const Msg& pMsg)
-{
-	return QTest::toString(QByteArray(pMsg));
-}
-
-
-#endif

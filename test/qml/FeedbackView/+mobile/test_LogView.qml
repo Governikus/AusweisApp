@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -9,7 +9,7 @@ TestCase {
 	id: testCase
 
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.FeedbackView; LogView {}", testCase);
+		return createTemporaryQmlObject("import Governikus.LogView; LogView {}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();

@@ -1,0 +1,89 @@
+From 821a2b1a392f0484164af0d03c4460698b227c74 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Wed, 13 May 2026 12:04:23 +0200
+Subject: a11y macOS: Respect state.expandable and state.expanded
+
+We cannot implement the accessiblityExpanded property getter since that
+would lead to every component being announced as collapsed, even when
+expandable is false.
+
+Task-number: QTBUG-146552
+Pick-to: 6.12
+Change-Id: I81d5c35ea4f7eba61e63a4447d21bc743e01c140
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+Reviewed-by: Lars Schmertmann <SmallLars@t-online.de>
+(cherry picked from commit c4d9f02a0fc2b4493ea8cca4703353c2f03fcaa8)
+---
+ src/plugins/platforms/cocoa/qcocoaaccessibility.mm  |  9 ++++++++-
+ .../platforms/cocoa/qcocoaaccessibilityelement.mm   | 13 +++++++++++--
+ 2 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
+index 2989b4d6df374e56fa07ed2e42dff59aba8068f4..657fe199c620cb9b744f2f02121bdfb1f5585560 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
+@@ -184,6 +184,8 @@ NSString *macRole(QAccessibleInterface *interface)
+             return NSAccessibilityMenuButtonRole;
+         if (roleMap[qtRole] == NSAccessibilityTextFieldRole && interface->state().multiLine)
+             return NSAccessibilityTextAreaRole;
++        if (roleMap[qtRole] == NSAccessibilityButtonRole && interface->state().expandable)
++            return NSAccessibilityDisclosureTriangleRole;
+         return roleMap[qtRole];
+     }
+ 
+@@ -359,7 +361,8 @@ bool hasValueAttribute(QAccessibleInterface *interface)
+     if (qtrole == QAccessible::EditableText
+             || qtrole == QAccessible::StaticText
+             || interface->valueInterface()
+-            || interface->state().checkable) {
++            || interface->state().checkable
++            || macRole(interface) == NSAccessibilityDisclosureTriangleRole) {
+         return true;
+     }
+ 
+@@ -405,6 +408,10 @@ id getValueAttribute(QAccessibleInterface *interface)
+         return interface->state().checked ? @(1) : @(0);
+     }
+ 
++    if (macRole(interface) == NSAccessibilityDisclosureTriangleRole) {
++        return interface->state().expanded ? @(1) : @(0);
++    }
++
+     return nil;
+ }
+ 
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibilityelement.mm y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibilityelement.mm
+index a1db0979c6b5e8a86e00ed45f699b0a4a5272076..204fe0ed9a6360cd621f97243b4238a23a6c72af 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibilityelement.mm
+@@ -834,12 +834,18 @@ static void convertLineOffset(QAccessibleTextInterface *text, int *line, int *of
+ }
+ 
+ - (NSArray *)accessibilityAttributeNames {
++    NSMutableArray *attributes = [[NSMutableArray new] autorelease];
++
+ #if QT_MACOS_PLATFORM_SDK_EQUAL_OR_ABOVE(260000)
+     if (@available(macOS 26, *))
+-        return @[ NSAccessibilityLanguageAttribute ];
++        [attributes addObject:NSAccessibilityLanguageAttribute];
+ #endif
+ 
+-    return nil;
++    QAccessibleInterface *iface = self.qtInterface;
++    if (iface && iface->state().expandable)
++        [attributes addObject:NSAccessibilityExpandedAttribute];
++
++    return attributes;
+ }
+ 
+ - (id)accessibilityAttributeValue:(NSString *)attribute {
+@@ -864,6 +870,9 @@ static void convertLineOffset(QAccessibleTextInterface *text, int *line, int *of
+     }
+ #endif
+ 
++    if ([attribute isEqualToString:NSAccessibilityExpandedAttribute])
++        return iface->state().expanded ? @YES : @NO;
++
+     return nil;
+ }
+ 

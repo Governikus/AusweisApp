@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -120,6 +120,7 @@ FlickableSectionPage {
 		readonly property bool hasLink: root.linkToOpen !== ""
 
 		Accessible.description: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, Accessible.name) : ""
+		Accessible.id: "ResultView_button"
 		Accessible.role: hasLink ? Accessible.Link : Accessible.Button
 		Layout.alignment: Qt.AlignHCenter
 		Layout.maximumWidth: d.buttonCorrectionNeeded ? d.maxButtonWidth : implicitWidth

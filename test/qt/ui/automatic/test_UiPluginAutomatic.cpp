@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus Service GmbH, Germany
  */
 
 #include "UiPluginAutomatic.h"
@@ -332,7 +332,7 @@ class test_UiPluginAutomatic
 			UiPluginAutomatic ui;
 			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
 			const auto& context = request->getContext();
-			context->setLastPaceResult(CardReturnCode::PROTOCOL_ERROR);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::PROTOCOL_ERROR));
 
 			ui.onWorkflowStarted(request);
 			QTest::ignoreMessage(QtWarningMsg, "Previous PACE failed... abort automatic workflow");
@@ -342,19 +342,8 @@ class test_UiPluginAutomatic
 		}
 
 
-		void handlePasswordSimulator_data()
-		{
-			QTest::addColumn<CardReturnCode>("returnCode");
-
-			QTest::newRow("OK") << CardReturnCode::OK;
-			QTest::newRow("OK_PUK") << CardReturnCode::OK_PUK;
-		}
-
-
 		void handlePasswordSimulator()
 		{
-			QFETCH(CardReturnCode, returnCode);
-
 			const auto& reader = MockReaderManagerPlugin::getInstance().addReader("MockReader"_L1, ReaderManagerPluginType::SIMULATOR);
 			reader->setCard(MockCardConfig());
 			reader->setInfoBasicReader(false);
@@ -362,7 +351,7 @@ class test_UiPluginAutomatic
 			UiPluginAutomatic ui;
 			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
 			const auto& context = request->getContext();
-			context->setLastPaceResult(returnCode);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::OK));
 			context->setCardConnection(QSharedPointer<MockCardConnection>::create(reader->getReaderInfo()));
 
 			ui.onWorkflowStarted(request);
@@ -381,7 +370,7 @@ class test_UiPluginAutomatic
 			UiPluginAutomatic ui;
 			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
 			const auto& context = request->getContext();
-			context->setLastPaceResult(CardReturnCode::OK);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::OK));
 			context->setCardConnection(QSharedPointer<MockCardConnection>::create(reader->getReaderInfo()));
 
 			ui.onWorkflowStarted(request);
@@ -455,7 +444,7 @@ class test_UiPluginAutomatic
 			UiPluginAutomatic ui;
 			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
 			const auto& context = request->getContext();
-			context->setLastPaceResult(CardReturnCode::OK);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::OK));
 			context->setEstablishPaceChannelType(passwordId);
 			context->setCardConnection(QSharedPointer<MockCardConnection>::create(reader->getReaderInfo()));
 

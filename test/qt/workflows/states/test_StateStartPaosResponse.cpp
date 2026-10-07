@@ -1,13 +1,16 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
+
+#include "states/StateStartPaosResponse.h"
+
+#include "paos/retrieve/PaosParser.h"
+#include "states/StateBuilder.h"
+
+#include "TestParserHelper.h"
 
 #include <QtCore>
 #include <QtTest>
-
-#include "TestFileHelper.h"
-#include "states/StateBuilder.h"
-#include "states/StateStartPaosResponse.h"
 
 
 using namespace Qt::Literals::StringLiterals;
@@ -18,6 +21,8 @@ class test_StateStartPaosResponse
 	: public QObject
 {
 	Q_OBJECT
+
+
 	QScopedPointer<StateStartPaosResponse> mState;
 	QSharedPointer<AuthContext> mAuthContext;
 
@@ -60,7 +65,9 @@ class test_StateStartPaosResponse
 
 		void takeResultFromStartPAOSResponse()
 		{
-			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml"_L1)));
+			const auto& parser = TestParserHelper::create(":/paos/StartPAOSResponse3.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const QSharedPointer<StartPaosResponse> startPAOSResponse(static_cast<StartPaosResponse*>(pm));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
 			mAuthContext->setStatus(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 
@@ -82,7 +89,9 @@ class test_StateStartPaosResponse
 
 		void emitErrorIfResultError()
 		{
-			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml"_L1)));
+			const auto& parser = TestParserHelper::create(":/paos/StartPAOSResponse3.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const QSharedPointer<StartPaosResponse> startPAOSResponse(static_cast<StartPaosResponse*>(pm));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
 
 			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireAbort);
@@ -96,7 +105,9 @@ class test_StateStartPaosResponse
 
 		void emitSuccessIfResultOk()
 		{
-			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse1.xml"_L1)));
+			const auto& parser = TestParserHelper::create(":/paos/StartPAOSResponse1.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const QSharedPointer<StartPaosResponse> startPAOSResponse(static_cast<StartPaosResponse*>(pm));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
 
 			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireContinue);

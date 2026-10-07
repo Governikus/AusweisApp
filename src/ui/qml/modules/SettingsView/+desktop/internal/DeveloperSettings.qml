@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -19,7 +19,7 @@ ColumnLayout {
 		//: DESKTOP
 		title: qsTr("Developer options")
 
-		onFocusChanged: if (focus)
+		onActiveFocusChanged: if (activeFocus)
 			Utils.positionViewAtItem(this)
 
 		GSwitch {
@@ -30,9 +30,9 @@ ColumnLayout {
 			//: DESKTOP
 			text: qsTr("Testmode for the self-authentication")
 
-			onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
+			onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
 		}
 		GSwitch {
 			checked: SettingsModel.enableSimulator
@@ -42,9 +42,9 @@ ColumnLayout {
 			//: DESKTOP
 			text: qsTr("Internal card simulator")
 
-			onCheckedChanged: SettingsModel.enableSimulator = checked
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
+			onCheckedChanged: SettingsModel.enableSimulator = checked
 		}
 		GSwitch {
 			checked: SettingsModel.developerMode
@@ -55,9 +55,9 @@ ColumnLayout {
 			//: DESKTOP
 			text: qsTr("Developer mode")
 
-			onCheckedChanged: SettingsModel.developerMode = checked
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
+			onCheckedChanged: SettingsModel.developerMode = checked
 		}
 		GSwitch {
 			checked: SettingsModel.showInAppNotifications
@@ -70,9 +70,9 @@ ColumnLayout {
 			//: DESKTOP
 			text: qsTr("Show notifications inside of %1").arg(Qt.application.name)
 
-			onCheckedChanged: SettingsModel.showInAppNotifications = checked
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
+			onCheckedChanged: SettingsModel.showInAppNotifications = checked
 		}
 	}
 	GPane {
@@ -80,7 +80,7 @@ ColumnLayout {
 		//: DESKTOP
 		title: qsTr("Custom config.json")
 
-		onFocusChanged: if (focus)
+		onActiveFocusChanged: if (activeFocus)
 			Utils.positionViewAtItem(this)
 
 		GText {

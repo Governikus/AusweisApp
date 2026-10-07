@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -21,6 +21,8 @@ class PortWrapper
 	private:
 		QList<quint16> mPorts;
 
+		static QList<quint16> fetchPorts(quint16 pLocalPort, quint16 pPeerPort);
+
 #ifdef Q_OS_WIN
 		static QString getUserOfProcessID(DWORD pPid);
 		static QString getExecutableOfProcessID(DWORD pPid);
@@ -28,16 +30,15 @@ class PortWrapper
 		static QString getUserOfConnection(const QList<MIB_TCPROW_OWNER_PID>& pConnections, quint16 pLocalPort, quint16 pPeerPort);
 		static QList<MIB_TCPROW_OWNER_PID> getConnections();
 		static quint16 getProcessPort(quint16 pLocalPort, quint16 pPeerPort);
-#else
-		static quint16 readPortFile(const QString& pFile);
 #endif
+
+		explicit PortWrapper(const QList<quint16>& pPorts);
 
 	public:
 		explicit PortWrapper(quint16 pLocalPort, quint16 pPeerPort = 0);
 
 		[[nodiscard]] bool isEmpty() const;
-		[[nodiscard]] quint16 fetchPort() const;
-		void invalidate();
+		[[nodiscard]] quint16 pop();
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -28,7 +28,6 @@ ColumnLayout {
 		}
 		GText {
 			id: textVersion
-
 		}
 		GText {
 			font.weight: Style.font.bold

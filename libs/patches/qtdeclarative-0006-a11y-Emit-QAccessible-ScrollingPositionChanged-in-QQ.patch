@@ -1,0 +1,88 @@
+From 741d872c151eff91b4fea366b4435d2f1764aefa Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Tue, 2 Jun 2026 14:17:28 +0200
+Subject: a11y: Emit QAccessible::ScrollingPositionChanged in QQuickFlickable
+
+Limit emission of the signal to 4 times per second to allow the screen
+reader to react towards the user.
+
+On Android it is common to use "ding ding ding" sounds that inform
+about the position within the viewport. If the signal is emitted
+without throttling, only sporadic events are completely processed
+and most are "cut off" by the next event, interrupting the sound
+output.
+
+Task-number: QTBUG-139833
+Pick-to: 6.12
+Change-Id: I95f920b6299d496a710234a123a5d544ef51f222
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+(cherry-picked from commit 7a8282fea8e2a423b477cb51b4dcad365af1de34)
+---
+ src/quick/items/qquickflickable.cpp   | 24 ++++++++++++++++++++++--
+ src/quick/items/qquickflickable_p_p.h |  9 +++++++++
+ 2 files changed, 31 insertions(+), 2 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/items/qquickflickable.cpp y/qtdeclarative/src/quick/items/qquickflickable.cpp
+index 198a4d19ab12295c7aaa57fa5c4a4b1ccf05aa97..879402ccbac48c074b374d91133990ad80a8dc16 100644
+--- x/qtdeclarative/src/quick/items/qquickflickable.cpp
++++ y/qtdeclarative/src/quick/items/qquickflickable.cpp
+@@ -337,10 +337,30 @@ void QQuickFlickablePrivate::itemGeometryChanged(QQuickItem *item, QQuickGeometr
+             if (vData.contentPositionChangedExternallyDuringDrag)
+                 vData.pressPos += deltaMoved.y();
+         }
+-        if (orient & Qt::Horizontal)
++#if QT_CONFIG(accessibility)
++        bool updateAccessibility = false;
++#endif
++        if (orient & Qt::Horizontal) {
+             emit q->contentXChanged();
+-        if (orient & Qt::Vertical)
++#if QT_CONFIG(accessibility)
++            updateAccessibility = true;
++#endif
++        }
++        if (orient & Qt::Vertical) {
+             emit q->contentYChanged();
++#if QT_CONFIG(accessibility)
++            updateAccessibility = true;
++#endif
++        }
++#if QT_CONFIG(accessibility)
++        if (updateAccessibility && QAccessible::isActive()) {
++            if (!m_scrollEventTimer.isValid() || m_scrollEventTimer.elapsed() >= 250) {
++                m_scrollEventTimer.restart();
++                QAccessibleEvent ev(q, QAccessible::ScrollingPositionChanged);
++                QAccessible::updateAccessibility(&ev);
++            }
++        }
++#endif
+     }
+ }
+ 
+diff --git x/qtdeclarative/src/quick/items/qquickflickable_p_p.h y/qtdeclarative/src/quick/items/qquickflickable_p_p.h
+index a3edffb1dfcecf5e019a47102c969b42eeabb384..6a6b366028e01820e1a02f4cf8bf26dacf115e61 100644
+--- x/qtdeclarative/src/quick/items/qquickflickable_p_p.h
++++ y/qtdeclarative/src/quick/items/qquickflickable_p_p.h
+@@ -29,6 +29,10 @@
+ #include <private/qquicktransitionmanager_p_p.h>
+ #include <private/qpodvector_p.h>
+ 
++#if QT_CONFIG(accessibility)
++#  include <QElapsedTimer>
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ class QQuickFlickableVisibleArea;
+@@ -248,6 +252,11 @@ public:
+     static qsizetype data_count(QQmlListProperty<QObject> *);
+     static QObject *data_at(QQmlListProperty<QObject> *, qsizetype);
+     static void data_clear(QQmlListProperty<QObject> *);
++
++#if QT_CONFIG(accessibility)
++private:
++    QElapsedTimer m_scrollEventTimer;
++#endif
+ };
+ 
+ class Q_QUICK_EXPORT QQuickFlickableVisibleArea : public QObject

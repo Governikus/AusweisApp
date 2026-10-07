@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -11,6 +11,10 @@
 #include <QList>
 #include <QWebSocketServer>
 
+
+class test_IfdConnector;
+
+
 namespace governikus
 {
 
@@ -18,6 +22,7 @@ class WebSocketServerImpl
 	: public WebSocketServer
 {
 	Q_OBJECT
+	friend class ::test_IfdConnector;
 
 	private:
 		QWebSocketServer mServer;

@@ -1,35 +1,27 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
-#include "paos/retrieve/PaosParser.h"
+#include "paos/element/ElementParser.h"
 #include "paos/retrieve/Transmit.h"
 
-#include <QXmlStreamReader>
-
-#include <memory>
 
 namespace governikus
 {
 
 class TransmitParser
-	: public PaosParser
 {
+	private:
+		const QSharedPointer<ElementParser>& mParser;
+		void parseInputApduInfo(Transmit& pTransmit);
+
 	public:
-		TransmitParser();
-		~TransmitParser() override = default;
+		explicit TransmitParser(const QSharedPointer<ElementParser>& pParser);
+		~TransmitParser();
 
-	protected:
-		PaosMessage* parseMessage() override;
-
-	private:
-		void parseSlotHandle() const;
-		void parseInputApduInfo();
-
-	private:
-		std::unique_ptr<Transmit> mTransmit;
+		[[nodiscard]] std::unique_ptr<Transmit> parse();
 };
 
 } // namespace governikus

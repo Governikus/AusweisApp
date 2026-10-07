@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "UiPluginWebService.h"
@@ -178,20 +178,20 @@ void UiPluginWebService::handleShowUiRequest(const QString& pUiModule, const QSh
 
 void UiPluginWebService::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	if (pRequest->getContext().objectCast<AuthContext>())
+	if (!pRequest->getContext().objectCast<AuthContext>())
 	{
-		const auto& request = pRequest->getData().value<QSharedPointer<HttpRequest>>();
-		if (request)
-		{
-			if (request->isConnected())
-			{
-				request->send(HTTP_STATUS_PROCESSING);
-			}
-			else
-			{
-				qCCritical(webservice) << "Cannot send 'Processing' to caller as connection is lost";
-			}
-		}
+		return;
+	}
+
+	const auto& request = pRequest->getData().value<QSharedPointer<HttpRequest>>();
+	if (!request)
+	{
+		return;
+	}
+
+	if (!request->isConnected() || !request->send(HTTP_STATUS_PROCESSING))
+	{
+		qCCritical(webservice) << "Cannot send 'Processing' to caller as connection is lost";
 	}
 }
 

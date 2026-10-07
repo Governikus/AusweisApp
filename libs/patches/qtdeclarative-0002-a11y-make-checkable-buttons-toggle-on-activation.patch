@@ -1,0 +1,121 @@
+From 6a5fcbc14290b6fb67e90be7cd39ffb2d5b2f4b5 Mon Sep 17 00:00:00 2001
+From: Andreas Belke <andreas.belke@governikus.de>
+Date: Mon, 11 May 2026 14:35:54 +0200
+Subject: a11y: make checkable buttons toggle on activation
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When a screen reader (Narrator, NVDA, VoiceOver, TalkBack) activates a
+QQuickAbstractButton-derived control, the control should behave as if
+the user had released a mouse, touch, or key on it: for a checkable
+button that means the check state must flip and toggled() must be
+emitted, in addition to clicked().
+Applications should not need to wire Accessible.onPressAction or
+Accessible.onToggleAction handlers to get consistent toggling
+across platforms - that is the default behaviour pointer and
+keyboard activation already provide, and a11y activation should
+match.
+
+The bug has two parts
+
+* NVDA, TalkBack, iOS VoiceOver land on pressAction(), which
+  QAccessibleQuickItem::doAction() dispatches to the Qt slot
+  accessiblePressAction() on the item. Before this patch that slot
+  called trigger() only, which emits clicked() but leaves the check
+  state alone.
+* MacOS VoiceOver, Narrator creates a toggleAction().
+  No accessibleToggleAction() slot existed on QQuickAbstractButton, so
+  the call fell through to the generic role fallback in
+  QAccessibleQuickItem::doAction() that sets the "checked" property via
+  QObject::setProperty(). Neither toggled() or clicked() was emitted.
+  Also toggling disabled controls was possible.
+
+Route the a11y press default slot through QQuickAbstractButton::click(),
+the same way QAccessibleButton::doAction() in qtbase. That emits the
+same signals as a real touch, mouse, or keyboard release and respects
+the disabled state. Do the same for toggle action. Declare
+accessibleToggleAction() as a public slot so
+QAccessibleQuickItem::doAction() finds it via
+QMetaObject::invokeMethod() for the "Toggle" action name, before the
+role fallback runs.
+
+This follows the qtbase (widgets) fix
+5317ff74fd2ff31e4bfb8e7e6c4a6e06a16fffc8, which argued that toggleAction
+only produces toggled(), but users may be more discerning and listen
+only to clicked() to react to *user* events, not every toggle.
+
+When the user has wired Accessible.onPressAction or
+Accessible.onToggleAction explicitly,
+QQuickAccessibleAttached::doAction() continues to accept the action
+before any default slot runs, so this change is source- and
+behaviour-compatible with existing code that opts in to custom handling.
+
+Fixes: QTBUG-144350
+Pick-to: 6.11
+Change-Id: Id034f48cb1ee8103f02d9b0fa7f3267562572c7e
+Reviewed-by: Morten Johan Sørvig <morten.sorvig@qt.io>
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+(cherry-picked from commit 94b6ebbf7fe04d826996c33efe82979497d6824f)
+---
+ src/quicktemplates/qquickabstractbutton.cpp   | 14 +++++++++++++-
+ src/quicktemplates/qquickabstractbutton_p.h   |  1 +
+ src/quicktemplates/qquickabstractbutton_p_p.h |  1 +
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git x/qtdeclarative/src/quicktemplates/qquickabstractbutton.cpp y/qtdeclarative/src/quicktemplates/qquickabstractbutton.cpp
+index 709508483f0f14b7b65afec9119f92b0edb25a06..9e74fefe3903005058c6d3e0cc22625863cd0037 100644
+--- x/qtdeclarative/src/quicktemplates/qquickabstractbutton.cpp
++++ y/qtdeclarative/src/quicktemplates/qquickabstractbutton.cpp
+@@ -417,7 +417,13 @@ void QQuickAbstractButtonPrivate::click()
+ 
+ void QQuickAbstractButtonPrivate::accessiblePressAction()
+ {
+-    trigger();
++    Q_Q(QQuickAbstractButton);
++    q->click();
++}
++
++void QQuickAbstractButtonPrivate::accessibleToggleAction()
++{
++    accessiblePressAction();
+ }
+ 
+ void QQuickAbstractButtonPrivate::trigger(bool doubleClick)
+@@ -1406,6 +1412,12 @@ void QQuickAbstractButton::accessiblePressAction()
+     Q_D(QQuickAbstractButton);
+     d->accessiblePressAction();
+ }
++
++void QQuickAbstractButton::accessibleToggleAction()
++{
++    Q_D(QQuickAbstractButton);
++    d->accessibleToggleAction();
++}
+ #endif
+ 
+ QT_END_NAMESPACE
+diff --git x/qtdeclarative/src/quicktemplates/qquickabstractbutton_p.h y/qtdeclarative/src/quicktemplates/qquickabstractbutton_p.h
+index f382881b02f8e55549cc91acbaeea88e318cccea..8c5d9d975284ac3bc2f09558f8fd847b1f86796c 100644
+--- x/qtdeclarative/src/quicktemplates/qquickabstractbutton_p.h
++++ y/qtdeclarative/src/quicktemplates/qquickabstractbutton_p.h
+@@ -182,6 +182,7 @@ protected:
+     void accessibilityActiveChanged(bool active) override;
+     QAccessible::Role accessibleRole() const override;
+     Q_INVOKABLE void accessiblePressAction();
++    Q_INVOKABLE void accessibleToggleAction();
+ #endif
+ 
+ private:
+diff --git x/qtdeclarative/src/quicktemplates/qquickabstractbutton_p_p.h y/qtdeclarative/src/quicktemplates/qquickabstractbutton_p_p.h
+index 6c705f709948f23773f66697ee0f857483c99410..09cd3e46c8600edf09e974fdd3ff632f8b1cf3ff 100644
+--- x/qtdeclarative/src/quicktemplates/qquickabstractbutton_p_p.h
++++ y/qtdeclarative/src/quicktemplates/qquickabstractbutton_p_p.h
+@@ -52,6 +52,7 @@ public:
+ 
+     virtual bool acceptKeyClick(Qt::Key key) const;
+     virtual void accessiblePressAction();
++    virtual void accessibleToggleAction();
+ 
+     bool isPressAndHoldConnected();
+     bool isDoubleClickConnected();

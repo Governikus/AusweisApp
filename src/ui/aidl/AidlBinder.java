@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -65,7 +65,16 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 			}
 		}
 
-		mCallbackSessionId = resetValidSessionID();
+		try
+		{
+			mCallbackSessionId = resetValidSessionID();
+		}
+		catch (UnsatisfiedLinkError e)
+		{
+			LogHandler.getLogger().log(Level.SEVERE, "Cannot find native implementation", e);
+			return false;
+		}
+
 		if (mCallbackSessionId.isEmpty())
 		{
 			return false;
@@ -83,7 +92,15 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 			handleClientException(t);
 		}
 
-		return startReaderManagerScans();
+		try
+		{
+			return startReaderManagerScans();
+		}
+		catch (UnsatisfiedLinkError e)
+		{
+			LogHandler.getLogger().log(Level.SEVERE, "Cannot find native implementation", e);
+			return false;
+		}
 	}
 
 
@@ -114,8 +131,16 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 			return false;
 		}
 
-		aidlSend(pMessageFromClient);
-		return true;
+		try
+		{
+			aidlSend(pMessageFromClient);
+			return true;
+		}
+		catch (UnsatisfiedLinkError e)
+		{
+			LogHandler.getLogger().log(Level.SEVERE, "Cannot find native implementation", e);
+		}
+		return false;
 	}
 
 

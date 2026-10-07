@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -24,7 +24,6 @@ Controller {
 	function processStateChange(pState) {
 		switch (pState) {
 		case "StateStartIfdService":
-			root.setLockedAndHidden();
 			RemoteServiceModel.continueWorkflow();
 			break;
 		case "StateEnterPacePasswordIfd":
@@ -44,7 +43,6 @@ Controller {
 			break;
 		case "FinalState":
 			RemoteServiceModel.continueWorkflow();
-			setLockedAndHidden(false);
 			break;
 		default:
 			RemoteServiceModel.continueWorkflow();

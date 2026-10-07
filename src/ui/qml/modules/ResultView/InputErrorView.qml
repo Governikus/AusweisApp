@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -34,8 +34,8 @@ FlickableSectionPage {
 				return fromPasswordType(root.passwordType);
 			}
 			switch (root.returnCode) {
-			case CardReturnCode.INVALID_CAN:
-			case CardReturnCode.INVALID_PUK:
+			case PaceResult.INVALID_CAN:
+			case PaceResult.INVALID_PUK:
 				return fromPasswordType(root.passwordType);
 			default:
 				return MultiInfoData.Type.TRANSPORT_PIN_NOT_WORKING;
@@ -51,13 +51,13 @@ FlickableSectionPage {
 		symbol: Symbol.Type.ERROR
 		type: {
 			switch (root.returnCode) {
-			case CardReturnCode.INVALID_PIN:
-			case CardReturnCode.INVALID_PIN_2:
-			case CardReturnCode.INVALID_PIN_3:
+			case PaceResult.INVALID_PIN_1:
+			case PaceResult.INVALID_PIN_2:
+			case PaceResult.INVALID_PIN_3:
 				return root.isTransportPin ? AnimationLoader.Type.TRANSPORT_PIN : AnimationLoader.Type.PIN;
-			case CardReturnCode.INVALID_CAN:
+			case PaceResult.INVALID_CAN:
 				return AnimationLoader.Type.CAN;
-			case CardReturnCode.INVALID_PUK:
+			case PaceResult.INVALID_PUK:
 				return AnimationLoader.Type.PUK;
 			}
 			switch (root.passwordType) {
@@ -73,15 +73,15 @@ FlickableSectionPage {
 
 		text: {
 			switch (root.returnCode) {
-			case CardReturnCode.INVALID_CAN:
+			case PaceResult.INVALID_CAN:
 				//: ALL_PLATFORMS
 				return qsTr("Wrong CAN");
-			case CardReturnCode.INVALID_PUK:
+			case PaceResult.INVALID_PUK:
 				//: ALL_PLATFORMS
 				return qsTr("Wrong PUK");
-			case CardReturnCode.INVALID_PIN:
-			case CardReturnCode.INVALID_PIN_2:
-			case CardReturnCode.INVALID_PIN_3:
+			case PaceResult.INVALID_PIN_1:
+			case PaceResult.INVALID_PIN_2:
+			case PaceResult.INVALID_PIN_3:
 				return root.isTransportPin ?
 				//: ALL_PLATFORMS
 				qsTr("Wrong Transport PIN") :
@@ -111,10 +111,10 @@ FlickableSectionPage {
 			}
 
 			switch (root.returnCode) {
-			case CardReturnCode.INVALID_PIN_2:
-			case CardReturnCode.INVALID_PIN_3:
-			case CardReturnCode.INVALID_CAN:
-			case CardReturnCode.INVALID_PUK:
+			case PaceResult.INVALID_PIN_2:
+			case PaceResult.INVALID_PIN_3:
+			case PaceResult.INVALID_CAN:
+			case PaceResult.INVALID_PUK:
 				return true;
 			default:
 				return infoData.contentType === MultiInfoData.Type.TRANSPORT_PIN_NOT_WORKING;
@@ -130,7 +130,7 @@ FlickableSectionPage {
 		sourceSize.width: animation.width
 		tintColor: Style.color.image
 		tintEnabled: false
-		visible: !root.isTransportPin && (root.returnCode === CardReturnCode.INVALID_PIN_2 || root.returnCode === CardReturnCode.INVALID_CAN)
+		visible: !root.isTransportPin && (root.returnCode === PaceResult.INVALID_PIN_2 || root.returnCode === PaceResult.INVALID_CAN)
 	}
 	GContinueButton {
 		onClicked: root.continueClicked()

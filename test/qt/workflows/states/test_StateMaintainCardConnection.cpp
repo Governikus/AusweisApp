@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateMaintainCardConnection.h"
@@ -57,7 +57,7 @@ class test_StateMaintainCardConnection
 			QFETCH(GlobalStatus::Code, status);
 			QSignalSpy spy(mState.data(), &StateMaintainCardConnection::fireAbort);
 
-			mContext->setLastPaceResult(code);
+			mContext->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, code));
 			QTest::ignoreMessage(QtDebugMsg, "Last PACE result is unrecoverable. Aborting.");
 			mState->run();
 			QCOMPARE(mContext->getStatus(), status);
@@ -68,25 +68,31 @@ class test_StateMaintainCardConnection
 
 		void test_Run_WrongPacePassword_data()
 		{
-			QTest::addColumn<CardReturnCode>("code");
+			QTest::addColumn<PacePasswordId>("passwordId");
+			QTest::addColumn<CardReturnCode>("returnCode");
+			QTest::addColumn<EstablishPaceChannelErrorCode>("errorCode");
 
-			QTest::newRow("invalid_can") << CardReturnCode::INVALID_CAN;
-			QTest::newRow("invalid_pin") << CardReturnCode::INVALID_PIN;
-			QTest::newRow("invalid_pin_2") << CardReturnCode::INVALID_PIN_2;
-			QTest::newRow("invalid_pin_3") << CardReturnCode::INVALID_PIN_3;
-			QTest::newRow("invalid_puk") << CardReturnCode::INVALID_PUK;
-			QTest::newRow("pin_not_blocked") << CardReturnCode::PIN_NOT_BLOCKED;
+			QTest::newRow("invalid_can") << PacePasswordId::PACE_CAN << CardReturnCode::OK << EstablishPaceChannelErrorCode::GeneralAuthenticateStep4;
+			QTest::newRow("invalid_pin") << PacePasswordId::PACE_PIN << CardReturnCode::OK << EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC2;
+			QTest::newRow("invalid_pin_2") << PacePasswordId::PACE_PIN << CardReturnCode::OK << EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC1;
+			QTest::newRow("invalid_pin_3") << PacePasswordId::PACE_PIN << CardReturnCode::OK << EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC0;
+			QTest::newRow("invalid_puk") << PacePasswordId::PACE_PUK << CardReturnCode::OK << EstablishPaceChannelErrorCode::GeneralAuthenticateStep4;
+			QTest::newRow("pin_not_blocked") << PacePasswordId::PACE_PUK << CardReturnCode::PIN_NOT_BLOCKED << EstablishPaceChannelErrorCode::NoError;
 		}
 
 
 		void test_Run_WrongPacePassword()
 		{
-			QFETCH(CardReturnCode, code);
+			QFETCH(PacePasswordId, passwordId);
+			QFETCH(CardReturnCode, returnCode);
+			QFETCH(EstablishPaceChannelErrorCode, errorCode);
 
 			QSignalSpy spyNoCardConnection(mState.data(), &StateMaintainCardConnection::fireNoCardConnection);
 			QSignalSpy spyUpdateRetryCounter(mState.data(), &StateMaintainCardConnection::fireForceUpdateRetryCounter);
 
-			mContext->setLastPaceResult(code);
+			EstablishPaceChannelOutput output(passwordId, returnCode);
+			output.setErrorCode(errorCode);
+			mContext->setPaceOutput(output);
 
 			QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
 			mState->run();
@@ -109,10 +115,12 @@ class test_StateMaintainCardConnection
 			QTest::newRow("card_not_found") << CardReturnCode::CARD_NOT_FOUND << true;
 			QTest::newRow("retry_allowed") << CardReturnCode::RESPONSE_EMPTY << true;
 
-			QTest::newRow("undefined") << CardReturnCode::UNDEFINED << false;
+			QTest::newRow("cancellation_by_user") << CardReturnCode::CANCELLATION_BY_USER << false;
+			QTest::newRow("input_time_out") << CardReturnCode::INPUT_TIME_OUT << false;
 			QTest::newRow("unknown") << CardReturnCode::UNKNOWN << false;
 			QTest::newRow("command_failed") << CardReturnCode::COMMAND_FAILED << false;
 			QTest::newRow("protocol_error") << CardReturnCode::PROTOCOL_ERROR << false;
+			QTest::newRow("wrong_length") << CardReturnCode::WRONG_LENGTH << false;
 			QTest::newRow("unexpected_transmit_status") << CardReturnCode::UNEXPECTED_TRANSMIT_STATUS << false;
 		}
 
@@ -127,7 +135,7 @@ class test_StateMaintainCardConnection
 			const auto& worker = MockCardConnectionWorker::create(mWorkerThread.data());
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			mContext->setCardConnection(connection);
-			mContext->setLastPaceResult(code);
+			mContext->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, code));
 			if (doReset)
 			{
 				QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
@@ -139,7 +147,7 @@ class test_StateMaintainCardConnection
 			}
 			mState->run();
 			QCOMPARE(mContext->getCardConnection(), doReset ? QSharedPointer<CardConnection>() : connection);
-			QCOMPARE(mContext->getLastPaceResult(), doReset ? CardReturnCode::OK : code);
+			QCOMPARE(mContext->getPaceOutput().getReturnCode(), doReset ? CardReturnCode::UNDEFINED : code);
 			QCOMPARE(spyNoCard.count(), doReset ? 1 : 0);
 			QCOMPARE(spyAbort.count(), doReset ? 0 : 1);
 			if (!doReset)
@@ -155,7 +163,7 @@ class test_StateMaintainCardConnection
 			QSignalSpy spyContinue(mState.data(), &StateMaintainCardConnection::fireContinue);
 			QSignalSpy spyUpdateRetryCounter(mState.data(), &StateMaintainCardConnection::fireForceUpdateRetryCounter);
 
-			mContext->setLastPaceResult(CardReturnCode::OK);
+			mContext->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::OK));
 			QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
 			mState->run();
 			QCOMPARE(spyNoCardConnection.count(), 1);
@@ -167,11 +175,11 @@ class test_StateMaintainCardConnection
 			mState->run();
 			QCOMPARE(spyContinue.count(), 1);
 
-			mContext->setLastPaceResult(CardReturnCode::OK_PUK);
+			mContext->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PUK, CardReturnCode::OK));
 			QTest::ignoreMessage(QtDebugMsg, "PIN unblocked! Triggering retry counter update.");
 			mState->run();
 			QCOMPARE(spyUpdateRetryCounter.count(), 1);
-			QCOMPARE(mContext->getLastPaceResult(), CardReturnCode::OK_PUK);
+			QCOMPARE(mContext->getPaceOutput().getReturnCode(), CardReturnCode::OK);
 		}
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "WorkflowContext.h"
@@ -28,9 +28,8 @@ WorkflowContext::WorkflowContext(const Action pAction, bool pActivateUi)
 	, mPin()
 	, mPuk()
 	, mEstablishPaceChannelType(PacePasswordId::UNKNOWN)
-	, mPaceOutputData()
+	, mPaceOutput()
 	, mExpectedReader()
-	, mLastPaceResult(CardReturnCode::OK)
 	, mStatus(GlobalStatus::Code::No_Error)
 	, mFailureCode()
 	, mStartPaosResult(ECardApiResult::createOk())
@@ -352,34 +351,22 @@ void WorkflowContext::resetPacePasswords()
 }
 
 
-EstablishPaceChannelOutput* WorkflowContext::getPaceOutputData() const
+const EstablishPaceChannelOutput& WorkflowContext::getPaceOutput() const
 {
-	return mPaceOutputData.data();
+	return mPaceOutput;
 }
 
 
-void WorkflowContext::setPaceOutputData(const EstablishPaceChannelOutput& pPaceOutputData)
+void WorkflowContext::setPaceOutput(const EstablishPaceChannelOutput& pPaceOutput)
 {
-	mPaceOutputData.reset(new EstablishPaceChannelOutput(pPaceOutputData));
+	mPaceOutput = pPaceOutput;
+	Q_EMIT firePaceOutputUpdated();
 }
 
 
-CardReturnCode WorkflowContext::getLastPaceResult() const
+void WorkflowContext::resetPaceOutput()
 {
-	return mLastPaceResult;
-}
-
-
-void WorkflowContext::setLastPaceResult(CardReturnCode pLastPaceResult)
-{
-	mLastPaceResult = pLastPaceResult;
-	Q_EMIT firePaceResultUpdated();
-}
-
-
-void WorkflowContext::resetLastPaceResult()
-{
-	setLastPaceResult(CardReturnCode::OK);
+	setPaceOutput(EstablishPaceChannelOutput());
 }
 
 

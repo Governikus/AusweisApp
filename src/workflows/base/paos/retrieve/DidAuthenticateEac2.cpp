@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "paos/retrieve/DidAuthenticateEac2.h"
@@ -7,8 +7,14 @@
 using namespace governikus;
 
 
+void DIDAuthenticateEAC2::setEac2InputType(const Eac2InputType& pEac2)
+{
+	mEac2 = pEac2;
+}
+
+
 DIDAuthenticateEAC2::DIDAuthenticateEAC2()
-	: PaosMessage(PaosType::DID_AUTHENTICATE_EAC2)
+	: DidAuthenticateMessage(PaosType::DID_AUTHENTICATE_EAC2)
 {
 }
 
@@ -16,27 +22,9 @@ DIDAuthenticateEAC2::DIDAuthenticateEAC2()
 DIDAuthenticateEAC2::~DIDAuthenticateEAC2() = default;
 
 
-const ConnectionHandle& DIDAuthenticateEAC2::getConnectionHandle() const
-{
-	return mConnectionHandle;
-}
-
-
-const QString& DIDAuthenticateEAC2::getDidName() const
-{
-	return mDidName;
-}
-
-
 const QString& DIDAuthenticateEAC2::getSignature() const
 {
 	return mEac2.getSignature();
-}
-
-
-const QList<QSharedPointer<const CVCertificate>>& DIDAuthenticateEAC2::getCvCertificates() const
-{
-	return mEac2.getCvCertificates();
 }
 
 
@@ -46,19 +34,7 @@ const QString& DIDAuthenticateEAC2::getEphemeralPublicKey() const
 }
 
 
-void DIDAuthenticateEAC2::setConnectionHandle(const ConnectionHandle& connectionHandle)
+const QList<QSharedPointer<const CVCertificate>>& DIDAuthenticateEAC2::getCvCertificates() const
 {
-	mConnectionHandle = connectionHandle;
-}
-
-
-void DIDAuthenticateEAC2::setDidName(const QString& didName)
-{
-	mDidName = didName;
-}
-
-
-void DIDAuthenticateEAC2::setEac2InputType(const Eac2InputType& pEac2)
-{
-	mEac2 = pEac2;
+	return mEac2.getCvCertificates();
 }

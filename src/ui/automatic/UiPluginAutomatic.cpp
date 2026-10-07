@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus Service GmbH, Germany
  */
 
 #include "UiPluginAutomatic.h"
@@ -17,10 +17,13 @@
 #include <QLoggingCategory>
 #include <QtGlobal>
 
+
 Q_DECLARE_LOGGING_CATEGORY(automatic)
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 UiPluginAutomatic::UiPluginAutomatic()
 	: UiPlugin()
@@ -135,45 +138,45 @@ bool UiPluginAutomatic::isDominated() const
 
 std::pair<QString, QVariant> UiPluginAutomatic::getOptionalData(const ReaderInfo& pInfo) const
 {
-	if (pInfo.getPluginType() == ReaderManagerPluginType::SIMULATOR)
+	if (pInfo.getPluginType() != ReaderManagerPluginType::SIMULATOR)
 	{
-		const auto& getJsonContent = [](const QString& pFile){
-					if (pFile.isEmpty())
-					{
-						return QByteArray();
-					}
-
-					if (QFile inputFile(pFile); inputFile.exists() && inputFile.open(QIODevice::ReadOnly | QIODevice::Text))
-					{
-						qCDebug(automatic) << "Use file as JSON data:" << pFile;
-						return inputFile.readAll();
-					}
-
-					qCDebug(automatic) << "Use content as JSON data:" << pFile;
-					return pFile.toLatin1();
-				};
-
-		const auto& simulator = getJsonContent(qEnvironmentVariable("AUSWEISAPP_AUTOMATIC_SIMULATOR", QString()));
-		if (!simulator.isEmpty())
-		{
-			QJsonParseError jsonError {};
-			const auto& json = QJsonDocument::fromJson(simulator, &jsonError);
-
-			if (jsonError.error == QJsonParseError::NoError)
-			{
-				if (json.isObject())
-				{
-					return {QString(), json.object()};
-				}
-
-				return {QStringLiteral("JSON data is not an object"), QVariant()};
-			}
-
-			return {jsonError.errorString(), QVariant()};
-		}
+		return {QString(), QVariant()};
 	}
 
-	return {QString(), QVariant()};
+	const auto& getJsonContent = [](const QString& pFile){
+				if (pFile.isEmpty())
+				{
+					return QByteArray();
+				}
+
+				if (QFile inputFile(pFile); inputFile.exists() && inputFile.open(QIODevice::ReadOnly | QIODevice::Text))
+				{
+					qCDebug(automatic) << "Use file as JSON data:" << pFile;
+					return inputFile.readAll();
+				}
+
+				qCDebug(automatic) << "Use content as JSON data:" << pFile;
+				return pFile.toLatin1();
+			};
+	const auto& simulator = getJsonContent(qEnvironmentVariable("AUSWEISAPP_AUTOMATIC_SIMULATOR", QString()));
+	if (simulator.isEmpty())
+	{
+		return {QString(), QVariant()};
+	}
+
+	QJsonParseError jsonError {};
+	const auto& json = QJsonDocument::fromJson(simulator, &jsonError);
+	if (jsonError.error == QJsonParseError::NoError)
+	{
+		if (json.isObject())
+		{
+			return {QString(), json.object()};
+		}
+
+		return {QStringLiteral("JSON data is not an object"), QVariant()};
+	}
+
+	return {jsonError.errorString(), QVariant()};
 }
 
 
@@ -205,24 +208,22 @@ void UiPluginAutomatic::handleInsertCardScanFinished()
 		mContext->setStateApproved();
 		return;
 	}
-	else
-	{
-		for (const auto& readerInfo : infos)
-		{
-			if (readerInfo.isInsertable())
-			{
-				const auto[error, data] = getOptionalData(readerInfo);
-				if (error.isEmpty())
-				{
-					qCDebug(automatic) << "Automatically insert card into:" << readerInfo.getName();
-					Env::getSingleton<ReaderManager>()->insert(readerInfo, data);
-					mContext->setStateApproved();
-					return;
-				}
 
-				qCWarning(automatic) << "Cannot get optional data:" << error;
-				break;
+	for (const auto& readerInfo : infos)
+	{
+		if (readerInfo.isInsertable())
+		{
+			const auto[error, data] = getOptionalData(readerInfo);
+			if (error.isEmpty())
+			{
+				qCDebug(automatic) << "Automatically insert card into:" << readerInfo.getName();
+				Env::getSingleton<ReaderManager>()->insert(readerInfo, data);
+				mContext->setStateApproved();
+				return;
 			}
+
+			qCWarning(automatic) << "Cannot get optional data:" << error;
+			break;
 		}
 	}
 
@@ -233,9 +234,7 @@ void UiPluginAutomatic::handleInsertCardScanFinished()
 
 void UiPluginAutomatic::handlePassword()
 {
-	if (mContext->getLastPaceResult() != CardReturnCode::OK
-			&& mContext->getLastPaceResult() != CardReturnCode::OK_PUK
-			&& mContext->getLastPaceResult() != CardReturnCode::OK_CAN)
+	if (!mContext->getPaceOutput().isOk() && !mContext->getPaceOutput().isUndefined())
 	{
 		qCWarning(automatic) << "Previous PACE failed... abort automatic workflow";
 		mContext->killWorkflow();

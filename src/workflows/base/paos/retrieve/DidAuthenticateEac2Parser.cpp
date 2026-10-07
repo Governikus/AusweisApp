@@ -1,13 +1,10 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
+#include "paos/retrieve/DidAuthenticateEac2.h"
 #include "paos/retrieve/DidAuthenticateEac2Parser.h"
 
-#include "paos/invoke/PaosCreator.h"
-#include "paos/retrieve/DidAuthenticateEac2.h"
-
-#include <QDebug>
 #include <QLoggingCategory>
 
 
@@ -17,65 +14,16 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(paos)
 
 
-DidAuthenticateEac2Parser::DidAuthenticateEac2Parser()
-	: PaosParser(QStringLiteral("DIDAuthenticate"))
-{
-}
-
-
-PaosMessage* DidAuthenticateEac2Parser::parseMessage()
-{
-	mDidAuthenticateEac2.reset(new DIDAuthenticateEAC2());
-
-	bool isConnectionHandleNotSet = true;
-	QString didName;
-
-	while (readNextStartElement())
-	{
-		const auto& name = getElementName();
-		if (name == QLatin1String("ConnectionHandle"))
-		{
-			if (assertNoDuplicateElement(isConnectionHandleNotSet))
-			{
-				isConnectionHandleNotSet = false;
-				mDidAuthenticateEac2->setConnectionHandle(parseConnectionHandle());
-			}
-		}
-		else if (name == QLatin1String("DIDName"))
-		{
-			if (readUniqueElementText(didName))
-			{
-				mDidAuthenticateEac2->setDidName(didName);
-			}
-		}
-		else if (name == QLatin1String("AuthenticationProtocolData"))
-		{
-			const auto value = getElementType();
-			if (value.endsWith(QLatin1String("EAC2InputType")))
-			{
-				mDidAuthenticateEac2->setEac2InputType(parseEac2InputType());
-			}
-		}
-		else
-		{
-			qCWarning(paos) << "Unknown element:" << name;
-			skipCurrentElement();
-		}
-	}
-
-	return parserFailed() ? nullptr : mDidAuthenticateEac2.release();
-}
-
-
 Eac2InputType DidAuthenticateEac2Parser::parseEac2InputType()
 {
 	Eac2InputType eac2;
 
 	QString ephemeralPublicKey;
 	QString signature;
-	while (readNextStartElement())
+
+	while (mParser->readNextStartElement())
 	{
-		const auto& name = getElementName();
+		const auto& name = mParser->getElementName();
 		if (name == QLatin1String("Certificate"))
 		{
 			parseCertificate(eac2);
@@ -91,11 +39,11 @@ Eac2InputType DidAuthenticateEac2Parser::parseEac2InputType()
 		else
 		{
 			qCWarning(paos) << "Unknown element:" << name;
-			skipCurrentElement();
+			mParser->skipCurrentElement();
 		}
 	}
 
-	assertMandatoryElement(eac2.getEphemeralPublicKey(), "EphemeralPublicKey");
+	mParser->assertMandatoryElement(eac2.getEphemeralPublicKey(), "EphemeralPublicKey");
 
 	return eac2;
 }
@@ -103,7 +51,7 @@ Eac2InputType DidAuthenticateEac2Parser::parseEac2InputType()
 
 void DidAuthenticateEac2Parser::parseCertificate(Eac2InputType& pEac2)
 {
-	const QByteArray hexCvc = readElementText().toLatin1();
+	const QByteArray hexCvc = mParser->readElementText().toLatin1();
 	if (auto cvc = CVCertificate::fromRaw(QByteArray::fromHex(hexCvc)))
 	{
 		pEac2.appendCvcert(cvc);
@@ -111,14 +59,14 @@ void DidAuthenticateEac2Parser::parseCertificate(Eac2InputType& pEac2)
 	else
 	{
 		qCCritical(paos) << "Cannot parse Certificate";
-		setParserFailed();
+		mParser->setParserFailed();
 	}
 }
 
 
 void DidAuthenticateEac2Parser::parseEphemeralPublicKey(Eac2InputType& pEac2, QString& pEphemeralPublicKey)
 {
-	if (readUniqueElementText(pEphemeralPublicKey))
+	if (mParser->readUniqueElementText(pEphemeralPublicKey))
 	{
 		pEac2.setEphemeralPublicKey(pEphemeralPublicKey);
 	}
@@ -127,8 +75,22 @@ void DidAuthenticateEac2Parser::parseEphemeralPublicKey(Eac2InputType& pEac2, QS
 
 void DidAuthenticateEac2Parser::parseSignature(Eac2InputType& pEac2, QString& pSignature)
 {
-	if (readUniqueElementText(pSignature))
+	if (mParser->readUniqueElementText(pSignature))
 	{
 		pEac2.setSignature(pSignature);
 	}
+}
+
+
+DidAuthenticateEac2Parser::DidAuthenticateEac2Parser(const QSharedPointer<ElementParser>& pParser)
+	: mParser(pParser)
+{
+}
+
+
+std::unique_ptr<DIDAuthenticateEAC2> DidAuthenticateEac2Parser::parse()
+{
+	auto didAuthenticateEac2 = std::make_unique<DIDAuthenticateEAC2>();
+	didAuthenticateEac2->setEac2InputType(parseEac2InputType());
+	return mParser->parserFailed() ? nullptr : std::move(didAuthenticateEac2);
 }

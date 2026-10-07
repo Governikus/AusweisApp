@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -15,6 +15,7 @@ Control {
 	id: root
 
 	required property int activeModule
+	property int safeAreaBottomMargin: 0
 
 	signal show(int pModule)
 
@@ -30,6 +31,7 @@ Control {
 		bottomLeftCorner: false
 		bottomRightCorner: false
 		color: Style.color.pane.background.basic_unchecked
+		height: parent.height + root.safeAreaBottomMargin
 		layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 		radius: Style.dimens.pane_radius
 
@@ -52,33 +54,15 @@ Control {
 			delegate: NavigationItem {
 				required property string desc
 				required property url image
-				required property int index
 				readonly property var mainViewSubViews: [UiModule.IDENTIFY, UiModule.SELF_AUTHENTICATION, UiModule.PINMANAGEMENT, UiModule.CHECK_ID_CARD]
 				required property int module
-				//: MOBILE Relative position of current navigation tab in navigation view. %1 is replaced with the current tab's index, %2 with the total count of tabs
-				readonly property string tabPositionA11y: qsTr("%1 of %2").arg(index + 1).arg(repeater.count)
 
 				Accessible.ignored: Utils.isAccessibleIgnored(root)
-				Accessible.name: {
-					//: MOBILE
-					var a11yName = [text, qsTr("Tab"), tabPositionA11y];
-					if (checked) {
-						if (Qt.platform.os === "ios") {
-							//: IOS Selected navigation tab.
-							a11yName.unshift(qsTr("Selection"));
-							//: IOS Name of a11y element of selected navigation tab.
-							a11yName.unshift(qsTr("Tab bar"));
-						} else {
-							//: ANDROID Currently selected navigation tab of navigation view.
-							a11yName.unshift(qsTr("Selected"));
-						}
-					}
-					return a11yName.join(". ");
-				}
 				Layout.fillHeight: true
 				Layout.fillWidth: true
 				Layout.preferredWidth: repeater.maxItemWidth
 				checked: root.activeModule === module || (module === UiModule.DEFAULT && mainViewSubViews.includes(root.activeModule))
+				count: repeater.count
 				flowHorizontally: navigationRow.horizontalIcons
 				source: image
 				text: qsTr(desc)

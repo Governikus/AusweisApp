@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -91,14 +91,16 @@ class ApplicationModel
 		const QScopedPointer<Private> mPrivate;
 #endif
 
-		ApplicationModel();
-		~ApplicationModel() override = default;
 		void onStatusChanged(const ReaderManagerPluginInfo& pInfo);
 
 		[[nodiscard]] static constexpr int getFeedbackTimeout()
 		{
 			return 7000;
 		}
+
+	protected:
+		ApplicationModel();
+		~ApplicationModel() override = default;
 
 	private Q_SLOTS:
 		void onApplicationStateChanged(Qt::ApplicationState pState);
@@ -172,7 +174,11 @@ class ApplicationModel
 		Q_INVOKABLE void saveEmbeddedConfig(const QUrl& pFilename) const;
 #endif
 		[[nodiscard]] Q_INVOKABLE QString stripHtmlTags(QString pString) const;
+
 		Q_INVOKABLE void showAppStoreRatingDialog() const;
+
+		[[nodiscard]] bool isStartedByAuth() const;
+
 		static void notifyScreenReaderChangedThreadSafe();
 
 	public Q_SLOTS:

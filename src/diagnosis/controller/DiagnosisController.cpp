@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "DiagnosisController.h"
@@ -67,29 +67,27 @@ void DiagnosisController::collectInterfaceInformation()
 
 DiagnosisController::PcscInfo DiagnosisController::retrievePcscInfo()
 {
-	PcscInfo result;
-	const auto& pcscInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::PCSC);
-	if (pcscInfo.isAvailable())
+	PcscInfo result = getPcscInfo();
+
+	if (result.mPcscVersion.isNull())
 	{
-		const QVariant version = pcscInfo.getValue(ReaderManagerPluginInfo::Key::PCSC_LITE_VERSION);
-		if (version.isValid())
+		const auto& pcscInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::PCSC);
+		if (pcscInfo.isAvailable())
 		{
-			result.mPcscVersion = QStringLiteral("pcsclite %1").arg(version.toString());
+			const QVariant version = pcscInfo.getValue(ReaderManagerPluginInfo::Key::PCSC_LITE_VERSION);
+			if (version.isValid())
+			{
+				result.mPcscVersion = QStringLiteral("pcsclite %1").arg(version.toString());
+			}
+			else
+			{
+				tr("unknown");
+			}
 		}
 		else
 		{
-			tr("unknown");
+			result.mPcscVersion = tr("not available");
 		}
-	}
-	else
-	{
-		result.mPcscVersion = tr("not available");
-	}
-
-	getPcscInfo(result.mPcscComponents, result.mPcscDrivers);
-	if (!result.mPcscComponents.isEmpty())
-	{
-		result.mPcscVersion = result.mPcscComponents.first().getVersion();
 	}
 
 	return result;

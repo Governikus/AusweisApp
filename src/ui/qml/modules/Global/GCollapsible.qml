@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -40,10 +40,10 @@ ColumnLayout {
 
 		property bool expanded: false
 
-		Accessible.description: root.a11yDescription
+		Accessible.description: Utils.resolveA11yDescription(root.title, root.a11yDescription)
 		Accessible.expandable: true
 		Accessible.expanded: expanded
-		Accessible.name: root.title
+		Accessible.name: Utils.resolveA11yName(root.title, root.a11yDescription)
 		implicitHeight: bannerLayout.implicitHeight + Style.dimens.pane_spacing * 2
 		implicitWidth: bannerLayout.implicitWidth
 

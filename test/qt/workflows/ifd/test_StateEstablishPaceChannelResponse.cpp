@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateEstablishPaceChannelResponse.h"
@@ -11,8 +11,10 @@
 
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class MockServerMsgHandler
 	: public ServerMessageHandler
@@ -85,10 +87,10 @@ class test_StateEstablishPaceChannelResponse
 			QTest::addColumn<int>("wrongPacePasswordCounter");
 			QTest::addColumn<int>("continueCounter");
 
-			QByteArray data1 = QByteArray("30 10"
+			QByteArray data1 = QByteArray("30 12"
 										  "a1 06 04 04 f00663c2"
 										  "a2 04 04 02 0000"
-										  "a3 00"
+										  "a3 02 3100"
 										  "9000");
 			QByteArray data2 = QByteArray("30 5A"
 										  "A1 06 04 04 F0200001"
@@ -116,9 +118,9 @@ class test_StateEstablishPaceChannelResponse
 			const QString slotHandle("slot handle"_L1);
 			const QSharedPointer<const IfdEstablishPaceChannel> msg(new IfdEstablishPaceChannel(slotHandle, EstablishPaceChannel(), 6));
 			mContext->setEstablishPaceChannel(msg);
-			EstablishPaceChannelOutput channelOutput;
-			QVERIFY(channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
-			mContext->setEstablishPaceChannelOutput(channelOutput);
+			EstablishPaceChannelOutput paceOutput(PacePasswordId::PACE_PIN);
+			QVERIFY(paceOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
+			mContext->setPaceOutput(paceOutput);
 			const QSharedPointer<MockServerMsgHandler> msgHandler(new MockServerMsgHandler());
 			auto server = mContext->getIfdServer().staticCast<MockIfdServer>();
 			server->setMessageHandler(msgHandler);

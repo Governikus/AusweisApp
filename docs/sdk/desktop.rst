@@ -146,7 +146,7 @@ the following information.
   {
     "Name": "AusweisApp2",
     "Implementation-Title": "AusweisApp2",
-    "Implementation-Vendor": "Governikus GmbH & Co. KG",
+    "Implementation-Vendor": "Governikus Service GmbH",
     "Implementation-Version": "2.0.0",
     "Specification-Title": "TR-03124-1",
     "Specification-Vendor": "Federal Office for Information Security",

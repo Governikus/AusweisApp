@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteIfdClient.h"
@@ -284,7 +284,7 @@ class test_RemoteIfdClient
 			client.startDetection();
 			QVERIFY(!mDatagramHandlerMock.isNull());
 
-			const auto& json = IfdEstablishContext(IfdVersion::Version::latest, DeviceInfo::getName()).toByteArray(IfdVersion::Version::latest, QStringLiteral("TestContext"));
+			const auto& json = IfdEstablishContext(IfdVersion::Version::latest, DeviceInfo::getDeviceName()).toByteArray(IfdVersion::Version::latest, QStringLiteral("TestContext"));
 			Q_EMIT mDatagramHandlerMock->fireNewMessage(json, QHostAddress("192.168.1.88"_L1));
 			QTRY_COMPARE(logSpy.count(), 7);
 			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be REMOTE_IFD"_L1));

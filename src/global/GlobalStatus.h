@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -96,9 +96,6 @@ defineEnumTypeQmlExposed(GlobalStatusCode,
 		Card_Cancellation_By_User,
 		Card_Input_TimeOut,
 		Card_Pin_Deactivated,
-		Card_Invalid_Pin,
-		Card_Invalid_Can,
-		Card_Invalid_Puk,
 		Card_Pin_Not_Blocked,
 		Card_Puk_Blocked,
 		Card_NewPin_Mismatch,

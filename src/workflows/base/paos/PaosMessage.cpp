@@ -1,10 +1,12 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "PaosMessage.h"
 
+
 using namespace governikus;
+
 
 PaosMessage::PaosMessage(PaosType pType)
 	: mMessageID()
@@ -17,17 +19,25 @@ PaosMessage::PaosMessage(PaosType pType)
 PaosMessage::~PaosMessage() = default;
 
 
-bool PaosMessage::handleWSAddressingHeaders(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes&)
+const QString& PaosMessage::getMessageId() const
 {
-	if (pElementName == QLatin1String("MessageID"))
-	{
-		mMessageID = pValue;
-		return true;
-	}
-	else if (pElementName == QLatin1String("RelatesTo"))
-	{
-		mRelatesTo = pValue;
-		return true;
-	}
-	return false;
+	return mMessageID;
+}
+
+
+void PaosMessage::setMessageId(const QString& messageId)
+{
+	mMessageID = messageId;
+}
+
+
+const QString& PaosMessage::getRelatesTo() const
+{
+	return mRelatesTo;
+}
+
+
+void PaosMessage::setRelatesTo(const QString& relatesTo)
+{
+	mRelatesTo = relatesTo;
 }

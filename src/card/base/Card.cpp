@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "Card.h"
@@ -8,9 +8,12 @@
 
 #include <QLoggingCategory>
 
+
 Q_DECLARE_LOGGING_CATEGORY(card)
 
+
 using namespace governikus;
+
 
 Card::Card()
 	: QObject()
@@ -33,12 +36,11 @@ void Card::setErrorMessage(const QString& pMessage)
 
 EstablishPaceChannelOutput Card::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription)
 {
-	Q_UNUSED(pPasswordId)
 	Q_UNUSED(pPreferredPinLength)
 	Q_UNUSED(pChat)
 	Q_UNUSED(pCertificateDescription)
 	qCWarning(card) << "Establishment of PACE channel not supported";
-	return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
+	return EstablishPaceChannelOutput(pPasswordId, CardReturnCode::COMMAND_FAILED);
 }
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -59,7 +59,7 @@ class WorkflowModel
 	Q_PROPERTY(bool showRemoveCardFeedback READ showRemoveCardFeedback NOTIFY fireRemoveCardFeedbackChanged)
 	Q_PROPERTY(bool cardInitiallyAppeared READ getCardInitiallyAppeared NOTIFY fireHasCardChanged)
 	Q_PROPERTY(bool hasCard READ hasCard NOTIFY fireHasCardChanged)
-	Q_PROPERTY(governikus::EnumCardReturnCode::CardReturnCode lastReturnCode READ getLastReturnCode NOTIFY fireLastReturnCodeChanged)
+	Q_PROPERTY(governikus::EnumPaceResult::PaceResult lastPaceResult READ getLastPaceResult NOTIFY fireLastPaceResultChanged)
 	friend class ::test_WorkflowModel;
 
 	private:
@@ -81,7 +81,7 @@ class WorkflowModel
 		[[nodiscard]] bool isError() const;
 		[[nodiscard]] bool isMaskedError() const;
 		[[nodiscard]] bool isPukInoperative() const;
-		[[nodiscard]] CardReturnCode getLastReturnCode() const;
+		[[nodiscard]] PaceResult getLastPaceResult() const;
 
 		[[nodiscard]] ReaderManagerPluginType getReaderPluginType() const;
 		void setReaderPluginType(ReaderManagerPluginType pReaderPluginType);
@@ -109,7 +109,7 @@ class WorkflowModel
 		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void setInitialPluginType();
 		[[nodiscard]] Q_INVOKABLE bool isCancellationByUser() const;
-		[[nodiscard]] Q_INVOKABLE QString getEmailHeader() const;
+		[[nodiscard]] Q_INVOKABLE QString getEmailHeader(bool pPercentEncoding = false) const;
 		[[nodiscard]] Q_INVOKABLE QString getEmailBody(bool pPercentEncoding = false, bool pAddLogNotice = false) const;
 		Q_INVOKABLE void sendResultMail() const;
 
@@ -131,12 +131,10 @@ class WorkflowModel
 		void fireRemoveCardFeedbackChanged();
 		void fireHasCardChanged();
 		void fireEidTypeMismatchErrorChanged();
-		void fireShowUiRequest(UiModule pModule);
 		void fireWorkflowFinished(bool pSuccess);
 		void fireOnPinUnlocked();
-		void fireOnPasswordUsed();
 		void fireOnCanSuccess();
-		void fireLastReturnCodeChanged();
+		void fireLastPaceResultChanged();
 };
 
 

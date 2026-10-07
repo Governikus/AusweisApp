@@ -247,7 +247,7 @@ a result and an url parameter to indicate the end of an authentication.
 
     - **description**: Description of the error message.
 
-    - **message**: The error message.
+    - **message**: The error message. The output may contain unescaped HTML tags.
 
     - **reason**: Unique :doc:`failurecodes`.
 
@@ -345,9 +345,9 @@ Provides information about the used certificate.
                   {
                    "issuerName": "Governikus Test DVCA",
                    "issuerUrl": "http://www.governikus.de",
-                   "subjectName": "Governikus GmbH & Co. KG",
+                   "subjectName": "Governikus Service GmbH",
                    "subjectUrl": "https://test.governikus-eid.de",
-                   "termsOfUsage": "Anschrift:\t\r\nGovernikus GmbH & Co. KG\r\nAm Fallturm 9\r\n28359 Bremen\t\r\n\r\nE-Mail-Adresse:\thb@bos-bremen.de\t\r\n\r\nZweck des Auslesevorgangs:\tDemonstration des eID-Service\t\r\n\r\nZuständige Datenschutzaufsicht:\t\r\nDie Landesbeauftragte für Datenschutz und Informationsfreiheit der Freien Hansestadt Bremen\r\nArndtstraße 1\r\n27570 Bremerhaven",
+                   "termsOfUsage": "Anschrift:\t\r\nGovernikus Service GmbH\r\nAm Fallturm 9\r\n28359 Bremen\t\r\n\r\nE-Mail-Adresse:\thb@bos-bremen.de\t\r\n\r\nZweck des Auslesevorgangs:\tDemonstration des eID-Service\t\r\n\r\nZuständige Datenschutzaufsicht:\t\r\nDie Landesbeauftragte für Datenschutz und Informationsfreiheit der Freien Hansestadt Bremen\r\nArndtstraße 1\r\n27570 Bremerhaven",
                    "purpose": "Demonstration des eID-Service"
                   },
     "validity":
@@ -695,7 +695,7 @@ increased for **incompatible** changes.
                   {
                    "Name": "AusweisApp2",
                    "Implementation-Title": "AusweisApp2",
-                   "Implementation-Vendor": "Governikus GmbH & Co. KG",
+                   "Implementation-Vendor": "Governikus Service GmbH",
                    "Implementation-Version": "2.0.0",
                    "Specification-Title": "TR-03124-1",
                    "Specification-Vendor": "Federal Office for Information Security",

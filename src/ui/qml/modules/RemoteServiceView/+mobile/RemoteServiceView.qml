@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -24,6 +24,7 @@ FlickableSectionPage {
 	readonly property bool runningInPairingMode: RemoteServiceModel.running && RemoteServiceModel.isPairing
 
 	enableTileStyle: false
+	lockAndHideNavigation: RemoteServiceModel.running
 	spacing: Style.dimens.pane_spacing
 
 	//: MOBILE
@@ -55,13 +56,6 @@ FlickableSectionPage {
 		}
 	]
 
-	Connections {
-		function onFireIsRunningChanged() {
-			root.setLockedAndHidden(RemoteServiceModel.running);
-		}
-
-		target: RemoteServiceModel
-	}
 	RemoteServiceController {
 		stackView: root.stackView
 	}
@@ -148,8 +142,8 @@ FlickableSectionPage {
 			id: infoText
 
 			readonly property string currentPin: RemoteServiceModel.psk
-			//: MOBILE %1 is replaced with the pairing code, %2 with the name "AusweisApp"
-			readonly property string enterCodeString: qsTr("Enter the pairing code \"%1\" in the %2 on your other device. Both devices have to be on the same network (e.g. WiFi).")
+			//: MOBILE %1 is replaced with the name "AusweisApp"
+			readonly property string enterCodeString: qsTr("Enter the pairing code in the %1 on your other device. Both devices have to be on the same network (e.g. WiFi). The code is valid for 2 minutes and is automatically renewed afterwards.")
 
 			//: MOBILE
 			text: qsTr("You can use this Smartphone as a card reader for the %1 on other devices e.g. a laptop.\n\nTo do this you first have to pair that device with this smartphone.").arg(Qt.application.name)
@@ -181,8 +175,8 @@ FlickableSectionPage {
 					when: root.runningInPairingMode
 
 					PropertyChanges {
-						infoText.Accessible.name: infoText.enterCodeString.arg(infoText.currentPin.split("").join(" ")).arg(Qt.application.name)
-						infoText.text: infoText.enterCodeString.arg(infoText.currentPin).arg(Qt.application.name)
+						infoText.Accessible.name: infoText.enterCodeString.arg(Qt.application.name)
+						infoText.text: infoText.enterCodeString.arg(Qt.application.name)
 					}
 				},
 				State {
@@ -201,24 +195,18 @@ FlickableSectionPage {
 	}
 	GText {
 		Accessible.ignored: true
-		Layout.alignment: Qt.AlignHCenter
-		horizontalAlignment: Text.AlignHCenter
+		horizontalAlignment: Text.AlignLeft
 
 		//: MOBILE
 		text: qsTr("Pairing code:")
 		textStyle: Style.text.headline
 		visible: pairingCode.visible
 	}
-	GText {
+	PairingCodePane {
 		id: pairingCode
 
-		readonly property string currentPin: RemoteServiceModel.psk
-
-		Accessible.ignored: true
-		Layout.alignment: Qt.AlignHCenter
-		horizontalAlignment: Text.AlignHCenter
-		text: RemoteServiceModel.isPairing ? currentPin : "0000"
-		textStyle: Style.text.headline
+		Layout.fillWidth: true
+		currentPin: RemoteServiceModel.psk
 		visible: false
 	}
 	GButton {
@@ -308,6 +296,7 @@ FlickableSectionPage {
 			id: pairingCodeInfoView
 
 			PairingCodeInfoView {
+				currentPin: RemoteServiceModel.psk
 				text: paringCodeLink.text
 
 				onNavActionClicked: root.pop()
@@ -351,8 +340,10 @@ FlickableSectionPage {
 			model: RemoteServiceModel.allDevices
 
 			delegate: DevicesListItem {
+				required property int index
+
 				Layout.fillWidth: true
-				linkQualityVisible: false
+				showSeparator: index > 0
 				titleColor: Style.color.textNormal.basic_unchecked
 			}
 		}
@@ -381,7 +372,7 @@ FlickableSectionPage {
 	LocalNetworkInfo {
 		id: networkPermissionText
 
-		visible: RemoteServiceModel.requiresLocalNetworkPermission
+		visible: Qt.platform.os === "ios"
 	}
 	GProgressBar {
 		//: MOBILE Name of an progress indicator during the pairing process read by screen readers

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus Service GmbH, Germany
  */
 
 #include "pcscmock.h"
@@ -10,6 +10,16 @@
 #ifndef Q_OS_WIN
 	#include <wintypes.h>
 #endif
+
+#if defined(Q_OS_MACOS)
+	#define CM_IOCTL_GET_FEATURE_REQUEST (0x42000000 + 3400)
+#elif defined(PCSCLITE_VERSION_NUMBER)
+	#include <reader.h>
+#else
+//  PC/SC Part 10 v2.02.09 November 2012 - 2.2 GET_FEATURE_REQUEST
+	#define CM_IOCTL_GET_FEATURE_REQUEST SCARD_CTL_CODE(3400)
+#endif
+
 
 struct MockSCardCommandData
 {
@@ -61,10 +71,24 @@ LONG SCardControl(SCARDHANDLE hCard, DWORD dwControlCode, LPCVOID pbSendBuffer, 
 	Q_UNUSED(pbSendBuffer)
 	Q_UNUSED(cbSendLength)
 
-	const auto featuresTLV = QByteArray::fromHex("120442330012");
-	Q_ASSERT(static_cast<qsizetype>(cbRecvLength) >= featuresTLV.size());
-	memcpy(pbRecvBuffer, featuresTLV.data(), static_cast<size_t>(featuresTLV.size()));
-	*lpBytesReturned = static_cast<DWORD>(featuresTLV.size());
+	QByteArray output;
+	switch (dwControlCode)
+	{
+		case CM_IOCTL_GET_FEATURE_REQUEST:
+			output = QByteArray::fromHex("120442330012");
+			break;
+
+		case 0x42000dcc: // EXECUTE_PACE
+			output = QByteArray::fromHex("c26306f0040090003100");
+			break;
+
+		default:
+			return SCARD_E_INVALID_PARAMETER;
+	}
+
+	Q_ASSERT(static_cast<qsizetype>(cbRecvLength) >= output.size());
+	memcpy(pbRecvBuffer, output.data(), static_cast<size_t>(output.size()));
+	*lpBytesReturned = static_cast<DWORD>(output.size());
 
 	return SCARD_S_SUCCESS;
 }

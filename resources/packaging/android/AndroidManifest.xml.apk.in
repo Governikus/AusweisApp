@@ -44,7 +44,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme.Launcher"
         android:enableOnBackInvokedCallback="false"
-        tools:targetApi="33">
+        tools:targetApi="@ANDROID_TARGET_SDK_VERSION@">
         <meta-data
             android:name="android.max_aspect"
             android:value="2.4" />
@@ -88,7 +88,6 @@
                 <data android:host="127.0.0.1" android:port="24727" />
                 <data android:path="/eID-Client" />
                 <data android:scheme="eid" />
-                <data android:scheme="http" />
             </intent-filter>
 
             <!-- Splash screen -->

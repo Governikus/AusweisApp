@@ -1,21 +1,20 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateProcessCertificatesFromEac2.h"
 
 #include "ResourceLoader.h"
-#include "asn1/CVCertificateChainBuilder.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
-#include "paos/retrieve/DidAuthenticateEac2Parser.h"
+#include "paos/retrieve/PaosParser.h"
 #include "states/StateBuilder.h"
 
 #include "TestAuthContext.h"
-#include "TestFileHelper.h"
+#include "TestParserHelper.h"
 
 #include <QtCore>
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -41,8 +40,10 @@ class test_StateProcessCertificatesFromEac2
 		void init()
 		{
 			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
-			QSharedPointer<DIDAuthenticateEAC2> didAuthEac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"_L1))));
-			mAuthContext->setDidAuthenticateEac2(didAuthEac2);
+			const auto& parser = TestParserHelper::create(":/paos/DIDAuthenticateEAC2.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			QSharedPointer<DIDAuthenticateEAC2> eac2(static_cast<DIDAuthenticateEAC2*>(pm));
+			mAuthContext->setDidAuthenticateEac2(eac2);
 
 			QByteArray hexBytes = QByteArray("00000000"
 											 "fa00"
@@ -53,7 +54,7 @@ class test_StateProcessCertificatesFromEac2
 											 "2000 5fdd96ef104815b7e5859b2bbdd64160146fe1ad1fc3152f7534ec339629ddde");
 			EstablishPaceChannelOutput paceOutput;
 			QVERIFY(paceOutput.parse(QByteArray::fromHex(hexBytes)));
-			mAuthContext->setPaceOutputData(paceOutput);
+			mAuthContext->setPaceOutput(paceOutput);
 
 			mState.reset(StateBuilder::createState<StateProcessCertificatesFromEac2>(mAuthContext));
 			mState->onEntry(nullptr);
@@ -75,7 +76,7 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(mState->getContext()->hasChainForCertificationAuthority(*mState->getContext()->getPaceOutputData()));
+			QVERIFY(mState->getContext()->hasChainForCertificationAuthority(mState->getContext()->getPaceOutput()));
 		}
 
 
@@ -90,7 +91,7 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(!mState->getContext()->hasChainForCertificationAuthority(*mState->getContext()->getPaceOutputData()));
+			QVERIFY(!mState->getContext()->hasChainForCertificationAuthority(mState->getContext()->getPaceOutput()));
 			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Process_Certificates_From_Eac2_Cvc_Chain_Missing);
 		}
 
@@ -108,7 +109,7 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(mState->getContext()->hasChainForCertificationAuthority(*mState->getContext()->getPaceOutputData()));
+			QVERIFY(mState->getContext()->hasChainForCertificationAuthority(mState->getContext()->getPaceOutput()));
 		}
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -85,9 +85,8 @@ class GeneralSettings
 		[[nodiscard]] bool isDeviceSurveyPending() const;
 		void setDeviceSurveyPending(bool pDeviceSurveyPending);
 
-		[[nodiscard]] bool askForStoreFeedback() const;
-		[[nodiscard]] bool isRequestStoreFeedback() const;
-		void setRequestStoreFeedback(bool pRequest);
+		[[nodiscard]] bool shouldShowAppStoreRatingDialog() const;
+		void setShowAppStoreRatingDialog(bool pRequest);
 
 		[[nodiscard]] QString getPreferredTechnology() const;
 		void setPreferredTechnology(const QString& pTechnology);
@@ -174,6 +173,13 @@ class GeneralSettings
 
 #ifdef Q_OS_WIN
 		void migrateSettings();
+#endif
+
+#ifdef Q_OS_ANDROID
+		void setUpdateVersionCode(int pVersionCode);
+		int getUpdateVersionCode() const;
+		void setUpdateReminderShown(bool pIsShown);
+		bool isUpdateReminderShown() const;
 #endif
 
 	Q_SIGNALS:

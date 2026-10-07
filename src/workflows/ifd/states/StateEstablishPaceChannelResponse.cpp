@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateEstablishPaceChannelResponse.h"
 
 #include "ServerMessageHandler.h"
+
 
 using namespace governikus;
 
@@ -19,7 +20,7 @@ StateEstablishPaceChannelResponse::StateEstablishPaceChannelResponse(const QShar
 void StateEstablishPaceChannelResponse::run()
 {
 	const QSharedPointer<IfdServiceContext>& context = getContext();
-	const auto& establishPaceChannelOutput = context->getEstablishPaceChannelOutput();
+	const auto& paceOutput = context->getPaceOutput();
 
 	const auto& ifdServer = context->getIfdServer();
 	if (ifdServer)
@@ -31,15 +32,12 @@ void StateEstablishPaceChannelResponse::run()
 
 			messageHandler->sendEstablishPaceChannelResponse(
 					context->getSlotHandle(),
-					establishPaceChannelOutput
+					paceOutput
 					);
 		}
 	}
 
-	const bool isWrongPacePassword = CardReturnCodeUtil::equalsWrongPacePassword(establishPaceChannelOutput.getPaceReturnCode());
-	context->setEstablishPaceChannel(nullptr);
-
-	if (isWrongPacePassword)
+	if (paceOutput.wrongPasswordUsed())
 	{
 		Q_EMIT fireWrongPacePassword();
 		return;

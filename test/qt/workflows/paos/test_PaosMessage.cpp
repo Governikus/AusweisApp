@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "paos/PaosMessage.h"
@@ -30,23 +30,6 @@ class test_PaosMessage
 			PaosMessage msg(PaosType::UNKNOWN);
 			QCOMPARE(msg.getMessageId(), QString());
 			QCOMPARE(msg.getRelatesTo(), QString());
-		}
-
-
-		void handleWSAddressingHeaders()
-		{
-			PaosMessage msg(PaosType::UNKNOWN);
-			QCOMPARE(msg.handleWSAddressingHeaders(QStringLiteral("elem name"), QStringLiteral("some value"), QXmlStreamAttributes()), false);
-			QCOMPARE(msg.getMessageId(), QString());
-			QCOMPARE(msg.getRelatesTo(), QString());
-
-			QCOMPARE(msg.handleWSAddressingHeaders(QStringLiteral("MessageID"), QStringLiteral("msg value"), QXmlStreamAttributes()), true);
-			QCOMPARE(msg.getMessageId(), QStringLiteral("msg value"));
-			QCOMPARE(msg.getRelatesTo(), QString());
-
-			QCOMPARE(msg.handleWSAddressingHeaders(QStringLiteral("RelatesTo"), QStringLiteral("relates value"), QXmlStreamAttributes()), true);
-			QCOMPARE(msg.getMessageId(), QStringLiteral("msg value"));
-			QCOMPARE(msg.getRelatesTo(), QStringLiteral("relates value"));
 		}
 
 

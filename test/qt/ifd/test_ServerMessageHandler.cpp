@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "ServerMessageHandler.h"
@@ -31,12 +31,16 @@
 #include <QSignalSpy>
 #include <QtTest>
 
+
 Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
+
 Q_DECLARE_METATYPE(ECardApiResult::Minor)
+
 
 class MockIfdMessageDispatcherServer
 	: public IfdDispatcherServer
@@ -162,7 +166,7 @@ class test_ServerMessageHandler
 			QSignalSpy spyContextHandle(mDataChannel.data(), &MockDataChannel::fireSend);
 			ServerMessageHandlerImpl serverMessageHandler(mDataChannel);
 
-			IfdEstablishContext establishContext(IfdVersion::Version::v2, DeviceInfo::getName());
+			IfdEstablishContext establishContext(IfdVersion::Version::v2, DeviceInfo::getDeviceName());
 			mDataChannel->onReceived(establishContext.toByteArray(IfdVersion::Version::v2, QString()));
 
 			const QJsonDocument& doc = QJsonDocument::fromJson(spyContextHandle.at(0).at(0).toByteArray());
@@ -595,7 +599,7 @@ class test_ServerMessageHandler
 			const QVariant ifdEstablishPACEChannelResponseVariant = ifdEstablishPACEChannelResponseArguments.at(0);
 			QVERIFY(ifdEstablishPACEChannelResponseVariant.canConvert<QByteArray>());
 
-			const IfdEstablishPaceChannelResponse ifdEstablishPACEChannelResponse(IfdMessage::parseByteArray(ifdEstablishPACEChannelResponseVariant.toByteArray()));
+			const IfdEstablishPaceChannelResponse ifdEstablishPACEChannelResponse(PacePasswordId::PACE_PIN, IfdMessage::parseByteArray(ifdEstablishPACEChannelResponseVariant.toByteArray()));
 			QVERIFY(!ifdEstablishPACEChannelResponse.isIncomplete());
 			QCOMPARE(ifdEstablishPACEChannelResponse.getType(), IfdMessageType::IFDEstablishPACEChannelResponse);
 			QCOMPARE(ifdEstablishPACEChannelResponse.getContextHandle(), contextHandle);
@@ -729,7 +733,7 @@ class test_ServerMessageHandler
 			sendSpy.clear();
 
 			// Card connected, try to establish PACE with basic reader while not in pinpad mode.
-			const QByteArray ifdEstablishPACEChannelMsg = IfdEstablishPaceChannel(connectResponse.getSlotHandle(), EstablishPaceChannel(), 6).toByteArray(IfdVersion::Version::latest, contextHandle);
+			const QByteArray ifdEstablishPACEChannelMsg = IfdEstablishPaceChannel(connectResponse.getSlotHandle(), EstablishPaceChannel(PacePasswordId::PACE_PIN), 6).toByteArray(IfdVersion::Version::latest, contextHandle);
 			mDataChannel->onReceived(ifdEstablishPACEChannelMsg);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 
@@ -737,7 +741,7 @@ class test_ServerMessageHandler
 			const QVariant ifdEstablishPACEChannelResponseVariant = ifdEstablishPACEChannelResponseArguments.at(0);
 			QVERIFY(ifdEstablishPACEChannelResponseVariant.canConvert<QByteArray>());
 
-			const IfdEstablishPaceChannelResponse ifdEstablishPACEChannelResponse(IfdMessage::parseByteArray(ifdEstablishPACEChannelResponseVariant.toByteArray()));
+			const IfdEstablishPaceChannelResponse ifdEstablishPACEChannelResponse(PacePasswordId::PACE_PIN, IfdMessage::parseByteArray(ifdEstablishPACEChannelResponseVariant.toByteArray()));
 			QVERIFY(!ifdEstablishPACEChannelResponse.isIncomplete());
 			QCOMPARE(ifdEstablishPACEChannelResponse.getType(), IfdMessageType::IFDEstablishPACEChannelResponse);
 			QCOMPARE(ifdEstablishPACEChannelResponse.getContextHandle(), contextHandle);
@@ -950,7 +954,7 @@ class test_ServerMessageHandler
 
 			const QString slotHandle("Slot Handle"_L1);
 			EstablishPaceChannelOutput output;
-			output.setPaceReturnCode(returnCode);
+			output.setReturnCode(returnCode);
 
 			ServerMessageHandlerImpl serverMsgHandler(mDataChannel);
 			QString contextHandle;

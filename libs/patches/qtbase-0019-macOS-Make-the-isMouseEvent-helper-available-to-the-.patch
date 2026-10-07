@@ -1,0 +1,95 @@
+From f7e074a2b3661049e5b6c325fde0ac33ae5f54db Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
+Date: Thu, 30 Jul 2026 19:53:54 +0200
+Subject: macOS: Make the isMouseEvent helper available to the whole plugin
+
+It was a file static in qnswindow.mm, but we need the same check in
+other places as well. We now express it in terms of the existing
+cocoaEvent2QtMouseEvent, which as a side effect also covers the
+NSEventTypeOtherMouse* events that the file static left out, so frame
+strut handling and popup redirection now treat the middle mouse button
+like the left and right ones.
+
+Pick-to: 6.12 6.11 6.8
+Change-Id: I244d962fcc52b0bbb43ec66a2860ee55a752d2ce
+Reviewed-by: Doris Verria <doris.verria@qt.io>
+(cherry picked from commit fd22838f0efb997da3462c225538508e603e201f)
+---
+ src/plugins/platforms/cocoa/qcocoahelpers.h  |  1 +
+ src/plugins/platforms/cocoa/qcocoahelpers.mm |  5 +++++
+ src/plugins/platforms/cocoa/qnswindow.mm     | 20 ++------------------
+ 3 files changed, 8 insertions(+), 18 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoahelpers.h y/qtbase/src/plugins/platforms/cocoa/qcocoahelpers.h
+index 0e67629177cd7f54dcfdc0566fc16ba9e0749770..bc89257a1abab37d2d71550d0e2c4bff0bc143a8 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoahelpers.h
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoahelpers.h
+@@ -73,6 +73,7 @@ Qt::MouseButton cocoaButton2QtButton(NSInteger buttonNum);
+ Qt::MouseButton cocoaButton2QtButton(NSEvent *event);
+ 
+ QEvent::Type cocoaEvent2QtMouseEvent(NSEvent *event);
++bool qt_mac_isMouseEvent(NSEvent *event);
+ 
+ Qt::MouseButtons cocoaMouseButtons2QtMouseButtons(NSInteger pressedMouseButtons);
+ Qt::MouseButtons currentlyPressedMouseButtons();
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoahelpers.mm y/qtbase/src/plugins/platforms/cocoa/qcocoahelpers.mm
+index e86386aad028cf101e3a7feecab31d4c801f1630..f05fb333d715c41bc129b45fe1d51571be3a1385 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoahelpers.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoahelpers.mm
+@@ -309,6 +309,11 @@ QEvent::Type cocoaEvent2QtMouseEvent(NSEvent *event)
+     return QEvent::None;
+ }
+ 
++bool qt_mac_isMouseEvent(NSEvent *event)
++{
++    return cocoaEvent2QtMouseEvent(event) != QEvent::None;
++}
++
+ /*!
+   \fn Qt::MouseButtons cocoaMouseButtons2QtMouseButtons(NSInteger pressedMouseButtons)
+ 
+diff --git x/qtbase/src/plugins/platforms/cocoa/qnswindow.mm y/qtbase/src/plugins/platforms/cocoa/qnswindow.mm
+index d678b953df7f4c8dae0062ad95f644760c47e9fd..e656419445194432b663d0ff34ec80e1532aa6dd 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qnswindow.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qnswindow.mm
+@@ -18,22 +18,6 @@
+ 
+ Q_STATIC_LOGGING_CATEGORY(lcQpaEvents, "qt.qpa.events");
+ 
+-static bool isMouseEvent(NSEvent *ev)
+-{
+-    switch ([ev type]) {
+-    case NSEventTypeLeftMouseDown:
+-    case NSEventTypeLeftMouseUp:
+-    case NSEventTypeRightMouseDown:
+-    case NSEventTypeRightMouseUp:
+-    case NSEventTypeMouseMoved:
+-    case NSEventTypeLeftMouseDragged:
+-    case NSEventTypeRightMouseDragged:
+-        return true;
+-    default:
+-        return false;
+-    }
+-}
+-
+ @implementation NSWindow (FullScreenProperty)
+ 
+ + (void)load
+@@ -342,7 +326,7 @@ QT_END_NAMESPACE
+     }
+ 
+     const bool mouseEventInFrameStrut = [theEvent, self]{
+-        if (isMouseEvent(theEvent)) {
++        if (qt_mac_isMouseEvent(theEvent)) {
+             const NSPoint loc = theEvent.locationInWindow;
+             const NSRect windowFrame = [self convertRectFromScreen:self.frame];
+             const NSRect contentFrame = self.contentView.frame;
+@@ -366,7 +350,7 @@ QT_END_NAMESPACE
+     // not Qt). However, an active popup is expected to grab any mouse event within the
+     // application, so we need to handle those explicitly and trust Qt's isWindowBlocked
+     // implementation to eat events that shouldn't be delivered anyway.
+-    if (isMouseEvent(theEvent) && QGuiApplicationPrivate::instance()->activePopupWindow()
++    if (qt_mac_isMouseEvent(theEvent) && QGuiApplicationPrivate::instance()->activePopupWindow()
+         && QGuiApplicationPrivate::instance()->isWindowBlocked(m_platformWindow->window(), nullptr)) {
+         qCDebug(lcQpaWindow) << "Mouse event over modally blocked window" << m_platformWindow->window()
+                              << "while popup is open - redirecting";

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "EstablishPaceChannelOutput.h"
@@ -13,7 +13,9 @@
 #include <QRegularExpression>
 #include <QtEndian>
 
+
 Q_DECLARE_LOGGING_CATEGORY(card)
+
 
 using namespace governikus;
 
@@ -38,10 +40,10 @@ IMPLEMENT_ASN1_OBJECT(ESTABLISHPACECHANNELOUTPUT)
 }  // namespace governikus
 
 
-CardReturnCode EstablishPaceChannelOutput::parseReturnCode(quint32 pPaceReturnCode)
+CardReturnCode EstablishPaceChannelOutput::toReturnCode(quint32 pErrorCode)
 {
 	// error codes from the reader
-	switch (EstablishPaceChannelErrorCode(pPaceReturnCode))
+	switch (EstablishPaceChannelErrorCode(pErrorCode))
 	{
 		case EstablishPaceChannelErrorCode::NoError:
 			// no error
@@ -57,7 +59,6 @@ CardReturnCode EstablishPaceChannelOutput::parseReturnCode(quint32 pPaceReturnCo
 		case EstablishPaceChannelErrorCode::WrongAuthenticationToken:
 			return CardReturnCode::COMMAND_FAILED;
 
-		// 0xF00663C2 -- invalid PIN?
 		case EstablishPaceChannelErrorCode::CommunicationAbort:
 			return CardReturnCode::COMMAND_FAILED;
 
@@ -71,84 +72,17 @@ CardReturnCode EstablishPaceChannelOutput::parseReturnCode(quint32 pPaceReturnCo
 			return CardReturnCode::INPUT_TIME_OUT;
 
 		default:
-			break;
-	}
-
-	// Error codes wrapping error codes from the card. The format is 0xXXXXYYZZ, where XXXX identifies
-	// the command/step, and YY and ZZ encode the SW1 and SW2 from the response APDU from the card.
-	switch (pPaceReturnCode & 0xFFFF0000U)
-	{
-		case 0xF0000000U: // Select EF.CardAccess
-		case 0xF0010000U: // Read Binary EF.CardAccess
-		case 0xF0020000U: // MSE: Set AT
-			break;
-
-		case 0xF0030000U: // General Authenticate Step 1
-		case 0xF0040000U: // General Authenticate Step 2
-		case 0xF0050000U: // General Authenticate Step 3
-		case 0xF0060000U: // General Authenticate Step 4
-			if ((pPaceReturnCode & 0xFF00U) == 0x6300U)
+		{
+			// Error codes wrapping error codes from the card. The format is 0xXXXXYYZZ, where XXXX identifies
+			// the command/step, and YY and ZZ encode the SW1 and SW2 from the response APDU from the card.
+			if (EstablishPaceChannelErrorCode(pErrorCode & 0xFFFFFF00U) == EstablishPaceChannelErrorCode::GeneralAuthenticateStep4)
 			{
-				// SW1 == 0x63 is a warning, which includes incorrectly entered CAN/PIN. For the PIN
-				// we get SW2 == 0xCX, with X being the number of remaining retries.
-				return CardReturnCode::INVALID_PASSWORD;
+				return CardReturnCode::OK;
 			}
-			break;
 
-		default:
-			break;
+			return CardReturnCode::UNKNOWN;
+		}
 	}
-
-	return CardReturnCode::UNKNOWN;
-}
-
-
-EstablishPaceChannelErrorCode EstablishPaceChannelOutput::generateReturnCode(CardReturnCode pReturnCode)
-{
-	switch (pReturnCode)
-	{
-		case CardReturnCode::UNKNOWN:
-		case CardReturnCode::UNDEFINED:
-		case CardReturnCode::PIN_NOT_BLOCKED:
-		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
-		case CardReturnCode::PROTOCOL_ERROR:
-		case CardReturnCode::WRONG_LENGTH:
-			return EstablishPaceChannelErrorCode::UnexpectedDataInInput;
-
-		case CardReturnCode::INVALID_PIN:
-			return EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC2;
-
-		case CardReturnCode::INVALID_PIN_2:
-			return EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC1;
-
-		case CardReturnCode::INVALID_PIN_3:
-			return EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC0;
-
-		case CardReturnCode::INVALID_CAN:
-		case CardReturnCode::INVALID_PUK:
-		case CardReturnCode::INVALID_PASSWORD:
-			return EstablishPaceChannelErrorCode::GeneralAuthenticateStep4;
-
-		case CardReturnCode::OK:
-		case CardReturnCode::OK_PUK:
-		case CardReturnCode::OK_CAN:
-			return EstablishPaceChannelErrorCode::NoError;
-
-		case CardReturnCode::CARD_NOT_FOUND:
-		case CardReturnCode::RESPONSE_EMPTY:
-			return EstablishPaceChannelErrorCode::NoCard;
-
-		case CardReturnCode::INPUT_TIME_OUT:
-			return EstablishPaceChannelErrorCode::Timeout;
-
-		case CardReturnCode::COMMAND_FAILED:
-			return EstablishPaceChannelErrorCode::CommunicationAbort;
-
-		case CardReturnCode::CANCELLATION_BY_USER:
-			return EstablishPaceChannelErrorCode::Abort;
-	}
-
-	Q_UNREACHABLE();
 }
 
 
@@ -164,35 +98,17 @@ void EstablishPaceChannelOutput::initEfCardAccess()
 }
 
 
-bool EstablishPaceChannelOutput::findErrorCode(const QString& pOutputData)
-{
-	// Try to parse the value of EstablishPaceChannelOutput.errorCode
-	// the regular expression is determined by the ASN.1 structure of EstablishPaceChannelOutput
-
-	QRegularExpression regExp(QStringLiteral("(.*)a1060404(?<a1>([[:xdigit:]]){8})a2040402"));
-	auto match = regExp.match(pOutputData);
-	if (!match.hasMatch())
-	{
-		return false;
-	}
-
-	qCWarning(card) << "Determine at least PACE return code by regular expression";
-	const QByteArray paceReturnCodeBytes = QByteArray::fromHex(match.captured(QStringLiteral("a1")).toUtf8());
-	mPaceReturnCode = parseReturnCode(qFromBigEndian<quint32>(paceReturnCodeBytes.data()));
-	qCDebug(card) << "mPaceReturnCode:" << paceReturnCodeBytes.toHex() << mPaceReturnCode;
-
-	return true;
-}
-
-
-EstablishPaceChannelOutput::EstablishPaceChannelOutput(CardReturnCode pPaceReturnCode)
-	: mPaceReturnCode(pPaceReturnCode)
+EstablishPaceChannelOutput::EstablishPaceChannelOutput(PacePasswordId pPasswordId, CardReturnCode pReturnCode)
+	: mPasswordId(pPasswordId)
+	, mReturnCode(pReturnCode)
+	, mErrorCode(0)
 	, mStatusMseSetAt()
 	, mEfCardAccess()
 	, mIdIcc()
 	, mCarCurr()
 	, mCarPrev()
 {
+	setReturnCode(pReturnCode);
 	initMseStatusSetAt();
 	initEfCardAccess();
 }
@@ -200,7 +116,6 @@ EstablishPaceChannelOutput::EstablishPaceChannelOutput(CardReturnCode pPaceRetur
 
 bool EstablishPaceChannelOutput::parse(const QByteArray& pControlOutput)
 {
-	mPaceReturnCode = CardReturnCode::COMMAND_FAILED;
 	initMseStatusSetAt();
 	initEfCardAccess();
 	mIdIcc.clear();
@@ -209,6 +124,7 @@ bool EstablishPaceChannelOutput::parse(const QByteArray& pControlOutput)
 
 	if (pControlOutput.size() < 6)
 	{
+		setReturnCode(CardReturnCode::COMMAND_FAILED);
 		qCWarning(card) << "Output of EstablishPaceChannel has wrong size";
 		return false;
 	}
@@ -228,17 +144,16 @@ bool EstablishPaceChannelOutput::parse(const QByteArray& pControlOutput)
 
 bool EstablishPaceChannelOutput::parseResultCode(const QByteArray& pPaceOutput)
 {
-	mPaceReturnCode = CardReturnCode::COMMAND_FAILED;
-
 	if (pPaceOutput.size() < 4)
 	{
+		mReturnCode = CardReturnCode::COMMAND_FAILED;
 		return false;
 	}
 
 	// PCSC Part 10 section 2.5.1: "Byte ordering is decided by machine architecture."
-	const auto paceReturnCode = qFromLittleEndian<quint32>(pPaceOutput.data());
-	mPaceReturnCode = parseReturnCode(paceReturnCode);
-	qCDebug(card) << "mPaceReturnCode:" << pPaceOutput.mid(0, 4).toHex() << mPaceReturnCode;
+	mErrorCode = qFromLittleEndian<quint32>(pPaceOutput.data());
+	mReturnCode = toReturnCode(mErrorCode);
+	qCDebug(card) << "mPaceReturnCode:" << pPaceOutput.mid(0, 4).toHex() << mReturnCode;
 
 	return true;
 }
@@ -314,7 +229,6 @@ bool EstablishPaceChannelOutput::parseOutputData(const QByteArray& pOutput)
 
 bool EstablishPaceChannelOutput::parseFromCcid(const QByteArray& pOutput)
 {
-	mPaceReturnCode = CardReturnCode::COMMAND_FAILED;
 	initMseStatusSetAt();
 	initEfCardAccess();
 	mIdIcc.clear();
@@ -323,6 +237,7 @@ bool EstablishPaceChannelOutput::parseFromCcid(const QByteArray& pOutput)
 
 	if (pOutput.size() < 2)
 	{
+		mReturnCode = CardReturnCode::COMMAND_FAILED;
 		qCCritical(card) << "EstablishPaceChannelOutput too short";
 		return false;
 	}
@@ -332,14 +247,16 @@ bool EstablishPaceChannelOutput::parseFromCcid(const QByteArray& pOutput)
 	const auto channelOutput = decodeObject<ESTABLISHPACECHANNELOUTPUT>(outputData);
 	if (channelOutput == nullptr)
 	{
+		mReturnCode = CardReturnCode::COMMAND_FAILED;
 		const auto& outputDataHex = QString::fromLatin1(outputData.toHex());
 		qCCritical(card) << "Parsing EstablishPaceChannelOutput failed" << outputDataHex;
-		return findErrorCode(outputDataHex);
+		return false;
 	}
 
 	const QByteArray paceReturnCodeBytes = Asn1OctetStringUtil::getValue(channelOutput->mErrorCode);
-	mPaceReturnCode = parseReturnCode(qFromBigEndian<quint32>(paceReturnCodeBytes.data()));
-	qCDebug(card) << "mPaceReturnCode:" << paceReturnCodeBytes.toHex() << mPaceReturnCode;
+	mErrorCode = qFromBigEndian<quint32>(paceReturnCodeBytes.data());
+	mReturnCode = toReturnCode(mErrorCode);
+	qCDebug(card) << "mPaceReturnCode:" << paceReturnCodeBytes.toHex() << mReturnCode;
 
 	if (channelOutput->mStatusMSESetAt)
 	{
@@ -375,27 +292,140 @@ bool EstablishPaceChannelOutput::parseFromCcid(const QByteArray& pOutput)
 }
 
 
-CardReturnCode EstablishPaceChannelOutput::getPaceReturnCode() const
+PacePasswordId EstablishPaceChannelOutput::getPasswordId() const
 {
-	return mPaceReturnCode;
+	return mPasswordId;
 }
 
 
-void EstablishPaceChannelOutput::setPaceReturnCode(CardReturnCode pPaceReturnCode)
+CardReturnCode EstablishPaceChannelOutput::getReturnCode() const
 {
-	mPaceReturnCode = pPaceReturnCode;
+	return mReturnCode;
+}
+
+
+void EstablishPaceChannelOutput::setReturnCode(CardReturnCode pReturnCode)
+{
+	mReturnCode = pReturnCode;
+
+	EstablishPaceChannelErrorCode errorCode = EstablishPaceChannelErrorCode::NoError;
+	switch (pReturnCode)
+	{
+		case CardReturnCode::UNKNOWN:
+		case CardReturnCode::UNDEFINED:
+		case CardReturnCode::PIN_NOT_BLOCKED:
+		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
+		case CardReturnCode::PROTOCOL_ERROR:
+		case CardReturnCode::WRONG_LENGTH:
+			errorCode = EstablishPaceChannelErrorCode::UnexpectedDataInInput;
+			break;
+
+		case CardReturnCode::OK:
+			errorCode = EstablishPaceChannelErrorCode::NoError;
+			break;
+
+		case CardReturnCode::CARD_NOT_FOUND:
+		case CardReturnCode::RESPONSE_EMPTY:
+			errorCode = EstablishPaceChannelErrorCode::NoCard;
+			break;
+
+		case CardReturnCode::INPUT_TIME_OUT:
+			errorCode = EstablishPaceChannelErrorCode::Timeout;
+			break;
+
+		case CardReturnCode::COMMAND_FAILED:
+			errorCode = EstablishPaceChannelErrorCode::CommunicationAbort;
+			break;
+
+		case CardReturnCode::CANCELLATION_BY_USER:
+			errorCode = EstablishPaceChannelErrorCode::Abort;
+			break;
+	}
+	setErrorCode(errorCode);
+}
+
+
+void EstablishPaceChannelOutput::setErrorCode(EstablishPaceChannelErrorCode pErrorCode)
+{
+	mErrorCode = Enum<EstablishPaceChannelErrorCode>::getValue(pErrorCode);
+}
+
+
+PaceResult EstablishPaceChannelOutput::getPaceResult() const
+{
+	if (mReturnCode != CardReturnCode::OK)
+	{
+		return PaceResult::UNDEFINED;
+	}
+
+	const auto rightPassword = EstablishPaceChannelErrorCode(mErrorCode) == EstablishPaceChannelErrorCode::NoError;
+	switch (mPasswordId)
+	{
+		case PacePasswordId::PACE_CAN:
+			if (rightPassword)
+			{
+				return mCarCurr.isEmpty() ? PaceResult::OK_CAN : PaceResult::OK_CAN_AUTH;
+			}
+			return PaceResult::INVALID_CAN;
+
+		case PacePasswordId::PACE_PIN:
+			if (rightPassword)
+			{
+				return mCarCurr.isEmpty() ? PaceResult::OK_PIN : PaceResult::OK_PIN_AUTH;
+			}
+
+			switch (mErrorCode & 0x0F)
+			{
+				case 2:
+					return PaceResult::INVALID_PIN_1;
+
+				case 1:
+					return PaceResult::INVALID_PIN_2;
+
+				default:
+					return PaceResult::INVALID_PIN_3;
+			}
+
+		case PacePasswordId::PACE_PUK:
+			return rightPassword ? PaceResult::OK_PUK : PaceResult::INVALID_PUK;
+
+		default:
+			return PaceResult::UNDEFINED;
+	}
+}
+
+
+bool EstablishPaceChannelOutput::isUndefined() const
+{
+	return mReturnCode == CardReturnCode::UNDEFINED;
+}
+
+
+bool EstablishPaceChannelOutput::isOk() const
+{
+	if (mReturnCode == CardReturnCode::OK)
+	{
+		return EstablishPaceChannelErrorCode(mErrorCode) == EstablishPaceChannelErrorCode::NoError;
+	}
+
+	return false;
+}
+
+
+bool EstablishPaceChannelOutput::wrongPasswordUsed() const
+{
+	if (mReturnCode == CardReturnCode::OK)
+	{
+		return (mErrorCode & 0xFFFFFF00U) == EstablishPaceChannelErrorCode::GeneralAuthenticateStep4;
+	}
+
+	return false;
 }
 
 
 StatusCode EstablishPaceChannelOutput::getStatusCodeMseSetAt() const
 {
 	return ResponseApdu(mStatusMseSetAt).getStatusCode();
-}
-
-
-const QByteArray& EstablishPaceChannelOutput::getStatusMseSetAt() const
-{
-	return mStatusMseSetAt;
 }
 
 
@@ -468,8 +498,7 @@ void EstablishPaceChannelOutput::setCarPrev(const QByteArray& pCarPrev)
 QByteArray EstablishPaceChannelOutput::toResultCode() const
 {
 	QByteArray paceReturnCodeBytes(sizeof(quint32), 0);
-	quint32 value = Enum<EstablishPaceChannelErrorCode>::getValue(generateReturnCode(mPaceReturnCode));
-	qToLittleEndian(value, paceReturnCodeBytes.data());
+	qToLittleEndian(mErrorCode, paceReturnCodeBytes.data());
 	return paceReturnCodeBytes;
 }
 
@@ -505,8 +534,7 @@ QByteArray EstablishPaceChannelOutput::toCcid() const
 	auto establishPaceChannelOutput = newObject<ESTABLISHPACECHANNELOUTPUT>();
 
 	QByteArray paceReturnCodeBytes(sizeof(quint32), 0);
-	quint32 value = Enum<EstablishPaceChannelErrorCode>::getValue(generateReturnCode(mPaceReturnCode));
-	qToBigEndian(value, paceReturnCodeBytes.data());
+	qToBigEndian(mErrorCode, paceReturnCodeBytes.data());
 	Asn1OctetStringUtil::setValue(paceReturnCodeBytes, establishPaceChannelOutput->mErrorCode);
 
 	Asn1OctetStringUtil::setValue(mStatusMseSetAt, establishPaceChannelOutput->mStatusMSESetAt);

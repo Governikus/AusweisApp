@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -53,9 +53,9 @@ FlickableSectionPage {
 
 		SelfAuthenticationView {
 			initialPlugin: root.readerType
+			lockAndHideNavigation: true
 
 			onBack: {
-				setLockedAndHidden(false);
 				pop();
 				show(UiModule.DEFAULT);
 			}
@@ -71,14 +71,12 @@ FlickableSectionPage {
 
 		function cancel() {
 			stopScan();
-			root.setLockedAndHidden(false);
 			root.popAll();
 		}
 		function startCheck() {
 			if (root.readerType === ReaderManagerPluginType.REMOTE_IFD) {
 				RemoteServiceModel.startDetection();
 			}
-			root.setLockedAndHidden();
 			root.push(checkIDCardWorkflow);
 		}
 		function stopScan() {
@@ -107,6 +105,7 @@ FlickableSectionPage {
 
 		RemoteServiceSettings {
 			allowUsage: true
+			lockAndHideNavigation: true
 
 			Component.onCompleted: RemoteServiceModel.startDetection()
 			Component.onDestruction: {
@@ -167,7 +166,6 @@ FlickableSectionPage {
 
 			onClicked: {
 				if (ApplicationModel.nfcState === ApplicationModel.NfcState.UNAVAILABLE && root.readerType !== ReaderManagerPluginType.REMOTE_IFD) {
-					root.setLockedAndHidden();
 					root.push(noNfcSuggestion);
 				} else {
 					d.startCheck();

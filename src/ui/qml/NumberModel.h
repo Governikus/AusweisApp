@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -50,7 +50,6 @@ class NumberModel
 		NumberModel();
 		~NumberModel() override = default;
 
-		CardReturnCode getInputErrorCode() const;
 		void clearNewPinAndConfirmation();
 		bool newPinAndConfirmationMatch() const;
 

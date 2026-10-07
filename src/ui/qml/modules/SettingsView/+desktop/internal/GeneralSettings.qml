@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -21,7 +21,7 @@ ColumnLayout {
 		//: DESKTOP
 		title: qsTr("Change language")
 
-		onFocusChanged: if (focus)
+		onActiveFocusChanged: if (activeFocus)
 			Utils.positionViewAtItem(this)
 
 		LanguageButtons {
@@ -34,7 +34,7 @@ ColumnLayout {
 		//: DESKTOP
 		title: qsTr("Appearance")
 
-		onFocusChanged: if (focus)
+		onActiveFocusChanged: if (activeFocus)
 			Utils.positionViewAtItem(this)
 
 		DarkModeButtons {
@@ -43,21 +43,17 @@ ColumnLayout {
 		}
 		GSwitch {
 			checked: SettingsModel.useSystemFont
-
-			//: DESKTOP
-			description: qsTr("Toggling will restart the %1").arg(Qt.application.name)
 			drawBottomCorners: true
 			//: DESKTOP
 			text: qsTr("Use system font")
 
+			onActiveFocusChanged: if (activeFocus)
+				Utils.positionViewAtItem(this)
 			onCheckedChanged: {
 				if (checked !== SettingsModel.useSystemFont) {
 					SettingsModel.useSystemFont = checked;
-					UiPluginModel.doRefresh();
 				}
 			}
-			onFocusChanged: if (focus)
-				Utils.positionViewAtItem(this)
 		}
 	}
 	GPane {
@@ -99,7 +95,7 @@ ColumnLayout {
 		//: DESKTOP
 		title: qsTr("Behavior")
 
-		onFocusChanged: if (focus)
+		onActiveFocusChanged: if (activeFocus)
 			Utils.positionViewAtItem(this)
 
 		GSwitch {
@@ -110,9 +106,9 @@ ColumnLayout {
 			//: DESKTOP Text for auto-start option
 			text: qsTr("Automatically start %1 (recommended)").arg(Qt.application.name)
 
-			onCheckedChanged: SettingsModel.autoStartApp = checked
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
+			onCheckedChanged: SettingsModel.autoStartApp = checked
 		}
 		GSwitch {
 			checked: SettingsModel.trayIconEnabled
@@ -124,9 +120,9 @@ ColumnLayout {
 			//: WINDOWS Text for attaching the AA to the system tray
 			qsTr("Attach %1 to system tray (recommended)").arg(Qt.application.name)
 
-			onCheckedChanged: SettingsModel.trayIconEnabled = checked
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
+			onCheckedChanged: SettingsModel.trayIconEnabled = checked
 		}
 		GSwitch {
 			checked: SettingsModel.autoCloseWindowAfterAuthentication
@@ -135,9 +131,9 @@ ColumnLayout {
 			//: DESKTOP
 			text: qsTr("Close %1 window after authentication").arg(Qt.application.name)
 
-			onCheckedChanged: SettingsModel.autoCloseWindowAfterAuthentication = checked
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
+			onCheckedChanged: SettingsModel.autoCloseWindowAfterAuthentication = checked
 		}
 		UpdateOptions {
 			id: updateOptions
@@ -154,7 +150,7 @@ ColumnLayout {
 		title: qsTr("Network")
 		visible: SettingsModel.customProxyAttributesPresent
 
-		onFocusChanged: if (focus)
+		onActiveFocusChanged: if (activeFocus)
 			Utils.positionViewAtItem(this)
 
 		GSwitch {
@@ -164,9 +160,9 @@ ColumnLayout {
 			//: DESKTOP
 			text: qsTr("Use the proxy (%1) specified during the installation.").arg(SettingsModel.customProxyUrl)
 
-			onCheckedChanged: SettingsModel.useCustomProxy = checked
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
+			onCheckedChanged: SettingsModel.useCustomProxy = checked
 		}
 	}
 }

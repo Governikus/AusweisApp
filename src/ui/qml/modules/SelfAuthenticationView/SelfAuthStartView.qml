@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -17,7 +17,7 @@ DecisionView {
 		//: ALL_PLATFORMS
 		qsTr("This way you can make sure that everything is working and that the data stored on your eID card is up to date before you identify yourself to a provider."),
 		//: ALL_PLATFORMS
-		qsTr("To do this, you go through an authentication process at Governikus GmbH & Co. KG, the manufacturer of the %1.").arg(Qt.application.name)]
+		qsTr("To do this, you go through an authentication process at Governikus Service GmbH, the manufacturer of the %1.").arg(Qt.application.name)]
 	//: ALL_PLATFORMS
 	headlineText: qsTr("Use eID function")
 	primaryButton.buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.error : Style.color.control.background.basic_unchecked
@@ -35,7 +35,7 @@ DecisionView {
 		Layout.fillWidth: true
 		//: ALL_PLATFORMS Buttontext for the link to the data privacy statement
 		buttonText: qsTr("Data privacy statement")
-		linkToOpen: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
+		linkToOpen: "https://www.ausweisapp.bund.de/%1/aa2/privacy-data".arg(SettingsModel.language)
 		//: ALL_PLATFORMS
 		text: qsTr("Your personal data is neither saved nor processed in any way. Please see our data privacy statement for details on how your personal data is processed.")
 	}

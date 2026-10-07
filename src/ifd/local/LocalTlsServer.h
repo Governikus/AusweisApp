@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -17,14 +17,13 @@ class LocalTlsServer
 
 	private:
 		QSslConfiguration sslConfiguration() const override;
+		bool acceptSslErrors(const QPointer<QSslSocket>& pSocket, const QList<QSslError>& pErrors) const override;
+		bool checkSslConfiguration(const QSslConfiguration& pSslConfiguration) const override;
+		void updateClientInfo(const QSslConfiguration& pSslConfiguration) override;
 
 	public:
 		LocalTlsServer() = default;
 		bool startListening(quint16 pPort) override;
-
-	private Q_SLOTS:
-		void onSslErrors(const QList<QSslError>& pErrors) override;
-		void onEncrypted() override;
 };
 
 } // namespace governikus

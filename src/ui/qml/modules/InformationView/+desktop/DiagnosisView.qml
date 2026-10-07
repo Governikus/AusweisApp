@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -30,7 +30,6 @@ SectionPage {
 
 	DiagnosisModel {
 		id: diagnosisModel
-
 	}
 	TabbedPane {
 		id: sectionContent
@@ -79,14 +78,17 @@ SectionPage {
 		GButton {
 			id: saveToFile
 
-			Accessible.description: qsTr("Save system data to textfile")
+			readonly property string a11yDescription: qsTr("Save system data to textfile")
+
+			Accessible.description: Utils.resolveA11yDescription(text, a11yDescription)
+			Accessible.name: Utils.resolveA11yName(text, a11yDescription)
 			anchors.fill: parent
 			anchors.rightMargin: Style.dimens.groupbox_spacing
 			//: DESKTOP
-			disabledTooltipText: qsTr("Diagnosis is still running")
+			disabledToolTipText: qsTr("Diagnosis is still running")
 			enableButton: !diagnosisModel.running || !timeout.running
 			//: DESKTOP
-			enabledTooltipText: diagnosisModel.running ? qsTr("Diagnosis may be incomplete") : ""
+			enabledToolTipText: diagnosisModel.running ? qsTr("Diagnosis may be incomplete") : ""
 			icon.source: "qrc:///images/desktop/save_icon.svg"
 			//: DESKTOP
 			text: qsTr("Save to file")

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -9,7 +9,9 @@
 #include "states/AbstractState.h"
 #include "states/GenericContextContainer.h"
 
+
 class test_StateEstablishPaceChannelIfd;
+
 
 namespace governikus
 {
@@ -23,13 +25,10 @@ class StateEstablishPaceChannelIfd
 	friend class ::test_StateEstablishPaceChannelIfd;
 
 	private:
-		PacePasswordId mPasswordId;
-
 		explicit StateEstablishPaceChannelIfd(const QSharedPointer<WorkflowContext>& pContext);
 		void run() override;
 
 	private Q_SLOTS:
-		void onReaderInfoChanged(const ReaderInfo& pReaderInfo);
 		void onEstablishConnectionDone(QSharedPointer<BaseCardCommand> pCommand);
 };
 

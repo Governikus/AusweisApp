@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateCheckRefreshAddress.h"
@@ -8,13 +8,14 @@
 #include "Env.h"
 #include "VolatileSettings.h"
 #include "context/AuthContext.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
+#include "paos/retrieve/PaosParser.h"
 #include "states/StateBuilder.h"
 
 #include "MockNetworkManager.h"
-#include "TestFileHelper.h"
+#include "TestParserHelper.h"
 
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -221,8 +222,9 @@ class test_StateCheckRefreshAddress
 			const QUrl tcTokenUrl("http://invalidhost/"_L1);
 			mAuthContext->setTcTokenUrl(tcTokenUrl);
 
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
-			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			const auto& parser = TestParserHelper::create(":/paos/DIDAuthenticateEAC1.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
 
 			SDK_MODE(false);
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(false);

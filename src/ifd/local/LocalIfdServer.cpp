@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "LocalIfdServer.h"
@@ -81,4 +81,9 @@ const QSharedPointer<ServerMessageHandler>& LocalIfdServer::getMessageHandler() 
 bool LocalIfdServer::isLocal() const
 {
 	return true;
+}
+
+
+void LocalIfdServer::rotatePsk()
+{
 }

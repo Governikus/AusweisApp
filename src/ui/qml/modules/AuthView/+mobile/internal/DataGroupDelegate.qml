@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -23,7 +23,7 @@ Loader {
 
 	sourceComponent: optional ? optionalDelegate : requiredDelegate
 
-	onFocusChanged: item.focus = focus // QTBUG-122734
+	onActiveFocusChanged: (item as Item).focus = activeFocus // QTBUG-122734
 
 	GSeparator {
 		visible: !root.isLast
@@ -79,7 +79,8 @@ Loader {
 			text: root.name
 			topPadding: Style.dimens.text_spacing
 
-			onFocusChanged: if (focus)
+			Accessible.onShowOnScreenAction: Utils.positionViewAtItem(this)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
 		}
 	}

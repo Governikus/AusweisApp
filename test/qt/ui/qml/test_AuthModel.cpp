@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "AuthModel.h"
@@ -7,12 +7,10 @@
 #include "AppSettings.h"
 #include "context/AuthContext.h"
 #include "context/SelfAuthContext.h"
+#include "paos/retrieve/PaosParser.h"
 
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
+#include "TestParserHelper.h"
 
-#include "TestFileHelper.h"
-
-#include <QDebug>
 #include <QtTest>
 
 
@@ -42,8 +40,10 @@ class test_AuthModel
 			QCOMPARE(spyStateEntered.count(), 0);
 			QCOMPARE(spyTransactionInfoChanged.count(), 0);
 
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_htmlTransactionInfo.xml"_L1);
-			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			const auto& parser = TestParserHelper::create(":/paos/DIDAuthenticateEAC1_htmlTransactionInfo.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
+
 			context->setDidAuthenticateEac1(eac1);
 			QCOMPARE(model->getTransactionInfo(), "this is a &lt;a&gt;test&lt;/a&gt; for TransactionInfo"_L1);
 			model->resetAuthContext(context);
@@ -157,17 +157,22 @@ class test_AuthModel
 			const GlobalStatus::ExternalInfoMap infoMap {
 				{GlobalStatus::ExternalInformation::LAST_URL, "https://www.governikus.de"_L1}
 			};
+			const GlobalStatus::ExternalInfoMap infoMapTags {
+				{GlobalStatus::ExternalInformation::LAST_URL, "<a href=\"https://www.governikus.de\">https://www.governikus.de</a>"_L1}
+			};
 
 			QTest::addRow("No context") << QSharedPointer<AuthContext>(nullptr) << GlobalStatus(GlobalStatus::Code::No_Error) << "";
 			QTest::addRow("No error") << QSharedPointer<AuthContext>::create() << GlobalStatus(GlobalStatus::Code::No_Error) << "No error occurred.";
 
 			QTest::addRow("Any error - No info - No reason") << QSharedPointer<AuthContext>::create() << GlobalStatus(GlobalStatus::Code::Card_Communication_Error) << "An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.";
 			QTest::addRow("Any error - Info - No reason") << QSharedPointer<AuthContext>::create() << GlobalStatus(GlobalStatus::Code::Card_Communication_Error, infoMap) << "An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.<br/>(https://www.governikus.de)";
+			QTest::addRow("Any error - Info escaped - No reason") << QSharedPointer<AuthContext>::create() << GlobalStatus(GlobalStatus::Code::Card_Communication_Error, infoMapTags) << "An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.<br/>(&lt;a href=&quot;https://www.governikus.de&quot;&gt;https://www.governikus.de&lt;/a&gt;)";
 
 			const auto context = QSharedPointer<AuthContext>::create();
 			context->setFailureCode(FailureCode::Reason::Card_Removed);
 			QTest::addRow("Any error - No info - Reason") << context << GlobalStatus(GlobalStatus::Code::Card_Communication_Error) << "An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.<br/><br/>Reason:<br/><b>Card_Removed</b>";
 			QTest::addRow("Any error - Info - Reason") << context << GlobalStatus(GlobalStatus::Code::Card_Communication_Error, infoMap) << "An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.<br/>(https://www.governikus.de)<br/><br/>Reason:<br/><b>Card_Removed</b>";
+			QTest::addRow("Any error - Info escaped - reason") << context << GlobalStatus(GlobalStatus::Code::Card_Communication_Error, infoMapTags) << "An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.<br/>(&lt;a href=&quot;https://www.governikus.de&quot;&gt;https://www.governikus.de&lt;/a&gt;)<br/><br/>Reason:<br/><b>Card_Removed</b>";
 		}
 
 

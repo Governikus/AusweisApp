@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -80,13 +80,7 @@
 
 #define defineTypedEnumType(enumName, enumType, ...) defineTypedEnumTypeProperty(enumName, enumType, , __VA_ARGS__)
 #define defineEnumType(enumName, ...) defineTypedEnumType(enumName, int, __VA_ARGS__)
-
-/* *INDENT-OFF* */
-#define ENUM_HELPER_OP (
-#define ENUM_HELPER_CP )
-#define ENUM_HELPER_CO ,
-/* *INDENT-ON* */
-#define defineEnumTypeQmlExposed(enumName, ...) defineTypedEnumTypeProperty(enumName, int, Q_CLASSINFO ENUM_HELPER_OP "QML.Element" ENUM_HELPER_CO #enumName ENUM_HELPER_CP, __VA_ARGS__)
+#define defineEnumTypeQmlExposed(enumName, ...) defineTypedEnumTypeProperty(enumName, int, Q_CLASSINFO("QML.Element", #enumName), __VA_ARGS__)
 
 
 namespace governikus

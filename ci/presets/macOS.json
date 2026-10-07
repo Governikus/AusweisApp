@@ -7,7 +7,10 @@
     {
       "name": "ci-macos",
       "inherits": "ci-with-libs",
-      "generator": "Xcode"
+      "generator": "Xcode",
+      "cacheVariables": {
+        "CMAKE_XCODE_ATTRIBUTE_COMPILATION_CACHE_ENABLE_CACHING": "YES"
+      }
     },
     {
       "name": "ci-macos-debug",

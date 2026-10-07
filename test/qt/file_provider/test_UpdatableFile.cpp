@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "UpdatableFile.h"
@@ -72,10 +72,10 @@ class test_UpdatableFile
 		void testFileOnlyInCache()
 		{
 			const QString filename("img_ACS_ACR1252V.png"_L1);
-			const QString filenameInCache = filename + QStringLiteral("_20170601102132UTC");
+			const QString filenameInCache = filename + QStringLiteral("_20170601102132MST");
 			const QDate timestampDate(2017, 6, 1);
 			const QTime timestampTime(10, 21, 32);
-			const QDateTime timestamp(timestampDate, timestampTime, QTimeZone("UTC"));
+			const QDateTime timestamp(timestampDate, timestampTime, QTimeZone("MST"));
 			UpdatableFile updatableFile(mSection, filename);
 			const auto guard = touchFileInCache(filenameInCache, updatableFile);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -13,7 +13,7 @@ GPane {
 
 	property alias buttonIconSource: hintButton.icon.source
 	property alias buttonText: hintButton.text
-	property alias buttonTooltip: hintButton.enabledTooltipText
+	property alias buttonToolTip: hintButton.enabledToolTipText
 	property string linkToOpen
 	property alias text: hintText.text
 

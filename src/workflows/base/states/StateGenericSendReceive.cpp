@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateGenericSendReceive.h"
@@ -13,7 +13,6 @@
 #include "paos/PaosHandler.h"
 
 
-Q_DECLARE_LOGGING_CATEGORY(secure)
 Q_DECLARE_LOGGING_CATEGORY(developermode)
 Q_DECLARE_LOGGING_CATEGORY(network)
 
@@ -42,26 +41,6 @@ void StateGenericSendReceive::emitStateMachineSignal(PaosType pResponseType)
 		{FailureCode::Info::Paos_Type, Enum<PaosType>::getName(pResponseType)}
 	};
 	Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Paos_Unhandled, infoMap});
-}
-
-
-void StateGenericSendReceive::logRawData(const QByteArray& pMessage)
-{
-	if (NetworkManager::isLoggingAllowed(mReply))
-	{
-		qCDebug(network).noquote() << "Received raw data:\n" << pMessage;
-	}
-	else
-	{
-		if (secure().isDebugEnabled())
-		{
-			qCDebug(secure).noquote() << "Received raw data:\n" << pMessage;
-		}
-		else
-		{
-			qCDebug(network) << "no-log was requested, skip logging of raw data";
-		}
-	}
 }
 
 
@@ -334,10 +313,7 @@ void StateGenericSendReceive::onReplyFinished()
 		return;
 	}
 
-	const auto& message = mReply->readAll();
-	logRawData(message);
-
-	PaosHandler paosHandler(message);
+	PaosHandler paosHandler(mReply.data(), NetworkManager::isLoggingAllowed(mReply));
 	const auto receivedType = paosHandler.getDetectedPaosType();
 	qCDebug(network) << "Received PAOS message of type:" << receivedType;
 

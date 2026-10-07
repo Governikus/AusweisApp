@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus Service GmbH, Germany
  */
 
 #include "PortWrapper.h"
@@ -22,9 +22,10 @@ const ULONG LOCALHOST = htonl(INADDR_LOOPBACK);
 } // namespace
 
 
-PortWrapper::PortWrapper(quint16 pLocalPort, quint16 pPeerPort)
-	: mPorts()
+QList<quint16> PortWrapper::fetchPorts(quint16 pLocalPort, quint16 pPeerPort)
 {
+	QList<quint16> ports;
+
 	if (pPeerPort == 0)
 	{
 		const auto& connections = getConnections();
@@ -33,7 +34,7 @@ PortWrapper::PortWrapper(quint16 pLocalPort, quint16 pPeerPort)
 			const auto port = getPortOfRunningProcess(connection, QString(), pLocalPort);
 			if (port != 0)
 			{
-				mPorts << port;
+				ports << port;
 			}
 		}
 	}
@@ -42,11 +43,11 @@ PortWrapper::PortWrapper(quint16 pLocalPort, quint16 pPeerPort)
 		const auto port = getProcessPort(pLocalPort, pPeerPort);
 		if (port > 0)
 		{
-			mPorts << port;
+			ports << port;
 		}
 	}
 
-	qCDebug(rproxy) << "Found instances on Ports:" << mPorts;
+	return ports;
 }
 
 

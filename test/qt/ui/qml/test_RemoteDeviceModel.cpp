@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteDeviceModel.h"
@@ -122,7 +122,8 @@ class test_RemoteDeviceModel
 			RemoteDeviceModelEntry entry1(name);
 			const Discovery disco((QJsonObject()));
 			QSharedPointer<IfdListEntry> pointer(new IfdListEntry(disco));
-			RemoteDeviceModelEntry entry2(name, id, true, true, true, true, time, pointer);
+			RemoteServiceSettings::RemoteInfo info(id, time, name);
+			RemoteDeviceModelEntry entry2(info, true, true, true, true, pointer);
 
 			QVERIFY(!entry1.isSupported());
 			QVERIFY(entry2.isSupported());
@@ -288,7 +289,8 @@ class test_RemoteDeviceModel
 
 			QList<RemoteDeviceModelEntry> readers;
 			QSharedPointer<IfdListEntry> listEntry(new IfdListEntry(Discovery(QJsonObject())));
-			const RemoteDeviceModelEntry entry1("reader 1"_L1, "test id"_ba, true, false, true, false, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), listEntry);
+			RemoteServiceSettings::RemoteInfo info("test id"_ba, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), "reader 1"_L1);
+			const RemoteDeviceModelEntry entry1(info, true, false, true, false, listEntry);
 			const RemoteDeviceModelEntry entry2("reader 2"_L1);
 			readers << entry1 << entry2;
 			mModel->mAllRemoteReaders = readers;

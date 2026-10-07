@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -65,9 +65,6 @@ class SecureStorage
 		[[nodiscard]] QJsonObject loadFile(const QStringList& pFiles) const;
 		void load();
 
-		QByteArrayList loadTestCvcsFromAppDir() const;
-		[[nodiscard]] QByteArray loadTestCvc(const QString& pPath) const;
-
 	protected:
 		SecureStorage();
 		~SecureStorage() = default;
@@ -99,7 +96,6 @@ class SecureStorage
 		[[nodiscard]] int getIfdCreateSize() const;
 		[[nodiscard]] bool isValid() const;
 
-		[[nodiscard]] QString getDeveloperConfig() const;
 		[[nodiscard]] QString getCustomConfig() const;
 		[[nodiscard]] QString getCustomConfigPath() const;
 		[[nodiscard]] QString getEmbeddedConfig() const;

@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
-#include "paos/ElementDetector.h"
 #include "paos/ResponseType.h"
+#include "paos/element/ElementParser.h"
 
 #include <QByteArray>
 #include <QString>
@@ -15,19 +15,21 @@ namespace governikus
 
 class StartPaosResponse
 	: public ResponseType
-	, private ElementDetector
 {
+
+
 	private:
+		const QSharedPointer<ElementParser> mParser;
 		QString mResultMajor;
 		QString mResultMinor;
 		QString mResultMessage;
 
-	public:
-		explicit StartPaosResponse(const QByteArray& pXmlData);
-
-	private:
 		void parse();
-		bool handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
+		void parseResult();
+
+	public:
+		explicit StartPaosResponse(const QSharedPointer<ElementParser>& pParser);
+		~StartPaosResponse() override;
 };
 
 } // namespace governikus

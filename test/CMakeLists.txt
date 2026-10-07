@@ -56,7 +56,7 @@ function(GET_TEST_ENV testenv testname)
 
 	list(APPEND ENV "QT_ENABLE_REGEXP_JIT=0")
 
-	if((LINUX OR BSD) AND "${testname}" MATCHES "card_pcsc_PcscReader")
+	if((LINUX OR BSD) AND "${testname}" MATCHES "card_pcsc_Pcsc(Card|Reader)")
 		list(APPEND ENV "ASAN_OPTIONS=verify_asan_link_order=0")
 		list(APPEND ENV "LD_PRELOAD=${PROJECT_BINARY_DIR}/test/helper/pcsc/libAusweisAppTestHelperPcsc.so")
 	endif()

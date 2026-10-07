@@ -13,6 +13,7 @@ elseif("Framework" IN_LIST NAMES)
 			set(PRESET ${PRESET}-arm64)
 		endif()
 	endif()
+
 elseif("SwiftPackage" IN_LIST NAMES)
 	step(${CMAKE_COMMAND} -DDIST_DIR=${T_DIST_DIR} -P ${CMAKE_DIR}/SwiftPackage.cmake)
 	return()

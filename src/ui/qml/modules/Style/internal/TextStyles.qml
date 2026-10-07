@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -29,6 +29,11 @@ QtObject {
 	readonly property var normal: TextStyle {
 		fontWeight: Style.font.normal
 	}
+	readonly property var numberField: TextStyle {
+		fontWeight: Style.font.bold
+		textColor: Style.color.textNormal.basic_unchecked
+		textSize: Style.dimens.textNumberField
+	}
 	readonly property var subline: TextStyle {
 		fontWeight: Style.font.medium
 		lineHeight: Style.dimens.lineHeight_subline
@@ -46,5 +51,9 @@ QtObject {
 		lineHeight: Style.dimens.lineHeight_title
 		textColor: Style.color.textTitle.basic_unchecked
 		textSize: Style.dimens.textTitle
+	}
+	readonly property var toolTip: TextStyle {
+		fontWeight: Style.font.normal
+		textSize: Style.dimens.text_toolTip
 	}
 }

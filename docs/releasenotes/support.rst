@@ -14,6 +14,8 @@ Betriebssysteme
 
 - macOS 26
 
+- macOS 27
+
 - Windows 10 (64 Bit) ab Version 1809
 
 - Windows 11
@@ -28,9 +30,9 @@ Betriebssysteme
 
 - Android 9 und höher (armeabi-v7a, arm64-v8a, x86_64)
 
-- iOS 17 und höher
+- iOS/iPadOS 17 und höher (arm64, arm64e)
 
-- ChromeOS 140 und höher
+- ChromeOS 152 und höher
 
 
 Karten
@@ -56,13 +58,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 150
+- Chrome 155
 
-- Firefox 152
+- Firefox 156
 
-- Safari 26.5 (macOS)
+- Safari 26.6 (macOS)
 
-- Edge 150
+- Edge 154
 
 
 
@@ -97,15 +99,15 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 150 (iOS/Android)
+- Chrome 154 (iOS/Android)
 
-- Firefox 152 (iOS/Android)
+- Firefox 156 (iOS/Android)
 
-- Edge 150 (iOS/Android)
+- Edge 153 (iOS/Android)
 
 - Samsung Internet 30 (Android)
 
-- Safari 26.5 (iOS)
+- Safari 26.6 (iOS)
 
 
 Kartenleser

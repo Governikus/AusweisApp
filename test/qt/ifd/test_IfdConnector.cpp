@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "IfdConnectorImpl.h"
@@ -8,6 +8,7 @@
 #include "Env.h"
 #include "KeyPair.h"
 #include "RemoteWebSocketServer.h"
+#include "RemoteWebSocketServerImpl.h"
 #include "ResourceLoader.h"
 #include "SecureStorage.h"
 #include "TlsChecker.h"
@@ -229,6 +230,13 @@ class test_IfdConnector
 
 			connector.reset();
 			QTRY_COMPARE(spyDestroy.size(), 1);
+
+			const auto* const remoteWebSocketServer = qobject_cast<RemoteWebSocketServerImpl*>(server.data());
+			QVERIFY(remoteWebSocketServer);
+			QTRY_VERIFY(remoteWebSocketServer->mWebSocketServer.mTlsServer->mSocket.isNull());
+
+			server->close();
+			server.reset();
 		}
 
 

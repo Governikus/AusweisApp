@@ -1,11 +1,14 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "pace/CipherMac.h"
 
 #include <QLoggingCategory>
 #include <QScopeGuard>
+
+#include <vector>
+
 
 using namespace governikus;
 
@@ -64,12 +67,12 @@ CipherMac::CipherMac(const SecurityProtocol& pSecurityProtocol, const QByteArray
 		return;
 	}
 
-	const OSSL_PARAM params[] = {
+	const std::vector<OSSL_PARAM> params = {
 		OSSL_PARAM_utf8_string("cipher", const_cast<char*>(cipher), 0),
 		OSSL_PARAM_octet_string("key", const_cast<char*>(pKeyBytes.data()), static_cast<size_t>(pKeyBytes.size())),
 		OSSL_PARAM_END
 	};
-	if (!EVP_MAC_CTX_set_params(mCtx, params))
+	if (!EVP_MAC_CTX_set_params(mCtx, params.data()))
 	{
 		qCCritical(card) << "Cannot set parameter";
 		return;

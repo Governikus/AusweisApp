@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteServiceSettings.h"
@@ -78,7 +78,7 @@ RemoteServiceSettings::RemoteServiceSettings()
 
 QString RemoteServiceSettings::getDefaultDeviceName() const
 {
-	QString name = DeviceInfo::getName();
+	QString name = DeviceInfo::getDeviceName();
 	if (name.isEmpty())
 	{
 		//: ALL_PLATFORMS
@@ -384,9 +384,10 @@ QString RemoteServiceSettings::escapeDeviceName(const QString& pDeviceNameUnesca
 
 
 RemoteServiceSettings::RemoteInfo::RemoteInfo(const QByteArray& pFingerprint,
-		const QDateTime& pLastConnected)
+		const QDateTime& pLastConnected,
+		const QString& pName)
 	: mFingerprint(pFingerprint)
-	, mName()
+	, mName(pName)
 	, mLastConnected(pLastConnected)
 {
 }
@@ -394,11 +395,10 @@ RemoteServiceSettings::RemoteInfo::RemoteInfo(const QByteArray& pFingerprint,
 
 RemoteServiceSettings::RemoteInfo RemoteServiceSettings::RemoteInfo::fromJson(const QJsonObject& obj)
 {
-	RemoteInfo remoteInfo(
-		QByteArray::fromHex(obj[QLatin1String("fingerprint")].toString().toLatin1()),
-		QDateTime::fromString(obj[QLatin1String("lastConnected")].toString(), Qt::ISODateWithMs));
-	remoteInfo.mName = obj[QLatin1String("name")].toString();
-	return remoteInfo;
+	return RemoteInfo(
+			QByteArray::fromHex(obj[QLatin1String("fingerprint")].toString().toLatin1()),
+			QDateTime::fromString(obj[QLatin1String("lastConnected")].toString(), Qt::ISODateWithMs),
+			obj[QLatin1String("name")].toString());
 }
 
 

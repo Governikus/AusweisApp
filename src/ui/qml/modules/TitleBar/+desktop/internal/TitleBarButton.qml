@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -71,11 +71,10 @@ Button {
 		}
 	}
 
-	Keys.onEscapePressed: tooltip.hide()
+	Keys.onEscapePressed: toolTip.hide()
 
 	FocusFrame {
 		id: focusFrame
-
 	}
 	MouseArea {
 		id: mouseArea
@@ -88,10 +87,9 @@ Button {
 			mouse.accepted = false;
 		}
 	}
-	ToolTip {
-		id: tooltip
+	GToolTip {
+		id: toolTip
 
-		delay: Style.toolTipDelay
 		text: root.text
 		visible: mouseArea.containsMouse
 

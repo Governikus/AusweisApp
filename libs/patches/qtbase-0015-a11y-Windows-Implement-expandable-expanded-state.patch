@@ -1,0 +1,54 @@
+From cf6b4fbb48cffbb06683b96b91df856b8abe68af Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Mon, 18 May 2026 15:22:41 +0200
+Subject: a11y Windows: Implement expandable/expanded state
+
+* Enable ExpandCollapsePattern for all expandable elements.
+  All elements that are expandable should be announced as that.
+* Expanding/Collapsing an expandable control now leads to the correct
+  announcement of the current expanded state.
+
+Task-number: QTBUG-146552
+Task-number: QTBUG-148361
+Pick-to: 6.12
+Change-Id: Ia658cd3b19a0655ee2b2deb18dca3abc1a1f5b82
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+Reviewed-by: Lars Schmertmann <SmallLars@t-online.de>
+(cherry picked from commit 6f82ae2a4bd19641afd2edaec2c1a9ae57ef9086)
+---
+ .../uiautomation/qwindowsuiamainprovider.cpp       | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiamainprovider.cpp y/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiamainprovider.cpp
+index 6bd3c9395c9219bce62f2ab73539245fa0d17fae..937a864854268ea85b02f61dc746357eb1500c95 100644
+--- x/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiamainprovider.cpp
++++ y/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiamainprovider.cpp
+@@ -101,6 +101,18 @@ void QWindowsUiaMainProvider::notifyStateChange(QAccessibleStateChangeEvent *eve
+                 }
+             }
+         }
++        if (event->changedStates().expanded) {
++            if (accessible->state().expandable) {
++                if (auto provider = providerForAccessible(accessible)) {
++                    long expandedState = accessible->state().expanded ? ExpandCollapseState_Expanded : ExpandCollapseState_Collapsed;
++
++                    QComVariant oldVal;
++                    QComVariant newVal{expandedState};
++                    UiaRaiseAutomationPropertyChangedEvent(
++                            provider.Get(), UIA_ExpandCollapseExpandCollapseStatePropertyId, oldVal.get(), newVal.get());
++                }
++            }
++        }
+         if (event->changedStates().active) {
+             if (accessible->role() == QAccessible::Window) {
+                 // Notifies window opened/closed.
+@@ -376,7 +388,7 @@ HRESULT QWindowsUiaMainProvider::GetPatternProvider(PATTERNID idPattern, IUnknow
+                 && accessible->childCount() > 0
+                 && accessible->child(0)->role() == QAccessible::PopupMenu)
+             || accessible->role() == QAccessible::ComboBox
+-            || (accessible->role() == QAccessible::TreeItem && accessible->state().expandable)) {
++            || accessible->state().expandable) {
+             *pRetVal = makeComObject<QWindowsUiaExpandCollapseProvider>(id()).Detach();
+         }
+         break;

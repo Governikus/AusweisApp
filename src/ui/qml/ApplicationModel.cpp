@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "ApplicationModel.h"
@@ -417,9 +417,18 @@ QString ApplicationModel::stripHtmlTags(QString pString) const
 }
 
 
-#ifndef Q_OS_IOS
+#if !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID)
 void ApplicationModel::showAppStoreRatingDialog() const
 {
+}
+
+
+#endif
+
+#if !defined(Q_OS_ANDROID)
+bool ApplicationModel::isStartedByAuth() const
+{
+	return false;
 }
 
 

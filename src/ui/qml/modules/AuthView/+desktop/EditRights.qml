@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -21,6 +21,7 @@ FlickableSectionPage {
 	spacing: Style.dimens.pane_spacing
 
 	ProviderInfoButton {
+		Accessible.id: "EditRights_providerInfoButton"
 		Layout.fillWidth: true
 		name: CertificateDescriptionModel.subjectName
 
@@ -46,9 +47,9 @@ FlickableSectionPage {
 		transactionText: AuthModel.transactionInfo
 		visible: transactionText !== "" || showDataNotRequiredText
 
-		onClicked: root.push(transactionInfoViewComponent)
-		onFocusChanged: if (focus)
+		onActiveFocusChanged: if (activeFocus)
 			root.positionViewAtItem(this)
+		onClicked: root.push(transactionInfoViewComponent)
 
 		Component {
 			id: transactionInfoViewComponent
@@ -74,6 +75,7 @@ FlickableSectionPage {
 		qsTr("By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:")
 	}
 	GButton {
+		Accessible.id: "EditRights_confirmButton"
 		Layout.alignment: Style.scanPatternAlignment
 		icon.source: "qrc:/images/identify.svg"
 		//: DESKTOP %1 can be "CAN" or "PIN"

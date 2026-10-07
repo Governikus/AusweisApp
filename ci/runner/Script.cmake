@@ -41,8 +41,8 @@ macro(SET_TEMPLATES) # Provide some base templates for SCRIPTs
 	set(T_CTEST ${CMAKE_CTEST_COMMAND} --test-dir ${T_BUILD_DIR} --output-on-failure)
 	set(T_CMAKE_FRESH ${CMAKE_COMMAND} --fresh)
 	set(T_CFG ${T_CMAKE_FRESH} ${PARAMS} -S ${CMAKE_SOURCE_DIR} -B ${T_BUILD_DIR})
-	set(T_CFG_LIBS ${T_CMAKE_FRESH} ${PARAMS} -S ${CMAKE_SOURCE_DIR}/libs -B ${T_LIBS_DIR})
-	set(T_CFG_LIBS_DEPS ${T_CMAKE_FRESH} -S ${CMAKE_SOURCE_DIR}/libs -B ${T_LIBS_DIR})
+	set(T_CFG_LIBS ${T_CMAKE_FRESH} ${PARAMS} -S ${LIBS_DIR} -B ${T_LIBS_DIR})
+	set(T_CFG_LIBS_DEPS ${T_CMAKE_FRESH} -S ${LIBS_DIR} -B ${T_LIBS_DIR})
 endmacro()
 
 
@@ -161,9 +161,16 @@ endfunction()
 macro(FETCH_VERSION)
 	list(APPEND CMAKE_MODULE_PATH ${CMAKE_DIR})
 	PROPAGATE_PARAM(CMAKE_ANDROID_ARCH_ABI)
+	PROPAGATE_PARAM(USE_APPSTORE_PROFILE)
 	include(Version)
 	include(DVCS)
 	list(POP_BACK CMAKE_MODULE_PATH)
 
 	set(BRANCH ${dvcs_branch})
+endmacro()
+
+macro(FETCH_VERSION_LIBS)
+	list(APPEND CMAKE_MODULE_PATH ${LIBS_DIR})
+	include(Versions)
+	list(POP_BACK CMAKE_MODULE_PATH)
 endmacro()

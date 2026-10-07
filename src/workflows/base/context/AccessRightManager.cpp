@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "AccessRightManager.h"
@@ -17,30 +17,29 @@ using namespace governikus;
 AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1, QSharedPointer<const CVCertificate> pTerminalCvc, QSharedPointer<const CVCertificate> pDvCvc)
 	: QObject()
 	, mTerminalCvc(pTerminalCvc)
-	, mDIDAuthenticateEAC1(pDIDAuthenticateEAC1)
 	, mOptionalAccessRights()
 	, mEffectiveAccessRights()
 	, mRequiredAccessRights()
 {
-	if (!pDvCvc || !mTerminalCvc || !mDIDAuthenticateEAC1)
+	if (!pDvCvc || !mTerminalCvc || !pDIDAuthenticateEAC1)
 	{
 		return;
 	}
 
 	bool accessRightPresent = false;
 
-	if (const auto& requiredChat = mDIDAuthenticateEAC1->getRequiredChat())
+	if (const auto& requiredChat = pDIDAuthenticateEAC1->getRequiredChat())
 	{
 		accessRightPresent = true;
 		mRequiredAccessRights = requiredChat.data()->getAccessRights();
-		removeForbiddenAccessRights(mRequiredAccessRights);
+		removeForbiddenAccessRights(mRequiredAccessRights, pDIDAuthenticateEAC1);
 	}
 
-	if (const auto& optionalChat = mDIDAuthenticateEAC1->getOptionalChat())
+	if (const auto& optionalChat = pDIDAuthenticateEAC1->getOptionalChat())
 	{
 		accessRightPresent = true;
 		mOptionalAccessRights = optionalChat.data()->getAccessRights();
-		removeForbiddenAccessRights(mOptionalAccessRights);
+		removeForbiddenAccessRights(mOptionalAccessRights, pDIDAuthenticateEAC1);
 
 		if (!mOptionalAccessRights.isEmpty() && !mRequiredAccessRights.isEmpty())
 		{
@@ -51,7 +50,7 @@ AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDA
 	if (!accessRightPresent)
 	{
 		mOptionalAccessRights = mTerminalCvc->getBody().getCHAT().getAccessRights();
-		removeForbiddenAccessRights(mOptionalAccessRights);
+		removeForbiddenAccessRights(mOptionalAccessRights, pDIDAuthenticateEAC1);
 	}
 
 	mRequiredAccessRights -= AccessRight::CAN_ALLOWED;
@@ -74,7 +73,6 @@ AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDA
 AccessRightManager::AccessRightManager(QSharedPointer<CHAT> pRequiredChat)
 	: QObject()
 	, mTerminalCvc()
-	, mDIDAuthenticateEAC1()
 	, mOptionalAccessRights()
 	, mEffectiveAccessRights(pRequiredChat->getAccessRights())
 	, mRequiredAccessRights(pRequiredChat->getAccessRights())
@@ -83,7 +81,7 @@ AccessRightManager::AccessRightManager(QSharedPointer<CHAT> pRequiredChat)
 }
 
 
-void AccessRightManager::removeForbiddenAccessRights(QSet<AccessRight>& pAccessRights)
+void AccessRightManager::removeForbiddenAccessRights(QSet<AccessRight>& pAccessRights, QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1)
 {
 	if (!mTerminalCvc)
 	{
@@ -107,12 +105,12 @@ void AccessRightManager::removeForbiddenAccessRights(QSet<AccessRight>& pAccessR
 		pAccessRights -= accessRight;
 	}
 
-	if (!mDIDAuthenticateEAC1)
+	if (!pDIDAuthenticateEAC1)
 	{
 		return;
 	}
 
-	const auto& auxiliaryData = mDIDAuthenticateEAC1->getAuthenticatedAuxiliaryData();
+	const auto& auxiliaryData = pDIDAuthenticateEAC1->getAuthenticatedAuxiliaryData();
 	if (pAccessRights.contains(AccessRight::AGE_VERIFICATION) && (!auxiliaryData || !auxiliaryData->hasAgeVerificationDate()))
 	{
 		qWarning() << "AGE_VERIFICATION requested, but no age specified";

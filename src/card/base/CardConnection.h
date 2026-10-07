@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -142,13 +142,15 @@ class CardConnection
 			if (pPacePasswordId == PacePasswordId::PACE_CAN)
 			{
 				connect(command, &BaseCardCommand::commandDone, this, [this](QSharedPointer<BaseCardCommand> pCommand){
-							mPaceCanSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
+							auto paceCommand = pCommand.staticCast<EstablishPaceChannelCommand>();
+							mPaceCanSuccessful = paceCommand->getPaceOutput().isOk();
 						});
 			}
 			else if (pPacePasswordId == PacePasswordId::PACE_PIN)
 			{
 				connect(command, &BaseCardCommand::commandDone, this, [this](QSharedPointer<BaseCardCommand> pCommand){
-							mPacePinSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
+							auto paceCommand = pCommand.staticCast<EstablishPaceChannelCommand>();
+							mPacePinSuccessful = paceCommand->getPaceOutput().isOk();
 							if (!mPacePinSuccessful)
 							{
 								mPaceCanSuccessful = false;

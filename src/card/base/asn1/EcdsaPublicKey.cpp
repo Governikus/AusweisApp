@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "EcdsaPublicKey.h"
@@ -182,7 +182,7 @@ QByteArray EcdsaPublicKey::getUncompressedPublicPoint() const
 }
 
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 QSharedPointer<EC_GROUP> EcdsaPublicKey::createGroup(const CurveData& pData) const
 {
 	QSharedPointer<EC_GROUP> group = EcUtil::create(EC_GROUP_new_curve_GFp(pData.p.data(), pData.a.data(), pData.b.data(), nullptr));
@@ -239,7 +239,7 @@ QSharedPointer<EVP_PKEY> EcdsaPublicKey::createKey(const uchar* pPublicPoint, in
 		return nullptr;
 	}
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 	const auto& group = createGroup(curveData);
 	if (group.isNull())
 	{

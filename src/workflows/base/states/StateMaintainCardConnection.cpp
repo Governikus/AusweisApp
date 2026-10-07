@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateMaintainCardConnection.h"
 
 #include "CardReturnCode.h"
+
 
 Q_DECLARE_LOGGING_CATEGORY(statemachine)
 
@@ -39,7 +40,6 @@ StateMaintainCardConnection::StateMaintainCardConnection(const QSharedPointer<Wo
 void StateMaintainCardConnection::run()
 {
 	auto context = getContext();
-
 	if (context->getStatus().isError())
 	{
 		auto failure = context->getFailureCode();
@@ -51,7 +51,8 @@ void StateMaintainCardConnection::run()
 		return;
 	}
 
-	const CardReturnCode lastPaceResult = context->getLastPaceResult();
+	const auto& paceOutput = context->getPaceOutput();
+	const CardReturnCode lastPaceResult = paceOutput.getReturnCode();
 	qCDebug(statemachine) << "Last PACE result:" << lastPaceResult;
 
 	switch (lastPaceResult)
@@ -59,14 +60,11 @@ void StateMaintainCardConnection::run()
 		case CardReturnCode::CANCELLATION_BY_USER:
 		case CardReturnCode::INPUT_TIME_OUT:
 		case CardReturnCode::UNKNOWN:
-		case CardReturnCode::UNDEFINED:
 		case CardReturnCode::COMMAND_FAILED:
 		case CardReturnCode::PROTOCOL_ERROR:
 		case CardReturnCode::WRONG_LENGTH:
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 		{
-			Q_ASSERT(!CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
-
 			qCDebug(statemachine) << "Last PACE result is unrecoverable. Aborting.";
 			updateStatus(CardReturnCodeUtil::toGlobalStatus(lastPaceResult));
 			Q_EMIT fireAbort({FailureCode::Reason::Maintain_Card_Connection_Pace_Unrecoverable,
@@ -75,16 +73,8 @@ void StateMaintainCardConnection::run()
 			return;
 		}
 
-		case CardReturnCode::INVALID_CAN:
-		case CardReturnCode::INVALID_PASSWORD:
-		case CardReturnCode::INVALID_PIN:
-		case CardReturnCode::INVALID_PIN_2:
-		case CardReturnCode::INVALID_PIN_3:
-		case CardReturnCode::INVALID_PUK:
 		case CardReturnCode::PIN_NOT_BLOCKED:
 		{
-			Q_ASSERT(CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
-
 			handleWrongPacePassword();
 			return;
 		}
@@ -92,21 +82,20 @@ void StateMaintainCardConnection::run()
 		case CardReturnCode::RESPONSE_EMPTY:
 		case CardReturnCode::CARD_NOT_FOUND:
 		{
-			Q_ASSERT(!CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
-
 			qCDebug(statemachine) << "Assuming the card was removed (" << lastPaceResult << "). Resetting card connection and PACE result.";
 			context->resetCardConnection();
-			context->resetLastPaceResult();
+			context->resetPaceOutput();
 			break;
 		}
 
 		case CardReturnCode::OK:
-		case CardReturnCode::OK_PUK:
-		case CardReturnCode::OK_CAN:
-		{
-			Q_ASSERT(!CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
+			if (paceOutput.wrongPasswordUsed())
+			{
+				handleWrongPacePassword();
+				return;
+			}
 
-			if (lastPaceResult == CardReturnCode::OK_PUK && context->getCardConnection())
+			if (paceOutput.getPaceResult() == PaceResult::OK_PUK && context->getCardConnection())
 			{
 				qCDebug(statemachine) << "PIN unblocked! Triggering retry counter update.";
 				Q_EMIT fireForceUpdateRetryCounter();
@@ -114,7 +103,9 @@ void StateMaintainCardConnection::run()
 			}
 
 			break;
-		}
+
+		case CardReturnCode::UNDEFINED:
+			break;
 	}
 
 	if (!context->getCardConnection())

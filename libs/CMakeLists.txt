@@ -46,9 +46,6 @@ endmacro()
 option(INTEGRATED_SDK "Build integrated specific SDK" OFF)
 option(CONTAINER_SDK "Build container specific SDK" OFF)
 option(DEVELOPER "Include modules/features for developer" OFF)
-option(USE_LEGACY_OPENSSL_API "Enable legacy API" OFF)
-
-list(APPEND LIBS_ID_SALT ${USE_LEGACY_OPENSSL_API})
 
 if(CONTAINER_SDK)
 	set(INTEGRATED_SDK ON)
@@ -103,7 +100,7 @@ endif()
 if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
 	if(IOS)
 		set(CMAKE_OSX_DEPLOYMENT_TARGET 17.0)
-	elseif(APPLE)
+	elseif(MACOS)
 		set(CMAKE_OSX_DEPLOYMENT_TARGET 14.0)
 	endif()
 endif()
@@ -204,6 +201,36 @@ list(APPEND LLHTTP_URLS $ENV{MIRROR_GITHUB}/nodejs/llhttp/archive/refs/tags/rele
 
 set(ENABLED_TARGETS)
 
+if(NOT CMAKE_OSX_ARCHITECTURES AND MACOS)
+	if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+		set(CMAKE_OSX_ARCHITECTURES x86_64)
+	elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+		set(CMAKE_OSX_ARCHITECTURES arm64)
+	endif()
+endif()
+list(JOIN CMAKE_OSX_ARCHITECTURES "$<SEMICOLON>" OSX_ARCH)
+
+
+if(CMAKE_OSX_ARCHITECTURES OR CMAKE_OSX_DEPLOYMENT_TARGET)
+	set(HAS_OSX_VARS_CONFIG TRUE)
+else()
+	set(HAS_OSX_VARS_CONFIG FALSE)
+endif()
+
+if(MACOS OR IOS)
+	set(BASE_SECURITY_FLAGS
+	        -ftyped-memory-operations
+	        -ftyped-cxx-new-delete
+	        -ftyped-cxx-delete
+	)
+
+	set(EXTENDED_SECURITY_FLAGS
+	        -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST
+	        -ftrivial-auto-var-init=zero
+	        ${BASE_SECURITY_FLAGS}
+	)
+endif()
+
 ################################## llhttp
 #########################################################################
 list(APPEND ENABLED_TARGETS llhttp)
@@ -222,8 +249,11 @@ if(ANDROID)
 	set(LLHTTP_CONFIGURE_FLAGS ${LLHTTP_CONFIGURE_FLAGS} -DCMAKE_ANDROID_ARCH_ABI=${CMAKE_ANDROID_ARCH_ABI})
 endif()
 
-if(MAC OR IOS)
-	set(LLHTTP_CONFIGURE_FLAGS ${LLHTTP_CONFIGURE_FLAGS} -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+if(MACOS OR IOS)
+	set(LLHTTP_CONFIGURE_FLAGS ${LLHTTP_CONFIGURE_FLAGS} -DCMAKE_OSX_ARCHITECTURES=${OSX_ARCH} -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+
+	string(JOIN " " LLHTTP_SECURITY_FLAGS ${EXTENDED_SECURITY_FLAGS})
+	set(LLHTTP_SECURITY_FLAGS "-DCMAKE_C_FLAGS=${LLHTTP_SECURITY_FLAGS}" "-DCMAKE_CXX_FLAGS=${LLHTTP_SECURITY_FLAGS}")
 endif()
 
 SET_PATCHER(LLHTTP ON)
@@ -242,6 +272,7 @@ ExternalProject_Add(llhttp
 						-DLLHTTP_BUILD_SHARED_LIBS=OFF
 						-DCMAKE_BUILD_TYPE=MinSizeRel
 						-DCMAKE_CONFIGURATION_TYPES=MinSizeRel
+						${LLHTTP_SECURITY_FLAGS}
 	BUILD_COMMAND ${CMAKE_COMMAND} --build . ${MAKE_JOBS}
 	INSTALL_COMMAND ${CMAKE_COMMAND} --install .
 )
@@ -250,30 +281,22 @@ ExternalProject_Add(llhttp
 
 ################################## OpenSSL
 #########################################################################
-list(APPEND ENABLED_TARGETS openssl)
-
 set(OPENSSL_CONFIGURE_FLAGS no-camellia no-bf no-aria no-seed no-poly1305 no-srp no-gost no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-srtp no-sm2 no-sm3 no-sm4)
 set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-ct no-dgram no-cast no-chacha no-blake2 no-rmd160 no-scrypt no-siphash no-whirlpool no-md4 no-des no-ec2m)
-set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls1 no-tls1-method no-tls1_1 no-tls1_1-method no-tls1_3 no-dtls no-dtls1-method no-dtls1_2-method)
+set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls1 no-tls1-method no-tls1_1 no-tls1_1-method no-dtls no-dtls1-method no-dtls1_2-method)
 set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-async no-dso no-comp no-ts no-makedepend no-tests)
-
-if(OPENSSL VERSION_GREATER_EQUAL "4.0")
-	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} enable-ec_explicit_curves)
-endif()
 
 if(OPENSSL VERSION_LESS "4.0")
 	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-ssl3 no-ssl3-method no-engine)
 endif()
 
-if(NOT USE_LEGACY_OPENSSL_API)
-	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-deprecated)
+set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-deprecated)
 
-	if(OPENSSL VERSION_GREATER "1.1.1")
-		set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-legacy)
-	endif()
-	if(OPENSSL VERSION_GREATER_EQUAL "3.5")
-		set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls-deprecated-ec)
-	endif()
+if(OPENSSL VERSION_GREATER "1.1.1")
+	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-legacy)
+endif()
+if(OPENSSL VERSION_GREATER_EQUAL "3.5")
+	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls-deprecated-ec)
 endif()
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
@@ -298,8 +321,12 @@ else()
 	ADD_FLAG(-fstack-protector-strong -fstack-protector NOQUOTES VAR OPENSSL_COMPILER_FLAGS)
 endif()
 
+if(MACOS OR IOS)
+	SET(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} ${EXTENDED_SECURITY_FLAGS})
+endif()
+
 if(IOS)
-	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-asm no-shared)
+	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-shared)
 	if(CMAKE_OSX_SYSROOT MATCHES "iphonesimulator")
 		set(OPENSSL_ARCH iossimulator-xcrun)
 		if (CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
@@ -310,28 +337,18 @@ if(IOS)
 		set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mios-simulator-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET})
 	else()
 		set(OPENSSL_ARCH ios64-xcrun)
+		if ("arm64e" IN_LIST CMAKE_OSX_ARCHITECTURES)
+			set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} "-arch arm64e")
+		endif()
 		string(REGEX REPLACE "/SDKs/.*" "" CROSS_TOP_DEV_ROOT "${CMAKE_OSX_SYSROOT}")
 		set(OPENSSL_ENV CROSS_TOP=${CROSS_TOP_DEV_ROOT} CROSS_SDK=iPhoneOS.sdk)
 		set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mios-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET})
 	endif()
 	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -fvisibility=hidden)
-elseif(APPLE)
-	if(NOT CMAKE_OSX_ARCHITECTURES)
-		if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
-			set(CMAKE_OSX_ARCHITECTURES x86_64)
-		elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-			set(CMAKE_OSX_ARCHITECTURES arm64)
-		endif()
-	endif()
-
-	if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
-		set(OPENSSL_ARCH darwin64-x86_64-cc)
-	elseif(CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
-		set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-asm)
-		set(OPENSSL_ARCH darwin64-arm64-cc)
-	else()
-		message(FATAL_ERROR "Unknown CMAKE_OSX_ARCHITECTURES: ${CMAKE_OSX_ARCHITECTURES}")
-	endif()
+elseif(MACOS)
+	set(OPENSSL_ARCH ${CMAKE_OSX_ARCHITECTURES})
+	set(OPENSSL_ARCH_x86_64 darwin64-x86_64-cc)
+	set(OPENSSL_ARCH_arm64 darwin64-arm64-cc)
 
 	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET})
 elseif(MINGW OR CYGWIN)
@@ -340,6 +357,9 @@ elseif(MINGW OR CYGWIN)
 	else()
 		set(OPENSSL_ARCH mingw)
 	endif()
+
+	# https://github.com/openssl/openssl/issues/31672
+	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -Wa,-muse-unaligned-vector-move)
 
 	if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 		set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} --cross-compile-prefix=${CROSS_PREFIX})
@@ -410,38 +430,89 @@ endif()
 
 SET_PATCHER(OPENSSL ON)
 
-ExternalProject_Add(openssl
-	URL ${OPENSSL_URLS}
-	URL_HASH SHA256=${OPENSSL_HASH}
-	DOWNLOAD_DIR ${PACKAGES_DIR}
+list(LENGTH OPENSSL_ARCH OPENSSL_ARCH_COUNT)
+add_custom_target(openssl)
+foreach(OPENSSL_CURRENT_ARCH ${OPENSSL_ARCH})
+	set(OPENSSL_PROJECT openssl_${OPENSSL_CURRENT_ARCH})
+	set(OPENSSL_DESTINATION_DIR ${DESTINATION_DIR})
+	set(OPENSSL_CONFIGURE_ARCH "${OPENSSL_CURRENT_ARCH}")
 
-	PATCH_COMMAND ${OPENSSL_PATCHES_CMD}
-	CONFIGURE_COMMAND ${OPENSSL_ENV} ${PERL_EXECUTABLE} <SOURCE_DIR>/Configure --prefix=${DESTINATION_DIR} --libdir=lib ${OPENSSL_CONFIGURE_FLAGS} ${OPENSSL_ARCH} "${OPENSSL_COMPILER_FLAGS}"
-	BUILD_COMMAND ${OPENSSL_ENV} ${MAKE} ${MAKE_JOBS}
-	INSTALL_COMMAND ${OPENSSL_ENV} ${MAKE} ${MAKE_JOBS} install_sw
-)
+	if(OPENSSL_ARCH_${OPENSSL_CURRENT_ARCH})
+		set(OPENSSL_CONFIGURE_ARCH "${OPENSSL_ARCH_${OPENSSL_CURRENT_ARCH}}")
+		if(OPENSSL_ARCH_COUNT GREATER 1)
+			set(OPENSSL_DESTINATION_DIR "${OPENSSL_DESTINATION_DIR}/${OPENSSL_CURRENT_ARCH}")
+			list(APPEND OPENSSL_ARCH_DIRS "${OPENSSL_DESTINATION_DIR}")
+		endif()
+	elseif(CMAKE_OSX_ARCHITECTURES AND MACOS)
+		message(FATAL_ERROR "Unknown CMAKE_OSX_ARCHITECTURES: ${OPENSSL_CURRENT_ARCH}")
+	endif()
 
-ExternalProject_Add_Step(openssl configdata
-	COMMAND ${PERL_EXECUTABLE} configdata.pm --dump
-	DEPENDEES configure
-	DEPENDERS build
-	WORKING_DIRECTORY <BINARY_DIR>)
+	list(APPEND ENABLED_TARGETS ${OPENSSL_PROJECT})
+
+	ExternalProject_Add(${OPENSSL_PROJECT}
+		URL ${OPENSSL_URLS}
+		URL_HASH SHA256=${OPENSSL_HASH}
+		DOWNLOAD_DIR ${PACKAGES_DIR}
+
+		PATCH_COMMAND ${OPENSSL_PATCHES_CMD}
+		CONFIGURE_COMMAND ${OPENSSL_ENV} ${PERL_EXECUTABLE} <SOURCE_DIR>/Configure --prefix=${OPENSSL_DESTINATION_DIR} --libdir=lib ${OPENSSL_CONFIGURE_FLAGS} ${OPENSSL_CONFIGURE_ARCH} "${OPENSSL_COMPILER_FLAGS}"
+		BUILD_COMMAND ${OPENSSL_ENV} ${MAKE} ${MAKE_JOBS}
+		INSTALL_COMMAND ${OPENSSL_ENV} ${MAKE} ${MAKE_JOBS} install_sw
+	)
+	add_dependencies(openssl ${OPENSSL_PROJECT})
+
+	ExternalProject_Add_Step(${OPENSSL_PROJECT} configdata
+		COMMAND ${PERL_EXECUTABLE} configdata.pm --dump
+		DEPENDEES configure
+		DEPENDERS build
+		WORKING_DIRECTORY <BINARY_DIR>)
 
 
-if(MAC)
-	string(REGEX MATCH "^[0-9]+" OPENSSL_FILE_VERSION ${OPENSSL})
+	if(MACOS)
+		add_custom_command(TARGET ${OPENSSL_PROJECT} POST_BUILD
+			COMMAND install_name_tool -id @rpath/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${OPENSSL_DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+			COMMAND install_name_tool -id @rpath/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${OPENSSL_DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+			COMMAND install_name_tool -change ${OPENSSL_DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} @rpath/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${OPENSSL_DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+	endif()
+
+	if(IOS)
+		# Remove this work-around! Do not build any .dylib or be able to use .dylib
+		# Globbing is not supported by cmake command mode! This will work if executed with unix shell only.
+		add_custom_command(TARGET openssl POST_BUILD COMMAND ${CMAKE_COMMAND} -E rm -f ${OPENSSL_DESTINATION_DIR}/lib/libssl*.dylib ${OPENSSL_DESTINATION_DIR}/lib/libcrypto*.dylib)
+	elseif(UNIX)
+		add_custom_command(TARGET openssl POST_BUILD COMMAND ${CMAKE_COMMAND} -E rm -f ${OPENSSL_DESTINATION_DIR}/lib/libssl*.a ${OPENSSL_DESTINATION_DIR}/lib/libcrypto*.a)
+	endif()
+endforeach()
+
+if(OPENSSL_ARCH_DIRS AND (MACOS OR IOS))
+	find_program(LIPO lipo required)
+
+	set(OPENSSL_LIBS libssl libcrypto)
+	foreach(lib ${OPENSSL_LIBS})
+		unset(libs)
+		foreach(dir ${OPENSSL_ARCH_DIRS})
+			list(APPEND libs ${dir}/lib/${lib}.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+		endforeach()
+
+		list(APPEND OPENSSL_MERGE
+			COMMAND ${LIPO} -create
+				${libs}
+				-output ${DESTINATION_DIR}/lib/${lib}.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+			COMMAND ${CMAKE_COMMAND} -E chdir ${DESTINATION_DIR}/lib ${CMAKE_COMMAND} -E create_symlink ${lib}.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${lib}${CMAKE_SHARED_LIBRARY_SUFFIX}
+		)
+	endforeach()
+
+	foreach(dir ${OPENSSL_ARCH_DIRS})
+		list(APPEND OPENSSL_RM COMMAND ${CMAKE_COMMAND} -E rm -r ${dir})
+	endforeach()
+
 	add_custom_command(TARGET openssl POST_BUILD
-		COMMAND install_name_tool -id @rpath/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
-		COMMAND install_name_tool -id @rpath/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
-		COMMAND install_name_tool -change ${DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} @rpath/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
-endif()
-
-if(IOS)
-	# Remove this work-around! Do not build any .dylib or be able to use .dylib
-	# Globbing is not supported by cmake command mode! This will work if executed with unix shell only.
-	add_custom_command(TARGET openssl POST_BUILD COMMAND ${CMAKE_COMMAND} -E rm -f ${DESTINATION_DIR}/lib/libssl*.dylib ${DESTINATION_DIR}/lib/libcrypto*.dylib)
-elseif(UNIX)
-	add_custom_command(TARGET openssl POST_BUILD COMMAND ${CMAKE_COMMAND} -E rm -f ${DESTINATION_DIR}/lib/libssl*.a ${DESTINATION_DIR}/lib/libcrypto*.a)
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${DESTINATION_DIR}/include ${DESTINATION_DIR}/lib/cmake
+		COMMAND ${CMAKE_COMMAND} -E copy_directory ${OPENSSL_DESTINATION_DIR}/include/openssl ${DESTINATION_DIR}/include/openssl
+		COMMAND ${CMAKE_COMMAND} -E copy_directory ${OPENSSL_DESTINATION_DIR}/lib/cmake/OpenSSL ${DESTINATION_DIR}/lib/cmake/OpenSSL
+		${OPENSSL_MERGE}
+		${OPENSSL_RM}
+	)
 endif()
 
 ################################## Qt
@@ -451,7 +522,7 @@ list(APPEND ENABLED_TARGETS qt)
 set(QT_CONFIGURE_FLAGS_HOST -release -optimize-size -shared -no-openssl -no-zstd -no-opengl)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
-	if(APPLE)
+	if(MACOS OR IOS)
 		set(QT_CONFIGURE_FLAGS -debug-and-release) # debug-only framework builds are not supported on macOS
 	else()
 		set(QT_CONFIGURE_FLAGS -debug)
@@ -464,9 +535,9 @@ else()
 	if(NOT WIN32)
 		list(APPEND QT_CONFIGURE_FLAGS -optimize-size)
 	endif()
-	if(APPLE OR ${CMAKE_BUILD_TYPE} STREQUAL "RELWITHDEBINFO")
+	if(MACOS OR IOS OR ${CMAKE_BUILD_TYPE} STREQUAL "RELWITHDEBINFO")
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -force-debug-info)
-		if(MAC)
+		if(MACOS)
 			set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -separate-debug-info)
 		endif()
 	endif()
@@ -548,13 +619,14 @@ endif()
 if(NOT CONTAINER_SDK)
 	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED directfb gif ico imageformat_bmp imageformat_ppm)
 	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED imageformat_xbm linuxfb mtdev pdf textodfwriter)
-	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED undocommand undogroup undostack)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED tuiotouch undocommand undogroup undostack)
 	list(APPEND QT_CONFIGURE_FLAGS_SHARED -qt-harfbuzz)
 endif()
 
 # qtbase/src/network
 DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED brotli dnslookup dtls localserver libresolv)
-DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED schannel sctp securetransport topleveldomain)
+DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED networklistmanager schannel sctp securetransport)
+DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED topleveldomain)
 
 # qtbase/src/testlib
 if(NOT CONTAINER_SDK)
@@ -565,7 +637,7 @@ endif()
 if(NOT (CONTAINER_SDK OR IOS OR ANDROID))
 	DISABLE_FEATURES(QT_CONFIGURE_FLAGS calendarwidget colordialog dial fontcombobox fontdialog)
 	DISABLE_FEATURES(QT_CONFIGURE_FLAGS lcdnumber splashscreen syntaxhighlighter undoview)
-	if(NOT MAC)
+	if(NOT MACOS)
 		DISABLE_FEATURES(QT_CONFIGURE_FLAGS mdiarea)
 	endif()
 endif()
@@ -575,12 +647,20 @@ if(NOT INTEGRATED_SDK)
 	DISABLE_FEATURES(QT_CONFIGURE_FLAGS bluetooth)
 endif()
 
+# qtdeclarative/src/qml
+if(IOS OR ANDROID)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED qml-labs)
+endif()
+if(NOT CONTAINER_SDK)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED qmlcontextpropertydump)
+endif()
+
 # qtdeclarative/src/quick
 if(IOS OR ANDROID)
 	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quick-dialogs)
 endif()
 if(NOT CONTAINER_SDK)
-	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quick-particles quick-path quick-pathview)
+	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quick-particles quick-pathview)
 	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quick-sprite quick-tableview quick-treeview)
 	DISABLE_FEATURES(QT_CONFIGURE_FLAGS_SHARED quick-vectorimage)
 endif()
@@ -612,25 +692,27 @@ DISABLE_FEATURES(QT_CONFIGURE_FLAGS websockets-qml)
 set(QT_CONFIGURE_FLAGS_OTHER -no-journald)
 set(QT_CONFIGURE configure)
 
-if(APPLE)
+if(MACOS OR IOS)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -appstore-compliant)
 
 	set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+	string(JOIN " " QT_SECURITY_FLAGS ${BASE_SECURITY_FLAGS})
+	set(QT_ENV "CFLAGS=${QT_SECURITY_FLAGS}" "CXXFLAGS=${QT_SECURITY_FLAGS}")
 endif()
+
 if(IOS)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -xplatform macx-ios-clang)
 
 	if(CMAKE_OSX_SYSROOT MATCHES "iphonesimulator")
 		set(ADDITIONAL_QT_DEFINES_HOST ${ADDITIONAL_QT_DEFINES_HOST} -DCMAKE_OSX_SYSROOT=macosx)
-		if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64" OR CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
-			set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES})
-		endif()
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -sdk iphonesimulator)
 	else()
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -sdk iphoneos)
 	endif()
-elseif(APPLE)
+	set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DCMAKE_OSX_ARCHITECTURES=${OSX_ARCH})
+elseif(MACOS)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -framework)
+	set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DCMAKE_OSX_ARCHITECTURES=${OSX_ARCH})
 elseif(WIN32 OR CYGWIN)
 	if(MSVC)
 		set(QT_PLATFORM win32-msvc)
@@ -787,7 +869,7 @@ if(WIN32)
 		list(APPEND GENERATE_LIBS_ID_SEED "${PROJECT_CMAKE_DIR}/SignFiles.cmake.in")
 		set(SIGN_COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_BINARY_DIR}/SignFiles.cmake")
 	endif()
-elseif(MAC)
+elseif(MACOS)
 	set(APPLE_SDK macosx)
 elseif(ANDROID)
 	list(APPEND TARBALL_NAME ${CMAKE_ANDROID_ARCH_ABI})
@@ -802,24 +884,8 @@ elseif(IOS)
 	if(CMAKE_OSX_ARCHITECTURES)
 		list(APPEND TARBALL_NAME ${CMAKE_OSX_ARCHITECTURES})
 	endif()
-elseif(LINUX)
-	set(OS_RELEASE "/etc/os-release")
-	if(EXISTS ${OS_RELEASE})
-		file(STRINGS ${OS_RELEASE} _content)
-		function(EXTRACT _identifier _out)
-			foreach(line IN LISTS _content)
-				string(REGEX MATCH "^${_identifier}=\"?([a-zA-Z0-9.-_]+)\"?" _unused "${line}")
-				if(CMAKE_MATCH_1)
-					set(${_out} ${CMAKE_MATCH_1} PARENT_SCOPE)
-					break()
-				endif()
-			endforeach()
-		endfunction()
-
-		EXTRACT(ID LINUX_DISTRO)
-		EXTRACT(VERSION_ID LINUX_DISTRO_VERSION)
-		list(APPEND TARBALL_NAME ${LINUX_DISTRO} ${LINUX_DISTRO_VERSION})
-	endif()
+elseif(OS_RELEASE)
+	list(APPEND TARBALL_NAME ${OS_RELEASE_ID} ${OS_RELEASE_VERSION_ID})
 endif()
 
 if(APPLE_SDK)

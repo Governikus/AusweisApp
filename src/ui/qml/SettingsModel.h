@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -75,7 +75,6 @@ class SettingsModel
 
 	private:
 		bool mAdvancedSettings;
-		bool mIsStartedByAuth;
 		bool mShowBetaTesting;
 		bool mManualAppcastUpdateRequested;
 
@@ -193,9 +192,6 @@ class SettingsModel
 
 		ReaderManagerPluginType getPreferredTechnology() const;
 		void setPreferredTechnology(ReaderManagerPluginType pTechnology) const;
-
-		[[nodiscard]] Q_INVOKABLE bool requestStoreFeedback() const;
-		Q_INVOKABLE void hideFutureStoreFeedbackDialogs() const;
 
 		Q_INVOKABLE void updateAppcast();
 

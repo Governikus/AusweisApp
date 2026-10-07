@@ -1,0 +1,119 @@
+From 35b2e3e8bd8c82830195516853fb23816d05697e Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Wed, 3 Jun 2026 00:10:50 +0200
+Subject: Introduce QAccessibleNativeInterface
+
+Use QAccessibleNativeInterface to insert native subviews at the
+correct place into the accessibility tree on iOS.
+
+Task-number: QTBUG-147411
+Change-Id: I2c74c8cec1d90733df7ee123af4a11d208c545ea
+---
+ src/gui/accessible/qaccessible.cpp                 |  2 ++
+ src/gui/accessible/qaccessible.h                   | 10 ++++++++++
+ src/gui/accessible/qaccessible_base.h              |  1 +
+ src/plugins/platforms/ios/quiview.mm               |  4 ++--
+ src/plugins/platforms/ios/quiview_accessibility.mm |  8 ++++++++
+ 5 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/gui/accessible/qaccessible.cpp y/qtbase/src/gui/accessible/qaccessible.cpp
+index 59884c172ce68e9eb7f60c25d878dae6517dbb9c..8efe3df4ef2ae01aa029ea7ec84011d895fdb44f 100644
+--- x/qtbase/src/gui/accessible/qaccessible.cpp
++++ y/qtbase/src/gui/accessible/qaccessible.cpp
+@@ -3287,6 +3287,8 @@ QAccessibleAttributesInterface::~QAccessibleAttributesInterface()
+ {
+ }
+ 
++QAccessibleNativeInterface::~QAccessibleNativeInterface() { }
++
+ /*!
+     \fn QList<QAccessible::Attribute> QAccessibleAttributesInterface::attributeKeys() const
+ 
+diff --git x/qtbase/src/gui/accessible/qaccessible.h y/qtbase/src/gui/accessible/qaccessible.h
+index afb1078a37acee1b48b020b9516b39e24e24dd1f..38d8ddda71d6d61f09f112ed57a2cbe43fed504a 100644
+--- x/qtbase/src/gui/accessible/qaccessible.h
++++ y/qtbase/src/gui/accessible/qaccessible.h
+@@ -43,6 +43,7 @@ class QAccessibleTableInterface;
+ class QAccessibleTableCellInterface;
+ class QAccessibleHyperlinkInterface;
+ class QAccessibleSelectionInterface;
++class QAccessibleNativeInterface;
+ class QAccessibleAttributesInterface;
+ class QAccessibleTableModelChangeEvent;
+ class QAccessibleViewportInterface;
+@@ -114,6 +115,9 @@ public:
+     inline QAccessibleViewportInterface *viewportInterface()
+     { return reinterpret_cast<QAccessibleViewportInterface *>(interface_cast(QAccessible::ViewportInterface)); }
+ 
++    inline QAccessibleNativeInterface *nativeInterface()
++    { return reinterpret_cast<QAccessibleNativeInterface *>(interface_cast(QAccessible::NativeInterface)); }
++
+     virtual void virtual_hook(int id, void *data);
+ 
+     virtual void *interface_cast(QAccessible::InterfaceType)
+@@ -313,6 +317,12 @@ public:
+     virtual void setPosition(QPointF position) = 0;
+ };
+ 
++class Q_GUI_EXPORT QAccessibleNativeInterface
++{
++public:
++    virtual ~QAccessibleNativeInterface();
++    virtual WId getNativeHandle() const = 0;
++};
+ 
+ class Q_GUI_EXPORT QAccessibleEvent
+ {
+diff --git x/qtbase/src/gui/accessible/qaccessible_base.h y/qtbase/src/gui/accessible/qaccessible_base.h
+index ec88ecf9ad446026b4835b2ddb313a364b3e5848..74ae1df815efcdc8bcbebb05c54dcc5a787c439c 100644
+--- x/qtbase/src/gui/accessible/qaccessible_base.h
++++ y/qtbase/src/gui/accessible/qaccessible_base.h
+@@ -369,6 +369,7 @@ public:
+         SelectionInterface,
+         AttributesInterface,
+         ViewportInterface,
++        NativeInterface,
+     };
+ 
+     enum TextBoundaryType {
+diff --git x/qtbase/src/plugins/platforms/ios/quiview.mm y/qtbase/src/plugins/platforms/ios/quiview.mm
+index 2d223625ba187be1a7f7e7db33637e3fc0b10278..fe968f451799866250c63f9b60272a6c1c975322 100644
+--- x/qtbase/src/plugins/platforms/ios/quiview.mm
++++ y/qtbase/src/plugins/platforms/ios/quiview.mm
+@@ -57,7 +57,7 @@ inline ulong getTimeStamp(UIEvent *event)
+ @implementation QUIView {
+     QHash<NSUInteger, QWindowSystemInterface::TouchPoint> m_activeTouches;
+     UITouch *m_activePencilTouch;
+-    NSMutableArray<UIAccessibilityElement *> *m_accessibleElements;
++    NSMutableArray<id> *m_accessibleElements;
+     CGPoint m_lastScrollCursorPos;
+     CGPoint m_lastScrollDelta;
+ }
+@@ -78,7 +78,7 @@ inline ulong getTimeStamp(UIEvent *event)
+         if (isQtApplication())
+             self.hidden = YES;
+ 
+-        m_accessibleElements = [[NSMutableArray<UIAccessibilityElement *> alloc] init];
++        m_accessibleElements = [[NSMutableArray<id> alloc] init];
+ 
+ #ifndef Q_OS_TVOS
+         self.multipleTouchEnabled = YES;
+diff --git x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+index 92f2048b0e30c16ca2c911a7744018749504d039..b015fe7c58e2a93c5b4be7943304b9c82ae5f9ed 100644
+--- x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
++++ y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+@@ -11,6 +11,14 @@
+ 
+ - (void)createAccessibleElement:(QAccessibleInterface *)iface
+ {
++    if (QAccessibleNativeInterface *nativeIface = iface->nativeInterface()) {
++        WId nativeHandle = nativeIface->getNativeHandle();
++        if (nativeHandle != WId(0) && nativeHandle != WId(1)) {
++            [m_accessibleElements addObject:(__bridge id)nativeHandle];
++            return;
++        }
++    }
++
+     if (!iface || iface->state().invisible || (iface->text(QAccessible::Name).isEmpty() && iface->text(QAccessible::Value).isEmpty() && iface->text(QAccessible::Description).isEmpty()))
+         return;
+     QAccessible::Id accessibleId = QAccessible::uniqueId(iface);

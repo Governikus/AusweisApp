@@ -46,6 +46,46 @@
         <extracomment>MOBILE Hint that is shown if the users pressed the &quot;back&quot; button on the top-most navigation level for the first time (a second press closes the app).</extracomment>
         <translation>Щоб закрити програму, двічі торкніться кнопки «Назад».</translation>
     </message>
+    <message>
+        <source>Restart now</source>
+        <extracomment>MOBILE</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An update was downloaded and a restart is required to apply it.</source>
+        <extracomment>MOBILE</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update available</source>
+        <extracomment>MOBILE</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A network connection is required to install the update.</source>
+        <extracomment>MOBILE</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <extracomment>MOBILE</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Install update</source>
+        <extracomment>MOBILE</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A critical update is available and required to use the %1.</source>
+        <extracomment>MOBILE %1 is replaced with the application name</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update required</source>
+        <extracomment>MOBILE</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AuthCanceledView</name>
@@ -171,9 +211,11 @@ MOBILE</extracomment>
         <translation>Надіслати журнал</translation>
     </message>
     <message>
-        <source>Authenticate with provider</source>
-        <extracomment>MOBILE A11y button to confirm the PIN and start the provider authentication</extracomment>
-        <translation>Виконайте автентифікацію у провайдера</translation>
+        <source>Confirm password and authenticate with provider</source>
+        <extracomment>DESKTOP A11y button to confirm the PIN and start the provider authentication
+----------
+MOBILE A11y button to confirm the PIN and start the provider authentication</extracomment>
+        <translation type="unfinished">Виконайте автентифікацію у провайдера</translation>
     </message>
     <message>
         <source>Authentication failed</source>
@@ -332,14 +374,6 @@ MOBILE</extracomment>
     </message>
 </context>
 <context>
-    <name>BaseDevicesListDelegate</name>
-    <message>
-        <source>Device %1</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Пристрій %1</translation>
-    </message>
-</context>
-<context>
     <name>BaseHeading</name>
     <message>
         <source>Heading</source>
@@ -430,10 +464,6 @@ MOBILE</extracomment>
     <message>
         <source>VersionCode</source>
         <translation>Код версії</translation>
-    </message>
-    <message>
-        <source>Certificate</source>
-        <translation>Сертифікат</translation>
     </message>
     <message>
         <source>Qt Version</source>
@@ -1449,6 +1479,14 @@ MOBILE</extracomment>
     </message>
 </context>
 <context>
+    <name>DevicesListItem</name>
+    <message>
+        <source>Device %1</source>
+        <extracomment>MOBILE %1 is replaced with the device&apos;s name</extracomment>
+        <translation>Пристрій %1</translation>
+    </message>
+</context>
+<context>
     <name>DiagnosisView</name>
     <message>
         <source>Save to file</source>
@@ -1691,6 +1729,10 @@ MOBILE</extracomment>
         <extracomment>DESKTOP</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Element %1 of %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GRadioGroup</name>
@@ -1711,9 +1753,9 @@ MOBILE</extracomment>
 <context>
     <name>GTextField</name>
     <message>
-        <source>A maximum of %1 characters is allowed.</source>
+        <source>Maximum allowed length reached.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Досягнуто максимально дозволеної довжини.</translation>
     </message>
 </context>
 <context>
@@ -1742,11 +1784,6 @@ MOBILE</extracomment>
         <source>Use system font</source>
         <extracomment>DESKTOP</extracomment>
         <translation>Використовувати шрифт системи</translation>
-    </message>
-    <message>
-        <source>Toggling will restart the %1</source>
-        <extracomment>DESKTOP</extracomment>
-        <translation>Перемикання призведе до перезапуску %1</translation>
     </message>
     <message>
         <source>Close %1 window after authentication</source>
@@ -2764,7 +2801,7 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>I can&apos;t recall neither my card PIN nor my transport PIN. How do I set a new card PIN?</source>
+        <source>I can&apos;t remember my card PIN or my transport PIN. How do I set a new card PIN?</source>
         <extracomment>ALL_PLATFORMS</extracomment>
         <translation type="unfinished"></translation>
     </message>
@@ -2788,13 +2825,6 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
     </message>
 </context>
 <context>
-    <name>NativeTextInput</name>
-    <message>
-        <source>Maximum allowed length reached.</source>
-        <translation>Досягнуто максимально дозволеної довжини.</translation>
-    </message>
-</context>
-<context>
     <name>NavigationAction</name>
     <message>
         <source>Cancel</source>
@@ -2810,6 +2840,34 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <source>Close</source>
         <extracomment>DESKTOP</extracomment>
         <translation>Закрити</translation>
+    </message>
+</context>
+<context>
+    <name>NavigationItem</name>
+    <message>
+        <source>%1 of %2</source>
+        <extracomment>MOBILE Relative position of current navigation tab in navigation view. %1 is replaced with the current tab&apos;s index, %2 with the total count of tabs</extracomment>
+        <translation type="unfinished">%1 з %2</translation>
+    </message>
+    <message>
+        <source>Tab</source>
+        <extracomment>MOBILE</extracomment>
+        <translation type="unfinished">Вкладка</translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <extracomment>IOS Selected navigation tab.</extracomment>
+        <translation type="unfinished">Вибір</translation>
+    </message>
+    <message>
+        <source>Tab bar</source>
+        <extracomment>IOS Name of a11y element of selected navigation tab.</extracomment>
+        <translation type="unfinished">Панель вкладок</translation>
+    </message>
+    <message>
+        <source>Selected</source>
+        <extracomment>ANDROID Currently selected navigation tab of navigation view.</extracomment>
+        <translation type="unfinished">Вибір</translation>
     </message>
 </context>
 <context>
@@ -2829,31 +2887,6 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
     <message>
         <source>Card reader</source>
         <translation>Пристрій читання карток</translation>
-    </message>
-    <message>
-        <source>%1 of %2</source>
-        <extracomment>MOBILE Relative position of current navigation tab in navigation view. %1 is replaced with the current tab&apos;s index, %2 with the total count of tabs</extracomment>
-        <translation>%1 з %2</translation>
-    </message>
-    <message>
-        <source>Tab</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Вкладка</translation>
-    </message>
-    <message>
-        <source>Selection</source>
-        <extracomment>IOS Selected navigation tab.</extracomment>
-        <translation>Вибір</translation>
-    </message>
-    <message>
-        <source>Tab bar</source>
-        <extracomment>IOS Name of a11y element of selected navigation tab.</extracomment>
-        <translation>Панель вкладок</translation>
-    </message>
-    <message>
-        <source>Selected</source>
-        <extracomment>ANDROID Currently selected navigation tab of navigation view.</extracomment>
-        <translation>Вибір</translation>
     </message>
 </context>
 <context>
@@ -3062,24 +3095,14 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <translation>Ви ввели %1 з %2 знаків.</translation>
     </message>
     <message>
-        <source>Click to hide the number</source>
-        <extracomment>DESKTOP Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Натисніть, щоб приховати номер</translation>
+        <source>Hide password</source>
+        <extracomment>ALL_PLATFORMS Screenreader text for the eye icon to hide the password</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tap to hide the number</source>
-        <extracomment>MOBILE Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Торкніться, щоб приховати номер</translation>
-    </message>
-    <message>
-        <source>Click to show the number</source>
-        <extracomment>DESKTOP Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Натисніть, щоб показати номер</translation>
-    </message>
-    <message>
-        <source>Tap to show the number</source>
-        <extracomment>MOBILE Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Торкніться, щоб показати номер</translation>
+        <source>Show password</source>
+        <extracomment>ALL_PLATFORMS Screenreader text for the eye icon to show the password</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The number is visible. Digits entered so far: %1</source>
@@ -3587,6 +3610,23 @@ MOBILE</extracomment>
     </message>
 </context>
 <context>
+    <name>PairingCodePane</name>
+    <message>
+        <source>Pairing code: %1, valid for %2 seconds</source>
+        <extracomment>MOBILE %1 is replaced with the current PSK, %2 with the remaining seconds of the PSK validity</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 seconds left before the pairing code %2 expires</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The pairing code has expired and a new code was generated: %1</source>
+        <extracomment>MOBILE %1 is replaced with the new PSK</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PairingFailedView</name>
     <message>
         <source>Pairing to &quot;%1&quot; failed</source>
@@ -3722,14 +3762,6 @@ MOBILE</extracomment>
         <source>Testmode for the integrated functions deactivated.</source>
         <extracomment>ALL_PLATFORMS Used in notifications when the user taps the icon</extracomment>
         <translation>Тестовий режим для інтегрованих функцій вимкнено.</translation>
-    </message>
-</context>
-<context>
-    <name>PlatformTextField</name>
-    <message>
-        <source>Maximum allowed length reached.</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Досягнуто максимально дозволеної довжини.</translation>
     </message>
 </context>
 <context>
@@ -3926,6 +3958,18 @@ DESKTOP Title of the proxy credentials popup.</extracomment>
     <message>
         <source>Critical errors:</source>
         <translation>Критичні помилки:</translation>
+    </message>
+    <message>
+        <source>%1 error report - %2</source>
+        <translation>Звіт про помилку програми %1 – %2</translation>
+    </message>
+</context>
+<context>
+    <name>QTextField</name>
+    <message>
+        <source>A maximum of %1 characters is allowed.</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4173,6 +4217,11 @@ DESKTOP Title of the proxy credentials popup.</extracomment>
         <translation>Пристрій читання карток готовий</translation>
     </message>
     <message>
+        <source>Enter the pairing code in the %1 on your other device. Both devices have to be on the same network (e.g. WiFi). The code is valid for 2 minutes and is automatically renewed afterwards.</source>
+        <extracomment>MOBILE %1 is replaced with the name &quot;AusweisApp&quot;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>To do this, start a process on a paired device.</source>
         <extracomment>MOBILE</extracomment>
         <translation>Для цього запустіть процес на пристрої, з яким створено пару.</translation>
@@ -4290,11 +4339,6 @@ To do this you first have to pair that device with this smartphone.</source>
         <source>Enter the pairing code</source>
         <extracomment>MOBILE</extracomment>
         <translation>Ввід коду створення пари</translation>
-    </message>
-    <message>
-        <source>Enter the pairing code &quot;%1&quot; in the %2 on your other device. Both devices have to be on the same network (e.g. WiFi).</source>
-        <extracomment>MOBILE %1 is replaced with the pairing code, %2 with the name &quot;AusweisApp&quot;</extracomment>
-        <translation>Введіть код створення пари «%1» у %2 на іншому пристрої. Обидва пристрої мають бути в одній мережі (наприклад, Wi-Fi).</translation>
     </message>
     <message>
         <source>Pairing progress</source>
@@ -4460,9 +4504,9 @@ MOBILE</extracomment>
         <translation>Таким чином, перш ніж ідентифікувати себе постачальнику послуг, ви можете переконатися, що все працює і що дані, які зберігаються на вашій eID-картці, є актуальними.</translation>
     </message>
     <message>
-        <source>To do this, you go through an authentication process at Governikus GmbH &amp; Co. KG, the manufacturer of the %1.</source>
+        <source>To do this, you go through an authentication process at Governikus Service GmbH, the manufacturer of the %1.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Для цього ви проходите процес автентифікації у компанії Governikus GmbH &amp; Co. KG, виробника %1.</translation>
+        <translation>Для цього ви проходите процес автентифікації у компанії Governikus Service GmbH, виробника %1.</translation>
     </message>
     <message>
         <source>Use eID function</source>
@@ -4656,11 +4700,6 @@ MOBILE</extracomment>
         <translation>Скинути приховані діалоги</translation>
     </message>
     <message>
-        <source>Toggling will restart the %1</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Перемикання призведе до перезапуску %1</translation>
-    </message>
-    <message>
         <source>Use system font</source>
         <extracomment>MOBILE</extracomment>
         <translation>Використовувати шрифт системи</translation>
@@ -4734,31 +4773,6 @@ MOBILE</extracomment>
         <source>Disable</source>
         <extracomment>MOBILE</extracomment>
         <translation>Вимкнути</translation>
-    </message>
-    <message>
-        <source>Later</source>
-        <extracomment>MOBILE</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restart</source>
-        <extracomment>IOS</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restart now</source>
-        <extracomment>ANDROID</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The font change applies only after restarting the application.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restart required</source>
-        <extracomment>MOBILE</extracomment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Prevent screenshots</source>
@@ -4868,29 +4882,6 @@ MOBILE</extracomment>
         <source>If you want to use the eID function on your PC, install %1 there and follow the initial setup.</source>
         <extracomment>MOBILE %1 will be replaced with the name of the application</extracomment>
         <translation>Якщо ви хочете використовувати функцію eID на своєму ПК, встановіть на нього %1 і проведіть початкове налаштування.</translation>
-    </message>
-</context>
-<context>
-    <name>StoreFeedbackPopup</name>
-    <message>
-        <source>Are you satisfied with %1?</source>
-        <extracomment>ANDROID Header of the app rating popup.</extracomment>
-        <translation>Ви задоволені програмою %1?</translation>
-    </message>
-    <message>
-        <source>We would be very grateful if you could leave a rating on the Google Play Store!</source>
-        <extracomment>ANDROID Content of the app rating popup.</extracomment>
-        <translation>Будемо дуже вдячні, якщо ви поставите оцінку в магазині Google Play!</translation>
-    </message>
-    <message>
-        <source>Do not ask again</source>
-        <extracomment>ANDROID</extracomment>
-        <translation>Більше не запитувати</translation>
-    </message>
-    <message>
-        <source>Rate app</source>
-        <extracomment>ANDROID</extracomment>
-        <translation>Оцінити програму</translation>
     </message>
 </context>
 <context>
@@ -5034,10 +5025,6 @@ MOBILE</extracomment>
     <message>
         <source>Show more information about the transaction.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Information about the transaction.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6405,21 +6392,6 @@ MOBILE</extracomment>
         <translation>Сталася помилка протоколу. Правильно розташуйте ID-картку на пристрої читання карток і повторіть спробу. Якщо проблема виникає знову, зверніться до нашої служби підтримки за посиланням: %1.</translation>
     </message>
     <message>
-        <source>The given PIN is not correct.</source>
-        <extracomment>ALL_PLATFORMS The ID card declined the PIN.</extracomment>
-        <translation>Введений PIN-код неправильний.</translation>
-    </message>
-    <message>
-        <source>The given Card Access Number (CAN) is not correct.</source>
-        <extracomment>ALL_PLATFORMS The ID card declined the CAN.</extracomment>
-        <translation>Введений номер доступу до картки (CAN) неправильний.</translation>
-    </message>
-    <message>
-        <source>The given PUK is not correct.</source>
-        <extracomment>ALL_PLATFORMS The ID card declined the PUK.</extracomment>
-        <translation>Введений PUK-код неправильний.</translation>
-    </message>
-    <message>
         <source>The PIN is not blocked.</source>
         <extracomment>ALL_PLATFORMS It was attempted to unlock the ID card via PUK even though it was not locked in the first place. This scenario is avoided in the UI by hiding the respective UI elements.</extracomment>
         <translation>PIN-код не заблоковано.</translation>
@@ -7026,6 +6998,7 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
     </message>
     <message>
         <source>You may now remove your ID card from the device.</source>
+        <extracomment>ALL_PLATFORMS The ID card PIN was changed successfully (2/2).</extracomment>
         <translation>Тепер ви можете видалити свою ID-картку з пристрою.</translation>
     </message>
 </context>
@@ -7264,10 +7237,6 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
 </context>
 <context>
     <name>governikus::WorkflowModel</name>
-    <message>
-        <source>%1 error report - %2</source>
-        <translation>Звіт про помилку програми %1 – %2</translation>
-    </message>
     <message>
         <source>Contact your local citizens&apos; office (Bürgeramt) to apply for a new ID card or to unblock the ID card.</source>
         <translation>Зверніться до місцевого відділу обслуговування громадян (Bürgeramt), щоб подати заяву на отримання нової ID-картки або розблокувати ID-картку.</translation>

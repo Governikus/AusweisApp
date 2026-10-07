@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "SettingsModel.h"
@@ -11,10 +11,6 @@
 
 #include <QQmlEngine>
 
-#ifdef Q_OS_ANDROID
-	#include <QJniObject>
-#endif
-
 
 using namespace governikus;
 
@@ -22,7 +18,6 @@ using namespace governikus;
 SettingsModel::SettingsModel()
 	: QObject()
 	, mAdvancedSettings(false)
-	, mIsStartedByAuth(false)
 	, mShowBetaTesting(!qEnvironmentVariableIsSet("SUPPRESS_BETA_LOGO"))
 	, mManualAppcastUpdateRequested(false)
 {
@@ -47,10 +42,6 @@ SettingsModel::SettingsModel()
 	connect(Env::getSingleton<ApplicationModel>(), &ApplicationModel::fireNfcStateChanged, this, [this]{
 				onNfcStateChanged(Env::getSingleton<ApplicationModel>()->getNfcState());
 			});
-
-#ifdef Q_OS_ANDROID
-	mIsStartedByAuth = QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
-#endif
 }
 
 
@@ -275,7 +266,7 @@ void SettingsModel::setSimulatorEnabled(bool pEnabled) const
 
 UiModule SettingsModel::getStartupModule() const
 {
-	if (mIsStartedByAuth)
+	if (Env::getSingleton<ApplicationModel>()->isStartedByAuth())
 	{
 		return UiModule::IDENTIFY;
 	}
@@ -359,26 +350,6 @@ void SettingsModel::setAutoStart(bool pEnabled)
 		settings.setAutoStart(pEnabled);
 		Q_EMIT fireAutoStartChanged();
 	}
-}
-
-
-bool SettingsModel::requestStoreFeedback() const
-{
-#ifdef Q_OS_ANDROID
-	const bool startedByAuth = QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
-	if (startedByAuth)
-	{
-		return false;
-	}
-#endif
-
-	return Env::getSingleton<AppSettings>()->getGeneralSettings().isRequestStoreFeedback();
-}
-
-
-void SettingsModel::hideFutureStoreFeedbackDialogs() const
-{
-	Env::getSingleton<AppSettings>()->getGeneralSettings().setRequestStoreFeedback(false);
 }
 
 
@@ -677,7 +648,6 @@ void SettingsModel::resetHideableDialogs() const
 	settings.setTransportPinReminder(true);
 	settings.setRemindUserToClose(true);
 	settings.setRemindUserOfAutoRedirect(true);
-	settings.setRequestStoreFeedback(true);
 	settings.setStartupModule(QString());
 	settings.setShowOnboarding(true);
 #endif

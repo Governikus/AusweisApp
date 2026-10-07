@@ -1,0 +1,95 @@
+From 9b769d373c0392d40dcc48fe212931beeaaab669 Mon Sep 17 00:00:00 2001
+From: Timon Sassor <timon.sassor@governikus.de>
+Date: Fri, 20 Mar 2026 14:07:39 +0100
+Subject: a11y Android: Listen to ACTION_SHOW_ON_SCREEN and pass it to
+ QAccessible
+
+Android sends ACTION_SHOW_ON_SCREEN if a "selection" or set focus of an
+element outside the viewport is requested. This allows for positioning
+of said element in the viewport. Since the action which is required to
+position the element depends on the circumstances, the
+AccessibleAttached showOnScreen signal was introduced to let the user
+handle the positioning.
+
+[ChangeLog][Accessibility][Android] React to the A11y
+ACTION_SHOW_ON_SCREEN signal.
+
+Change-Id: I1e91521f84de0ae34819f41110a9c590524371c4
+Reviewed-by: MohammadHossein Qanbari <mohammad.qanbari@qt.io>
+(cherry-picked from commit 95898cacd0fdccd29fd354ee4c79829f781f9b84)
+---
+ src/quick/items/qquickaccessibleattached.cpp | 12 ++++++++++++
+ src/quick/items/qquickaccessibleattached_p.h |  2 ++
+ 2 files changed, 14 insertions(+)
+
+diff --git x/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp y/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
+index 7f618687731cdb37094f466afb8b57dc835cbae2..f54bdd4401af249a6f0703a46500ba00e8e0d677 100644
+--- x/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
++++ y/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
+@@ -283,6 +283,12 @@ QT_BEGIN_NAMESPACE
+ 
+     This signal is emitted when a decrease action is received from an assistive tool such as a screen-reader.
+ */
++/*!
++    \qmlsignal QtQuick::Accessible::showOnScreenAction()
++
++    This signal is emitted when an assistive tool such as a screen-reader detects a partially visible element
++    and requests it to be fully visible.
++*/
+ /*!
+     \qmlsignal QtQuick::Accessible::scrollUpAction()
+ 
+@@ -318,6 +324,7 @@ QMetaMethod QQuickAccessibleAttached::sigPress;
+ QMetaMethod QQuickAccessibleAttached::sigToggle;
+ QMetaMethod QQuickAccessibleAttached::sigIncrease;
+ QMetaMethod QQuickAccessibleAttached::sigDecrease;
++QMetaMethod QQuickAccessibleAttached::sigShowOnScreen;
+ QMetaMethod QQuickAccessibleAttached::sigScrollUp;
+ QMetaMethod QQuickAccessibleAttached::sigScrollDown;
+ QMetaMethod QQuickAccessibleAttached::sigScrollLeft;
+@@ -385,6 +392,7 @@ QQuickAccessibleAttached::QQuickAccessibleAttached(QObject *parent)
+         sigToggle = QMetaMethod::fromSignal(&QQuickAccessibleAttached::toggleAction);
+         sigIncrease = QMetaMethod::fromSignal(&QQuickAccessibleAttached::increaseAction);
+         sigDecrease = QMetaMethod::fromSignal(&QQuickAccessibleAttached::decreaseAction);
++        sigShowOnScreen = QMetaMethod::fromSignal(&QQuickAccessibleAttached::showOnScreenAction);
+         sigScrollUp = QMetaMethod::fromSignal(&QQuickAccessibleAttached::scrollUpAction);
+         sigScrollDown = QMetaMethod::fromSignal(&QQuickAccessibleAttached::scrollDownAction);
+         sigScrollLeft = QMetaMethod::fromSignal(&QQuickAccessibleAttached::scrollLeftAction);
+@@ -498,6 +506,8 @@ bool QQuickAccessibleAttached::doAction(const QString &actionName)
+         sig = &sigIncrease;
+     else if (actionName == QAccessibleActionInterface::decreaseAction())
+         sig = &sigDecrease;
++    else if (actionName == QAccessibleActionInterface::showOnScreenAction())
++        sig = &sigShowOnScreen;
+     else if (actionName == QAccessibleActionInterface::scrollUpAction())
+         sig = &sigScrollUp;
+     else if (actionName == QAccessibleActionInterface::scrollDownAction())
+@@ -531,6 +541,8 @@ void QQuickAccessibleAttached::availableActions(QStringList *actions) const
+         actions->append(QAccessibleActionInterface::increaseAction());
+     if (isSignalConnected(sigDecrease))
+         actions->append(QAccessibleActionInterface::decreaseAction());
++    if (isSignalConnected(sigShowOnScreen))
++        actions->append(QAccessibleActionInterface::showOnScreenAction());
+     if (isSignalConnected(sigScrollUp))
+         actions->append(QAccessibleActionInterface::scrollUpAction());
+     if (isSignalConnected(sigScrollDown))
+diff --git x/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h y/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h
+index a991ab2e269bb3e6f649a58660ca3a1157bbddd3..899dddcc7c01b742ddf8dd55836180f36baf905c 100644
+--- x/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h
++++ y/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h
+@@ -256,6 +256,7 @@ Q_SIGNALS:
+     void toggleAction();
+     void increaseAction();
+     void decreaseAction();
++    void showOnScreenAction();
+     void scrollUpAction();
+     void scrollDownAction();
+     void scrollLeftAction();
+@@ -281,6 +282,7 @@ private:
+     static QMetaMethod sigToggle;
+     static QMetaMethod sigIncrease;
+     static QMetaMethod sigDecrease;
++    static QMetaMethod sigShowOnScreen;
+     static QMetaMethod sigScrollUp;
+     static QMetaMethod sigScrollDown;
+     static QMetaMethod sigScrollLeft;

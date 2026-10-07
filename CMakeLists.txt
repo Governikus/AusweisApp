@@ -36,21 +36,23 @@ if(isMultiConfig)
 	endif()
 endif()
 
-include(Version)
 find_package(Governikus QUIET)
+
+include(Version)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES ${LANGUAGES})
-
-if(ANDROID AND NOT GOVERNIKUS_TOOLCHAIN_FILE)
-	message(FATAL_ERROR "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_DIR}/android.toolchain.cmake is required")
-endif()
-
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
 if(NOT PROJECT_VERSION_TWEAK)
 	set(PROJECT_VERSION_TWEAK 0)
 endif()
 
-if(APPLE AND NOT tools.only)
+if(ANDROID AND NOT GOVERNIKUS_TOOLCHAIN_FILE)
+	message(FATAL_ERROR "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_DIR}/android.toolchain.cmake is required")
+endif()
+
+include(Helper)
+
+if((MACOS OR IOS) AND NOT tools.only)
 	enable_language(OBJCXX)
 endif()
 
@@ -61,8 +63,6 @@ option(CONTAINER_SDK "Build container specific SDK" OFF)
 if(CONTAINER_SDK)
 	set(INTEGRATED_SDK ON)
 endif()
-
-include(Helper)
 
 if(NOT VENDOR)
 	if(EXISTS "${CMAKE_DIR}/Vendor.internal.cmake")
@@ -100,11 +100,11 @@ if(ANDROID)
 	message(STATUS "ANDROID_VERSION_CODE: ${ANDROID_VERSION_CODE}")
 endif()
 
-if(IOS OR MAC)
-	if(NOT USE_DISTRIBUTION_PROFILE)
-		set(USE_DISTRIBUTION_PROFILE false)
+if(IOS OR MACOS)
+	if(NOT USE_APPSTORE_PROFILE)
+		set(USE_APPSTORE_PROFILE false)
 	endif()
-	message(STATUS "USE_DISTRIBUTION_PROFILE: ${USE_DISTRIBUTION_PROFILE}")
+	message(STATUS "USE_APPSTORE_PROFILE: ${USE_APPSTORE_PROFILE}")
 endif()
 
 if("${PROJECT_BINARY_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND NOT FORCE_SOURCE_BUILD)
@@ -120,7 +120,7 @@ set(DOCS_DIR ${PROJECT_SOURCE_DIR}/docs)
 set(RESOURCES_DIR ${PROJECT_SOURCE_DIR}/resources)
 set(PACKAGING_DIR ${RESOURCES_DIR}/packaging)
 set(COPYRIGHT_TEXT "2014-2026 ${VENDOR}")
-if(APPLE)
+if(MACOS OR IOS)
 	string(REPLACE " \& " " \&amp; " COPYRIGHT_TEXT ${COPYRIGHT_TEXT})
 endif()
 set(BUNDLE_IDENTIFIER com.governikus.ausweisapp2)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "MockIfdServer.h"
@@ -8,6 +8,7 @@
 #include <QSharedPointer>
 #include <QSignalSpy>
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -82,7 +83,7 @@ class test_IfdServiceContext
 			QCOMPARE(context.getPin(), QString());
 			QCOMPARE(context.getPuk(), QString());
 			QCOMPARE(context.getNewPin(), QString());
-			QCOMPARE(context.getLastPaceResult(), CardReturnCode::OK);
+			QCOMPARE(context.getPaceOutput().getReturnCode(), CardReturnCode::UNDEFINED);
 			QVERIFY(context.getSlotHandle().isEmpty());
 			QCOMPARE(context.getModifyPinMessage(), QSharedPointer<const IfdModifyPin>());
 		}

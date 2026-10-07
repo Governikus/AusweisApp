@@ -1,0 +1,32 @@
+From 648450f400fec8841bd0e883e75568d58c71762b Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Tue, 28 Apr 2026 18:14:39 +0200
+Subject: CMake: Fix property QT_ANDROID_LEGACY_PACKAGING
+
+Currently useLegacyPackaging in build.gradle evaluates to true when
+any value is given in gradle.properties because only strings are
+provided and any string is != null. So we add a missing conversion.
+Gradle will not change it: https://github.com/gradle/gradle/issues/2632
+
+Fixes: QTBUG-146124
+Pick-to: 6.12 6.11
+Change-Id: I45aeb5275ae091eedd959a21e02abb643a9753b1
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit 2ee96d1c0ba8943a0574d761b965ede21060b394)
+---
+ src/android/templates/build.gradle | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtbase/src/android/templates/build.gradle y/qtbase/src/android/templates/build.gradle
+index 695315dde1420f820e2a1b0cd033e517fc40eea8..29b5eef64930f059f157cf51309bb5d8512f6d6c 100644
+--- x/qtbase/src/android/templates/build.gradle
++++ y/qtbase/src/android/templates/build.gradle
+@@ -79,7 +79,7 @@ android {
+ 
+     packagingOptions {
+         jniLibs {
+-            useLegacyPackaging = legacyPackaging
++            useLegacyPackaging = legacyPackaging.toBoolean()
+         }
+     }
+ 

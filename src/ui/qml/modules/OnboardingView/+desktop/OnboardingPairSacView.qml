@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -96,7 +96,7 @@ BaseOnboardingView {
 			delegate: RemoteReaderDelegate {
 				Layout.fillWidth: true
 
-				onFocusChanged: if (focus)
+				onActiveFocusChanged: if (activeFocus)
 					Utils.positionViewAtItem(this)
 				onPairDevice: pDeviceId => {
 					if (RemoteServiceModel.rememberServer(pDeviceId)) {
@@ -117,12 +117,12 @@ BaseOnboardingView {
 					//: DESKTOP
 					text: qsTr("Use device")
 
-					onClicked: root.continueOnboarding()
-					onFocusChanged: if (focus)
+					onActiveFocusChanged: if (activeFocus)
 						root.positionViewAtItem(this)
+					onClicked: root.continueOnboarding()
 				}
 
-				onFocusChanged: if (focus)
+				onActiveFocusChanged: if (activeFocus)
 					Utils.positionViewAtItem(this)
 			}
 		}
@@ -140,7 +140,7 @@ BaseOnboardingView {
 			remoteDeviceStatus: ""
 			visible: devicesInPairingMode.count === 0 && availablePairedDevices.count === 0
 
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
 		}
 		MoreInformationLink {

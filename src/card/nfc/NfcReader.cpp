@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "NfcReader.h"
@@ -62,7 +62,7 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 			});
 	fetchCardInfo();
 
-	if (mCard.isNull() || !mCard->isValid())
+	if (mCard.isNull())
 	{
 		removeCardInfo();
 		return;
@@ -175,12 +175,7 @@ bool NfcReader::isEnabled() const
 
 Card* NfcReader::getCard() const
 {
-	if (mCard && mCard->isValid())
-	{
-		return mCard.data();
-	}
-
-	return nullptr;
+	return mCard.data();
 }
 
 

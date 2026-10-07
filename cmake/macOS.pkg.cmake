@@ -20,4 +20,4 @@ foreach(dir IN LISTS ALL_DIRS)
 	endif()
 endforeach()
 
-execute_process(COMMAND ${XCRUN} productbuild --sign "3rd Party Mac Developer Installer: Governikus GmbH & Co. KG (G7EQCJU4BR)" --component ${APP_PATH} /Applications ${PKG_PATH})
+execute_process(COMMAND ${XCRUN} productbuild --sign "3rd Party Mac Developer Installer: Governikus Service GmbH (G7EQCJU4BR)" --component ${APP_PATH} /Applications ${PKG_PATH})

@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "Env.h"
+#include "MockApplicationModel.h"
 #include "MockNetworkManager.h"
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
@@ -32,6 +33,7 @@ class QmlTestRunner
 
 	private:
 		QSharedPointer<MockNetworkManager> mMockNetworkManager;
+		QSharedPointer<MockApplicationModel> mMockApplicationModel;
 
 	public:
 		Q_INVOKABLE void registerUrlScheme(const QString& pScheme)
@@ -57,6 +59,8 @@ class QmlTestRunner
 			Env::getSingleton<ReaderManager>()->init();
 			mMockNetworkManager.reset(new MockNetworkManager());
 			Env::set(NetworkManager::staticMetaObject, mMockNetworkManager.get());
+			mMockApplicationModel.reset(new MockApplicationModel());
+			Env::set(ApplicationModel::staticMetaObject, mMockApplicationModel.get());
 		}
 
 

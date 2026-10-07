@@ -42,8 +42,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = '@PROJECT_NAME@'
-copyright = '2016-2026, Governikus GmbH & Co. KG'
-author = 'Governikus GmbH & Co. KG'
+copyright = '2016-2026, Governikus Service GmbH'
+author = 'Governikus Service GmbH'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -119,7 +119,7 @@ latex_elements = {
 
 # Additional stuff for the LaTeX preamble.
 'preamble': '''
-\hypersetup{pdfauthor={Governikus GmbH \& Co. KG},
+\hypersetup{pdfauthor={Governikus Service GmbH},
             pdftitle={@PROJECT_NAME@},
             pdfsubject={Release Notes},
             pdfkeywords={release, notes},
@@ -145,7 +145,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   (master_doc, '@ARTIFACT_FILENAME@-ReleaseNotes.tex', '@PROJECT_NAME@ Release Notes',
-   'Governikus GmbH \& Co. KG', 'howto'),
+   'Governikus Service GmbH', 'howto'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

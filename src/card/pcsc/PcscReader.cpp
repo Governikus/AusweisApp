@@ -1,6 +1,8 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
+
+#include "PcscReader.h"
 
 #include "PcscCard.h"
 
@@ -9,6 +11,7 @@
 #include <QStringList>
 
 #include <array>
+
 
 #if defined(Q_OS_MACOS)
 	#define CM_IOCTL_GET_FEATURE_REQUEST (0x42000000 + 3400)
@@ -24,6 +27,7 @@ using namespace governikus;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
+
 
 PcscReader::PcscReader(const QString& pReaderName)
 	: Reader(ReaderManagerPluginType::PCSC, pReaderName)

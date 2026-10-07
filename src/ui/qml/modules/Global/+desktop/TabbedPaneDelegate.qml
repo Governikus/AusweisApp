@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -12,6 +12,21 @@ import Governikus.View
 
 Item {
 	id: root
+
+	readonly property string a11yDescription: Qt.platform.os === "windows" ? a11yPageIndicator : ""
+	readonly property string a11yName: {
+		if (Qt.platform.os === "windows") {
+			return sectionName.text;
+		}
+
+		let a11yRole = index === ListView.view.currentIndex ?
+		//: DESKTOP
+		qsTr("Tab selected") :
+		//: DESKTOP
+		qsTr("Tab");
+
+		return sectionName.text + ", " + a11yRole + ", " + a11yPageIndicator;
+	}
 
 	//: DESKTOP %1 is the current selected Page of %2 Pages
 	readonly property string a11yPageIndicator: qsTr("%1 of %2").arg(index + 1).arg(ListView.view.count)
@@ -28,21 +43,9 @@ Item {
 		ListView.view.currentIndex = index;
 	}
 
-	Accessible.description: Qt.platform.os === "windows" ? a11yPageIndicator : ""
+	Accessible.description: Utils.resolveA11yDescription(a11yName, a11yDescription)
 	Accessible.focusable: true
-	Accessible.name: {
-		if (Qt.platform.os === "windows") {
-			return sectionName.text;
-		}
-
-		let a11yRole = index === ListView.view.currentIndex ?
-		//: DESKTOP
-		qsTr("Tab selected") :
-		//: DESKTOP
-		qsTr("Tab");
-
-		return sectionName.text + ", " + a11yRole + ", " + a11yPageIndicator;
-	}
+	Accessible.name: Utils.resolveA11yName(a11yName, a11yDescription)
 	Accessible.role: Accessible.PageTab
 	height: sectionName.height + 2 * Style.dimens.pane_padding
 	width: ListView.view.width

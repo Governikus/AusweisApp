@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateRedirectBrowser.h"
@@ -10,23 +10,6 @@
 
 
 using namespace governikus;
-
-
-namespace
-{
-inline QString removePrefix(QString pStr)
-{
-	return pStr.replace(QRegularExpression(QStringLiteral("(.*)#")), QLatin1String(""));
-}
-
-
-inline QString getSuffix(ECardApiResult::Minor pMinor)
-{
-	return removePrefix(ECardApiResult::getMinorString(pMinor));
-}
-
-
-} // namespace
 
 
 StateRedirectBrowser::StateRedirectBrowser(const QSharedPointer<WorkflowContext>& pContext)
@@ -101,35 +84,10 @@ QUrl StateRedirectBrowser::addMajorMinor(const QUrl& pOriginUrl, const ECardApiR
 {
 	QUrlQuery q;
 	q.setQuery(pOriginUrl.query());
-
-	const ECardApiResult::Major majorEnumVal = pResult.isOk() ? ECardApiResult::Major::Ok : ECardApiResult::Major::Error;
-	const auto& major = removePrefix(ECardApiResult::getMajorString(majorEnumVal));
-	q.addQueryItem(QStringLiteral("ResultMajor"), major);
-
+	q.addQueryItem(QStringLiteral("ResultMajor"), pResult.getRedirectMajor());
 	if (!pResult.isOk())
 	{
-		QString minor;
-
-		switch (pResult.getMinor())
-		{
-			case ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed:
-			case ECardApiResult::Minor::AL_Communication_Error:
-			case ECardApiResult::Minor::SAL_Cancellation_by_User:
-				minor = getSuffix(pResult.getMinor());
-				break;
-
-			default:
-				if (pResult.isOriginServer())
-				{
-					minor = QStringLiteral("serverError");
-				}
-				else
-				{
-					minor = QStringLiteral("clientError");
-				}
-				break;
-		}
-		q.addQueryItem(QStringLiteral("ResultMinor"), minor);
+		q.addQueryItem(QStringLiteral("ResultMinor"), pResult.getRedirectMinor());
 	}
 
 	QUrl adaptedUrl(pOriginUrl);

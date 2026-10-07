@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 import QtQml
@@ -235,17 +235,17 @@ TestCase {
 		let testObject = createTestObject();
 		compare(testObject.textStyle, Style.text.button, "Initial textStyle: button");
 	}
-	function test_tooltipText() {
+	function test_toolTipText() {
 		let testObject = createTestObject();
-		compare(testObject.enabledTooltipText, "", "Initial enabledTooltipText: empty");
-		compare(testObject.disabledTooltipText, "", "Initial disabledTooltipText: empty");
-		testObject.enabledTooltipText = "enabledTooltipText";
-		testObject.disabledTooltipText = "disabledTooltipText";
-		compare(testObject.enabledTooltipText, "enabledTooltipText", "Initial enabledTooltipText: empty");
-		compare(testObject.disabledTooltipText, "disabledTooltipText", "Initial disabledTooltipText: empty");
+		compare(testObject.enabledToolTipText, "", "Initial enabledToolTipText: empty");
+		compare(testObject.disabledToolTipText, "", "Initial disabledToolTipText: empty");
+		testObject.enabledToolTipText = "enabledToolTipText";
+		testObject.disabledToolTipText = "disabledToolTipText";
+		compare(testObject.enabledToolTipText, "enabledToolTipText", "Initial enabledToolTipText: empty");
+		compare(testObject.disabledToolTipText, "disabledToolTipText", "Initial disabledToolTipText: empty");
 		testObject.enableButton = false;
-		testObject.disabledTooltipText = "Quite long text that will be truncated after whatever character is beyond the limit.";
-		compare(testObject.tooltipText, "Quite long text that will be truncated after whatever character is beyond …");
+		testObject.disabledToolTipText = "Quite long text that will be truncated after whatever character is beyond the limit.";
+		compare(testObject.toolTipText, "Quite long text that will be truncated after whatever character is beyond …");
 	}
 
 	name: "test_GButton"

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -50,6 +50,7 @@ class UiPluginQml
 		int mFontWeightAdjustment;
 		bool mA11yButtonShapeActive;
 		bool mA11yOnOffSwitchLabelActive;
+		QString mFontFamily;
 
 		void init();
 
@@ -83,6 +84,7 @@ class UiPluginQml
 
 #ifndef QT_NO_DEBUG
 		static QString adjustQmlImportPath(QQmlEngine* pEngine);
+		Q_INVOKABLE void emitFireShowRequest(UiModule pModule);
 #endif
 		[[nodiscard]] static QString getOverridePlatform();
 
@@ -106,9 +108,9 @@ class UiPluginQml
 		[[nodiscard]] bool isChromeOS() const override;
 		[[nodiscard]] bool isA11yButtonShapeActive() const override;
 		[[nodiscard]] bool isA11yOnOffSwitchLabelActive() const override;
+		[[nodiscard]] QString getFontFamily() const override;
 
 		Q_INVOKABLE void hideFromTaskbar() const override;
-		Q_INVOKABLE void doRefresh() override;
 
 	Q_SIGNALS:
 		void fireTranslationChanged();
@@ -136,9 +138,8 @@ class UiPluginQml
 
 		void onRawLog(const QString& pMessage, const QString& pCategoryName);
 
-		void onWindowPaletteChanged();
 		void onUserDarkModeChanged() const;
-		void onUseSystemFontChanged() const;
+		void onUseSystemFontChanged();
 		void onTrayIconEnabledChanged();
 		void onAppConfigChanged();
 		void onReaderStatusChanged(const ReaderManagerPluginInfo& pInfo) const;

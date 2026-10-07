@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -114,6 +114,7 @@ Popup {
 		GText {
 			id: mainText
 
+			Accessible.id: "BaseConfirmationPopup_mainText"
 			// Layout.maximumWidth is only required for desktop as long as the minimum Qt version is <= 6.8.1
 			Layout.maximumWidth: Style.is_layout_desktop ? Number.POSITIVE_INFINITY : Math.ceil(implicitWidth)
 			horizontalAlignment: root.horizontalTextAlignment

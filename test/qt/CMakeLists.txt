@@ -90,7 +90,6 @@ function(SHOULD_SKIP_TEST _out filename)
 	if(INTEGRATED_SDK AND (test MATCHES "ui/qml"
 			OR test MATCHES "ui/scheme"
 			OR test MATCHES "ifd"
-			OR test MATCHES "export"
 			OR test MATCHES "diagnosis"))
 		set(${_out} TRUE PARENT_SCOPE)
 		return()
@@ -113,7 +112,7 @@ function(ADD_TEST_EXECUTABLE_SUBDIR)
 		add_custom_command(TARGET AusweisAppTestRcc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${RCC}" "${CMAKE_CURRENT_BINARY_DIR}")
 	endif()
 
-	if(APPLE)
+	if(MACOS OR IOS)
 		file(GLOB_RECURSE TEST_FILES "*.cpp" "*.mm")
 	else()
 		file(GLOB_RECURSE TEST_FILES "*.cpp")

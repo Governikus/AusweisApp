@@ -711,6 +711,17 @@ class Figure(BaseElement):
         return wrap_latex(self.generate_labeled_tex_figure())
 
 
+def is_external_link_target(line):
+    """
+    Check if a line is an external RST hyperlink target.
+
+    Internal labels (``.. _name:``) end after the colon and are handled as
+    LaTeX labels. External targets carry a URL after the colon and must be
+    kept as RST so pandoc can resolve the references to them.
+    """
+    return bool(re.match(r'^\.\. _[^:]+:\s*\S', line))
+
+
 def extract_element_with_linebreaks(input_lines, start_idx, prefixes):
     """
     Helper function to extract the lines of an element containing line breaks
@@ -742,7 +753,10 @@ def parse_document(input_lines):
     line_idx = 0
     while line_idx < len(input_lines):
         line = input_lines[line_idx].rstrip()
-        if line.startswith('.. _'):
+        if line.startswith('.. _') and is_external_link_target(line):
+            output_doc.append(Paragraph([line]))
+            line_idx += 1
+        elif line.startswith('.. _'):
             current_label = Label(line)
             elem_before_label = output_doc[-1]
             line_idx += 1
@@ -794,6 +808,14 @@ def parse_document(input_lines):
                 output_doc.append(current_label)
                 current_label = None
             line_idx += 1
+
+    if current_paragraph:
+        output_doc.append(Paragraph(current_paragraph))
+
+    if current_label and (
+        not output_doc or elem_before_label != output_doc[-1]
+    ):
+        output_doc.append(current_label)
 
     return output_doc
 

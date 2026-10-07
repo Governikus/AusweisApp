@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 
@@ -153,29 +153,41 @@ KeyAgreementStatus KeyAgreement::performMutualAuthenticate()
 		return KeyAgreementStatus::RETRY_ALLOWED;
 	}
 
-	if (response.getRetryCounter() < 3)
+	switch (response.getStatusCode())
 	{
-		if (response.getSW1() == SW1::NONVOLATILE_MEMORY_CHANGED_1)
+		case StatusCode::SUCCESS:
 		{
-			return KeyAgreementStatus::FAILED;
+			QByteArray uncompressedTerminalPublicKey = getUncompressedTerminalPublicKey();
+			QByteArray mutualAuthenticationTerminalData = cmac.generate(uncompressedTerminalPublicKey);
+
+			if (mutualAuthenticationTerminalData != response.getAuthenticationToken())
+			{
+				qCCritical(card) << "Error on mutual authentication";
+				return KeyAgreementStatus::PROTOCOL_ERROR;
+			}
+
+			mCarCurr = response.getCarCurr();
+			mCarPrev = response.getCarPrev();
+			qCDebug(card) << "Successfully authenticated";
+			return KeyAgreementStatus::SUCCESS;
 		}
 
-		return KeyAgreementStatus::PROTOCOL_ERROR;
+		case StatusCode::PIN_RETRY_COUNT_2:
+			return KeyAgreementStatus::FAILED_RC2;
+
+		case StatusCode::PIN_SUSPENDED:
+			return KeyAgreementStatus::FAILED_RC1;
+
+		case StatusCode::PIN_BLOCKED:
+			return KeyAgreementStatus::FAILED_RC0;
+
+		case StatusCode::VERIFICATION_FAILED:
+			return KeyAgreementStatus::FAILED;
+
+		default:
+			return KeyAgreementStatus::PROTOCOL_ERROR;
 	}
 
-	QByteArray uncompressedTerminalPublicKey = getUncompressedTerminalPublicKey();
-	QByteArray mutualAuthenticationTerminalData = cmac.generate(uncompressedTerminalPublicKey);
-
-	if (mutualAuthenticationTerminalData != response.getAuthenticationToken())
-	{
-		qCCritical(card) << "Error on mutual authentication";
-		return KeyAgreementStatus::PROTOCOL_ERROR;
-	}
-
-	mCarCurr = response.getCarCurr();
-	mCarPrev = response.getCarPrev();
-	qCDebug(card) << "Successfully authenticated";
-	return KeyAgreementStatus::SUCCESS;
 }
 
 

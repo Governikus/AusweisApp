@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "ProviderConfigurationParser.h"
@@ -59,7 +59,7 @@ class test_ProviderConfigurationParser
 										 "         \"homepage\": \"https://www.ausweisapp.bund.de/\","
 										 "         \"phone\": \"+49 421 - 204 95 995\","
 										 "         \"email\": \"support@ausweisapp.de\","
-										 "         \"postalAddress\": \"Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen\","
+										 "         \"postalAddress\": \"Governikus Service GmbH<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen\","
 										 "         \"category\": \"citizen\""
 										 "      },"
 										 "		{"
@@ -71,7 +71,7 @@ class test_ProviderConfigurationParser
 										 "         \"homepage\": \"https://www.ausweisapp.bund.de/\","
 										 "         \"phone\": \"+49 421 - 204 95 995\","
 										 "         \"email\": \"support@ausweisapp.de\","
-										 "         \"postalAddress\": \"Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen\","
+										 "         \"postalAddress\": \"Governikus Service GmbH<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen\","
 										 "         \"category\": \"citizen\","
 										 "         \"internalId\": \"myId\""
 										 "      }"
@@ -116,7 +116,7 @@ class test_ProviderConfigurationParser
 			QCOMPARE(provider.getHomepage(), QStringLiteral("https://www.ausweisapp.bund.de/"));
 			QCOMPARE(provider.getPhone(), QStringLiteral("+49 421 - 204 95 995"));
 			QCOMPARE(provider.getEMail(), QStringLiteral("support@ausweisapp.de"));
-			QCOMPARE(provider.getPostalAddress(), QStringLiteral("Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen"));
+			QCOMPARE(provider.getPostalAddress(), QStringLiteral("Governikus Service GmbH<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen"));
 			QCOMPARE(provider.getCategory(), QStringLiteral("citizen"));
 			QVERIFY(provider.getIcon()->lookupPath().endsWith("/citizen_button.svg"_L1));
 			QVERIFY(provider.getImage()->lookupPath().endsWith("/citizen_bg.svg"_L1));

@@ -46,6 +46,46 @@
         <extracomment>MOBILE Hint that is shown if the users pressed the &quot;back&quot; button on the top-most navigation level for the first time (a second press closes the app).</extracomment>
         <translation>Zum Schließen erneut &quot;Zurück&quot; tippen.</translation>
     </message>
+    <message>
+        <source>Restart now</source>
+        <extracomment>MOBILE</extracomment>
+        <translation>Jetzt neu starten</translation>
+    </message>
+    <message>
+        <source>An update was downloaded and a restart is required to apply it.</source>
+        <extracomment>MOBILE</extracomment>
+        <translation>Ein Update wurde heruntergeladen und benötigt einen Neustart zur Installation.</translation>
+    </message>
+    <message>
+        <source>Update available</source>
+        <extracomment>MOBILE</extracomment>
+        <translation>Aktualisierung verfügbar</translation>
+    </message>
+    <message>
+        <source>A network connection is required to install the update.</source>
+        <extracomment>MOBILE</extracomment>
+        <translation>Eine Netzwerkverbindung ist erforderlich, um das Update zu installieren.</translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <extracomment>MOBILE</extracomment>
+        <translation>Beenden</translation>
+    </message>
+    <message>
+        <source>Install update</source>
+        <extracomment>MOBILE</extracomment>
+        <translation>Update installieren</translation>
+    </message>
+    <message>
+        <source>A critical update is available and required to use the %1.</source>
+        <extracomment>MOBILE %1 is replaced with the application name</extracomment>
+        <translation>Ein sicherheitskritisches Update ist verfügbar und notwendig um die %1 zu nutzen.</translation>
+    </message>
+    <message>
+        <source>Update required</source>
+        <extracomment>MOBILE</extracomment>
+        <translation>Update notwendig</translation>
+    </message>
 </context>
 <context>
     <name>AuthCanceledView</name>
@@ -171,9 +211,11 @@ MOBILE</extracomment>
         <translation>Protokoll senden</translation>
     </message>
     <message>
-        <source>Authenticate with provider</source>
-        <extracomment>MOBILE A11y button to confirm the PIN and start the provider authentication</extracomment>
-        <translation>Bei Anbieter ausweisen</translation>
+        <source>Confirm password and authenticate with provider</source>
+        <extracomment>DESKTOP A11y button to confirm the PIN and start the provider authentication
+----------
+MOBILE A11y button to confirm the PIN and start the provider authentication</extracomment>
+        <translation>Geheimnummer bestätigen und bei Anbieter ausweisen</translation>
     </message>
     <message>
         <source>Authentication failed</source>
@@ -332,14 +374,6 @@ MOBILE</extracomment>
     </message>
 </context>
 <context>
-    <name>BaseDevicesListDelegate</name>
-    <message>
-        <source>Device %1</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Gerät %1</translation>
-    </message>
-</context>
-<context>
     <name>BaseHeading</name>
     <message>
         <source>Heading</source>
@@ -372,7 +406,7 @@ MOBILE</extracomment>
     <message>
         <source>You can call up the initial setup again at any time under %1Help%2.</source>
         <extracomment>ALL_PLATFORMS The text between %1 and %2 will be emphasized.</extracomment>
-        <translation>Sie können die Ersteinrichtung jederzeit in der %1Hilfe%2 neustarten.</translation>
+        <translation>Sie können die Ersteinrichtung jederzeit in der %1Hilfe%2 neu starten.</translation>
     </message>
 </context>
 <context>
@@ -430,10 +464,6 @@ MOBILE</extracomment>
     <message>
         <source>VersionCode</source>
         <translation>Versions-Code</translation>
-    </message>
-    <message>
-        <source>Certificate</source>
-        <translation>Zertifikat</translation>
     </message>
     <message>
         <source>Qt Version</source>
@@ -563,12 +593,12 @@ MOBILE</extracomment>
     <message>
         <source>The connection to your system&apos;s smartcard service could not be established. You can try to resolve this issue and restart the scan.</source>
         <extracomment>DESKTOP</extracomment>
-        <translation>Es konnte keine Verbindung zum Smartcard-Dienst Ihres Systems hergestellt werden. Sie können versuchen, dieses Problem zu beheben und den Scan neustarten.</translation>
+        <translation>Es konnte keine Verbindung zum Smartcard-Dienst Ihres Systems hergestellt werden. Sie können versuchen, dieses Problem zu beheben und den Scan neu starten.</translation>
     </message>
     <message>
         <source>Restart smartcard scan</source>
         <extracomment>DESKTOP</extracomment>
-        <translation>Smartcard-Scan neustarten</translation>
+        <translation>Smartcard-Scan neu starten</translation>
     </message>
     <message>
         <source>List of connected card readers.</source>
@@ -1449,6 +1479,14 @@ MOBILE</extracomment>
     </message>
 </context>
 <context>
+    <name>DevicesListItem</name>
+    <message>
+        <source>Device %1</source>
+        <extracomment>MOBILE %1 is replaced with the device&apos;s name</extracomment>
+        <translation>Gerät %1</translation>
+    </message>
+</context>
+<context>
     <name>DiagnosisView</name>
     <message>
         <source>Save to file</source>
@@ -1525,14 +1563,14 @@ IOS Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
         <extracomment>DESKTOP
 ----------
 MOBILE</extracomment>
-        <translation>Mit Eingabe der CAN gewähren Sie dem oben genannten Anbieter folgende Datenzugriffe auf den Ausweis:</translation>
+        <translation>Mit Eingabe der CAN gewähren Sie dem zuvor genannten Anbieter folgende Datenzugriffe auf den Ausweis:</translation>
     </message>
     <message>
         <source>By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:</source>
         <extracomment>DESKTOP
 ----------
 MOBILE</extracomment>
-        <translation>Mit Eingabe Ihrer PIN gewähren Sie dem oben genannten Anbieter folgende Datenzugriffe auf Ihren Ausweis:</translation>
+        <translation>Mit Eingabe Ihrer PIN gewähren Sie dem zuvor genannten Anbieter folgende Datenzugriffe auf Ihren Ausweis:</translation>
     </message>
     <message>
         <source>Identify</source>
@@ -1691,6 +1729,10 @@ MOBILE</extracomment>
         <extracomment>DESKTOP</extracomment>
         <translation>aktiviert</translation>
     </message>
+    <message>
+        <source>Element %1 of %2.</source>
+        <translation>Element %1 von %2.</translation>
+    </message>
 </context>
 <context>
     <name>GRadioGroup</name>
@@ -1711,9 +1753,9 @@ MOBILE</extracomment>
 <context>
     <name>GTextField</name>
     <message>
-        <source>A maximum of %1 characters is allowed.</source>
+        <source>Maximum allowed length reached.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Es sind maximal %1 Zeichen erlaubt.</translation>
+        <translation>Maximal zulässige Länge erreicht.</translation>
     </message>
 </context>
 <context>
@@ -1742,11 +1784,6 @@ MOBILE</extracomment>
         <source>Use system font</source>
         <extracomment>DESKTOP</extracomment>
         <translation>Systemschriftart verwenden</translation>
-    </message>
-    <message>
-        <source>Toggling will restart the %1</source>
-        <extracomment>DESKTOP</extracomment>
-        <translation>Ein Umschalten startet die %1 neu</translation>
     </message>
     <message>
         <source>Close %1 window after authentication</source>
@@ -2764,7 +2801,7 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <translation>Ich kenne meine Karten-PIN nicht. Wie kann ich eine neue PIN setzen?</translation>
     </message>
     <message>
-        <source>I can&apos;t recall neither my card PIN nor my transport PIN. How do I set a new card PIN?</source>
+        <source>I can&apos;t remember my card PIN or my transport PIN. How do I set a new card PIN?</source>
         <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Ich kenne weder Karten-PIN noch Transport-PIN. Wie kann ich eine neue PIN setzen?</translation>
     </message>
@@ -2788,13 +2825,6 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
     </message>
 </context>
 <context>
-    <name>NativeTextInput</name>
-    <message>
-        <source>Maximum allowed length reached.</source>
-        <translation>Maximal zulässige Länge erreicht.</translation>
-    </message>
-</context>
-<context>
     <name>NavigationAction</name>
     <message>
         <source>Cancel</source>
@@ -2813,23 +2843,7 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
     </message>
 </context>
 <context>
-    <name>NavigationView</name>
-    <message>
-        <source>Start</source>
-        <translation>Start</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Einstellungen</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation>Hilfe</translation>
-    </message>
-    <message>
-        <source>Card reader</source>
-        <translation>Kartenleser</translation>
-    </message>
+    <name>NavigationItem</name>
     <message>
         <source>%1 of %2</source>
         <extracomment>MOBILE Relative position of current navigation tab in navigation view. %1 is replaced with the current tab&apos;s index, %2 with the total count of tabs</extracomment>
@@ -2854,6 +2868,25 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <source>Selected</source>
         <extracomment>ANDROID Currently selected navigation tab of navigation view.</extracomment>
         <translation>Ausgewählt</translation>
+    </message>
+</context>
+<context>
+    <name>NavigationView</name>
+    <message>
+        <source>Start</source>
+        <translation>Start</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Einstellungen</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Hilfe</translation>
+    </message>
+    <message>
+        <source>Card reader</source>
+        <translation>Kartenleser</translation>
     </message>
 </context>
 <context>
@@ -3062,24 +3095,14 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <translation>Sie haben %1 von %2 Ziffern eingegeben.</translation>
     </message>
     <message>
-        <source>Click to hide the number</source>
-        <extracomment>DESKTOP Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Klicken Sie die Taste um die Geheimnummer auszublenden</translation>
+        <source>Hide password</source>
+        <extracomment>ALL_PLATFORMS Screenreader text for the eye icon to hide the password</extracomment>
+        <translation>Geheimnummer ausblenden</translation>
     </message>
     <message>
-        <source>Tap to hide the number</source>
-        <extracomment>MOBILE Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Tippen Sie die Taste um die Geheimnummer auszublenden</translation>
-    </message>
-    <message>
-        <source>Click to show the number</source>
-        <extracomment>DESKTOP Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Klicken Sie die Taste um die Geheimnummer einzublenden</translation>
-    </message>
-    <message>
-        <source>Tap to show the number</source>
-        <extracomment>MOBILE Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Tippen Sie die Taste um die Geheimnummer einzublenden</translation>
+        <source>Show password</source>
+        <extracomment>ALL_PLATFORMS Screenreader text for the eye icon to show the password</extracomment>
+        <translation>Geheimnummer einblenden</translation>
     </message>
     <message>
         <source>The number is visible. Digits entered so far: %1</source>
@@ -3587,6 +3610,23 @@ MOBILE</extracomment>
     </message>
 </context>
 <context>
+    <name>PairingCodePane</name>
+    <message>
+        <source>Pairing code: %1, valid for %2 seconds</source>
+        <extracomment>MOBILE %1 is replaced with the current PSK, %2 with the remaining seconds of the PSK validity</extracomment>
+        <translation>Kopplungscode: %1, gültig für %2 Sekunden</translation>
+    </message>
+    <message>
+        <source>%1 seconds left before the pairing code %2 expires</source>
+        <translation>Noch %1 Sekunden bis der Kopplungscode %2 abläuft</translation>
+    </message>
+    <message>
+        <source>The pairing code has expired and a new code was generated: %1</source>
+        <extracomment>MOBILE %1 is replaced with the new PSK</extracomment>
+        <translation>Der Kopplungscode ist abgelaufen und ein neuer wurde generiert: %1</translation>
+    </message>
+</context>
+<context>
     <name>PairingFailedView</name>
     <message>
         <source>Pairing to &quot;%1&quot; failed</source>
@@ -3722,14 +3762,6 @@ MOBILE</extracomment>
         <source>Testmode for the integrated functions deactivated.</source>
         <extracomment>ALL_PLATFORMS Used in notifications when the user taps the icon</extracomment>
         <translation>Testmodus für die integrierten Funktionen deaktiviert.</translation>
-    </message>
-</context>
-<context>
-    <name>PlatformTextField</name>
-    <message>
-        <source>Maximum allowed length reached.</source>
-        <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Maximal zulässige Länge erreicht.</translation>
     </message>
 </context>
 <context>
@@ -3926,6 +3958,18 @@ DESKTOP Title of the proxy credentials popup.</extracomment>
     <message>
         <source>Critical errors:</source>
         <translation>Kritische Fehler:</translation>
+    </message>
+    <message>
+        <source>%1 error report - %2</source>
+        <translation>%1 Fehlerbericht - %2</translation>
+    </message>
+</context>
+<context>
+    <name>QTextField</name>
+    <message>
+        <source>A maximum of %1 characters is allowed.</source>
+        <extracomment>ALL_PLATFORMS</extracomment>
+        <translation>Es sind maximal %1 Zeichen erlaubt.</translation>
     </message>
 </context>
 <context>
@@ -4173,6 +4217,11 @@ DESKTOP Title of the proxy credentials popup.</extracomment>
         <translation>Kartenleser bereit</translation>
     </message>
     <message>
+        <source>Enter the pairing code in the %1 on your other device. Both devices have to be on the same network (e.g. WiFi). The code is valid for 2 minutes and is automatically renewed afterwards.</source>
+        <extracomment>MOBILE %1 is replaced with the name &quot;AusweisApp&quot;</extracomment>
+        <translation>Geben Sie den Kopplungscode in der %1 auf Ihrem anderen Gerät ein. Beide Geräte müssen hierfür im selben Netzwerk (z.B. WLAN) sein. Der Code ist 2 Minuten gültig und wird anschließend automatisch erneuert.</translation>
+    </message>
+    <message>
         <source>To do this, start a process on a paired device.</source>
         <extracomment>MOBILE</extracomment>
         <translation>Starten Sie hierzu auf einem gekoppelten Gerät einen Vorgang.</translation>
@@ -4290,11 +4339,6 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
         <source>Enter the pairing code</source>
         <extracomment>MOBILE</extracomment>
         <translation>Eingabe des Kopplungscodes</translation>
-    </message>
-    <message>
-        <source>Enter the pairing code &quot;%1&quot; in the %2 on your other device. Both devices have to be on the same network (e.g. WiFi).</source>
-        <extracomment>MOBILE %1 is replaced with the pairing code, %2 with the name &quot;AusweisApp&quot;</extracomment>
-        <translation>Geben Sie den Kopplungscode &quot;%1&quot; in der %2 auf Ihrem anderen Gerät ein. Beide Geräte müssen hierfür im selben Netzwerk (z.B. WLAN) sein.</translation>
     </message>
     <message>
         <source>Pairing progress</source>
@@ -4460,9 +4504,9 @@ MOBILE</extracomment>
         <translation>So können Sie sicherstellen, dass alles funktioniert und die auf Ihrem Ausweis gespeicherten Daten aktuell sind, bevor Sie sich bei einem Anbieter ausweisen.</translation>
     </message>
     <message>
-        <source>To do this, you go through an authentication process at Governikus GmbH &amp; Co. KG, the manufacturer of the %1.</source>
+        <source>To do this, you go through an authentication process at Governikus Service GmbH, the manufacturer of the %1.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
-        <translation>Dafür durchlaufen Sie einen Authentisierungsprozess bei Governikus GmbH &amp; Co. KG, dem Hersteller der %1.</translation>
+        <translation>Dafür durchlaufen Sie einen Authentisierungsprozess bei Governikus Service GmbH, dem Hersteller der %1.</translation>
     </message>
     <message>
         <source>Use eID function</source>
@@ -4656,11 +4700,6 @@ MOBILE</extracomment>
         <translation>Setze versteckbare Dialoge zurück</translation>
     </message>
     <message>
-        <source>Toggling will restart the %1</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Ein Umschalten startet die %1 neu</translation>
-    </message>
-    <message>
         <source>Use system font</source>
         <extracomment>MOBILE</extracomment>
         <translation>Systemschriftart verwenden</translation>
@@ -4734,31 +4773,6 @@ MOBILE</extracomment>
         <source>Disable</source>
         <extracomment>MOBILE</extracomment>
         <translation>Deaktivieren</translation>
-    </message>
-    <message>
-        <source>Later</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Später</translation>
-    </message>
-    <message>
-        <source>Restart</source>
-        <extracomment>IOS</extracomment>
-        <translation>Neustarten</translation>
-    </message>
-    <message>
-        <source>Restart now</source>
-        <extracomment>ANDROID</extracomment>
-        <translation>Jetzt neustarten</translation>
-    </message>
-    <message>
-        <source>The font change applies only after restarting the application.</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Die Änderung der Schriftart wird erst nach einem Neustart der Anwendung aktiv.</translation>
-    </message>
-    <message>
-        <source>Restart required</source>
-        <extracomment>MOBILE</extracomment>
-        <translation>Systemfont</translation>
     </message>
     <message>
         <source>Prevent screenshots</source>
@@ -4868,29 +4882,6 @@ MOBILE</extracomment>
         <source>If you want to use the eID function on your PC, install %1 there and follow the initial setup.</source>
         <extracomment>MOBILE %1 will be replaced with the name of the application</extracomment>
         <translation>Falls Sie die Online-Ausweisfunktion auf dem PC nutzen möchten, installieren Sie dort die %1 und folgen Sie der Ersteinrichtung.</translation>
-    </message>
-</context>
-<context>
-    <name>StoreFeedbackPopup</name>
-    <message>
-        <source>Are you satisfied with %1?</source>
-        <extracomment>ANDROID Header of the app rating popup.</extracomment>
-        <translation>Zufrieden mit der %1?</translation>
-    </message>
-    <message>
-        <source>We would be very grateful if you could leave a rating on the Google Play Store!</source>
-        <extracomment>ANDROID Content of the app rating popup.</extracomment>
-        <translation>Wir würden uns sehr über eine Bewertung im Google Play Store freuen!</translation>
-    </message>
-    <message>
-        <source>Do not ask again</source>
-        <extracomment>ANDROID</extracomment>
-        <translation>Ignorieren</translation>
-    </message>
-    <message>
-        <source>Rate app</source>
-        <extracomment>ANDROID</extracomment>
-        <translation>App bewerten</translation>
     </message>
 </context>
 <context>
@@ -5035,10 +5026,6 @@ MOBILE</extracomment>
         <source>Show more information about the transaction.</source>
         <extracomment>ALL_PLATFORMS</extracomment>
         <translation>Zeige mehr Informationen zur Transaktion</translation>
-    </message>
-    <message>
-        <source>Information about the transaction.</source>
-        <translation>Informationen zur Transaktion</translation>
     </message>
     <message>
         <source>Transactional information</source>
@@ -6405,21 +6392,6 @@ MOBILE</extracomment>
         <translation>Ein Protokollfehler ist aufgetreten. Bitte überprüfen Sie, dass der Ausweis korrekt aufgelegt ist und versuchen Sie es erneut. Wenn das Problem wieder auftritt kontaktieren Sie bitte unseren Support unter %1.</translation>
     </message>
     <message>
-        <source>The given PIN is not correct.</source>
-        <extracomment>ALL_PLATFORMS The ID card declined the PIN.</extracomment>
-        <translation>Die eingegebene PIN ist nicht korrekt.</translation>
-    </message>
-    <message>
-        <source>The given Card Access Number (CAN) is not correct.</source>
-        <extracomment>ALL_PLATFORMS The ID card declined the CAN.</extracomment>
-        <translation>Die eingegebene Zugangsnummer (CAN) ist nicht korrekt.</translation>
-    </message>
-    <message>
-        <source>The given PUK is not correct.</source>
-        <extracomment>ALL_PLATFORMS The ID card declined the PUK.</extracomment>
-        <translation>Die eingegebene PUK ist nicht korrekt.</translation>
-    </message>
-    <message>
         <source>The PIN is not blocked.</source>
         <extracomment>ALL_PLATFORMS It was attempted to unlock the ID card via PUK even though it was not locked in the first place. This scenario is avoided in the UI by hiding the respective UI elements.</extracomment>
         <translation>Die PIN ist nicht gesperrt.</translation>
@@ -7026,6 +6998,7 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
     </message>
     <message>
         <source>You may now remove your ID card from the device.</source>
+        <extracomment>ALL_PLATFORMS The ID card PIN was changed successfully (2/2).</extracomment>
         <translation>Sie können nun Ihren Ausweis vom Gerät entfernen.</translation>
     </message>
 </context>
@@ -7264,10 +7237,6 @@ ALL_PLATFORMS Additional date format with unknown day</extracomment>
 </context>
 <context>
     <name>governikus::WorkflowModel</name>
-    <message>
-        <source>%1 error report - %2</source>
-        <translation>%1 Fehlerbericht - %2</translation>
-    </message>
     <message>
         <source>Contact your local citizens&apos; office (Bürgeramt) to apply for a new ID card or to unblock the ID card.</source>
         <translation>Bitte wenden Sie sich an das Bürgeramt, um ein neues Ausweisdokument zu beantragen oder die Sperrung des Ausweises aufzuheben.</translation>

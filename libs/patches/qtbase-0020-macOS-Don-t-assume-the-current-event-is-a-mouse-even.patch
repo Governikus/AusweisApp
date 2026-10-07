@@ -1,0 +1,45 @@
+From af96a29a01a7c6f60573acf4792284ca081b9d5a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
+Date: Thu, 30 Jul 2026 19:53:54 +0200
+Subject: macOS: Don't assume the current event is a mouse event in the tray
+ icon
+
+The status item button's action callback has no event parameter, so we
+consult NSApp.currentEvent to determine the activation reason. As of
+macOS 27 NSControls are driven by gesture recognizers, which defers the
+action callback past the event that triggered it, so the current event
+is not necessarily a mouse event anymore, and asking a non-mouse event
+for its clickCount raises an exception.
+
+We now report the activation as Unknown in that situation. Determining
+the real activation reason without an event is a larger task, as
+nothing but an event carries the click count.
+
+Pick-to: 6.12 6.11 6.8
+Change-Id: I48b082fcd0778c22eec71c4c96c22b812ec9fc6d
+Reviewed-by: Doris Verria <doris.verria@qt.io>
+(cherry picked from commit 65020b43cdd2c923c42ac4bc894c967ac90a0477)
+---
+ src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm y/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
+index d5c5ed8c2e272720cb54f20ee1d3b294970bdd2a..3eb0e5e4132cdc0e75807b360a87d1aae49e8838 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
+@@ -244,6 +244,15 @@ void QCocoaSystemTrayIcon::showMessage(const QString &title, const QString &mess
+ 
+ void QCocoaSystemTrayIcon::emitActivated()
+ {
++    // NSControls are driven by gesture recognizers in macOS 27,
++    // which means NSApp.currentEvent may not be a mouse event
++    // at the point when we receive the status bar button's
++    // action callback. This is a quick fix to avoid crashing.
++    if (!qt_mac_isMouseEvent(NSApp.currentEvent)) {
++        emit activated(QPlatformSystemTrayIcon::Unknown);
++        return;
++    }
++
+     auto *mouseEvent = NSApp.currentEvent;
+ 
+     auto activationReason = QPlatformSystemTrayIcon::Unknown;

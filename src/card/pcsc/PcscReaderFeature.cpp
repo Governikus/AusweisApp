@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "PcscReaderFeature.h"
 
 #include <QLoggingCategory>
 #include <QStringBuilder>
+#include <QtEndian>
 
 
 using namespace governikus;
@@ -38,13 +39,8 @@ PcscReaderFeature::PcscReaderFeature(const QByteArray& pFeaturesTLV)
 		// skip length byte (always 1 byte : 0x04)
 		++runner;
 
-		PCSC_INT value = 0;
-		value += static_cast<PCSC_INT>(*runner++) << 24 & 0xFF000000;
-		value += *runner++ << 16 & 0x00FF0000;
-		value += *runner++ << 8 & 0x0000FF00;
-		value += *runner++ << 0 & 0x000000FF;
-
-		mFeatures.insert(fid, value);
+		mFeatures.insert(fid, qFromBigEndian<quint32>(runner));
+		runner += 4;
 	}
 }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -20,33 +20,12 @@ class Transmit
 
 	public:
 		Transmit();
-		explicit Transmit(const QByteArray& pXmlData);
 		~Transmit() override;
 
-		[[nodiscard]] const QString& getSlotHandle() const
-		{
-			return mSlotHandle;
-		}
-
-
-		void setSlotHandle(const QString& pSlotHandle)
-		{
-			mSlotHandle = pSlotHandle;
-		}
-
-
-		[[nodiscard]] const QList<InputAPDUInfo>& getInputApduInfos() const
-		{
-			return mInputApduInfos;
-		}
-
-
-		void appendInputApduInfo(const InputAPDUInfo& pInfo)
-		{
-			mInputApduInfos += pInfo;
-		}
-
-
+		[[nodiscard]] const QString& getSlotHandle() const;
+		void setSlotHandle(const QString& pSlotHandle);
+		[[nodiscard]] const QList<InputAPDUInfo>& getInputApduInfos() const;
+		void appendInputApduInfo(const InputAPDUInfo& pInfo);
 };
 
 } // namespace governikus

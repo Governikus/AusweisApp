@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -21,6 +21,7 @@ class RemoteWebSocketServer
 		[[nodiscard]] virtual bool isPairingAnnounced() const = 0;
 		virtual void setPairing(bool pEnable = true) = 0;
 		[[nodiscard]] virtual QSslCertificate getCurrentCertificate() const = 0;
+		virtual void rotatePsk() = 0;
 
 	Q_SIGNALS:
 		void firePairingCompleted(const QSslCertificate& pCertificate);

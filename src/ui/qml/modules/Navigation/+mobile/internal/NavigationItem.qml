@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -11,11 +11,28 @@ import Governikus.View
 GAbstractButton {
 	id: root
 
+	required property int count
 	property bool flowHorizontally: true
+	required property int index
 	property alias source: tabImage.source
 
-	Accessible.name: text
-	Accessible.role: checked ? Accessible.PageTab : Accessible.Button
+	Accessible.name: {
+		//: MOBILE Relative position of current navigation tab in navigation view. %1 is replaced with the current tab's index, %2 with the total count of tabs
+		const elemString = qsTr("%1 of %2").arg(index + 1).arg(count);
+		//: MOBILE
+		var a11yName = [text, qsTr("Tab"), elemString];
+		if (checked && Qt.platform.os === "ios") {
+			//: IOS Selected navigation tab.
+			a11yName.unshift(qsTr("Selection"));
+			//: IOS Name of a11y element of selected navigation tab.
+			a11yName.unshift(qsTr("Tab bar"));
+		} else if (checked && Qt.platform.os === "android") {
+			//: ANDROID Currently selected navigation tab of navigation view.
+			a11yName.unshift(qsTr("Selected"));
+		}
+		return a11yName.join(", ");
+	}
+	Accessible.role: Accessible.PageTab
 	Layout.minimumWidth: tabImage.implicitWidth + leftPadding + rightPadding
 	padding: Style.dimens.text_spacing / 2
 
@@ -68,7 +85,6 @@ GAbstractButton {
 
 	HoverHandler {
 		id: hoverHandler
-
 	}
 	StatefulColors {
 		id: colors

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteWebSocketServerImpl.h"
@@ -181,6 +181,9 @@ class test_RemoteWebSocketServer
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(client.state(), QAbstractSocket::SocketState::ConnectedState);
 			QCOMPARE(mServer->getCurrentCertificate(), client.sslConfiguration().localCertificate());
+
+			client.close();
+			QTRY_VERIFY(!mServer->isConnected());
 		}
 
 
@@ -205,6 +208,9 @@ class test_RemoteWebSocketServer
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(client.state(), QAbstractSocket::SocketState::ConnectedState);
 			QCOMPARE(mServer->getCurrentCertificate(), client.sslConfiguration().localCertificate());
+
+			client.close();
+			QTRY_VERIFY(!mServer->isConnected());
 		}
 
 
@@ -253,6 +259,9 @@ class test_RemoteWebSocketServer
 
 			QCOMPARE(client1.state(), QAbstractSocket::SocketState::ConnectedState);
 			QCOMPARE(client2.state(), QAbstractSocket::SocketState::UnconnectedState);
+
+			client1.close();
+			QTRY_VERIFY(!mServer->isConnected());
 		}
 
 

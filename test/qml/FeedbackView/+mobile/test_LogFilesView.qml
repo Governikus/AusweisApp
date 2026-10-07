@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
 import QtTest
 import QtQuick
 
-import Governikus.FeedbackView
+import Governikus.LogView
 
 Item {
 	height: 400
@@ -26,7 +26,7 @@ Item {
 		id: testCase
 
 		function test_load() {
-			let testObject = createTemporaryQmlObject("import Governikus.FeedbackView; LogFilesView {}", testCase);
+			let testObject = createTemporaryQmlObject("import Governikus.LogView; LogFilesView {}", testCase);
 			verify(testObject, "Object loaded");
 		}
 		function test_whenItemClicked_signalIsEmitted() {

@@ -1,9 +1,8 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import Governikus.Global
@@ -73,10 +72,9 @@ Rectangle {
 					top: rootAction.top
 					topMargin: rootAction.baselineOffset - baselineOffset
 				}
-				ToolTip {
+				GToolTip {
 					id: toolTip
 
-					delay: Style.toolTipDelay
 					//: DESKTOP
 					text: qsTr("The update can only be performed after the current operation has been completed.")
 					visible: !updateButton.enabled && updateButton.hovered
@@ -92,7 +90,10 @@ Rectangle {
 				spacing: Style.dimens.titlebar_padding
 
 				TitleBarButton {
-					Accessible.description: qsTr("Open settings view of %1").arg(Qt.application.name)
+					readonly property string a11yDescription: qsTr("Open settings view of %1").arg(Qt.application.name)
+
+					Accessible.description: Utils.resolveA11yDescription(text, a11yDescription)
+					Accessible.name: Utils.resolveA11yName(text, a11yDescription)
 					height: rightTitleBarActions.height
 					source: "qrc:///images/desktop/material_settings.svg"
 					text: qsTr("Settings")
@@ -103,11 +104,14 @@ Rectangle {
 				TitleBarButton {
 					id: notifyButton
 
-					Accessible.description: checked ?
+					readonly property string a11yDescription: checked ?
 					//: DESKTOP
 					qsTr("Hide in-app notifications of %1").arg(Qt.application.name) :
 					//: DESKTOP
 					qsTr("Show in-app notifications of %1").arg(Qt.application.name)
+
+					Accessible.description: Utils.resolveA11yDescription(text, a11yDescription)
+					Accessible.name: Utils.resolveA11yName(text, a11yDescription)
 					Accessible.role: {
 						if ("Switch" in Accessible) {
 							return Accessible.Switch; // qmllint disable missing-property
@@ -149,6 +153,7 @@ Rectangle {
 			width: parent.width
 
 			NavigationAction {
+				Accessible.id: "TitleBar_navigationAction"
 				Layout.fillHeight: true
 				Layout.leftMargin: Style.dimens.pane_padding
 				enabled: root.currentSettings.navigationEnabled
@@ -180,6 +185,5 @@ Rectangle {
 	}
 	TitleBarSettings {
 		id: defaultSettings
-
 	}
 }

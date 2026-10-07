@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick.Layouts
+import QtQuick
 
 import Governikus.Global
 import Governikus.Style
@@ -25,6 +26,7 @@ BaseConfirmationPopup {
 			onClicked: root.cancel()
 		}
 		GButton {
+			Accessible.id: "ConfirmationPopup_ok"
 			Layout.leftMargin: root.style & ConfirmationPopup.PopupStyle.CancelButton ? Style.dimens.pane_spacing : 0
 			text: root.okButtonText
 			visible: root.style & ConfirmationPopup.PopupStyle.OkButton

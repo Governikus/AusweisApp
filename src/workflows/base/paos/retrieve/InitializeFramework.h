@@ -1,10 +1,9 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
-#include "paos/ElementDetector.h"
 #include "paos/PaosMessage.h"
 
 namespace governikus
@@ -12,14 +11,10 @@ namespace governikus
 
 class InitializeFramework
 	: public PaosMessage
-	, public ElementDetector
 {
-	private:
-		void parse();
-		bool handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
-
 	public:
-		explicit InitializeFramework(const QByteArray& pXmlData);
+		explicit InitializeFramework();
+		~InitializeFramework() override;
 };
 
 } // namespace governikus

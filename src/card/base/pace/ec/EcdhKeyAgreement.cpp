@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "EcdhKeyAgreement.h"
 
+#include "EcKeyPair.h"
 #include "EcUtil.h"
 #include "asn1/ASN1Struct.h"
 #include "asn1/ASN1Util.h"
@@ -21,9 +22,9 @@ Q_DECLARE_LOGGING_CATEGORY(secure)
 
 EcdhKeyAgreement::EcdhKeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo,
 		const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker,
-		const QSharedPointer<EcdhGenericMapping>& pMapping)
+		const QSharedPointer<EC_GROUP>& pCurve)
 	: KeyAgreement(pPaceInfo, pCardConnectionWorker)
-	, mMapping(pMapping)
+	, mMapping(pCurve)
 	, mTerminalPublicKey()
 	, mCardPublicKey()
 {
@@ -57,7 +58,7 @@ QSharedPointer<EcdhKeyAgreement> EcdhKeyAgreement::create(const QSharedPointer<c
 		return nullptr;
 	}
 
-	return QSharedPointer<EcdhKeyAgreement>(new EcdhKeyAgreement(pPaceInfo, pCardConnectionWorker, QSharedPointer<EcdhGenericMapping>::create(curve)));
+	return QSharedPointer<EcdhKeyAgreement>(new EcdhKeyAgreement(pPaceInfo, pCardConnectionWorker, curve));
 }
 
 
@@ -75,80 +76,67 @@ KeyAgreement::CardResult EcdhKeyAgreement::determineSharedSecret(const QByteArra
 
 CardReturnCode EcdhKeyAgreement::determineEphemeralDomainParameters(const QByteArray& pNonce)
 {
-	QByteArray terminalMappingData = mMapping->generateLocalMappingData();
+	QByteArray terminalMappingData = mMapping.generateLocalMappingData();
 	auto [resultCode, cardMappingData] = transmitGAMappingData(terminalMappingData);
 	if (resultCode != CardReturnCode::OK)
 	{
 		return resultCode;
 	}
 
-	return mMapping->generateEphemeralDomainParameters(cardMappingData, pNonce) ? CardReturnCode::OK : CardReturnCode::PROTOCOL_ERROR;
+	return mMapping.generateEphemeralDomainParameters(cardMappingData, pNonce) ? CardReturnCode::OK : CardReturnCode::PROTOCOL_ERROR;
 }
 
 
 KeyAgreement::CardResult EcdhKeyAgreement::performKeyExchange()
 {
-	const auto& curve = mMapping->getCurve();
-
-	const auto terminalEphemeralKey = EcUtil::generateKey(curve);
-	if (terminalEphemeralKey.isNull())
+	EcKeyPair keyPair(mMapping);
+	mTerminalPublicKey = keyPair.getPublicKey();
+	if (mTerminalPublicKey.isEmpty())
 	{
 		return {CardReturnCode::PROTOCOL_ERROR};
 	}
 
-	const QByteArray terminalEphemeralPublicKeyBytes = EcUtil::getEncodedPublicKey(terminalEphemeralKey);
-	const auto& terminalEphemeralPrivateKey = EcUtil::getPrivateKey(terminalEphemeralKey);
-
-	// Make a copy of the terminal public key for later mutual authentication.
-	mTerminalPublicKey = EcUtil::oct2point(curve, terminalEphemeralPublicKeyBytes);
-
-	auto [resultCode, cardEphemeralPublicKeyBytes] = transmitGAEphemeralPublicKey(terminalEphemeralPublicKeyBytes);
+	auto [resultCode, cardEphemeralPublicKeyBytes] = transmitGAEphemeralPublicKey(mTerminalPublicKey);
 	if (resultCode != CardReturnCode::OK)
 	{
 		return {resultCode};
 	}
-	qCDebug(secure) << "uncompressedCardEphemeralPublicKey:" << cardEphemeralPublicKeyBytes.toHex();
 
-	mCardPublicKey = EcUtil::oct2point(curve, cardEphemeralPublicKeyBytes);
-	if (!mCardPublicKey)
+	if (cardEphemeralPublicKeyBytes.isEmpty())
 	{
-		qCCritical(card) << "Cannot encode card ephemeral public key";
+		qCCritical(card) << "Missing card ephemeral public key";
 		return {CardReturnCode::PROTOCOL_ERROR};
 	}
 
-	if (!EC_POINT_cmp(curve.data(), mTerminalPublicKey.data(), mCardPublicKey.data(), nullptr))
+	qCDebug(secure) << "uncompressedCardEphemeralPublicKey:" << cardEphemeralPublicKeyBytes.toHex();
+	mCardPublicKey = cardEphemeralPublicKeyBytes;
+
+	if (mTerminalPublicKey == mCardPublicKey)
 	{
 		qCCritical(card) << "The exchanged public keys are equal";
 		return {CardReturnCode::PROTOCOL_ERROR};
 	}
 
-	QSharedPointer<EC_POINT> mutualPoint = EcUtil::create(EC_POINT_new(curve.data()));
-	if (!EC_POINT_mul(curve.data(), mutualPoint.data(), nullptr, mCardPublicKey.data(), terminalEphemeralPrivateKey.data(), nullptr))
-	{
-		qCCritical(card) << "Calculation of elliptic curve point (shared secret) failed";
-		return {CardReturnCode::PROTOCOL_ERROR};
-	}
-
-	const QByteArray sharedSecret = EcUtil::point2oct(mMapping->getCurve(), mutualPoint.data(), true);
+	const QByteArray sharedSecret = keyPair.getSharedSecret(mCardPublicKey);
 	return {CardReturnCode::OK, sharedSecret};
 }
 
 
 QByteArray EcdhKeyAgreement::getUncompressedTerminalPublicKey()
 {
-	return encodeUncompressedPublicKey(getPaceInfo()->getOid(), EcUtil::point2oct(mMapping->getCurve(), mTerminalPublicKey.data()));
+	return encodeUncompressedPublicKey(getPaceInfo()->getOid(), mTerminalPublicKey);
 }
 
 
 QByteArray EcdhKeyAgreement::getUncompressedCardPublicKey()
 {
-	return encodeUncompressedPublicKey(getPaceInfo()->getOid(), EcUtil::point2oct(mMapping->getCurve(), mCardPublicKey.data()));
+	return encodeUncompressedPublicKey(getPaceInfo()->getOid(), mCardPublicKey);
 }
 
 
 QByteArray EcdhKeyAgreement::getCompressedCardPublicKey()
 {
-	return EcUtil::point2oct(mMapping->getCurve(), mCardPublicKey.data(), true);
+	return EcUtil::compressPoint(mCardPublicKey);
 }
 
 

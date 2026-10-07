@@ -1,0 +1,40 @@
+From 74e3cd6996fd2fd41b82b7caf6ce5f16697cba6e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
+Date: Tue, 23 Jun 2026 15:46:29 +0200
+Subject: QTest::CrashHandler: Use accessor to read the program counter on
+ arm64
+
+We were reading the program counter directly from the __pc field of
+the Darwin ARM thread state. That field only exists on plain arm64.
+
+On arm64e, pointer authentication is enabled, and the SDK makes the
+thread state fields opaque (__pc becomes __opaque_pc), since the values
+are signed pointers that must be authenticated before use. Accessing
+__pc directly then fails to compile.
+
+We now go through the arm_thread_state64_get_pc() accessor macro, which
+handles the PAC bits on arm64e and just returns the raw field on plain
+arm64, so it works for both.
+
+Fixes: QTBUG-147612
+Pick-to: 6.12 6.11
+Change-Id: Icf46a7ae658b03e601322dac156e01349d43e2d9
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+(cherry picked from commit 7b484f99cff76c13e1cad4ab44b8dcbda5bd07da)
+---
+ src/testlib/qtestcrashhandler_unix.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtbase/src/testlib/qtestcrashhandler_unix.cpp y/qtbase/src/testlib/qtestcrashhandler_unix.cpp
+index e6b845b84b3f9298fc31b687451a3bbdec3feda3..3f5a4f0e87312229939736128f16c27ebc3222b0 100644
+--- x/qtbase/src/testlib/qtestcrashhandler_unix.cpp
++++ y/qtbase/src/testlib/qtestcrashhandler_unix.cpp
+@@ -372,7 +372,7 @@ static quintptr getProgramCounter(void *ucontext)
+ #if 0 // keep the list below alphabetical
+ 
+ #elif defined(Q_OS_DARWIN) && defined(Q_PROCESSOR_ARM_64)
+-        pc = ctx->uc_mcontext->__ss.__pc;
++        pc = arm_thread_state64_get_pc(ctx->uc_mcontext->__ss);
+ #elif defined(Q_OS_DARWIN) && defined(Q_PROCESSOR_X86_64)
+         pc = ctx->uc_mcontext->__ss.__rip;
+ 

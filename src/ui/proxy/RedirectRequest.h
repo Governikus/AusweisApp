@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -15,12 +15,13 @@ class test_RedirectRequest;
 namespace governikus
 {
 class RedirectRequest
-	: private QTcpSocket
+	: public QObject
 {
 	Q_OBJECT
 	friend class ::test_RedirectRequest;
 
 	private:
+		QTcpSocket mSocket;
 		QSharedPointer<HttpRequest> mRequest;
 		PortWrapper mPortWrapper;
 		bool mAnswerReceived;

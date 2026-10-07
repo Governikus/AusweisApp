@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -14,7 +14,7 @@ import Governikus.Type
 FlickableSectionPage {
 	id: root
 
-	readonly property string currentPin: RemoteServiceModel.psk
+	required property string currentPin
 	property alias text: headline.text
 
 	signal navActionClicked
@@ -34,7 +34,6 @@ FlickableSectionPage {
 
 	Heading {
 		id: headline
-
 	}
 	TintableIcon {
 		Layout.alignment: Qt.AlignHCenter

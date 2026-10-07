@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "Reader.h"
@@ -7,7 +7,6 @@
 #include "CardConnectionWorker.h"
 #include "CardInfoFactory.h"
 #include "apdu/CommandApdu.h"
-#include "apdu/PacePinStatus.h"
 #include "asn1/ASN1Struct.h"
 #include "asn1/PaceInfo.h"
 
@@ -232,12 +231,12 @@ Reader::RetryCounterResult Reader::getRetryCounter(QSharedPointer<CardConnection
 	const StatusCode statusCode = mseSetAtResponse.getStatusCode();
 	qCDebug(card) << "StatusCode:" << statusCode;
 
-	const int retryCounter = PacePinStatus::getRetryCounter(mseSetAtResponse.getStatusCode());
+	const int retryCounter = mseSetAtResponse.getRetryCounter();
 	if (retryCounter == -1)
 	{
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	const bool pinDeactivated = PacePinStatus::isDeactivated(mseSetAtResponse.getStatusCode());
+	const bool pinDeactivated = mseSetAtResponse.getStatusCode() == StatusCode::PIN_DEACTIVATED;
 	return {CardReturnCode::OK, retryCounter, pinDeactivated};
 }

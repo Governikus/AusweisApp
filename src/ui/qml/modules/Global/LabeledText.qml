@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -28,6 +28,8 @@ Item {
 
 	Accessible.onScrollDownAction: Utils.scrollPageDownOnGFlickable(this)
 	Accessible.onScrollUpAction: Utils.scrollPageUpOnGFlickable(this)
+	onActiveFocusChanged: if (activeFocus)
+		Utils.positionViewAtItem(this)
 
 	QtObject {
 		id: d
@@ -37,7 +39,6 @@ Item {
 	}
 	FocusFrame {
 		id: focusFrame
-
 	}
 	Column {
 		id: column

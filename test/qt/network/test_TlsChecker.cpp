@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "TlsChecker.h"
@@ -70,7 +70,7 @@ class test_TlsChecker
 
 			QTest::newRow("rsa") << ":/core/invalid.keysize.rsa.der" << "Rsa key with insufficient key size found 1024";
 			QTest::newRow("dsa") << ":/core/invalid.keysize.dsa.der" << "Dsa key with insufficient key size found 1024";
-			if (!QSysInfo::prettyProductName().contains(QLatin1String("Fedora")))
+			if (!QSysInfo::prettyProductName().contains(QLatin1String("Fedora")) && !QSysInfo::prettyProductName().contains(QLatin1String("openSUSE")))
 			{
 				QTest::newRow("ec") << ":/core/invalid.keysize.ec.der" << "Ec key with insufficient key size found 128";
 			}
@@ -121,7 +121,8 @@ class test_TlsChecker
 			 * openssl ecparam -in secp112r2_param.pem -genkey -noout -out secp112r2_key.pem
 			 * openssl ec -in secp112r2_key.pem -pubout -out secp112r2_pubkey.pem
 			 */
-			if (!QSysInfo::prettyProductName().contains(QLatin1String("Fedora")))
+			if (!QSysInfo::prettyProductName().contains(QLatin1String("Fedora")) &&
+					!QSysInfo::prettyProductName().contains(QLatin1String("openSUSE")))
 			{
 				QByteArray ec112("-----BEGIN PUBLIC KEY-----\n"
 								 "MDIwEAYHKoZIzj0CAQYFK4EEAAcDHgAEWo89aCax3oUWJho7rFZ1u70WqghvA7Tf\n"

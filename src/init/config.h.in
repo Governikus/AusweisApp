@@ -18,29 +18,20 @@
 	#if defined(__BASE_FILE__) && __has_include(<string_view>)
 		#include <string_view>
 
-constexpr bool isPathSeparator(char pChar)
+constexpr std::string_view stripPath(std::string_view path)
 {
-	return pChar == '/' || pChar == '\\';
-}
-
-
-constexpr const char* stripPath(const char* pPath)
-{
-	auto result = pPath;
-	for (auto iter = pPath; *iter; ++iter)
+	const auto pos = path.find_last_of("/\\");
+	if (pos == std::string_view::npos)
 	{
-		if (isPathSeparator(*iter) && *(iter + 1))
-		{
-			result = iter + 1;
-		}
+		return path;
 	}
-	return result;
+	return path.substr(pos + 1);
 }
 
 
 constexpr std::string_view currentFile()
 {
-	return std::string_view(stripPath(__BASE_FILE__));
+	return stripPath(__BASE_FILE__);
 }
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -11,6 +11,9 @@
 #include <QSharedPointer>
 
 
+class test_KeyAgreement;
+
+
 namespace governikus
 {
 
@@ -20,11 +23,16 @@ enum class KeyAgreementStatus
 	RETRY_ALLOWED,
 	COMMUNICATION_ERROR,
 	FAILED,
+	FAILED_RC0,
+	FAILED_RC1,
+	FAILED_RC2,
 	PROTOCOL_ERROR
 };
 
 class KeyAgreement
 {
+	friend class ::test_KeyAgreement;
+
 	protected:
 		struct CardResult
 		{

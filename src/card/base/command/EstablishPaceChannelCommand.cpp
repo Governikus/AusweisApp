@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "EstablishPaceChannelCommand.h"
@@ -16,7 +16,7 @@ EstablishPaceChannelCommand::EstablishPaceChannelCommand(QSharedPointer<CardConn
 	, mPacePassword(pPacePassword)
 	, mEffectiveChat(pEffectiveChat)
 	, mCertificateDescription(pCertificateDescription)
-	, mPaceOutput()
+	, mPaceOutput(pPacePasswordId)
 {
 }
 
@@ -31,7 +31,7 @@ void EstablishPaceChannelCommand::internalExecute()
 {
 	if (!getCardConnectionWorker()->getReaderInfo().hasEid())
 	{
-		mPaceOutput.setPaceReturnCode(CardReturnCode::CARD_NOT_FOUND);
+		mPaceOutput.setReturnCode(CardReturnCode::CARD_NOT_FOUND);
 		setReturnCode(CardReturnCode::CARD_NOT_FOUND);
 		return;
 	}
@@ -40,11 +40,11 @@ void EstablishPaceChannelCommand::internalExecute()
 			&& (getCardConnectionWorker()->getReaderInfo().getRetryCounter() > 0
 			|| getCardConnectionWorker()->getReaderInfo().isPinDeactivated()))
 	{
-		mPaceOutput.setPaceReturnCode(CardReturnCode::PIN_NOT_BLOCKED);
-		setReturnCode(mPaceOutput.getPaceReturnCode());
+		mPaceOutput.setReturnCode(CardReturnCode::PIN_NOT_BLOCKED);
+		setReturnCode(mPaceOutput.getReturnCode());
 		return;
 	}
 
 	mPaceOutput = getCardConnectionWorker()->establishPaceChannel(mPacePasswordId, mPacePassword, mEffectiveChat, mCertificateDescription);
-	setReturnCode(mPaceOutput.getPaceReturnCode());
+	setReturnCode(mPaceOutput.getReturnCode());
 }

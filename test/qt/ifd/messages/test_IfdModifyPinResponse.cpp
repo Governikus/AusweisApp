@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "messages/IfdModifyPinResponse.h"
@@ -236,7 +236,7 @@ class test_IfdModifyPinResponse
 							   "    \"msg\": \"IFDModifyPINResponse\"\n"
 							   "}\n");
 			message.replace("%1", QByteArray(ResponseApdu(statusCodeIn)).toHex());
-			message.replace("%2", ECardApiResult::getMinorString(minor).toUtf8());
+			message.replace("%2", ECardApiResult(ECardApiResult::Major::Error, minor).getMinorString().toUtf8());
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
 			const IfdModifyPinResponse ifdModifyPinResponse(obj);
 			QVERIFY(!ifdModifyPinResponse.isIncomplete());

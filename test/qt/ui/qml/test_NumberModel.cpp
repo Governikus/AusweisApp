@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "NumberModel.h"
@@ -106,7 +106,7 @@ class test_NumberModel
 			QCOMPARE(spyCanAllowed.count(), 3);
 			Q_EMIT context->fireReaderNameChanged();
 			QCOMPARE(spyReaderNameChanged.count(), 3);
-			Q_EMIT context->firePaceResultUpdated();
+			Q_EMIT context->firePaceOutputUpdated();
 			QCOMPARE(spyLastPaceResultChanged.count(), 4);
 
 			mModel->resetContext(pinContext);
@@ -126,7 +126,7 @@ class test_NumberModel
 			QCOMPARE(spyCanAllowed.count(), 5);
 			Q_EMIT pinContext->fireReaderNameChanged();
 			QCOMPARE(spyReaderNameChanged.count(), 5);
-			Q_EMIT pinContext->firePaceResultUpdated();
+			Q_EMIT pinContext->firePaceOutputUpdated();
 			QCOMPARE(spyLastPaceResultChanged.count(), 7);
 			Q_EMIT pinContext->fireNewPinChanged();
 			QCOMPARE(spyNewPinChanged.count(), 4);
@@ -275,43 +275,55 @@ class test_NumberModel
 
 			QCOMPARE(mModel->getInputError(), QString());
 
-			context->setLastPaceResult(CardReturnCode::OK);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::OK));
 			mModel->resetContext(context);
 			QCOMPARE(mModel->getInputError(), QString());
 
-			context->setLastPaceResult(CardReturnCode::OK_PUK);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PUK, CardReturnCode::OK));
 			QCOMPARE(mModel->getInputError(), QString());
 
-			context->setLastPaceResult(CardReturnCode::CANCELLATION_BY_USER);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::CANCELLATION_BY_USER));
 			QCOMPARE(mModel->getInputError(), QString());
 
 			auto worker = MockCardConnectionWorker::create(connectionThread.data());
 			QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			context->setCardConnection(connection);
 
-			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
+			EstablishPaceChannelOutput outputPin1(PacePasswordId::PACE_PIN, CardReturnCode::OK);
+			outputPin1.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC2);
+			context->setPaceOutput(outputPin1);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN.<br/><br/>You have<b> 2 further attempts</b> to enter the correct ID card PIN."));
 
-			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
+			EstablishPaceChannelOutput outputPin2(PacePasswordId::PACE_PIN, CardReturnCode::OK);
+			outputPin2.setStatusMseSetAt(QByteArray::fromHex("63c2"));
+			outputPin2.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC1);
+			context->setPaceOutput(outputPin2);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an <b>incorrect, 6-digit ID card PIN 2 times</b>.<br/><br/>"
 												 "For a 3rd attempt, the<b> 6-digit Card Access Number (CAN)</b> must be entered first. "
 												 "You can find your CAN in the <b>bottom right on the front of your ID card</b>."));
 
-			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
+			EstablishPaceChannelOutput outputPin3(PacePasswordId::PACE_PIN, CardReturnCode::OK);
+			outputPin3.setStatusMseSetAt(QByteArray::fromHex("63c1"));
+			outputPin3.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC0);
+			context->setPaceOutput(outputPin3);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN 3 times. Your <b>ID card PIN is now blocked</b>.<br/><br/>"
 												 "To remove the block, the<b> 10-digit PUK</b> must be entered first. "
 												 "You can find the PUK in the bottom <b>right next</b> to the Transport PIN in the <b>authority's letter</b>."));
 
-			context->setLastPaceResult(CardReturnCode::INVALID_CAN);
+			EstablishPaceChannelOutput outputCan(PacePasswordId::PACE_CAN, CardReturnCode::OK);
+			outputCan.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4);
+			context->setPaceOutput(outputCan);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an <b>incorrect Card Access Number (CAN)</b>. Please try again. You can find your CAN in the <b>bottom right on the front of your ID card</b>."));
 
-			context->setLastPaceResult(CardReturnCode::INVALID_PUK);
+			EstablishPaceChannelOutput outputPuk(PacePasswordId::PACE_PUK, CardReturnCode::OK);
+			outputPuk.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4);
+			context->setPaceOutput(outputPuk);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 10-digit PUK. Please try again."));
 
-			context->setLastPaceResult(CardReturnCode::UNKNOWN);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::UNKNOWN));
 			QCOMPARE(mModel->getInputError(), tr("An unexpected error has occurred during processing."));
 
-			context->setLastPaceResult(CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::UNEXPECTED_TRANSMIT_STATUS));
 			QCOMPARE(mModel->getInputError(), QStringLiteral("%1 <a href=\"https://www.ausweisapp.bund.de/%2/aa2/support\">%3</a>.").arg(
 					tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
 					LanguageLoader::getLocaleCode(),
@@ -320,15 +332,15 @@ class test_NumberModel
 			context.reset(new ChangePinContext(true));
 			mModel->resetContext(context);
 			context->setCardConnection(connection);
-			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
+			context->setPaceOutput(outputPin1);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN.<br/><br/>"
 												 "You have<b> 2 further attempts</b> to enter the correct Transport PIN. "
 												 "The 5-digit Transport PIN may be found on the <b>bottom left of your PIN letter</b>."));
-			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
+			context->setPaceOutput(outputPin2);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an <b>incorrect, 5-digit Transport PIN 2 times</b>.<br/><br/>"
 												 "For a 3rd attempt, the<b> 6-digit Card Access Number (CAN)</b> must be entered first. "
 												 "You can find your CAN in the <b>bottom right on the front of your ID card</b>."));
-			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
+			context->setPaceOutput(outputPin3);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN 3 times, your <b>Transport PIN is now blocked</b>. "
 												 "To remove the block, the<b> 10-digit PUK</b> must be entered first."));
 
@@ -532,11 +544,14 @@ class test_NumberModel
 			context->setCardConnection(connection);
 
 			mModel->resetContext(context);
-			context->setLastPaceResult(CardReturnCode::OK);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::OK));
 			QVERIFY(mModel->getInputError().isEmpty());
 
 			context->setPin(QStringLiteral("000000"));
-			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
+
+			EstablishPaceChannelOutput output(PacePasswordId::PACE_PIN, CardReturnCode::OK);
+			output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC2);
+			context->setPaceOutput(output);
 			QVERIFY(!mModel->getPin().isEmpty());
 			QVERIFY(!mModel->getInputError().isEmpty());
 
@@ -555,7 +570,7 @@ class test_NumberModel
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
 			mModel->resetContext(context);
-			context->setLastPaceResult(CardReturnCode::OK);
+			context->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::OK));
 			context->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
 			QVERIFY(mModel->getInitialInputError().isEmpty());
 			context->setEstablishPaceChannelType(PacePasswordId::PACE_CAN);

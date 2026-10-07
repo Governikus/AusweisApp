@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "PortFile.h"
@@ -158,14 +158,14 @@ class test_UiPluginWebSocket
 
 			mHelper->sendMessage("{\"cmd\": \"GET_INFO\"}"_L1);
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-						return pMessage["msg"_L1] == "INFO"_L1 &&
-							   pMessage["VersionInfo"_L1].toObject()["Name"_L1] == QLatin1String("AusweisApp2");
+						return pMessage.value("msg"_L1) == "INFO"_L1 &&
+							   pMessage.value("VersionInfo"_L1).toObject().value("Name"_L1) == QLatin1String("AusweisApp2");
 					}));
 
 			mHelper->sendMessage("{\"cmd\": \"GET_API_LEVEL\"}"_L1);
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-						return pMessage["msg"_L1] == "API_LEVEL"_L1 &&
-							   pMessage["available"_L1].toArray().size() >= 1;
+						return pMessage.value("msg"_L1) == "API_LEVEL"_L1 &&
+							   pMessage.value("available"_L1).toArray().size() >= 1;
 					}));
 		}
 
@@ -179,11 +179,11 @@ class test_UiPluginWebSocket
 			connect();
 			mHelper->sendMessage("{\"cmd\": \"RUN_AUTH\", \"tcTokenURL\" : \"https://localhost/\"}"_L1);
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-						return pMessage["msg"_L1] == "AUTH"_L1;
+						return pMessage.value("msg"_L1) == "AUTH"_L1;
 					}));
 
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-						return pMessage["result"_L1].toObject()["major"_L1].toString().endsWith("#error"_L1);
+						return pMessage.value("result"_L1).toObject().value("major"_L1).toString().endsWith("#error"_L1);
 					}));
 		}
 

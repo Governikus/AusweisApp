@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -13,17 +13,14 @@ Item {
 	id: root
 
 	readonly property int activeModule: d.activeModule
-	readonly property bool lockedAndHidden: d.lockedAndHidden
+	property bool lockedAndHidden: false
 	required property real safeAreaBottomMargin
 
 	signal resetContentArea
 
-	function setLockedAndHidden(pLockedAndHidden = true) {
-		d.lockedAndHidden = pLockedAndHidden;
-	}
-	function show(pModule, pLockedAndHidden = false) {
-		setLockedAndHidden(pLockedAndHidden);
+	function show(pModule) {
 		if (d.activeModule !== pModule) {
+			root.resetContentArea();
 			d.activeModule = pModule;
 			SettingsModel.startupModule = pModule === UiModule.REMOTE_SERVICE ? UiModule.REMOTE_SERVICE : UiModule.DEFAULT;
 		}
@@ -33,10 +30,10 @@ Item {
 	height: safeAreaBottomMargin + navigationView.implicitHeight
 
 	states: State {
-		when: d.lockedAndHidden
+		when: root.lockedAndHidden
 
 		PropertyChanges {
-			root.height: root.safeAreaBottomMargin
+			root.height: 0
 		}
 	}
 	transitions: Transition {
@@ -54,10 +51,9 @@ Item {
 
 		property int activeModule
 		readonly property bool initialLockedAndHidden: startupModule === UiModule.IDENTIFY || startupModule === UiModule.ONBOARDING
-		property bool lockedAndHidden
 		readonly property int startupModule: SettingsModel.startupModule
 
-		Component.onCompleted: root.show(startupModule, initialLockedAndHidden)
+		Component.onCompleted: root.show(startupModule)
 	}
 	ColumnLayout {
 		anchors.left: parent.left
@@ -66,23 +62,16 @@ Item {
 		NavigationView {
 			id: navigationView
 
-			Accessible.ignored: d.lockedAndHidden
+			Accessible.ignored: root.lockedAndHidden
 			Layout.alignment: Qt.AlignHCenter
 			Layout.fillWidth: true
 			activeModule: d.activeModule
-			visible: root.height > root.safeAreaBottomMargin
+			safeAreaBottomMargin: root.safeAreaBottomMargin
+			visible: root.height > 0
 
 			onShow: pModule => {
-				root.resetContentArea();
 				root.show(pModule);
 			}
 		}
-	}
-	Rectangle {
-		anchors.bottom: parent.bottom
-		anchors.left: parent.left
-		anchors.right: parent.right
-		color: d.lockedAndHidden ? Style.color.background : Style.color.pane.background.basic_unchecked
-		height: root.safeAreaBottomMargin
 	}
 }

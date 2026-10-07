@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "TestAuthContext.h"
 
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
-#include "paos/retrieve/DidAuthenticateEac2Parser.h"
+#include "paos/retrieve/PaosParser.h"
 
-#include "TestFileHelper.h"
+#include "TestParserHelper.h"
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -23,12 +23,18 @@ TestAuthContext::TestAuthContext(const QString& pFileName)
 	}
 	else
 	{
-		QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(TestFileHelper::readFile(pFileName))));
-		setDidAuthenticateEac1(eac1);
-		setDvCvc(eac1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).at(0));
-		initAccessRightManager(eac1->getCvCertificates({AccessRole::AT}).at(0));
+		const auto& parserEac1 = TestParserHelper::create(pFileName);
+		auto* pm = PaosParser().parse(parserEac1).release();
+		const QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
 
-		QSharedPointer<DIDAuthenticateEAC2> eac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"_L1))));
+		setDidAuthenticateEac1(eac1);
+		setDvCvc(getDidAuthenticateEac1()->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).at(0));
+		initAccessRightManager(getDidAuthenticateEac1()->getCvCertificates({AccessRole::AT}).at(0));
+
+
+		const auto& parserEac2 = TestParserHelper::create(":/paos/DIDAuthenticateEAC2.xml"_L1);
+		pm = PaosParser().parse(parserEac2).release();
+		const QSharedPointer<DIDAuthenticateEAC2> eac2(static_cast<DIDAuthenticateEAC2*>(pm));
 		setDidAuthenticateEac2(eac2);
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "command/EstablishPaceChannelCommand.h"
@@ -7,7 +7,6 @@
 #include "MockCardConnectionWorker.h"
 
 #include <QPointer>
-#include <QtCore>
 #include <QtTest>
 
 
@@ -30,20 +29,20 @@ class test_EstablishPaceChannelCommand
 					passwort, chat, description);
 
 			EstablishPaceChannelOutput output;
-			output.setPaceReturnCode(CardReturnCode::OK);
+			output.setReturnCode(CardReturnCode::OK);
 			output.setCarCurr(QByteArray("carCurr"));
 			output.setCarPrev(QByteArray("carPrev"));
 			output.setEfCardAccess(QByteArray("cardAccess"));
 			output.setIdIcc(QByteArray("IdIcc"));
-			output.setStatusMseSetAt(QByteArray("status"));
+			output.setStatusMseSetAt(QByteArray::fromHex("9000"));
 			command.mPaceOutput = output;
 
-			QCOMPARE(command.getPaceOutput().getPaceReturnCode(), CardReturnCode::OK);
+			QCOMPARE(command.getPaceOutput().getReturnCode(), CardReturnCode::OK);
 			QCOMPARE(command.getPaceOutput().getCarCurr(), QByteArray("carCurr"));
 			QCOMPARE(command.getPaceOutput().getCarPrev(), QByteArray("carPrev"));
 			QCOMPARE(command.getPaceOutput().getEfCardAccess(), QByteArray("cardAccess"));
 			QCOMPARE(command.getPaceOutput().getIdIcc(), QByteArray("IdIcc"));
-			QCOMPARE(command.getPaceOutput().getStatusMseSetAt(), QByteArray("status"));
+			QCOMPARE(command.getPaceOutput().getStatusCodeMseSetAt(), StatusCode::SUCCESS);
 		}
 
 

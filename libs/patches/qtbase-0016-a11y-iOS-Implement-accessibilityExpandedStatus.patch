@@ -1,0 +1,45 @@
+From 91f2825d2f7d10e457999a05e93d69eabfcdf923 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Tue, 19 May 2026 15:19:18 +0200
+Subject: a11y iOS: Implement accessibilityExpandedStatus
+
+This leads to the current expanded/collapsed state being announced.
+
+Task-number: QTBUG-146552
+Pick-to: 6.12
+Change-Id: I10f19491498e1d5469b235ad1e2233967fffea5f
+Reviewed-by: Lars Schmertmann <SmallLars@t-online.de>
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+(cherry picked from commit c925b3b047c0c8195ed985eb2d7191ec86b915a7)
+---
+ .../platforms/ios/quiaccessibilityelement.mm     | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+index b77c2fdba25bfc13e0612df7f7172e7dbaed423d..a08b58edb4665c7878561ea2225d053b557556bb 100644
+--- x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+@@ -205,6 +205,22 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+     return traits;
+ }
+ 
++- (UIAccessibilityExpandedStatus)accessibilityExpandedStatus
++{
++    QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || !iface->isValid()) {
++        qWarning() << "invalid accessible interface for: " << self.axid;
++        return UIAccessibilityExpandedStatusUnsupported;
++    }
++
++    QAccessible::State state = iface->state();
++    if (!state.expandable)
++        return UIAccessibilityExpandedStatusUnsupported;
++
++    return state.expanded ? UIAccessibilityExpandedStatusExpanded
++                          : UIAccessibilityExpandedStatusCollapsed;
++}
++
+ - (BOOL)accessibilityActivate
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);

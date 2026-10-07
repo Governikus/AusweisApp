@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "MockCardConnectionWorker.h"
@@ -116,7 +116,8 @@ EstablishPaceChannelOutput MockCardConnectionWorker::establishPaceChannel(PacePa
 	Q_UNUSED(pPasswordValue)
 	Q_UNUSED(pChat)
 	Q_UNUSED(pCertificateDescription)
-	return EstablishPaceChannelOutput(mPaceCodes.empty() ? CardReturnCode::UNDEFINED : mPaceCodes.takeFirst());
+
+	return EstablishPaceChannelOutput(pPasswordId, mPaceCodes.empty() ? CardReturnCode::UNDEFINED : mPaceCodes.takeFirst());
 }
 
 

@@ -1,10 +1,9 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
-#include "paos/ElementDetector.h"
 #include "paos/PaosMessage.h"
 
 #include <QSharedPointer>
@@ -14,26 +13,19 @@ namespace governikus
 {
 
 class PaosHandler
-	: private ElementDetector
 {
 	Q_DISABLE_COPY(PaosHandler)
 
 	private:
-		const QByteArray mXmlData;
-		PaosType mDetectedType;
 		QSharedPointer<PaosMessage> mParsedObject;
 
-		void detect();
-		void parse();
-		void setParsedObject(PaosMessage* pParsedObject);
-
-		bool handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
+		void setParsedObject(std::unique_ptr<PaosMessage> pParsedObject);
 
 	public:
-		explicit PaosHandler(const QByteArray& pXmlData);
+		explicit PaosHandler(QIODevice* pDevice, bool pLoggingAllowed);
 
 		[[nodiscard]] PaosType getDetectedPaosType() const;
-		[[nodiscard]] QSharedPointer<PaosMessage> getPaosMessage() const;
+		[[nodiscard]] const QSharedPointer<PaosMessage>& getPaosMessage() const;
 };
 
 } // namespace governikus

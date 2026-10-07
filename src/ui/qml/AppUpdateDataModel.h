@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -95,6 +95,9 @@ class AppUpdateDataModel
 		[[nodiscard]] Q_INVOKABLE bool download();
 		[[nodiscard]] Q_INVOKABLE bool abortDownload();
 
+		Q_INVOKABLE void applyUpdate() const;
+		Q_INVOKABLE void startUpdateFlow(bool pImmediate) const;
+
 	Q_SIGNALS:
 		void fireAppUpdateDataChanged();
 		void fireDownloadProgressChanged();
@@ -103,6 +106,8 @@ class AppUpdateDataModel
 		void fireAppcastUpdateTextChanged();
 		void fireAppcastNoUpdateTextChanged();
 		void fireAppcastErrorTextChanged();
+		void fireUpdateAvailable();
+		void fireUpdateCanceled();
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -103,7 +103,7 @@ QtObject {
 			id: transportPinInfo
 
 			//: ALL_PLATFORMS
-			hintBoxesTitle: qsTr("I can't recall neither my card PIN nor my transport PIN. How do I set a new card PIN?")
+			hintBoxesTitle: qsTr("I can't remember my card PIN or my transport PIN. How do I set a new card PIN?")
 
 			//: ALL_PLATFORMS
 			linkText: qsTr("What is the Transport PIN?")
@@ -131,6 +131,9 @@ QtObject {
 		},
 		MultiInfoContent {
 			id: transportPinNotWorkingInfo
+
+			//: ALL_PLATFORMS
+			hintBoxesTitle: qsTr("I can't remember my card PIN or my transport PIN. How do I set a new card PIN?")
 
 			//: ALL_PLATFORMS
 			linkText: qsTr("My Transport PIN does not work")

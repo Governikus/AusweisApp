@@ -1,26 +1,48 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "ElementParser.h"
-
-#include "paos/element/ConnectionHandleParser.h"
 
 
 using namespace governikus;
 
 
 Q_DECLARE_LOGGING_CATEGORY(paos)
+Q_DECLARE_LOGGING_CATEGORY(secure)
 
 
-ElementParser::ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader)
+ElementParser::ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader, bool pLoggingAllowed)
 	: mXmlReader(pXmlReader)
 	, mParseError(false)
+	, mLogger(spawnMessageLogger(pLoggingAllowed ? paos : secure))
+	, mLoggerIndent(0)
 {
+	if (!pLoggingAllowed)
+	{
+		qCDebug(paos).noquote() << "no-log was requested, skip logging of xml data";
+	}
 }
 
 
-ElementParser::~ElementParser() = default;
+QDebug ElementParser::logXml() const
+{
+	return mLogger.debug().noquote().nospace() << QByteArray(mLoggerIndent * 2, ' ');
+}
+
+
+QString ElementParser::toString(const QXmlStreamAttributes& pAttributes, QLatin1Char pJoin)
+{
+	QStringList parts;
+	parts.reserve(pAttributes.size());
+
+	for (const auto& entry : pAttributes)
+	{
+		parts << QStringLiteral("%1=\"%2\"").arg(entry.qualifiedName(), entry.value());
+	}
+
+	return parts.isEmpty() ? QString() : pJoin + parts.join(pJoin);
+}
 
 
 bool ElementParser::parserFailed() const
@@ -31,7 +53,26 @@ bool ElementParser::parserFailed() const
 
 bool ElementParser::readNextStartElement()
 {
-	return !mParseError && mXmlReader->readNextStartElement();
+	if (mParseError)
+	{
+		return false;
+	}
+
+	if (mXmlReader->isEndElement())
+	{
+		--mLoggerIndent;
+		logXml() << '/' << mXmlReader->qualifiedName();
+	}
+
+	if (!mXmlReader->readNextStartElement())
+	{
+		return false;
+	}
+
+	logXml() << mXmlReader->qualifiedName() << toString(mXmlReader->attributes());
+	++mLoggerIndent;
+
+	return true;
 }
 
 
@@ -53,6 +94,7 @@ QString ElementParser::readElementText()
 		return QString();
 	}
 
+	logXml() << text;
 	return text.isEmpty() ? QLatin1String("") : text.simplified();
 }
 
@@ -99,9 +141,7 @@ void ElementParser::skipCurrentElement() const
 
 QStringView ElementParser::getElementName() const
 {
-	const auto& name = mXmlReader->name();
-	qCDebug(paos) << name;
-	return name;
+	return mXmlReader->name();
 }
 
 
@@ -111,30 +151,49 @@ QStringView ElementParser::getElementTypeByNamespace(const QString& pNamespace) 
 }
 
 
-void ElementParser::initData(const QByteArray& pXmlData)
-{
-	mParseError = false;
-	mXmlReader->clear();
-	mXmlReader->addData(pXmlData);
-}
-
-
 void ElementParser::setParserFailed()
 {
 	mParseError = true;
 }
 
 
-ConnectionHandle ElementParser::parseConnectionHandle()
-{
-	ConnectionHandleParser parser(mXmlReader);
-	const auto& handle = parser.parse();
-	mParseError |= parser.parserFailed();
-	return handle;
-}
-
-
 const QLoggingCategory& ElementParser::getLoggingCategory()
 {
 	return paos();
+}
+
+
+void ElementParser::detectStartElements(const QStringList& pStartElementNames, const HandleFoundElement& pFunc)
+{
+	for (; !mXmlReader->atEnd(); mXmlReader->readNext())
+	{
+		if (mXmlReader->hasError())
+		{
+			qCWarning(paos) << "Error parsing PAOS message:" << mXmlReader->errorString();
+			return;
+		}
+		else if (mXmlReader->isStartElement() && !handleStartElements(pStartElementNames, pFunc))
+		{
+			return;
+		}
+	}
+}
+
+
+bool ElementParser::handleStartElements(const QStringList& pStartElementNames, const HandleFoundElement& pFunc)
+{
+	const QString name = mXmlReader->name().toString();
+	if (pStartElementNames.contains(name))
+	{
+		QXmlStreamAttributes attributes = mXmlReader->attributes();
+		QString value;
+		if (mXmlReader->readNext() == QXmlStreamReader::TokenType::Characters && !mXmlReader->isWhitespace())
+		{
+			value = mXmlReader->text().toString().simplified();
+		}
+
+		return pFunc(name, value, attributes);
+	}
+
+	return true;
 }

@@ -1,0 +1,36 @@
+From 35a966ebbd16fb7639ab2590925ee589ede5bc9e Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Tue, 2 Jun 2026 09:26:24 +0200
+Subject: a11y: Consider QQuickItemPrivate->isAccessible in QQuickScrollbar
+
+Amend 3e233634d834ad9cdbe337b99cbd59e8b130f62f to consider if the
+scrollbar is disabled by the user.
+
+Users might want to disable it via Accessible.ignored to avoid
+having the scroll bar constantly posting its value to the screen
+reader if the position changes (e.g. during an ongoing a11y scroll
+via Android TalkBack).
+
+Task-number: QTBUG-139833
+Task-number: QTBUG-140673
+Pick-to: 6.12
+Change-Id: I21b278fb50cefff4611ca02829b6c745ecb39a29
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+(cherry-picked from commit ba264a0ef2acc44c7c16ea96b469549a69394cc2)
+---
+ src/quicktemplates/qquickscrollbar.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtdeclarative/src/quicktemplates/qquickscrollbar.cpp y/qtdeclarative/src/quicktemplates/qquickscrollbar.cpp
+index f7d0600ed2ab589d8145528f2926c707c0c52918..f1b3657ed97f68b89373ed51fd2fc87897e8bf28 100644
+--- x/qtdeclarative/src/quicktemplates/qquickscrollbar.cpp
++++ y/qtdeclarative/src/quicktemplates/qquickscrollbar.cpp
+@@ -472,7 +472,7 @@ void QQuickScrollBarPrivate::setPosition(qreal newPosition, bool notifyVisualCha
+         visualAreaChange(visualArea(), oldVisualArea);
+ 
+ #if QT_CONFIG(accessibility)
+-    if (QAccessible::isActive()) {
++    if (QAccessible::isActive() && isAccessible) {
+         if (QAccessibleInterface *accessible = QAccessible::queryAccessibleInterface(q)) {
+             QAccessibleValueInterface *valueInterface = accessible->valueInterface();
+             Q_ASSERT(valueInterface);

@@ -1,14 +1,58 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "StartPaosResponse.h"
 
+
 using namespace governikus;
 
-StartPaosResponse::StartPaosResponse(const QByteArray& pXmlData)
+
+void StartPaosResponse::parse()
+{
+	while (mParser->readNextStartElement())
+	{
+		const auto& name = mParser->getElementName();
+		if (name == QLatin1String("Result"))
+		{
+			parseResult();
+		}
+		else
+		{
+			mParser->skipCurrentElement();
+		}
+	}
+}
+
+
+void StartPaosResponse::parseResult()
+{
+	while (mParser->readNextStartElement())
+	{
+		const auto& name = mParser->getElementName();
+		if (name == QLatin1String("ResultMajor"))
+		{
+			mResultMajor = mParser->readElementText();
+		}
+		else if (name == QLatin1String("ResultMinor"))
+		{
+			mResultMinor = mParser->readElementText();
+		}
+		else if (name == QLatin1String("ResultMessage"))
+		{
+			mResultMessage = mParser->readElementText();
+		}
+		else
+		{
+			mParser->skipCurrentElement();
+		}
+	}
+}
+
+
+StartPaosResponse::StartPaosResponse(const QSharedPointer<ElementParser>& pParser)
 	: ResponseType(PaosType::STARTPAOS_RESPONSE)
-	, ElementDetector(pXmlData)
+	, mParser(pParser)
 	, mResultMajor()
 	, mResultMinor()
 	, mResultMessage()
@@ -18,37 +62,4 @@ StartPaosResponse::StartPaosResponse(const QByteArray& pXmlData)
 }
 
 
-void StartPaosResponse::parse()
-{
-	const QStringList expectedElements({
-				QStringLiteral("RelatesTo"),
-				QStringLiteral("MessageID"),
-				QStringLiteral("ResultMajor"),
-				QStringLiteral("ResultMinor"),
-				QStringLiteral("ResultMessage")
-			});
-
-	detectStartElements(expectedElements);
-}
-
-
-bool StartPaosResponse::handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes)
-{
-	if (handleWSAddressingHeaders(pElementName, pValue, pAttributes))
-	{
-		// handled all WS addressing PAOS header stuff
-	}
-	else if (pElementName == QLatin1String("ResultMajor"))
-	{
-		mResultMajor = pValue;
-	}
-	else if (pElementName == QLatin1String("ResultMinor"))
-	{
-		mResultMinor = pValue;
-	}
-	else if (pElementName == QLatin1String("ResultMessage"))
-	{
-		mResultMessage = pValue;
-	}
-	return true;
-}
+StartPaosResponse::~StartPaosResponse() = default;

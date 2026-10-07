@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -8,7 +8,9 @@
 #include <QSharedPointer>
 #include <openssl/ec.h>
 
+
 class test_EcdhGenericMapping;
+
 
 namespace governikus
 {
@@ -22,20 +24,19 @@ class EcdhGenericMapping
 
 	private:
 		const QSharedPointer<EC_GROUP> mCurve;
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
 		QSharedPointer<EVP_PKEY> mLocalKey;
 #else
 		QSharedPointer<EC_KEY> mLocalKey;
 #endif
+		QSharedPointer<EC_POINT> mPoint;
 
 		QSharedPointer<EC_POINT> createNewGenerator(const QSharedPointer<const EC_POINT>& pRemotePubKey, const QSharedPointer<const BIGNUM>& pS);
-
-		bool setGenerator(const QSharedPointer<const EC_POINT>& pNewGenerator) const;
 
 	public:
 		explicit EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve);
 
-		[[nodiscard]] const QSharedPointer<EC_GROUP>& getCurve() const;
+		[[nodiscard]] int getNid() const;
 
 		/*!
 		 * \brief Generates the local mapping data, that will be sent to the remote.
@@ -50,6 +51,8 @@ class EcdhGenericMapping
 		 * \return the terminal's mapping data
 		 */
 		bool generateEphemeralDomainParameters(const QByteArray& pRemoteMappingData, const QByteArray& pNonce);
+
+		[[nodiscard]] QByteArray getGenerator() const;
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "IfdEstablishPaceChannelResponse.h"
@@ -65,9 +65,9 @@ IfdEstablishPaceChannelResponse::IfdEstablishPaceChannelResponse(const QString& 
 }
 
 
-IfdEstablishPaceChannelResponse::IfdEstablishPaceChannelResponse(const QJsonObject& pMessageObject)
+IfdEstablishPaceChannelResponse::IfdEstablishPaceChannelResponse(PacePasswordId pPasswordId, const QJsonObject& pMessageObject)
 	: IfdSlotHandle<IfdMessageResponse>(pMessageObject)
-	, mOutputData()
+	, mOutputData(pPasswordId)
 {
 	parseOutputData(pMessageObject);
 

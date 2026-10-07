@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -10,7 +10,6 @@ import Governikus.Global
 import Governikus.TitleBar
 import Governikus.Navigation
 import Governikus.View
-import Governikus.FeedbackView
 import Governikus.Type
 import Governikus.Style
 
@@ -27,19 +26,25 @@ ApplicationWindow {
 			feedbackPopup = null;
 		}
 	}
-	function closeOpenPopups() {
-		closeFeedbackPopup();
-		feedback.close();
+	function showAppRatingIfNecessary() {
+		if (ApplicationModel.currentWorkflow === ApplicationModel.Workflow.NONE && !RemoteServiceModel.running) {
+			ApplicationModel.showAppStoreRatingDialog();
+		}
 	}
 
 	color: Style.color.background
-	flags: Qt.platform.os === "ios" ? Qt.Window | Qt.ExpandedClientAreaHint : Qt.Window
+	flags: Qt.Window | Qt.ExpandedClientAreaHint
 	locale: Qt.locale(SettingsModel.language)
 	visible: true
 
 	footer: Navigation {
 		id: navigation
 
+		readonly property bool currentlyLockedAndHidden: contentArea.currentSectionPage?.lockAndHideNavigation ?? false
+		readonly property bool onboardingActive: contentArea.activeModule === UiModule.ONBOARDING
+		readonly property bool workflowActive: ApplicationModel.currentWorkflow !== ApplicationModel.Workflow.NONE
+
+		lockedAndHidden: workflowActive || onboardingActive || currentlyLockedAndHidden
 		safeAreaBottomMargin: parent.SafeArea.margins.bottom
 
 		onResetContentArea: contentArea.reset()
@@ -77,7 +82,7 @@ ApplicationWindow {
 		Style.dimens.screenHeight = Qt.binding(function () {
 			return root.height;
 		});
-		feedback.showIfNecessary();
+		showAppRatingIfNecessary();
 	}
 	onClosing: pClose => {
 		// back button pressed
@@ -122,7 +127,7 @@ ApplicationWindow {
 	}
 	Connections {
 		function onFireApplicationActivated() {
-			feedback.showIfNecessary();
+			root.showAppRatingIfNecessary();
 		}
 
 		target: UiPluginModel
@@ -154,7 +159,7 @@ ApplicationWindow {
 				navigation.show(UiModule.HELP);
 				break;
 			case UiModule.IDENTIFY:
-				root.closeOpenPopups();
+				root.closeFeedbackPopup();
 				if (ApplicationModel.currentWorkflow === ApplicationModel.Workflow.NONE) {
 					navigation.show(UiModule.SELF_AUTHENTICATION);
 					break;
@@ -176,7 +181,8 @@ ApplicationWindow {
 			id: contentArea
 
 			function reset() {
-				currentSectionPage.popAll();
+				currentSectionPage?.popAll();
+				root.showAppRatingIfNecessary();
 			}
 
 			Layout.fillHeight: true
@@ -221,6 +227,16 @@ ApplicationWindow {
 
 		target: ApplicationModel
 	}
+	Connections {
+		function onFireUpdateAvailable() {
+			updateAvailablePopup.open();
+		}
+		function onFireUpdateCanceled() {
+			updateCanceledPopup.open();
+		}
+
+		target: SettingsModel.appUpdateData
+	}
 	Component {
 		id: toast
 
@@ -233,14 +249,60 @@ ApplicationWindow {
 			onConfirmed: ApplicationModel.onShowNextFeedback()
 		}
 	}
-	StoreFeedbackPopup {
-		id: feedback
+	ConfirmationPopup {
+		id: updateAvailablePopup
 
-		function showIfNecessary() {
-			if (ApplicationModel.currentWorkflow === ApplicationModel.Workflow.NONE && !RemoteServiceModel.running && SettingsModel.requestStoreFeedback()) {
-				SettingsModel.hideFutureStoreFeedbackDialogs();
-				feedback.open();
+		closePolicy: Popup.NoAutoClose
+		dim: true
+		modal: true
+		//: MOBILE
+		okButtonText: qsTr("Restart now")
+		//: MOBILE
+		text: qsTr("An update was downloaded and a restart is required to apply it.")
+		//: MOBILE
+		title: qsTr("Update available")
+
+		onCancelled: close()
+		onConfirmed: SettingsModel.appUpdateData.applyUpdate()
+	}
+	ConfirmationPopup {
+		id: updateCanceledPopup
+
+		readonly property bool missingNetworkAccess: !connectivityManager.networkInterfaceActive
+
+		//: MOBILE
+		cancelButtonText: qsTr("Exit")
+		closePolicy: Popup.NoAutoClose
+		dim: true
+		modal: true
+		//: MOBILE
+		okButtonText: qsTr("Install update")
+		style: ConfirmationPopup.PopupStyle.CancelButton | (missingNetworkAccess ? 0 : ConfirmationPopup.PopupStyle.OkButton)
+		//: MOBILE
+		title: qsTr("Update required")
+
+		onCancelled: UiPluginModel.fireQuitApplicationRequest()
+		onConfirmed: SettingsModel.appUpdateData.startUpdateFlow(true)
+
+		ColumnLayout {
+			spacing: Style.dimens.groupbox_spacing
+			width: parent.width
+
+			GText {
+				//: MOBILE %1 is replaced with the application name
+				text: qsTr("A critical update is available and required to use the %1.").arg(Qt.application.name)
+			}
+			GText {
+				font.weight: Style.font.bold
+				//: MOBILE
+				text: qsTr("A network connection is required to install the update.")
+				visible: updateCanceledPopup.missingNetworkAccess
 			}
 		}
+	}
+	ConnectivityManager {
+		id: connectivityManager
+
+		watching: updateCanceledPopup.visible
 	}
 }

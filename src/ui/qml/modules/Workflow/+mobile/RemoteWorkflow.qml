@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -56,7 +56,7 @@ GFlickableColumnLayout {
 				return "";
 			}
 		}
-		showAdditionalContent: RemoteServiceModel.requiresLocalNetworkPermission && root.wifiEnabled && !root.foundSelectedReader
+		showAdditionalContent: Qt.platform.os === "ios" && root.wifiEnabled && !root.foundSelectedReader
 		subTitleText: {
 			if (!root.wifiEnabled || !root.foundSelectedReader) {
 				return "";

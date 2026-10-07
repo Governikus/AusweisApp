@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -28,12 +28,9 @@ class PaceHandler final
 		QSharedPointer<KeyAgreement> mKeyAgreement;
 		QSharedPointer<const PaceInfo> mPaceInfo;
 		QByteArray mStatusMseSetAt;
-		QByteArray mIdIcc;
 		QByteArray mEncryptionKey;
 		QByteArray mMacKey;
 		QByteArray mChat;
-		QByteArray mCarCurr;
-		QByteArray mCarPrev;
 
 		/*!
 		 * \brief checks for implementation support
@@ -63,7 +60,7 @@ class PaceHandler final
 		 * \param pPassword the password value, e.g. "123456"
 		 * \return false on any errors during establishment
 		 */
-		CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pPassword);
+		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pPassword);
 
 		/*!
 		 * \brief The certificate holder authorization template to be supplied to the card. May be empty
@@ -84,27 +81,6 @@ class PaceHandler final
 		 */
 		[[nodiscard]] const QByteArray& getMacKey() const;
 
-		/*!
-		 * \brief During PACE protocol a certificate authority reference (CAR) may be determined. This method returns this CAR.
-		 * The CAR is determined, if a CHAT was supplied, \see setChat
-		 * \return the card's CAR number 1
-		 */
-		[[nodiscard]] const QByteArray& getCarCurr() const;
-
-		/*!
-		 * \brief During PACE protocol a certificate authority reference (CAR) may be determined. This method returns this CAR.
-		 * The CAR is determined, if a CHAT was supplied, \see setChat
-		 * \return the card's CAR number 2
-		 */
-		[[nodiscard]] const QByteArray& getCarPrev() const;
-
-		/*!
-		 * \brief The IDicc is the card's compressed ephemeral public key.
-		 * \return the card's compressed ephemeral public key
-		 */
-		[[nodiscard]] const QByteArray& getIdIcc() const;
-
-		[[nodiscard]] const QByteArray& getStatusMseSetAt() const;
 
 		/*!
 		 * The used PACE protocol.

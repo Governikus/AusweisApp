@@ -1,10 +1,8 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
-
-#include "EnumHelper.h"
 
 #include <QCoreApplication>
 #include <QList>
@@ -21,11 +19,6 @@
 namespace governikus
 {
 
-defineEnumType(CertificateType
-		, UNKNOWN
-		, PRODUCTION
-		, DEVELOPER
-		)
 
 class BuildHelper
 {
@@ -35,14 +28,12 @@ class BuildHelper
 		BuildHelper() = delete;
 		~BuildHelper() = delete;
 
-		[[nodiscard]] static CertificateType fetchCertificateType();
 		[[nodiscard]] static bool fetchUserInteractive();
 
 	public:
 		static QList<std::pair<QLatin1String, QString>> getInformationHeader();
 		static void processInformationHeader(const std::function<void(const QString&, const QString&)>& pFunc, bool pTranslate = true);
 
-		[[nodiscard]] static CertificateType getCertificateType();
 		[[nodiscard]] static bool isUserInteractive();
 
 
@@ -51,7 +42,6 @@ class BuildHelper
 		static int getVersionCode();
 		static int getVersionCode(const QString& pPackageName);
 		static QString getPackageName();
-		static QByteArrayList getAppCertificates();
 		static QByteArrayList getAppCertificates(const QString& pPackageName);
 #endif
 

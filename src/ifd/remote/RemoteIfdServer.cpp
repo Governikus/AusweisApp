@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteIfdServer.h"
@@ -115,4 +115,10 @@ const QSharedPointer<ServerMessageHandler>& RemoteIfdServer::getMessageHandler()
 bool RemoteIfdServer::isLocal() const
 {
 	return false;
+}
+
+
+void RemoteIfdServer::rotatePsk()
+{
+	mWebSocketServer->rotatePsk();
 }

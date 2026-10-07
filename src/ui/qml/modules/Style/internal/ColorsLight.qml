@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -74,12 +74,18 @@ Colors {
 		content.basic_unchecked: "#0077b6"
 	}
 	controlSwitch: DefaultControlColors {
-		background.pressed_checked: "#80cdec"
-		background.pressed_unchecked: "#80cdec"
-		border.pressed_checked: "#80cdec"
-		border.pressed_unchecked: "#80cdec"
+		background.hovered_checked: background.pressed_checked
+		background.hovered_unchecked: background.pressed_unchecked
+		background.pressed_checked: "#008ad3"
+		background.pressed_unchecked: "#ffffff"
+		border.hovered_checked: border.pressed_checked
+		border.hovered_unchecked: border.pressed_unchecked
+		border.pressed_checked: "#008ad3"
+		border.pressed_unchecked: "#008ad3"
+		content.hovered_checked: content.pressed_checked
+		content.hovered_unchecked: content.pressed_unchecked
 		content.pressed_checked: "#ffffff"
-		content.pressed_unchecked: "#ffffff"
+		content.pressed_unchecked: "#008ad3"
 	}
 	linkBasic: DefaultLinkColors {
 		hovered_checked: "#379ec8"

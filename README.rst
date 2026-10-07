@@ -3,7 +3,7 @@ AusweisApp
 
 Kontakt
 -------
-| Governikus GmbH & Co. KG
+| Governikus Service GmbH
 | Hochschulring 4
 | 28359 Bremen
 | support@ausweisapp.de
@@ -13,7 +13,7 @@ Lizenz
 ------
 Der vorliegende Quellcode wird unter der EUPL v1.2 bereitgestellt.
 Die Datei ``LICENSE.officially.txt`` gilt ausschließlich für
-die offizielle Version der AusweisApp, welche von der Governikus GmbH & Co. KG
+die offizielle Version der AusweisApp, welche von der Governikus Service GmbH
 im Auftrag des Bundes unter https://www.ausweisapp.bund.de bereitgestellt wird.
 
 

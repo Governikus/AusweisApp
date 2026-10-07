@@ -1,38 +1,26 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "DidAuthenticateEac1.h"
 
-#include "asn1/ASN1Util.h"
 
 using namespace governikus;
-
-DIDAuthenticateEAC1::DIDAuthenticateEAC1()
-	: PaosMessage(PaosType::DID_AUTHENTICATE_EAC1)
-{
-}
-
-
-DIDAuthenticateEAC1::~DIDAuthenticateEAC1() = default;
-
-
-void DIDAuthenticateEAC1::setConnectionHandle(const ConnectionHandle& connectionHandle)
-{
-	mConnectionHandle = connectionHandle;
-}
-
-
-void DIDAuthenticateEAC1::setDidName(const QString& didName)
-{
-	mDidName = didName;
-}
 
 
 void DIDAuthenticateEAC1::setEac1InputType(const Eac1InputType& eac1InputType)
 {
 	mEac1InputType = eac1InputType;
 }
+
+
+DIDAuthenticateEAC1::DIDAuthenticateEAC1()
+	: DidAuthenticateMessage(PaosType::DID_AUTHENTICATE_EAC1)
+{
+}
+
+
+DIDAuthenticateEAC1::~DIDAuthenticateEAC1() = default;
 
 
 const QSharedPointer<const AuthenticatedAuxiliaryData>& DIDAuthenticateEAC1::getAuthenticatedAuxiliaryData() const
@@ -59,12 +47,6 @@ const QByteArray& DIDAuthenticateEAC1::getCertificateDescriptionAsBinary() const
 }
 
 
-const ConnectionHandle& DIDAuthenticateEAC1::getConnectionHandle() const
-{
-	return mConnectionHandle;
-}
-
-
 const QList<QSharedPointer<const CVCertificate>>& DIDAuthenticateEAC1::getCvCertificates() const
 {
 	return mEac1InputType.getCvCertificates();
@@ -85,12 +67,6 @@ QList<QSharedPointer<const CVCertificate>> DIDAuthenticateEAC1::getCvCertificate
 	}
 
 	return cvcs;
-}
-
-
-const QString& DIDAuthenticateEAC1::getDidName() const
-{
-	return mDidName;
 }
 
 

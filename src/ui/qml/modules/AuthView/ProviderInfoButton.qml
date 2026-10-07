@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -12,11 +12,13 @@ import Governikus.View
 GAbstractButton {
 	id: root
 
+	//: ALL_PLATFORMS
+	readonly property string a11yDescription: qsTr("Show more information about the service provider")
+	readonly property string a11yName: subheading.text + ". " + nameText.text
 	property alias name: nameText.text
 
-	//: ALL_PLATFORMS
-	Accessible.description: qsTr("Show more information about the service provider")
-	Accessible.name: subheading.text + ". " + nameText.text
+	Accessible.description: Utils.resolveA11yDescription(a11yName, a11yDescription)
+	Accessible.name: Utils.resolveA11yName(a11yName, a11yDescription)
 	Accessible.role: Accessible.Button
 	padding: Style.dimens.pane_padding
 
@@ -61,7 +63,6 @@ GAbstractButton {
 
 	HoverHandler {
 		id: hoverHandler
-
 	}
 	StatefulColors {
 		id: colors

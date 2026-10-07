@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import Governikus.Global
@@ -16,10 +17,17 @@ GAbstractButton {
 	property bool drawBottomCorners: false
 	required property url img
 	required property string name
+	readonly property string positionString: {
+		if (ButtonGroup.group === null)
+			return "";
+		const idx = ButtonGroup.group.buttons.findIndex(elem => this === elem);
+		const len = ButtonGroup.group.buttons.length;
+		return qsTr("Element %1 of %2.").arg(idx + 1).arg(len);
+	}
 	property alias tintIcon: icon.tintEnabled
 
 	Accessible.description: desc
-	Accessible.name: name
+	Accessible.name: positionString + " " + name
 	Accessible.role: Accessible.RadioButton
 	autoExclusive: true
 	checkable: true

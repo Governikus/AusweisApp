@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "GeneralSettings.h"
@@ -519,11 +519,11 @@ class test_GeneralSettings
 		void testStoreFeedbackRequested()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-			QCOMPARE(settings.isRequestStoreFeedback(), false);
-			settings.setRequestStoreFeedback(true);
-			QCOMPARE(settings.isRequestStoreFeedback(), true);
-			settings.setRequestStoreFeedback(false);
-			QCOMPARE(settings.isRequestStoreFeedback(), false);
+			QCOMPARE(settings.shouldShowAppStoreRatingDialog(), false);
+			settings.setShowAppStoreRatingDialog(true);
+			QCOMPARE(settings.shouldShowAppStoreRatingDialog(), true);
+			settings.setShowAppStoreRatingDialog(false);
+			QCOMPARE(settings.shouldShowAppStoreRatingDialog(), false);
 		}
 
 

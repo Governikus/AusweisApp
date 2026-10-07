@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -14,6 +14,9 @@
 #include <QTimer>
 
 
+class test_PcscCard;
+
+
 namespace governikus
 {
 
@@ -21,6 +24,7 @@ class PcscCard
 	: public Card
 {
 	Q_OBJECT
+	friend class ::test_PcscCard;
 
 	private:
 		struct CardResult

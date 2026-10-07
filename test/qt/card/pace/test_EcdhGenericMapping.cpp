@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "pace/ec/EcdhGenericMapping.h"
@@ -8,6 +8,7 @@
 #include "pace/ec/EcUtil.h"
 
 #include <QtTest>
+
 
 using namespace governikus;
 
@@ -31,67 +32,66 @@ class test_EcdhGenericMapping
 		{
 			QFETCH(int, nid);
 
+			if (nid == NID_undef)
+			{
+				QTest::ignoreMessage(QtCriticalMsg, "Error on EC_GROUP_new_by_curve_name, curve is unknown: 0");
+				QTest::ignoreMessage(QtCriticalMsg, "No curve defined");
+			}
 			auto curve = EcUtil::createCurve(nid);
 			EcdhGenericMapping mapping(curve);
-			QCOMPARE(mapping.getCurve(), curve);
+			QCOMPARE(mapping.getNid(), nid);
 			QCOMPARE(mapping.generateLocalMappingData().isEmpty(), curve.isNull());
 		}
 
 
-		void curveGenerator_data()
+		void equalKeys()
 		{
-			QTest::addColumn<bool>("derived");
-
-			QTest::newRow("derived") << true;
-			QTest::newRow("not derived") << false;
+			EcdhGenericMapping mapping(EcUtil::createCurve(NID_brainpoolP256r1));
+			const auto& localMapping = mapping.generateLocalMappingData();
+			QTest::ignoreMessage(QtCriticalMsg, "The exchanged public keys are equal.");
+			QVERIFY(!mapping.generateEphemeralDomainParameters(localMapping, QByteArray("0123456789ABCDEF")));
 		}
 
 
-		void curveGenerator()
+		void pointGenerator()
 		{
-			QFETCH(bool, derived);
+			const auto& curve = EcUtil::createCurve(NID_brainpoolP256r1);
+			const auto& generator = EcUtil::point2oct(curve, EC_GROUP_get0_generator(curve.data()));
+			const auto& nonce = Randomizer::getInstance().createBytes(16);
 
-			const auto nid = NID_brainpoolP256r1;
-			const auto originalCurve = EcUtil::createCurve(nid);
-			EcdhGenericMapping cardMapping(originalCurve);
-			const auto originalGenerator = EcUtil::point2oct(originalCurve, EC_GROUP_get0_generator(originalCurve.data()));
+			EcdhGenericMapping cardMapping(curve);
+			const auto& cardMappingData = cardMapping.generateLocalMappingData();
+			QVERIFY(!cardMappingData.isEmpty());
 
-			if (derived)
-			{
-				EcdhGenericMapping terminalMapping(EcUtil::createCurve(nid));
-				const auto& nonce = Randomizer::getInstance().createBytes(16);
-				QVERIFY(!cardMapping.generateLocalMappingData().isEmpty());
-				QVERIFY(cardMapping.generateEphemeralDomainParameters(terminalMapping.generateLocalMappingData(), nonce));
-			}
+			EcdhGenericMapping terminalMapping(curve);
+			const auto& terminalMappingData = terminalMapping.generateLocalMappingData();
+			QVERIFY(!terminalMappingData.isEmpty());
 
-			const auto curve = cardMapping.getCurve();
-			const auto generator = EcUtil::point2oct(curve, EC_GROUP_get0_generator(curve.data()));
-			QVERIFY(!generator.isEmpty());
-			if (derived)
-			{
-				QCOMPARE_NE(generator, originalGenerator);
-			}
+			QVERIFY(cardMapping.generateEphemeralDomainParameters(terminalMappingData, nonce));
+			QVERIFY(!cardMapping.getGenerator().isEmpty());
 
-			const auto key = EcUtil::generateKey(curve);
-			QVERIFY(key);
+			QVERIFY(terminalMapping.generateEphemeralDomainParameters(cardMappingData, nonce));
+			QVERIFY(!terminalMapping.getGenerator().isEmpty());
+			QCOMPARE(cardMapping.getGenerator(), terminalMapping.getGenerator());
+			QCOMPARE_NE(generator, cardMapping.getGenerator());
+		}
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
-			size_t bufferLength = 0;
-			EVP_PKEY_get_utf8_string_param(key.data(), "group", nullptr, 0, &bufferLength);
-			QByteArray groupName(bufferLength, Qt::Uninitialized);
-			EVP_PKEY_get_utf8_string_param(key.data(), "group", groupName.data(), groupName.size(), &bufferLength);
 
-			QCOMPARE(groupName, derived ? QByteArray() : QByteArrayView(OBJ_nid2sn(nid))); // modified/derived curve must be empty group name!
-#endif
+		void explicitCurve()
+		{
+			auto curve = EcUtil::createCurve(NID_brainpoolP256r1);
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
-			EVP_PKEY_get_octet_string_param(key.data(), "generator", nullptr, 0, &bufferLength);
-			QByteArray extractedGenerator(bufferLength, Qt::Uninitialized);
-			EVP_PKEY_get_octet_string_param(key.data(), "generator", reinterpret_cast<uchar*>(extractedGenerator.data()), extractedGenerator.size(), &bufferLength);
-#else
-			QByteArray extractedGenerator(EcUtil::point2oct(curve, EC_GROUP_get0_generator(EC_KEY_get0_group(key.data()))));
-#endif
-			QCOMPARE(extractedGenerator.toHex(), generator.toHex());
+			// Change generator by double it to ensure the point is still on the curve
+			BN_CTX* ctx = BN_CTX_new();
+			EC_POINT* newGenerator = EC_POINT_new(curve.data());
+			EC_POINT_dbl(curve.data(), newGenerator, EC_GROUP_get0_generator(curve.data()), ctx);
+			EC_GROUP_set_generator(curve.data(), newGenerator, EC_GROUP_get0_order(curve.data()), EC_GROUP_get0_cofactor(curve.data()));
+			EC_POINT_free(newGenerator);
+			BN_CTX_free(ctx);
+
+			EcdhGenericMapping mapping(curve);
+			// Should be NID_undef: https://github.com/openssl/openssl/issues/31616
+			QCOMPARE(mapping.getNid(), NID_brainpoolP256r1);
 		}
 
 

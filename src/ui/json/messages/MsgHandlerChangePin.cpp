@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 #include "MsgHandlerChangePin.h"
@@ -8,6 +8,7 @@
 #include "UiLoader.h"
 #include "UiPluginJson.h"
 #include "controller/ChangePinController.h"
+
 
 using namespace governikus;
 
@@ -35,7 +36,9 @@ MsgHandlerChangePin::MsgHandlerChangePin(const QSharedPointer<const ChangePinCon
 {
 	Q_ASSERT(pContext);
 
-	setValue(QLatin1String("success"), pContext->getLastPaceResult() == CardReturnCode::OK && !pContext->isWorkflowCancelled());
+	const auto success = pContext->getPaceOutput().getReturnCode() == CardReturnCode::OK
+			&& pContext->getPaceOutput().getPaceResult() == PaceResult::OK_PIN;
+	setValue(QLatin1String("success"), success && !pContext->isWorkflowCancelled());
 
 	const auto& failureCode = pContext->getFailureCode();
 	if (failureCode.has_value())

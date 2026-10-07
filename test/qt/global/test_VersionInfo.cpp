@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include <QtCore>
@@ -21,7 +21,7 @@ class test_VersionInfo
 	private Q_SLOTS:
 		void init()
 		{
-			QCoreApplication::setOrganizationName(QStringLiteral("Governikus GmbH & Co. KG"));
+			QCoreApplication::setOrganizationName(QStringLiteral("Governikus Service GmbH"));
 			QCoreApplication::setApplicationVersion(QStringLiteral("x.y.z"));
 			Env::getSingleton<LogHandler>()->init();
 		}
@@ -55,7 +55,7 @@ class test_VersionInfo
 			QCOMPARE(obj["Specification-Vendor"_L1].toString(), QLatin1String("Federal Office for Information Security"));
 			QCOMPARE(obj["Implementation-Title"_L1].toString(), QLatin1String("AusweisApp2"));
 			QCOMPARE(obj["Implementation-Version"_L1].toString(), QLatin1String("x.y.z"));
-			QCOMPARE(obj["Implementation-Vendor"_L1].toString(), QLatin1String("Governikus GmbH & Co. KG"));
+			QCOMPARE(obj["Implementation-Vendor"_L1].toString(), QLatin1String("Governikus Service GmbH"));
 		}
 
 
@@ -107,7 +107,7 @@ class test_VersionInfo
 			QVERIFY(text.contains(QLatin1String("Specification-Vendor: Federal Office for Information Security")));
 			QVERIFY(text.contains(QLatin1String("Implementation-Title: AusweisApp2")));
 			QVERIFY(text.contains(QLatin1String("Implementation-Version: x.y.z")));
-			QVERIFY(text.contains(QLatin1String("Implementation-Vendor: Governikus GmbH & Co. KG")));
+			QVERIFY(text.contains(QLatin1String("Implementation-Vendor: Governikus Service GmbH")));
 		}
 
 

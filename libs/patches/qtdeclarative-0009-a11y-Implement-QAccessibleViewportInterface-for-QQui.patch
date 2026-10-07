@@ -1,0 +1,426 @@
+From 3c59f1dc18776432a8b6b42867500bf0b4b46715 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Thu, 4 Jun 2026 08:11:54 +0200
+Subject: a11y: Implement QAccessibleViewportInterface for QQuickListView
+
+This will allow the a11y layer to inform the screen reader
+about the currently visible item range and total item count
+of a QML ListView.
+
+[ChangeLog][Qt Quick][Accessibility] QML ListView now exposes its
+visible item range and total item count to screen readers via
+QAccessibleViewportInterface.
+
+Task-number: QTBUG-139833
+Pick-to: 6.12
+Change-Id: I24f3f36ddda637024382f126accb749529694be4
+Reviewed-by: MohammadHossein Qanbari <mohammad.qanbari@qt.io>
+(cherry-picked from commit 8dd86364e6c17187830c72679ccf085cc17aff1c)
+---
+ src/quick/CMakeLists.txt                      |   1 +
+ .../accessible/qaccessiblequicklistview.cpp   | 115 +++++++++++++++
+ .../accessible/qaccessiblequicklistview_p.h   |  49 +++++++
+ .../accessible/qquickaccessiblefactory.cpp    |   4 +
+ .../quick/qquickaccessible/data/listview.qml  |  12 ++
+ .../qquickaccessible/tst_qquickaccessible.cpp | 133 ++++++++++++++++++
+ 6 files changed, 314 insertions(+)
+ create mode 100644 src/quick/accessible/qaccessiblequicklistview.cpp
+ create mode 100644 src/quick/accessible/qaccessiblequicklistview_p.h
+ create mode 100644 tests/auto/quick/qquickaccessible/data/listview.qml
+
+diff --git x/qtdeclarative/src/quick/CMakeLists.txt y/qtdeclarative/src/quick/CMakeLists.txt
+index 4faf6d4cd652b0961019336886e3606be275bf98..74ab651d8ef5ae94e8549aeab4d608a2373b9f52 100644
+--- x/qtdeclarative/src/quick/CMakeLists.txt
++++ y/qtdeclarative/src/quick/CMakeLists.txt
+@@ -587,6 +587,7 @@ qt_internal_extend_target(Quick CONDITION QT_FEATURE_accessibility
+         accessible/qaccessiblequicktextinput.cpp accessible/qaccessiblequicktextinput_p.h
+         accessible/qaccessiblequickview.cpp accessible/qaccessiblequickview_p.h
+         accessible/qaccessiblequickflickable.cpp accessible/qaccessiblequickflickable_p.h
++        accessible/qaccessiblequicklistview.cpp accessible/qaccessiblequicklistview_p.h
+         accessible/qquickaccessiblefactory.cpp accessible/qquickaccessiblefactory_p.h
+     LIBRARIES
+         Qt::CorePrivate
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequicklistview.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequicklistview.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..9490eca43ee46cbce1e2110680a718a940a8bb87
+--- /dev/null
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequicklistview.cpp
+@@ -0,0 +1,115 @@
++// Copyright (C) 2026 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++// Qt-Security score:significant reason:default
++
++#include "qaccessiblequicklistview_p.h"
++
++#include <QtQuick/private/qquicklistview_p.h>
++
++QT_BEGIN_NAMESPACE
++
++#if QT_CONFIG(accessibility)
++
++QAccessibleQuickListView::QAccessibleQuickListView(QQuickListView *listView)
++    : QAccessibleQuickItem(listView)
++{
++}
++
++QSizeF QAccessibleQuickListView::contentSize() const
++{
++    if (auto *l = listView()) {
++        const int count = l->count();
++        if (count == 0)
++            return { 0, 0 };
++
++        if (l->orientation() == QQuickListView::Horizontal)
++            return { static_cast<qreal>(count), 1 };
++
++        return { 1, static_cast<qreal>(count) };
++    }
++
++    return { };
++}
++
++QPointF QAccessibleQuickListView::position() const
++{
++    if (auto *l = listView()) {
++        const int count = l->count();
++        if (count == 0)
++            return { 0, 0 };
++
++        if (l->orientation() == QQuickListView::Horizontal) {
++            // compensate for undershooting of underlying Flickable
++            const int startIndex = std::max(0, l->indexAt(l->contentX(), 0));
++            return { static_cast<qreal>(startIndex) / count, 0 };
++        }
++
++        // compensate for undershooting of underlying Flickable
++        const int startIndex = std::max(0, l->indexAt(0, l->contentY()));
++        return { 0, static_cast<qreal>(startIndex) / count };
++    }
++
++    return { };
++}
++
++QSizeF QAccessibleQuickListView::viewportSize() const
++{
++    if (auto *l = listView()) {
++        const int count = l->count();
++        if (count == 0)
++            return { 1, 1 };
++
++        if (l->orientation() == QQuickListView::Horizontal) {
++            const int startIndex = std::max(0, l->indexAt(l->contentX(), 0));
++            int endIndex = l->indexAt(l->contentX() + l->width() - 1, 0);
++            // compensate for overshooting of underlying Flickable
++            if (endIndex == -1)
++                endIndex = count - 1;
++
++            return { static_cast<qreal>(endIndex - startIndex + 1) / count, 1 };
++        }
++        const int startIndex = std::max(0, l->indexAt(0, l->contentY()));
++        int endIndex = l->indexAt(0, l->contentY() + l->height() - 1);
++        // compensate for overshooting of underlying Flickable
++        if (endIndex == -1)
++            endIndex = count - 1;
++
++        return { 1, static_cast<qreal>(endIndex - startIndex + 1) / count };
++    }
++
++    return { };
++}
++
++bool QAccessibleQuickListView::isIndexed() const
++{
++    return true;
++}
++
++void QAccessibleQuickListView::setPosition(QPointF position)
++{
++    if (auto *l = listView()) {
++        if (l->orientation() == QQuickListView::Horizontal) {
++            l->positionViewAtIndex(position.x() * l->count(), QQuickListView::Beginning);
++            return;
++        }
++
++        l->positionViewAtIndex(position.y() * l->count(), QQuickListView::Beginning);
++    }
++}
++
++void *QAccessibleQuickListView::interface_cast(QAccessible::InterfaceType t)
++{
++    if (t == QAccessible::ViewportInterface)
++        return static_cast<QAccessibleViewportInterface *>(this);
++
++    return QAccessibleQuickItem::interface_cast(t);
++}
++
++QQuickListView *QAccessibleQuickListView::listView() const
++{
++    return qobject_cast<QQuickListView *>(object());
++}
++
++#endif // accessibility
++
++QT_END_NAMESPACE
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequicklistview_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequicklistview_p.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..245a3c4cbcfa389e7dadcef84cc0a86c1508e527
+--- /dev/null
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequicklistview_p.h
+@@ -0,0 +1,49 @@
++// Copyright (C) 2026 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++// Qt-Security score:significant reason:default
++
++#ifndef QACCESSIBLEQUICKLISTVIEW_H
++#define QACCESSIBLEQUICKLISTVIEW_H
++
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++#include "qaccessiblequickitem_p.h"
++
++QT_BEGIN_NAMESPACE
++
++#if QT_CONFIG(accessibility)
++
++class QQuickListView;
++
++class Q_QUICK_EXPORT QAccessibleQuickListView : public QAccessibleQuickItem,
++                                                public QAccessibleViewportInterface
++{
++public:
++    QAccessibleQuickListView(QQuickListView *listView);
++
++    // Viewport Interface
++    QSizeF contentSize() const override;
++    QPointF position() const override;
++    QSizeF viewportSize() const override;
++    bool isIndexed() const override;
++    void setPosition(QPointF position) override;
++
++protected:
++    QQuickListView *listView() const;
++    void *interface_cast(QAccessible::InterfaceType t) override;
++};
++
++#endif // accessibility
++
++QT_END_NAMESPACE
++
++#endif // QACCESSIBLEQUICKLISTVIEW_H
+diff --git x/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp y/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
+index 75615002ad75a6d4c9172c30bdb30e00d980076a..a6932bdf634fb1fc6fe969d06a136ba3736c3a19 100644
+--- x/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
++++ y/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
+@@ -9,8 +9,10 @@
+ #include "qaccessiblequicktextedit_p.h"
+ #include "qaccessiblequicktextinput_p.h"
+ #include "qaccessiblequickflickable_p.h"
++#include "qaccessiblequicklistview_p.h"
+ #include <QtQuick/private/qquickflickable_p.h>
+ #include <QtQuick/private/qquickitem_p.h>
++#include <QtQuick/private/qquicklistview_p.h>
+ #include <QtQuick/private/qquicktextedit_p.h>
+ #include <QtQuick/private/qquicktextinput_p.h>
+ 
+@@ -25,6 +27,8 @@ QAccessibleInterface *qQuickAccessibleFactory(const QString &classname, QObject
+         return new QAccessibleQuickTextEdit(qobject_cast<QQuickTextEdit *>(object));
+     if (classname == QLatin1String("QQuickTextInput"))
+         return new QAccessibleQuickTextInput(qobject_cast<QQuickTextInput *>(object));
++    if (classname == QLatin1String("QQuickListView"))
++        return new QAccessibleQuickListView(qobject_cast<QQuickListView *>(object));
+     if (classname == QLatin1String("QQuickFlickable"))
+         return new QAccessibleQuickFlickable(qobject_cast<QQuickFlickable *>(object));
+     if (classname == QLatin1String("QQuickItem")) {
+diff --git x/qtdeclarative/tests/auto/quick/qquickaccessible/data/listview.qml y/qtdeclarative/tests/auto/quick/qquickaccessible/data/listview.qml
+new file mode 100644
+index 0000000000000000000000000000000000000000..df7e2a2816558414b4dbcab9900dcc72dc178ff5
+--- /dev/null
++++ y/qtdeclarative/tests/auto/quick/qquickaccessible/data/listview.qml
+@@ -0,0 +1,12 @@
++import QtQuick
++
++ListView {
++    model: listModel
++    height: 300
++    width: 100
++    orientation: ListView.Vertical
++    delegate: Text {
++        height: 10
++        width: 20
++    }
++}
+diff --git x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+index 9f26a4e3b06ab04760ed37f7991d9b3e79e1f51e..834c5acd458a8368ea6dc73f9ad5434c1a4ce152 100644
+--- x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
++++ y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+@@ -24,14 +24,17 @@
+ #include <QtQuick/private/qquicktextinput_p.h>
+ #include <QtQuick/private/qaccessiblequickitem_p.h>
+ #include <QtQuick/private/qaccessiblequickflickable_p.h>
++#include <QtQuick/private/qaccessiblequicklistview_p.h>
+ 
+ #include <QtQuickTestUtils/private/qmlutils_p.h>
++#include <QtQuickTestUtils/private/viewtestutils_p.h>
+ #include <QtQuickTestUtils/private/visualtestutils_p.h>
+ 
+ #include <QQmlComponent>
+ #include <QQmlApplicationEngine>
+ 
+ using namespace Qt::StringLiterals;
++using namespace QQuickViewTestUtils;
+ 
+ #define EXPECT(cond) \
+     do { \
+@@ -84,6 +87,11 @@ private slots:
+ 
+     void flickableViewportTest_data();
+     void flickableViewportTest();
++
++    void listViewViewportTest_data();
++    void listViewViewportTest();
++    void listViewSetPositionTest_data();
++    void listViewSetPositionTest();
+ };
+ 
+ tst_QQuickAccessible::tst_QQuickAccessible()
+@@ -1175,6 +1183,131 @@ void tst_QQuickAccessible::flickableViewportTest()
+     QCOMPARE(a11yFlickable.isIndexed(), false);
+ }
+ 
++void tst_QQuickAccessible::listViewViewportTest_data()
++{
++    QTest::addColumn<int>("rowCount");
++    QTest::addColumn<QQuickListView::Orientation>("orientation");
++    QTest::addColumn<int>("index");
++    QTest::addColumn<QSizeF>("contentSize");
++    QTest::addColumn<QPointF>("position");
++    QTest::addColumn<QSizeF>("viewportSize");
++
++    QTest::addRow("Vertical - empty")
++            << 0 << QQuickListView::Vertical << 0 << QSizeF(0, 0) << QPointF(0, 0) << QSizeF(1, 1);
++    QTest::addRow("Vertical - index 0") << 100 << QQuickListView::Vertical << 0 << QSizeF(1, 100)
++                                        << QPointF(0, 0) << QSizeF(1, 0.3);
++    QTest::addRow("Vertical - index 10") << 100 << QQuickListView::Vertical << 10 << QSizeF(1, 100)
++                                         << QPointF(0, 0.1) << QSizeF(1, 0.3);
++    QTest::addRow("Vertical - index 50") << 100 << QQuickListView::Vertical << 50 << QSizeF(1, 100)
++                                         << QPointF(0, 0.5) << QSizeF(1, 0.3);
++    QTest::addRow("Vertical - index 70") << 100 << QQuickListView::Vertical << 70 << QSizeF(1, 100)
++                                         << QPointF(0, 0.7) << QSizeF(1, 0.3);
++    // 30 delegates fit in the view's height
++    QTest::addRow("Vertical - index 90") << 100 << QQuickListView::Vertical << 90 << QSizeF(1, 100)
++                                         << QPointF(0, 0.7) << QSizeF(1, 0.3);
++    QTest::addRow("Vertical - index 99") << 100 << QQuickListView::Vertical << 99 << QSizeF(1, 100)
++                                         << QPointF(0, 0.7) << QSizeF(1, 0.3);
++
++    QTest::addRow("Horizontal - empty") << 0 << QQuickListView::Horizontal << 0 << QSizeF(0, 0)
++                                        << QPointF(0, 0) << QSizeF(1, 1);
++    QTest::addRow("Horizontal - index 0") << 100 << QQuickListView::Horizontal << 0
++                                          << QSizeF(100, 1) << QPointF(0, 0) << QSizeF(0.05, 1);
++    QTest::addRow("Horizontal - index 10") << 100 << QQuickListView::Horizontal << 10
++                                           << QSizeF(100, 1) << QPointF(0.1, 0) << QSizeF(0.05, 1);
++    QTest::addRow("Horizontal - index 50") << 100 << QQuickListView::Horizontal << 50
++                                           << QSizeF(100, 1) << QPointF(0.5, 0) << QSizeF(0.05, 1);
++    QTest::addRow("Horizontal - index 70") << 100 << QQuickListView::Horizontal << 70
++                                           << QSizeF(100, 1) << QPointF(0.7, 0) << QSizeF(0.05, 1);
++    // 5 delegates fit in the view's width
++    QTest::addRow("Horizontal - index 90") << 100 << QQuickListView::Horizontal << 90
++                                           << QSizeF(100, 1) << QPointF(0.9, 0) << QSizeF(0.05, 1);
++    QTest::addRow("Horizontal - index 99") << 100 << QQuickListView::Horizontal << 99
++                                           << QSizeF(100, 1) << QPointF(0.95, 0) << QSizeF(0.05, 1);
++}
++
++void tst_QQuickAccessible::listViewViewportTest()
++{
++    auto clearEvents = qScopeGuard([] { QTestAccessibility::clearEvents(); });
++
++    QFETCH(int, rowCount);
++    QFETCH(QQuickListView::Orientation, orientation);
++    QFETCH(int, index);
++    QFETCH(QSizeF, contentSize);
++    QFETCH(QPointF, position);
++    QFETCH(QSizeF, viewportSize);
++
++    QScopedPointer<QQuickView> window(createView());
++    window->rootContext()->setContextProperty("listModel", rowCount);
++    window->setSource(testFileUrl("listview.qml"));
++    window->show();
++    QVERIFY(QTest::qWaitForWindowExposed(window.data()));
++
++    QQuickListView *listView = qobject_cast<QQuickListView *>(window->rootObject());
++    QVERIFY(listView);
++
++    auto *a11yIface = QAccessible::queryAccessibleInterface(listView);
++    auto *a11yListView = dynamic_cast<QAccessibleQuickListView *>(a11yIface);
++    QVERIFY(a11yListView);
++
++    listView->setOrientation(orientation);
++    listView->positionViewAtIndex(index, QQuickListView::Beginning);
++
++    QCOMPARE(a11yListView->contentSize(), contentSize);
++    QCOMPARE(a11yListView->position(), position);
++    QCOMPARE(a11yListView->viewportSize(), viewportSize);
++    QCOMPARE(a11yListView->isIndexed(), true);
++}
++
++void tst_QQuickAccessible::listViewSetPositionTest_data()
++{
++    QTest::addColumn<int>("rowCount");
++    QTest::addColumn<QQuickListView::Orientation>("orientation");
++    QTest::addColumn<QPointF>("position");
++
++    QTest::addRow("Vertical - empty") << 0 << QQuickListView::Vertical << QPointF(0, 0);
++    QTest::addRow("Vertical - 10") << 100 << QQuickListView::Vertical << QPointF(0, 0.1);
++    QTest::addRow("Vertical - 50") << 100 << QQuickListView::Vertical << QPointF(0, 0.5);
++    QTest::addRow("Vertical - 70") << 100 << QQuickListView::Vertical << QPointF(0, 0.7);
++    // 30 delegates fit in the view's height
++    QTest::addRow("Vertical - 90") << 100 << QQuickListView::Vertical << QPointF(0, 0.7);
++    QTest::addRow("Vertical - 99") << 100 << QQuickListView::Vertical << QPointF(0, 0.7);
++
++    QTest::addRow("Horizontal - empty") << 0 << QQuickListView::Horizontal << QPointF(0, 0);
++    QTest::addRow("Horizontal - 10") << 100 << QQuickListView::Horizontal << QPointF(0.1, 0);
++    QTest::addRow("Horizontal - 50") << 100 << QQuickListView::Horizontal << QPointF(0.5, 0);
++    QTest::addRow("Horizontal - 70") << 100 << QQuickListView::Horizontal << QPointF(0.7, 0);
++    // 5 delegates fit in the view's height
++    QTest::addRow("Horizontal - 90") << 100 << QQuickListView::Horizontal << QPointF(0.95, 0);
++    QTest::addRow("Horizontal - 99") << 100 << QQuickListView::Horizontal << QPointF(0.95, 0);
++}
++
++void tst_QQuickAccessible::listViewSetPositionTest()
++{
++    auto clearEvents = qScopeGuard([] { QTestAccessibility::clearEvents(); });
++
++    QFETCH(int, rowCount);
++    QFETCH(QQuickListView::Orientation, orientation);
++    QFETCH(QPointF, position);
++
++    QScopedPointer<QQuickView> window(createView());
++    window->rootContext()->setContextProperty("listModel", rowCount);
++    window->setSource(testFileUrl("listview.qml"));
++    window->show();
++    QVERIFY(QTest::qWaitForWindowExposed(window.data()));
++
++    QQuickListView *listView = qobject_cast<QQuickListView *>(window->rootObject());
++    QVERIFY(listView);
++
++    auto *a11yIface = QAccessible::queryAccessibleInterface(listView);
++    auto *a11yListView = dynamic_cast<QAccessibleQuickListView *>(a11yIface);
++    QVERIFY(a11yListView);
++
++    listView->setOrientation(orientation);
++
++    a11yListView->setPosition(position);
++    QCOMPARE(a11yListView->position(), position);
++}
++
+ QTEST_MAIN(tst_QQuickAccessible)
+ 
+ #include "tst_qquickaccessible.moc"

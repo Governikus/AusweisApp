@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -32,6 +32,7 @@ DecisionView {
 	}
 	//: MOBILE
 	headlineText: qsTr("No NFC available")
+	lockAndHideNavigation: true
 	primaryButton.text: {
 		return usedInOnboarding ?
 		//: MOBILE

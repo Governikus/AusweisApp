@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -22,12 +22,11 @@ ColumnLayout {
 	spacing: Style.dimens.pane_spacing
 	visible: title !== "" && statusCode !== GlobalStatusCode.Card_ValidityVerificationFailed
 
-	GText {
+	Subheading {
 		id: titleText
 
 		Layout.alignment: Qt.AlignLeft
 		text: d.getTitle()
-		textStyle: Style.text.subline
 	}
 	Hint {
 		Layout.alignment: Qt.AlignHCenter

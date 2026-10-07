@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateEstablishPaceChannelIfd.h"
@@ -21,9 +21,13 @@ class MockEstablishPaceChannelCommand
 {
 	Q_OBJECT
 
+	private:
+		PacePasswordId mPasswordId;
+
 	public:
 		explicit MockEstablishPaceChannelCommand(const QSharedPointer<MockCardConnectionWorker>& pCardConnectionWorker, PacePasswordId pPacePasswordId = PacePasswordId::PACE_PIN)
 			: EstablishPaceChannelCommand(pCardConnectionWorker, pPacePasswordId, QByteArray("0000"), QByteArray(), QByteArray())
+			, mPasswordId(pPacePasswordId)
 		{
 			setPaceReturnCode(CardReturnCode::OK);
 		}
@@ -31,10 +35,11 @@ class MockEstablishPaceChannelCommand
 
 		~MockEstablishPaceChannelCommand() override = default;
 
-		void setPaceReturnCode(CardReturnCode pCode)
+		void setPaceReturnCode(CardReturnCode pCode, EstablishPaceChannelErrorCode pErrorCode = EstablishPaceChannelErrorCode::NoError)
 		{
-			mPaceOutput = EstablishPaceChannelOutput(pCode);
-			setReturnCode(mPaceOutput.getPaceReturnCode());
+			mPaceOutput = EstablishPaceChannelOutput(mPasswordId, pCode);
+			mPaceOutput.setErrorCode(pErrorCode);
+			setReturnCode(mPaceOutput.getReturnCode());
 		}
 
 
@@ -99,22 +104,10 @@ class test_StateEstablishPaceChannelIfd
 		}
 
 
-		void test_OnReaderInfoChanged()
-		{
-			ReaderInfo info;
-			QSignalSpy spy(mState.data(), &StateEstablishPaceChannelIfd::fireContinue);
-
-			mState->onReaderInfoChanged(info);
-			QCOMPARE(mContext->getEstablishPaceChannelOutput().getPaceReturnCode(), CardReturnCode::CARD_NOT_FOUND);
-			QCOMPARE(spy.count(), 1);
-		}
-
-
 		void test_OnEstablishConnectionDoneEstablishPaceChannelCommand()
 		{
 			QSignalSpy spy(mState.data(), &StateEstablishPaceChannelIfd::fireContinue);
 			const QSharedPointer<MockEstablishPaceChannelCommand> command(new MockEstablishPaceChannelCommand(mWorker));
-			mState->mPasswordId = PacePasswordId::PACE_PIN;
 
 			mContext->setExpectedRetryCounter(2);
 			QTest::ignoreMessage(QtDebugMsg, "Correct PACE password. Expected retry counter is now 3");
@@ -122,7 +115,7 @@ class test_StateEstablishPaceChannelIfd
 			QCOMPARE(mContext->getExpectedRetryCounter(), 3);
 
 			mContext->setExpectedRetryCounter(2);
-			command->setPaceReturnCode(CardReturnCode::INVALID_PIN);
+			command->setPaceReturnCode(CardReturnCode::OK, EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC2);
 			QTest::ignoreMessage(QtDebugMsg, "Wrong PACE password. Decreasing expected retry counter to 1");
 			mState->onEstablishConnectionDone(command);
 			QCOMPARE(mContext->getExpectedRetryCounter(), 1);
@@ -135,7 +128,6 @@ class test_StateEstablishPaceChannelIfd
 		{
 			QSignalSpy spy(mState.data(), &StateEstablishPaceChannelIfd::fireContinue);
 			const QSharedPointer<MockEstablishPaceChannelCommand> command(new MockEstablishPaceChannelCommand(mWorker, PacePasswordId::PACE_PUK));
-			mState->mPasswordId = PacePasswordId::PACE_PUK;
 
 			command->setPaceReturnCode(CardReturnCode::OK);
 			QTest::ignoreMessage(QtDebugMsg, "Resetting PACE passwords and setting expected retry counter to -1");
@@ -143,7 +135,7 @@ class test_StateEstablishPaceChannelIfd
 			QCOMPARE(mContext->getExpectedRetryCounter(), -1);
 			QCOMPARE(mContext->getNewPin(), QString());
 
-			command->setPaceReturnCode(CardReturnCode::INVALID_PUK);
+			command->setPaceReturnCode(CardReturnCode::OK, EstablishPaceChannelErrorCode::GeneralAuthenticateStep4);
 			QTest::ignoreMessage(QtDebugMsg, "Resetting PACE passwords and setting expected retry counter to -1");
 			mState->onEstablishConnectionDone(command);
 			QCOMPARE(mContext->getExpectedRetryCounter(), -1);
@@ -151,7 +143,7 @@ class test_StateEstablishPaceChannelIfd
 
 			command->setPaceReturnCode(CardReturnCode::UNDEFINED);
 			mState->onEstablishConnectionDone(command);
-			QCOMPARE(mContext->getEstablishPaceChannelOutput().getPaceReturnCode(), CardReturnCode::UNDEFINED);
+			QCOMPARE(mContext->getPaceOutput().getReturnCode(), CardReturnCode::UNDEFINED);
 
 			QCOMPARE(spy.count(), 3);
 		}

@@ -54,6 +54,7 @@ extend-ignore-re = [
     "AppUpdatData",
     "test_AppUpdatr",
     "-DPENDING_PATCH",
+    "(self\\.|detect_)udid[ \\(]",
 ]
 
 [default.extend-identifiers]

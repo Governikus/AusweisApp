@@ -1,0 +1,38 @@
+AusweisApp 2.6.0
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 06. Oktober 2026
+
+
+Anwender
+""""""""
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- Optimierung einzelner Barrierefreiheitsfunktionen.
+
+- Unterstützung der arm64-Architektur auf macOS.
+
+- Unterstützung der arm64e-Architektur auf iOS/iPadOS.
+
+- Der Code zum Koppeln über den Fernzugriff hat nun
+  nur noch eine zeitlich begrenzte Gültigkeit.
+
+- Unterstützung von In-App Updates auf Android.
+
+- Verhinderung der möglichen Einschleusung von unerwünschten Inhalten
+  in die Anwendung oder in von der Anwendung generierten E-Mails.
+
+
+Entwickler
+""""""""""
+- Aktualisierung von Qt auf die Version 6.11.1
+  (mit Patches für CVE-2026-76151 und CVE-2026-78253).
+
+- Aktualisierung von OpenSSL auf die Version 4.0.3.
+
+- Aktualisierung von llhttp auf die Version 9.4.3.
+
+- Unterstützung der arm64e-Architektur im SDK für iOS/iPadOS.
+
+- Verbesserte Kompatibilität mit OpenSSL durch Verzicht auf explizite
+  elliptische Kurven bei der Umsetzung von PACE mit Generic Mapping.

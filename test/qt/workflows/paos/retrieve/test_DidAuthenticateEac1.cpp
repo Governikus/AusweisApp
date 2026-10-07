@@ -1,20 +1,23 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "paos/retrieve/DidAuthenticateEac1.h"
 
 #include "Env.h"
 #include "LogHandler.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
+#include "paos/retrieve/PaosParser.h"
 
 #include "TestFileHelper.h"
+#include "TestParserHelper.h"
 
 #include <QtCore>
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_DidAuthenticateEac1
 	: public QObject
@@ -51,21 +54,24 @@ class test_DidAuthenticateEac1
 		{
 			QFETCH(QString, filename);
 
-			QByteArray content = TestFileHelper::readFile(filename);
-			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			const auto& parser = TestParserHelper::create(filename);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
 			if (eac1)
 			{
 				QCOMPARE(eac1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).size(), 1);
 				QCOMPARE(eac1->getCvCertificates({AccessRole::AT}).size(), 1);
 			}
+
 		}
 
 
 		void parseXml()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
-			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
-			QVERIFY(!eac1.isNull());
+			const auto& parser = TestParserHelper::create(":/paos/DIDAuthenticateEAC1.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
+			QVERIFY(eac1);
 
 			QCOMPARE(eac1->getConnectionHandle().getCardApplication(), "4549445F49534F5F32343732375F42415345"_L1);
 			QCOMPARE(eac1->getConnectionHandle().getContextHandle(), "4549445F4946445F434F4E544558545F42415345"_L1);
@@ -89,9 +95,9 @@ class test_DidAuthenticateEac1
 		// Test data from Test TS_TA_2.1.1 from TR-03105-5.2
 		void test_TS_TA_2_1_1()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_TS_TA_2.1.1.xml"_L1);
-			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
-
+			const auto& parser = TestParserHelper::create(":/paos/DIDAuthenticateEAC1_TS_TA_2.1.1.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
 			QVERIFY(eac1 == nullptr);
 		}
 
@@ -133,8 +139,10 @@ class test_DidAuthenticateEac1
 			QByteArray content = TestFileHelper::readFile(templateXml);
 			content = content.replace(replaceIdentifier, data + data);
 
-			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
-			QVERIFY(eac1.isNull());
+			const auto& parser = TestParserHelper::create(content);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
+			QVERIFY(!eac1);
 
 			const QByteArray duplicateUniqueElement = "Duplicate unique element: \"" + tag + "\"";
 			QVERIFY(Env::getSingleton<LogHandler>()->getBacklog().contains(duplicateUniqueElement));
@@ -170,10 +178,12 @@ class test_DidAuthenticateEac1
 			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_template.xml"_L1);
 			content = content.replace(QByteArray("<!-- PLACEHOLDER -->"), replaceContent);
 
-			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			const auto& parser = TestParserHelper::create(content);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
 			if (parsingSuccessful)
 			{
-				QVERIFY(!eac1.isNull());
+				QVERIFY(eac1);
 				QCOMPARE(eac1->getAcceptedEidTypes().size(), acceptedEidTypes.size());
 				if (acceptedEidTypes.isEmpty())
 				{
@@ -187,7 +197,7 @@ class test_DidAuthenticateEac1
 			}
 			else
 			{
-				QVERIFY(eac1.isNull());
+				QVERIFY(!eac1);
 			}
 		}
 

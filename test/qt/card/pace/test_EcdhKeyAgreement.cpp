@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "pace/ec/EcdhKeyAgreement.h"
@@ -7,7 +7,6 @@
 #include "MockReader.h"
 #include "TestFileHelper.h"
 #include "asn1/PaceInfo.h"
-#include "pace/ec/EcUtil.h"
 
 #include <QtCore>
 #include <QtTest>
@@ -40,7 +39,7 @@ class test_EcdhKeyAgreement
 			transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6982")));
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(transmitConfigs, mEfCardAccess));
 			QSharedPointer<const PaceInfo> paceInfo = mEfCardAccess->getPaceInfos().at(0);
-			QScopedPointer<KeyAgreement> keyAgreement(new EcdhKeyAgreement(paceInfo, reader->createCardConnectionWorker(), QSharedPointer<EcdhGenericMapping>()));
+			QScopedPointer<KeyAgreement> keyAgreement(new EcdhKeyAgreement(paceInfo, reader->createCardConnectionWorker(), QSharedPointer<EC_GROUP>()));
 
 			KeyAgreementStatus result = keyAgreement->perform("123456");
 

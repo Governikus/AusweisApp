@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "context/WorkflowContext.h"
@@ -10,6 +10,7 @@
 #include "TestWorkflowContext.h"
 
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -193,14 +194,14 @@ class test_WorkflowContext
 
 		void test_LastPaceAndResult()
 		{
-			QSignalSpy spy(mContext.data(), &WorkflowContext::firePaceResultUpdated);
+			QSignalSpy spy(mContext.data(), &WorkflowContext::firePaceOutputUpdated);
 
-			mContext->setLastPaceResult(CardReturnCode::COMMAND_FAILED);
-			QCOMPARE(mContext->getLastPaceResult(), CardReturnCode::COMMAND_FAILED);
+			mContext->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::COMMAND_FAILED));
+			QCOMPARE(mContext->getPaceOutput().getReturnCode(), CardReturnCode::COMMAND_FAILED);
 			QCOMPARE(spy.count(), 1);
 
-			mContext->setLastPaceResult(CardReturnCode::OK);
-			QCOMPARE(mContext->getLastPaceResult(), CardReturnCode::OK);
+			mContext->setPaceOutput(EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::OK));
+			QCOMPARE(mContext->getPaceOutput().getReturnCode(), CardReturnCode::OK);
 			QCOMPARE(spy.count(), 2);
 		}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -25,7 +25,7 @@ class MockCardConfig
 		CardReturnCode mConnect = CardReturnCode::OK;
 		CardReturnCode mDisconnect = CardReturnCode::OK;
 
-		MockCardConfig(const QList<TransmitConfig>& pTransmits = QList<TransmitConfig>())
+		explicit MockCardConfig(const QList<TransmitConfig>& pTransmits = QList<TransmitConfig>())
 			: mTransmits(pTransmits)
 		{
 		}

@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
 
 import Governikus.Global
 import Governikus.Style
+import Governikus.Type
 import Governikus.View
 
 Item {
@@ -28,6 +29,7 @@ Item {
 	FontMetrics {
 		id: fontMetrics
 
+		font.family: UiPluginModel.fontFamily
 		font.pixelSize: Style.dimens.text
 	}
 	GText {
@@ -38,7 +40,7 @@ Item {
 		text: root.name
 		visible: !root.optional
 
-		onFocusChanged: if (focus)
+		onActiveFocusChanged: if (activeFocus)
 			Utils.positionViewAtItem(this)
 	}
 	GCheckBox {

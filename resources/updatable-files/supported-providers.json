@@ -593,23 +593,6 @@
 		},
 		{
 			"shortName": {
-				"": "foxdox by d.velop"
-			},
-			"longName": {
-				"": "foxdox by d.velop - Dokumente sicher ablegen"
-			},
-			"longDescription": {
-				"": "Dokumente, Verträge, Reiseunterlagen, Bilder und vieles mehr können Sie einfach in Ihren persönlichen foxdox-Account hochladen. <br/>Sie melden sich mit der Online-Ausweisfunktion an und können von überall und jederzeit auf Ihre Dokumentenablage zugreifen, z. B. um sie innerhalb der Familie, Ihren Kollegen oder auch Ihrem Steuerberater zur Verfügung zu stellen. <br/>Quittungen und Belege können Sie einfach fotografieren oder scannen, hochladen und sicher in Ihrem foxdox-Account mit übersichtlichem Ordner-System speichern. Eine separate Ablage oder Kopien sind nicht mehr notwendig. Alle Daten liegen sicher und verschlüsselt in einem Rechenzentrum in Deutschland.<br/>Ein Standard-Account ist kostenfrei erhältlich."
-			},
-			"address": "https://mein.foxdox.de",
-			"homepage": "https://www.d-velop.de/foxdox/foxdox-home",
-			"phone": "+49 2542 9307 0",
-			"email": "support@foxdox.de",
-			"postalAddress": "d.velop business services GmbH<br/>Schildarpstraße 6-8<br/>48712 Gescher",
-			"category": "other"
-		},
-		{
-			"shortName": {
 				"": "Digitale Bürgerdienste der Stadt Fürth"
 			},
 			"longName": {
@@ -663,6 +646,24 @@
 			"image": "DAKAPO_image.jpg",
 			"icon": "DAKAPO_icon.png",
 			"category": "citizen"
+		},
+		{
+			"shortName": {
+				"": "d.velop postbox"
+			},
+			"longName": {
+				"": "d.velop postbox - Ihr digitaler Briefkasten - Dokumente sicher empfangen und ablegen"
+			},
+			"longDescription": {
+				"": "d.velop postbox ist ein digitaler Briefkasten als rechtssichere Alternative zur klassischen Briefpost. d.velop postbox funktioniert wie der Briefkasten an der Hauswand - nur digital. Sie empfangen Ihre Post elektronisch von Behörden, Finanzdienstleistern, Versicherungen und vielen weiteren Organisationen sicher und rechtsverbindlich in einem zentralen Postfach. d.velop postbox ist als App oder Webanwendung auf jedem mobilen Gerät verfügbar.Die Anmeldung erfolgt über den elektronischen Personalausweis. Einmal registriert steht Ihnen d.velop postbox lebenslang kostenfrei zur Verfügung. Im Anschluss können Sie Ihre Post jederzeit und von überall digital abrufen, im digitalen Postfach speichern oder herunterladen."
+			},
+			"address": "https://www.postbox.eu",
+			"homepage": "https://www.d-velop.de/software/d-velop-postbox",
+			"email": "info@d-velop.de",
+			"postalAddress": "d.velop AG<br/>Schildarpstraße 6-8<br/>48712 Gescher",
+			"image": "d_velop_image.jpg",
+			"icon": "d_velop_icon.png",
+			"category": "other"
 		},
 		{
 			"eidSupport": false,
@@ -1518,7 +1519,7 @@
 			"homepage": "https://www.governikus.de",
 			"phone": "+49 421 204 95 0",
 			"email": "kontakt@governikus.de",
-			"postalAddress": "Governikus GmbH & Co. KG<br/>Hochschulring 4<br/>28359 Bremen",
+			"postalAddress": "Governikus Service GmbH<br/>Hochschulring 4<br/>28359 Bremen",
 			"image": "openpgp_image.jpg",
 			"icon": "openpgp_icon.svg",
 			"category": "other"
@@ -1531,13 +1532,13 @@
 				"": "Selbstauskunft/ 'Meine Daten einsehen'"
 			},
 			"longDescription": {
-				"": "Die AusweisApp verfügt über die Funktion 'Meine Daten einsehen'. Mit dieser Funktion können Sie eine Test-Authentisierung durchführen und die auf dem Personalausweis, elektronischen Aufenthaltstitel oder der eID-Karte gespeicherten Daten auslesen. Sie können also eine Selbstauskunft durchführen.<br/><br/>Der App-Hersteller, die Governikus GmbH & Co. KG, bietet diesen Dienst an und erscheint daher als Anbieter, bei dem Sie sich ausweisen möchten. Nach Eingabe Ihrer PIN und erfolgreicher Datenübertragung werden Ihnen Ihre persönlichen Ausweis-Daten in der AusweisApp angezeigt. Hierbei handelt es sich um einen reinen Demonstrationsdienst, d.h. die ausgelesenen Daten werden lediglich zur Anzeige gebracht und weder gespeichert noch weitergegeben."
+				"": "Die AusweisApp verfügt über die Funktion 'Meine Daten einsehen'. Mit dieser Funktion können Sie eine Test-Authentisierung durchführen und die auf dem Personalausweis, elektronischen Aufenthaltstitel oder der eID-Karte gespeicherten Daten auslesen. Sie können also eine Selbstauskunft durchführen.<br/><br/>Der App-Hersteller, die Governikus Service GmbH, bietet diesen Dienst an und erscheint daher als Anbieter, bei dem Sie sich ausweisen möchten. Nach Eingabe Ihrer PIN und erfolgreicher Datenübertragung werden Ihnen Ihre persönlichen Ausweis-Daten in der AusweisApp angezeigt. Hierbei handelt es sich um einen reinen Demonstrationsdienst, d.h. die ausgelesenen Daten werden lediglich zur Anzeige gebracht und weder gespeichert noch weitergegeben."
 			},
 			"address": "https://www.ausweisapp.bund.de/aa2/download",
 			"homepage": "https://www.ausweisapp.bund.de",
 			"phone": "+49 421 204 95 995",
 			"email": "support@ausweisapp.de",
-			"postalAddress": "Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes für Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>28359 Bremen",
+			"postalAddress": "Governikus Service GmbH<br/>- im Auftrag des Bundesamtes für Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>28359 Bremen",
 			"image": "selbstauskunft_image.jpg",
 			"icon": "selbstauskunft_icon.svg",
 			"category": "citizen"

@@ -1,0 +1,55 @@
+From f97d1a86391b6c2fb2691a19b7ba18532b987daa Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Tue, 28 Oct 2025 11:30:35 +0100
+Subject: a11y iOS: Implement accessibilityHitTest for QUIView
+
+This is to respect the correct paint order of the accessible
+elements.
+
+This function has only an effect for iOS 18 and higher.
+
+Task-number: QTBUG-140393
+Change-Id: I3fcdde9db432dd7e6f69c98001b12fcf1c85eb87
+---
+ .../platforms/ios/quiview_accessibility.mm    | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+index 0bc70f299f3748f37235ed06317a8c35d724d9ec..92f2048b0e30c16ca2c911a7744018749504d039 100644
+--- x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
++++ y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+@@ -56,6 +56,34 @@
+     [m_accessibleElements removeAllObjects];
+ }
+ 
++- (id)accessibilityHitTest:(CGPoint)point withEvent:(UIEvent *)event
++{
++    for (UIView *subview in [self.subviews reverseObjectEnumerator]) {
++        if (subview.hidden || qFuzzyIsNull(subview.alpha))
++            continue;
++
++        CGPoint viewPoint = [subview convertPoint:point fromView:self];
++        if (id child = [subview accessibilityHitTest:viewPoint withEvent:event])
++            return child;
++    }
++
++    if (!self.platformWindow)
++        return [super accessibilityHitTest:point withEvent:event];
++
++    QWindow *win = self.platformWindow->window();
++    QAccessibleInterface *iface = win->accessibleRoot();
++    if (!iface)
++        return nil;
++
++    QPoint screenPoint = self.platformWindow->mapToGlobal(QPointF::fromCGPoint(point).toPoint());
++    QAccessibleInterface *child = iface->childAt(screenPoint.x(), screenPoint.y());
++    if (!child || !child->state().focusable)
++        return nil;
++
++    QAccessible::Id childId = QAccessible::uniqueId(child);
++    return [QMacAccessibilityElement elementWithId:childId];
++}
++
+ // this is a container, returning yes here means the functions below will never be called
+ - (BOOL)isAccessibilityElement
+ {

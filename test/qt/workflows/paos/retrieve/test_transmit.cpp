@@ -1,19 +1,23 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "paos/retrieve/Transmit.h"
 
 #include "Env.h"
 #include "LogHandler.h"
+#include "paos/retrieve/PaosParser.h"
+
 #include "TestFileHelper.h"
-#include "paos/retrieve/TransmitParser.h"
+#include "TestParserHelper.h"
 
 #include <QtCore>
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_transmit
 	: public QObject
@@ -35,9 +39,10 @@ class test_transmit
 
 		void parseXml()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/Transmit.xml"_L1);
-			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
-			QVERIFY(!transmit.isNull());
+			const auto& parser = TestParserHelper::create(":/paos/Transmit.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<Transmit> transmit(static_cast<Transmit*>(pm));
+			QVERIFY(transmit);
 			auto inputApdusInfos = transmit->getInputApduInfos();
 
 			QCOMPARE(transmit->getSlotHandle(), "34366364653038392D623031322D346664372D386233362D343664346232393537636236"_L1);
@@ -70,9 +75,10 @@ class test_transmit
 
 		void parseXmlWithAddressing()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/Transmit3.xml"_L1);
-			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
-			QVERIFY(!transmit.isNull());
+			const auto& parser = TestParserHelper::create(":/paos/Transmit3.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<Transmit> transmit(static_cast<Transmit*>(pm));
+			QVERIFY(transmit);
 			auto inputApdusInfos = transmit->getInputApduInfos();
 
 			QCOMPARE(transmit->getSlotHandle(), "34366364653038392D623031322D346664372D386233362D343664346232393537636236"_L1);
@@ -107,9 +113,10 @@ class test_transmit
 
 		void parseAnswerAutent()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/Transmit2.xml"_L1);
-			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
-			QVERIFY(!transmit.isNull());
+			const auto& parser = TestParserHelper::create(":/paos/Transmit2.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<Transmit> transmit(static_cast<Transmit*>(pm));
+			QVERIFY(transmit);
 			auto inputApduInfos = transmit->getInputApduInfos();
 
 			QCOMPARE(transmit->getSlotHandle(), "33393236303635313532"_L1);
@@ -173,8 +180,10 @@ class test_transmit
 			QByteArray content = TestFileHelper::readFile(":/paos/Transmit_template.xml"_L1);
 			content = content.replace(replaceIdentifier, data + data);
 
-			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
-			QVERIFY(transmit.isNull());
+			const auto& parser = TestParserHelper::create(content);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<Transmit> transmit(static_cast<Transmit*>(pm));
+			QVERIFY(!transmit);
 
 			const QByteArray duplicateUniqueElement = "Duplicate unique element: \"" + tag + "\"";
 			QVERIFY(Env::getSingleton<LogHandler>()->getBacklog().contains(duplicateUniqueElement));

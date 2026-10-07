@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus Service GmbH, Germany
  */
 
 #include "PcscReader.h"

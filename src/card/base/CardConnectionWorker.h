@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -11,7 +11,6 @@
 #include "apdu/CommandApdu.h"
 #include "apdu/ResponseApdu.h"
 #include "asn1/CVCertificateChain.h"
-#include "asn1/SecurityInfos.h"
 #include "pace/SecureMessaging.h"
 #include "pinpad/EstablishPaceChannelOutput.h"
 
@@ -37,8 +36,6 @@ class CardConnectionWorker
 		 * Object performing the cryptography needed by a secure messaging channel
 		 */
 		QScopedPointer<SecureMessaging> mSecureMessaging;
-
-		inline QSharedPointer<const EFCardAccess> getEfCardAccess() const;
 
 		void stopSecureMessaging();
 

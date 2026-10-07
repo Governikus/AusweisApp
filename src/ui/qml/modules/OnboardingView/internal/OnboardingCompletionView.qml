@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -24,7 +24,7 @@ DecisionView {
 	customContentSourceComponent: Hint {
 		//: ALL_PLATFORMS
 		buttonText: qsTr("Open website")
-		buttonTooltip: linkToOpen
+		buttonToolTip: linkToOpen
 		linkToOpen: "https://www.ausweisapp.bund.de/%1/aa2/providerlist".arg(SettingsModel.language)
 		//: ALL_PLATFORMS
 		text: qsTr("You can find many examples of use in the provider list.")

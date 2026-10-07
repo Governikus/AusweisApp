@@ -1,13 +1,15 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 
 #include "AbstractSettings.h"
 
 #include "Backup.h"
+#include "FileDestination.h"
 
 #include <QCoreApplication>
+#include <QFile>
 
 using namespace governikus;
 
@@ -45,6 +47,13 @@ void AbstractSettings::sync(const QSharedPointer<QSettings>& pSettings)
 QSharedPointer<QSettings> AbstractSettings::getStore(QSettings::Scope pScope, const QString& pFilename, QSettings::Format pFormat)
 {
 #ifndef QT_NO_DEBUG
+	const auto customSettingsFile = FileDestination::getPath(QStringLiteral("settings.ini"));
+	if (QFile::exists(customSettingsFile))
+	{
+		qInfo() << "Loading settings from" << customSettingsFile;
+		return QSharedPointer<QSettings>::create(customSettingsFile, QSettings::IniFormat);
+	}
+
 	if (QCoreApplication::applicationName().startsWith(QLatin1StringView("Test")))
 	{
 		if (mTestDir.isNull())

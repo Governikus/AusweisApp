@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "PcscCard.h"
@@ -11,9 +11,12 @@
 #include <QLatin1String>
 #include <QLoggingCategory>
 
+
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
+
 using namespace governikus;
+
 
 namespace
 {
@@ -294,7 +297,7 @@ EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswo
 
 	if (!mReader->hasFeature(FeatureID::EXECUTE_PACE))
 	{
-		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
+		return EstablishPaceChannelOutput(pPasswordId, CardReturnCode::COMMAND_FAILED);
 	}
 
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
@@ -303,14 +306,15 @@ EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswo
 	if (returnCode != pcsc::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Control to establish PACE channel failed";
-		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
+		return EstablishPaceChannelOutput(pPasswordId, CardReturnCode::COMMAND_FAILED);
 	}
 
-	EstablishPaceChannelOutput output;
+	EstablishPaceChannelOutput output(pPasswordId);
 	if (!output.parse(controlRes))
 	{
 		qCWarning(card_pcsc) << "Parsing of EstablishPaceChannelOutput failed";
 	}
+
 	return output;
 }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "IfdServiceContext.h"
@@ -32,7 +32,6 @@ IfdServiceContext::IfdServiceContext(const QSharedPointer<IfdServer>& pIfdServer
 	, mEstablishPaceChannel()
 	, mRequestTransportPin(false)
 	, mAllowToChangePinLength(false)
-	, mEstablishPaceChannelOutput()
 	, mAccessRightManager()
 	, mModifyPinMessage()
 	, mModifyPinMessageResponseApdu()
@@ -134,9 +133,10 @@ void IfdServiceContext::setEstablishPaceChannel(const QSharedPointer<const IfdEs
 		mRequestTransportPin = false;
 		mAllowToChangePinLength = false;
 	}
-	mEstablishPaceChannelOutput = EstablishPaceChannelOutput();
 
-	setEstablishPaceChannelType(mEstablishPaceChannel.getPasswordId());
+	const auto passwordId = mEstablishPaceChannel.getPasswordId();
+	setPaceOutput(EstablishPaceChannelOutput(passwordId));
+	setEstablishPaceChannelType(passwordId);
 
 	Q_EMIT fireCanAllowedModeChanged();
 	Q_EMIT fireEstablishPaceChannelUpdated();
@@ -212,18 +212,6 @@ bool IfdServiceContext::isRequestTransportPin() const
 }
 
 
-void IfdServiceContext::setEstablishPaceChannelOutput(const EstablishPaceChannelOutput& pEstablishPaceChannelOutput)
-{
-	mEstablishPaceChannelOutput = pEstablishPaceChannelOutput;
-}
-
-
-const EstablishPaceChannelOutput& IfdServiceContext::getEstablishPaceChannelOutput() const
-{
-	return mEstablishPaceChannelOutput;
-}
-
-
 void IfdServiceContext::setModifyPinMessage(const QSharedPointer<const IfdModifyPin>& pMessage)
 {
 	mModifyPinMessage = pMessage;
@@ -271,7 +259,7 @@ void IfdServiceContext::reset()
 	resetPacePasswords();
 	resetCardConnection();
 	resetCardInitiallyAppeared();
-	resetLastPaceResult();
+	resetPaceOutput();
 	setEstablishPaceChannel(QSharedPointer<const IfdEstablishPaceChannel>());
 	mModifyPinMessage = QSharedPointer<const IfdModifyPin>();
 }

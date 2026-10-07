@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -21,37 +21,16 @@ class PaosMessage
 		QString mMessageID;
 		QString mRelatesTo;
 
-	protected:
-		bool handleWSAddressingHeaders(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes);
-
 	public:
 		const PaosType mType;
 
 		explicit PaosMessage(PaosType pType);
 		virtual ~PaosMessage();
 
-		[[nodiscard]] const QString& getMessageId() const
-		{
-			return mMessageID;
-		}
-
-
-		void setMessageId(const QString& messageId)
-		{
-			mMessageID = messageId;
-		}
-
-
-		[[nodiscard]] const QString& getRelatesTo() const
-		{
-			return mRelatesTo;
-		}
-
-
-		void setRelatesTo(const QString& relatesTo)
-		{
-			mRelatesTo = relatesTo;
-		}
+		[[nodiscard]] const QString& getMessageId() const;
+		void setMessageId(const QString& messageId);
+		[[nodiscard]] const QString& getRelatesTo() const;
+		void setRelatesTo(const QString& relatesTo);
 
 
 };

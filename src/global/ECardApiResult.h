@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 /*!
@@ -19,11 +19,11 @@
 #include <QString>
 
 #include <optional>
-#include <utility>
 
 
 class test_ECardApiResult;
 class test_StateRedirectBrowser;
+class test_IfdModifyPinResponse;
 
 
 namespace governikus
@@ -38,6 +38,7 @@ class ECardApiResult
 	friend class StartPaosResponse;
 	friend class ::test_ECardApiResult;
 	friend class ::test_StateRedirectBrowser;
+	friend class ::test_IfdModifyPinResponse;
 
 	public:
 		enum class Major
@@ -163,15 +164,14 @@ class ECardApiResult
 		[[nodiscard]] const QString& getMessageLang() const;
 		[[nodiscard]] const std::optional<FailureCode>& getFailureCode() const;
 
-		[[nodiscard]] static QString getMajorString(Major pMajor);
-		[[nodiscard]] static QString getMinorString(Minor pMinor);
+		[[nodiscard]] QString getRedirectMajor() const;
+		[[nodiscard]] QString getRedirectMinor() const;
 
 		[[nodiscard]] QString getMajorString() const;
 		[[nodiscard]] QString getMinorString() const;
 
 		[[nodiscard]] bool isValid() const;
 		[[nodiscard]] bool isOk() const;
-		[[nodiscard]] bool isOriginServer() const;
 		[[nodiscard]] QJsonObject toJson() const;
 
 		[[nodiscard]] GlobalStatus toStatus() const;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "SecureStorage.h"
@@ -12,6 +12,7 @@
 #include <QSslCertificateExtension>
 #include <QSslKey>
 #include <QtTest>
+#include <openssl/ssl.h>
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -297,9 +298,13 @@ class test_SecureStorage
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 
 			const auto& tlsSettings = secureStorage->getTlsConfig();
+#if OPENSSL_VERSION_NUMBER >= 0x30500000L
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 12);
+#else
 			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 9);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst(), QByteArray("RSA+SHA512"));
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("ECDSA+SHA256"));
+#endif
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst(), QByteArray("rsa_pss_rsae_sha512"));
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("ecdsa_secp256r1_sha256"));
 		}
 
 
@@ -325,7 +330,7 @@ class test_SecureStorage
 			QCOMPARE(configPairing.getSignatureAlgorithms().size(), 9);
 
 			const auto& configLocalIfd = secureStorage->getTlsConfigLocalIfd();
-			QCOMPARE(configLocalIfd.getSignatureAlgorithms().size(), 3);
+			QCOMPARE(configLocalIfd.getSignatureAlgorithms().size(), 0);
 		}
 
 
@@ -342,13 +347,14 @@ class test_SecureStorage
 			QCOMPARE(ciphersPsk.last(), QSslCipher("RSA-PSK-AES256-CBC-SHA"_L1));
 
 			const auto& ciphersEc = secureStorage->getTlsConfig().getEllipticCurves();
-			QCOMPARE(ciphersEc.count(), 5);
-			QCOMPARE(ciphersEc.first(), QSslEllipticCurve::fromLongName("brainpoolP512r1"_L1));
+			const bool suse = QSysInfo::prettyProductName().contains(QLatin1String("openSUSE"));
+			QCOMPARE(ciphersEc.count(), suse ? 3 : 6);
+			QCOMPARE(ciphersEc.first(), suse ? QSslEllipticCurve::fromLongName("secp521r1"_L1) : QSslEllipticCurve::fromLongName("brainpoolP512r1"_L1));
 			QCOMPARE(ciphersEc.last(), QSslEllipticCurve::fromLongName("prime256v1"_L1));
 
 			const auto& ciphersEcRemoteReader = secureStorage->getTlsConfigRemoteIfd().getEllipticCurves();
-			QCOMPARE(ciphersEcRemoteReader.count(), 5);
-			QCOMPARE(ciphersEcRemoteReader.first(), QSslEllipticCurve::fromLongName("brainpoolP512r1"_L1));
+			QCOMPARE(ciphersEcRemoteReader.count(), suse ? 3 : 6);
+			QCOMPARE(ciphersEcRemoteReader.first(), suse ? QSslEllipticCurve::fromLongName("secp521r1"_L1) : QSslEllipticCurve::fromLongName("brainpoolP512r1"_L1));
 			QCOMPARE(ciphersEcRemoteReader.last(), QSslEllipticCurve::fromLongName("prime256v1"_L1));
 
 			const auto& ciphersEcRemoteReaderPairing = secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getEllipticCurves();
@@ -361,13 +367,13 @@ class test_SecureStorage
 
 			const auto& localIfdConfig = secureStorage->getTlsConfigLocalIfd();
 			const auto& ciphersEcLocalIfd = localIfdConfig.getEllipticCurves();
-			QCOMPARE(ciphersEcLocalIfd.count(), 5);
+			QCOMPARE(ciphersEcLocalIfd.count(), 6);
 			QCOMPARE(ciphersEcLocalIfd.first(), QSslEllipticCurve::fromLongName("brainpoolP512r1"_L1));
 			QCOMPARE(ciphersEcLocalIfd.last(), QSslEllipticCurve::fromLongName("prime256v1"_L1));
 
 			const auto& ciphersLocalIfd = localIfdConfig.getCiphers();
 
-			if (QSysInfo::prettyProductName().contains(QLatin1String("Fedora")))
+			if (QSysInfo::prettyProductName().contains(QLatin1String("Fedora")) || QSysInfo::prettyProductName().contains(QLatin1String("openSUSE")))
 			{
 				QCOMPARE(ciphersLocalIfd.count(), 1);
 				QCOMPARE(ciphersLocalIfd.first(), QSslCipher("ECDHE-PSK-AES128-CBC-SHA256"_L1));
@@ -409,12 +415,12 @@ class test_SecureStorage
 
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 
-			const bool fedora = QSysInfo::prettyProductName().contains(QLatin1String("Fedora"));
+			const bool fedoraSuse = QSysInfo::prettyProductName().contains(QLatin1String("Fedora")) || QSysInfo::prettyProductName().contains(QLatin1String("openSUSE"));
 			QTest::newRow("ciphers non PSK") << secureStorage->getTlsConfig().getConfiguration() << 6;
 			QTest::newRow("ciphers for PSK") << secureStorage->getTlsConfig(SecureStorage::TlsSuite::PSK).getConfiguration() << 3;
 			QTest::newRow("remote ifd") << secureStorage->getTlsConfigRemoteIfd().getConfiguration() << 3;
 			QTest::newRow("remote ifd pairing") << secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getConfiguration() << 3;
-			QTest::newRow("local ifd") << secureStorage->getTlsConfigLocalIfd().getConfiguration() << (fedora ? 1 : 2);
+			QTest::newRow("local ifd") << secureStorage->getTlsConfigLocalIfd().getConfiguration() << (fedoraSuse ? 1 : 2);
 		}
 
 
@@ -437,6 +443,44 @@ class test_SecureStorage
 			QCOMPARE(secureStorage->getMinimumIfdKeySize(QSsl::KeyAlgorithm::Dh), 2000);
 			QCOMPARE(secureStorage->getMinimumIfdKeySize(QSsl::KeyAlgorithm::Ec), 250);
 
+		}
+
+
+		void signature_algorithms_data()
+		{
+			QTest::addColumn<QByteArray>("algorithm");
+
+			const auto secureStorage = Env::getSingleton<SecureStorage>();
+			QByteArrayList sigAlgs;
+			sigAlgs << secureStorage->getTlsConfig().getSignatureAlgorithms();
+			sigAlgs << secureStorage->getTlsConfigRemoteIfd().getSignatureAlgorithms();
+
+			sigAlgs = QSet(sigAlgs.begin(), sigAlgs.end()).values();
+			for (const auto& entry : std::as_const(sigAlgs))
+			{
+				QTest::newRow(entry.constData()) << entry;
+			}
+		}
+
+
+		void signature_algorithms()
+		{
+			QFETCH(QByteArray, algorithm);
+
+			SSL_CTX* ctx = SSL_CTX_new(TLS_method());
+			const auto guardCtx = qScopeGuard([ctx] {
+						SSL_CTX_free(ctx);
+					});
+			SSL_CONF_CTX* cctx = SSL_CONF_CTX_new();
+			const auto guardConfCtx = qScopeGuard([cctx] {
+						SSL_CONF_CTX_free(cctx);
+					});
+
+			SSL_CONF_CTX_set_ssl_ctx(cctx, ctx);
+			SSL_CONF_CTX_set_flags(cctx, SSL_CONF_FLAG_FILE);
+
+			QCOMPARE(SSL_CONF_cmd(cctx, "SignatureAlgorithms", algorithm.constData()), 2);
+			QCOMPARE(SSL_CONF_CTX_finish(cctx), 1);
 		}
 
 

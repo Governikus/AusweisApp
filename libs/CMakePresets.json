@@ -53,7 +53,8 @@
       "name": "ci-macos",
       "inherits": "ci",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RELEASE"
+        "CMAKE_BUILD_TYPE": "RELEASE",
+        "CMAKE_OSX_ARCHITECTURES": "x86_64;arm64"
       }
     },
     {
@@ -65,16 +66,17 @@
       }
     },
     {
-      "name": "ci-ios",
+      "name": "ci-ios-arm64-arm64e",
       "inherits": "ci",
       "toolchainFile": "${sourceParentDir}/cmake/iOS.toolchain.cmake",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RELEASE"
+        "CMAKE_BUILD_TYPE": "RELEASE",
+        "CMAKE_OSX_ARCHITECTURES": "arm64;arm64e"
       }
     },
     {
       "name": "ci-ios-simulator-x86_64",
-      "inherits": "ci-ios",
+      "inherits": "ci-ios-arm64-arm64e",
       "generator": "Xcode",
       "cacheVariables": {
         "CMAKE_OSX_SYSROOT": "iphonesimulator",

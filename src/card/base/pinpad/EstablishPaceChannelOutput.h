@@ -1,10 +1,12 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
 #include "CardReturnCode.h"
+#include "PaceResult.h"
+#include "SmartCardDefinitions.h"
 #include "apdu/ResponseApdu.h"
 #include "asn1/SecurityInfos.h"
 #include "pace/EstablishPaceChannelCode.h"
@@ -44,22 +46,22 @@ DECLARE_ASN1_OBJECT(ESTABLISHPACECHANNELOUTPUT)
 class EstablishPaceChannelOutput
 {
 	private:
-		CardReturnCode mPaceReturnCode;
+		PacePasswordId mPasswordId;
+		CardReturnCode mReturnCode;
+		quint32 mErrorCode;
 		QByteArray mStatusMseSetAt;
 		QByteArray mEfCardAccess;
 		QByteArray mIdIcc;
 		QByteArray mCarCurr;
 		QByteArray mCarPrev;
 
-		[[nodiscard]] static CardReturnCode parseReturnCode(quint32 pPaceReturnCode);
-		[[nodiscard]] static EstablishPaceChannelErrorCode generateReturnCode(CardReturnCode pReturnCode);
+		[[nodiscard]] static CardReturnCode toReturnCode(quint32 pErrorCode);
 
 		void initMseStatusSetAt();
 		void initEfCardAccess();
-		bool findErrorCode(const QString& pOutputData);
 
 	public:
-		explicit EstablishPaceChannelOutput(CardReturnCode pPaceReturnCode = CardReturnCode::COMMAND_FAILED);
+		explicit EstablishPaceChannelOutput(PacePasswordId pPasswordId = PacePasswordId::UNKNOWN, CardReturnCode pReturnCode = CardReturnCode::UNDEFINED);
 
 		/**
 		 * Defined in pcsc10_v2.02.08_amd1.1 section 2.5.12
@@ -77,11 +79,19 @@ class EstablishPaceChannelOutput
 		 */
 		[[nodiscard]] bool parseFromCcid(const QByteArray& pOutput);
 
-		[[nodiscard]] CardReturnCode getPaceReturnCode() const;
-		void setPaceReturnCode(CardReturnCode pPaceReturnCode);
+		[[nodiscard]] PacePasswordId getPasswordId() const;
+
+		[[nodiscard]] CardReturnCode getReturnCode() const;
+		void setReturnCode(CardReturnCode pReturnCode);
+
+		void setErrorCode(EstablishPaceChannelErrorCode pErrorCode);
+
+		[[nodiscard]] PaceResult getPaceResult() const;
+		[[nodiscard]] bool isUndefined() const;
+		[[nodiscard]] bool isOk() const;
+		[[nodiscard]] bool wrongPasswordUsed() const;
 
 		[[nodiscard]] StatusCode getStatusCodeMseSetAt() const;
-		[[nodiscard]] const QByteArray& getStatusMseSetAt() const;
 		void setStatusMseSetAt(const QByteArray& pStatusMseSetAt);
 
 		[[nodiscard]] const QByteArray& getEfCardAccess() const;
@@ -103,7 +113,7 @@ class EstablishPaceChannelOutput
 #ifndef QT_NO_DEBUG
 		bool operator==(const EstablishPaceChannelOutput& pOther) const
 		{
-			return !(mPaceReturnCode != pOther.mPaceReturnCode
+			return !(mReturnCode != pOther.mReturnCode
 				   || mEfCardAccess != pOther.mEfCardAccess
 				   || mCarCurr != pOther.mCarCurr
 				   || mCarPrev != pOther.mCarPrev

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQml
@@ -8,6 +8,7 @@ import Governikus.Type
 
 BrandDimensions {
 	readonly property int border_width: 1
+	readonly property int circular_indicator_border_width: 5
 	readonly property int control_horizontalPadding: 20
 	readonly property int control_radius: 12
 	readonly property int control_verticalPadding: 6

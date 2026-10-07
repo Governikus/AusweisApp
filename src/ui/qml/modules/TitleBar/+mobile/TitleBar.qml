@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -78,6 +78,7 @@ Rectangle {
 			TitleBarNavigation {
 				id: titleBarNavigation
 
+				Accessible.id: root.navigationAction ? root.navigationAction.Accessible.id : ""
 				anchors.fill: parent
 				navAction: root.navigationAction ? root.navigationAction.action : NavigationAction.Action.None
 				visible: root.navigationAction ? root.navigationAction.enabled && (icon.source.toString() !== "" || text !== "") : false

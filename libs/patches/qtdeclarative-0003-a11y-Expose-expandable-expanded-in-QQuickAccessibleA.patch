@@ -1,0 +1,158 @@
+From bb40689dd2a4dddf6052eea3f6421479c4543418 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Mon, 11 May 2026 11:15:30 +0200
+Subject: a11y: Expose expandable/expanded in QQuickAccessibleAttached
+
+These properties already exist in QAccessible::State but were not
+usable for custom components.
+
+Task-number: QTBUG-146552
+Change-Id: Ifb84a618c5975797b4b6434671dbadaa7cb735d7
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+(cherry picked from commit 477ebeb6dee22eda2e9afc25943700c1c5cc94d4)
+---
+ src/quick/items/qquickaccessibleattached.cpp  | 14 +++++++
+ src/quick/items/qquickaccessibleattached_p.h  |  2 +
+ .../qquickaccessible/data/expandable.qml      | 39 +++++++++++++++++++
+ .../qquickaccessible/tst_qquickaccessible.cpp | 36 +++++++++++++++++
+ 4 files changed, 91 insertions(+)
+ create mode 100644 tests/auto/quick/qquickaccessible/data/expandable.qml
+
+diff --git x/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp y/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
+index f54bdd4401af249a6f0703a46500ba00e8e0d677..daf8edcf15dcd017a125d89ce85990c3b7fa3ff1 100644
+--- x/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
++++ y/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
+@@ -157,6 +157,20 @@ QT_BEGIN_NAMESPACE
+     By default this property is \c false.
+     \sa checkable
+ */
++/*! \qmlproperty bool QtQuick::Accessible::expandable
++    \brief This property holds whether this item is expandable.
++
++    \since 6.12
++    By default this property is \c false.
++    \sa expanded
++*/
++/*! \qmlproperty bool QtQuick::Accessible::expanded
++    \brief This property holds whether this item is currently expanded.
++
++    \since 6.12
++    By default this property is \c false.
++    \sa expandable
++*/
+ /*! \qmlproperty bool QtQuick::Accessible::editable
+     \brief This property holds whether this item has editable text.
+ 
+diff --git x/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h y/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h
+index 899dddcc7c01b742ddf8dd55836180f36baf905c..e537c669a23a9c7f40725462284788f1971fd212 100644
+--- x/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h
++++ y/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h
+@@ -70,6 +70,8 @@ public:
+     STATE_PROPERTY(checkable)
+     STATE_PROPERTY(checked)
+     STATE_PROPERTY(editable)
++    STATE_PROPERTY(expandable)
++    STATE_PROPERTY(expanded)
+     STATE_PROPERTY(focusable)
+     STATE_PROPERTY(focused)
+     STATE_PROPERTY(multiLine)
+diff --git x/qtdeclarative/tests/auto/quick/qquickaccessible/data/expandable.qml y/qtdeclarative/tests/auto/quick/qquickaccessible/data/expandable.qml
+new file mode 100644
+index 0000000000000000000000000000000000000000..211abe5254713a07206b7ae89c62c2e92884ac42
+--- /dev/null
++++ y/qtdeclarative/tests/auto/quick/qquickaccessible/data/expandable.qml
+@@ -0,0 +1,39 @@
++import QtQuick 2.0
++
++Item {
++    width: 400
++    height: 400
++    Accessible.name: "root"
++
++    // button, not expandable
++    Rectangle {
++        objectName: "button1"
++        y: 20
++        width: 100; height: 20
++        Accessible.role : Accessible.Button
++    }
++
++    // button, expandable, not expanded
++    Rectangle {
++        objectName: "button2"
++        y: 40
++        width: 100; height: 20
++        Accessible.role : Accessible.Button
++        Accessible.expandable: expandable
++        Accessible.expanded: expanded
++        property bool expandable: true
++        property bool expanded: false
++    }
++
++    // button, expandable, expanded
++    Rectangle {
++        objectName: "button3"
++        y: 60
++        width: 100; height: 20
++        Accessible.role : Accessible.Button
++        Accessible.expandable: expandable
++        Accessible.expanded: expanded
++        property bool expandable: true
++        property bool expanded: true
++    }
++}
+diff --git x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+index 6368f5478b295bb521f242d8b8615d2da5eeb43c..59d573dbec8f36b209ac3aced8d2158578f8503c 100644
+--- x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
++++ y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+@@ -68,6 +68,7 @@ private slots:
+     void basicPropertiesTest();
+     void hitTest();
+     void checkableTest();
++    void expandableTest();
+     void ignoredTest();
+     void passwordTest();
+     void announceTest();
+@@ -808,6 +809,41 @@ void tst_QQuickAccessible::checkableTest()
+     QTestAccessibility::clearEvents();
+ }
+ 
++void tst_QQuickAccessible::expandableTest() {
++    auto window = std::make_unique<QQuickView>();
++    window->setSource(testFileUrl("expandable.qml"));
++    window->show();
++
++    QQuickItem *contentItem = window->contentItem();
++    QVERIFY(contentItem);
++    QQuickItem *rootItem = contentItem->childItems().first();
++    QVERIFY(rootItem);
++
++    QAccessibleInterface *iface =
++        QAccessible::queryAccessibleInterface(window.get());
++    QVERIFY(iface);
++    QAccessibleInterface *root = iface->child(0);
++
++    QAccessibleInterface *button1 = root->child(0);
++    QCOMPARE(button1->role(), QAccessible::Button);
++    QVERIFY(!(button1->state().expanded));
++    QVERIFY(!(button1->state().expandable));
++
++    QAccessibleInterface *button2 = root->child(1);
++    QVERIFY(!(button2->state().expanded));
++    QVERIFY(button2->state().expandable);
++    QQuickItem *button2item =
++        qobject_cast<QQuickItem *>(rootItem->childItems().at(1));
++    QVERIFY(button2item);
++    QCOMPARE(button2item->objectName(), QLatin1String("button2"));
++
++    QAccessibleInterface *button3 = root->child(2);
++    QVERIFY(button3->state().expanded);
++    QVERIFY(button3->state().expandable);
++
++    QTestAccessibility::clearEvents();
++}
++
+ void tst_QQuickAccessible::ignoredTest()
+ {
+     auto window = std::make_unique<QQuickView>();

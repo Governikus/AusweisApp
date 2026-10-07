@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "UiPluginQml.h"
@@ -57,6 +57,9 @@
 #include <QSvgRenderer>
 #include <QtPlugin>
 #include <QtQml>
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	#include <QAccessibilityHints>
+#endif
 
 #ifdef Q_OS_WIN
 	#include <dwmapi.h>
@@ -111,6 +114,9 @@ UiPluginQml::UiPluginQml()
 	QGuiApplication::setWindowIcon(mTrayIcon.getIcon());
 #endif
 	QGuiApplication::setDesktopFileName(QStringLiteral("com.governikus.ausweisapp2"));
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	connect(QGuiApplication::styleHints()->accessibility(), &QAccessibilityHints::contrastPreferenceChanged, this, &UiPluginQml::fireHighContrastEnabledChanged);
+#endif
 
 	connect(&mTrayIcon, &TrayIcon::fireShow, this, &UiPluginQml::show);
 	connect(&mTrayIcon, &TrayIcon::fireMessageClicked, this, [this](){
@@ -192,7 +198,6 @@ void UiPluginQml::init()
 		setOsDarkMode(QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark);
 	}
 
-	onWindowPaletteChanged();
 	onUserDarkModeChanged();
 
 #ifdef Q_OS_WIN
@@ -230,6 +235,12 @@ QString UiPluginQml::adjustQmlImportPath(QQmlEngine* pEngine)
 	}
 
 	return primaryPrefix;
+}
+
+
+Q_INVOKABLE void UiPluginQml::emitFireShowRequest(UiModule pModule)
+{
+	Q_EMIT fireShowRequest(pModule);
 }
 
 
@@ -352,7 +363,6 @@ void UiPluginQml::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pReq
 
 void UiPluginQml::onApplicationInitialized()
 {
-	connect(Env::getSingleton<AuthModel>(), &AuthModel::fireShowUiRequest, this, &UiPlugin::fireShowUiRequested);
 	connect(Env::getSingleton<ChangePinModel>(), &ChangePinModel::fireStartWorkflow, this, &UiPlugin::fireWorkflowRequested);
 	connect(Env::getSingleton<SelfAuthModel>(), &SelfAuthModel::fireStartWorkflow, this, &UiPlugin::fireWorkflowRequested);
 	connect(Env::getSingleton<RemoteServiceModel>(), &RemoteServiceModel::fireStartWorkflow, this, &UiPlugin::fireWorkflowRequested);
@@ -506,12 +516,6 @@ void UiPluginQml::show()
 
 bool UiPluginQml::eventFilter(QObject* pObj, QEvent* pEvent)
 {
-	if (pEvent->type() == QEvent::ApplicationPaletteChange)
-	{
-		onWindowPaletteChanged();
-		return true;
-	}
-
 	if (pEvent->type() == QEvent::ThemeChange)
 	{
 		setOsDarkMode(QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark);
@@ -632,30 +636,6 @@ void UiPluginQml::onRawLog(const QString& pMessage, const QString& pCategoryName
 }
 
 
-void UiPluginQml::doRefresh()
-{
-	qCDebug(qml) << "Reload qml files";
-#if defined(Q_OS_ANDROID)
-	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([](){
-				QJniObject activity = QNativeInterface::QAndroidApplication::context();
-				if (!activity.isValid())
-				{
-					qCDebug(qml) << "Unable to refresh UIPluginQML, Android activity not valid.";
-					return;
-				}
-				activity.callMethod<void>("recreate", "()V");
-			});
-#else
-	QMetaObject::invokeMethod(this, &UiPluginQml::init, Qt::QueuedConnection);
-#endif
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
-	QMetaObject::invokeMethod(this, [this]{
-				Q_EMIT fireShowUiRequested(UiModule::CURRENT);
-			}, Qt::QueuedConnection);
-#endif
-}
-
-
 QString UiPluginQml::getQtVersion() const
 {
 	return QString::fromLatin1(qVersion());
@@ -692,22 +672,17 @@ bool UiPluginQml::isDominated() const
 }
 
 
-#ifndef Q_OS_MACOS
 bool UiPluginQml::isHighContrastEnabled() const
 {
-	#ifdef Q_OS_WIN
-	HIGHCONTRAST hc;
-	hc.cbSize = sizeof(hc);
-	return SystemParametersInfo(SPI_GETHIGHCONTRAST, sizeof(hc), &hc, FALSE) && (hc.dwFlags & HCF_HIGHCONTRASTON);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	return QGuiApplication::styleHints()->accessibility()->contrastPreference() == Qt::ContrastPreference::HighContrast;
 
-	#else
+#else
 	return false;
 
-	#endif
+#endif
 }
 
-
-#endif
 
 bool UiPluginQml::isOsDarkModeEnabled() const
 {
@@ -819,17 +794,6 @@ void UiPluginQml::setFontScaleFactor(qreal pFactor)
 }
 
 
-void UiPluginQml::onWindowPaletteChanged()
-{
-	const bool highContrast = isHighContrastEnabled();
-	if (mHighContrastEnabled != highContrast)
-	{
-		mHighContrastEnabled = highContrast;
-		Q_EMIT fireHighContrastEnabledChanged();
-	}
-}
-
-
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 void UiPluginQml::onUserDarkModeChanged() const
 {
@@ -838,11 +802,13 @@ void UiPluginQml::onUserDarkModeChanged() const
 
 #endif
 
-void UiPluginQml::onUseSystemFontChanged() const
+
+void UiPluginQml::onUseSystemFontChanged()
 {
-	const auto guard = qScopeGuard([] {
-				const auto& family = QGuiApplication::font().family();
-				qDebug() << "Using" << family << "with styles" << QFontDatabase::styles(family);
+	const auto guard = qScopeGuard([this] {
+				qCDebug(qml) << "Request font family" << mFontFamily;
+				const auto& family = QFontInfo(QFont(mFontFamily)).family();
+				qCDebug(qml) << "Using font family" << family << "with styles" << QFontDatabase::styles(family);
 			});
 
 	if (Env::getSingleton<AppSettings>()->getGeneralSettings().isUseSystemFont())
@@ -855,7 +821,8 @@ void UiPluginQml::onUseSystemFontChanged() const
 			font.setFamily(QStringLiteral("Arial")); // will usually resolve to "Liberation Sans" or "Arimo"
 			qCDebug(qml) << "Changing font family from" << oldFamily << "to" << QFontInfo(font).family();
 		}
-		QGuiApplication::setFont(font);
+		mFontFamily = font.family();
+		Q_EMIT fireFontFamilyChanged();
 		return;
 	}
 
@@ -865,11 +832,14 @@ void UiPluginQml::onUseSystemFontChanged() const
 	{
 		if (knownFamilies.contains(family))
 		{
-			QGuiApplication::setFont(QFont(family));
+			mFontFamily = family;
+			Q_EMIT fireFontFamilyChanged();
 			return;
 		}
 	}
 
+	mFontFamily = QFontInfo(QGuiApplication::font()).family();
+	Q_EMIT fireFontFamilyChanged();
 	qCCritical(qml) << "Roboto was not found in the FontDatabase. Staying on system default.";
 }
 
@@ -951,4 +921,10 @@ void UiPluginQml::setA11yOnOffSwitchLabelActive(bool pActive)
 bool UiPluginQml::isA11yOnOffSwitchLabelActive() const
 {
 	return mA11yOnOffSwitchLabelActive;
+}
+
+
+QString UiPluginQml::getFontFamily() const
+{
+	return mFontFamily;
 }

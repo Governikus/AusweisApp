@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -33,8 +33,8 @@ GAbstractButton {
 			return GRadioButton.Position.Middle;
 	}
 
-	Accessible.description: desc
-	Accessible.name: name
+	Accessible.description: Utils.resolveA11yDescription(name, desc)
+	Accessible.name: Utils.resolveA11yName(name, desc)
 	Accessible.role: Accessible.RadioButton
 	autoExclusive: true
 	bottomPadding: backgroundRectangle.radius
@@ -103,9 +103,6 @@ GAbstractButton {
 			text: root.name
 		}
 	}
-
-	Accessible.onPressAction: toggled() // Windows
-	Accessible.onToggleAction: toggled() // macOS
 
 	Keys.onSpacePressed: event => {
 		toggled();

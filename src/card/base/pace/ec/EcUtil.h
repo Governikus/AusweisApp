@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -9,7 +9,6 @@
 
 #include <openssl/bn.h>
 #include <openssl/ec.h>
-#include <openssl/ecdsa.h>
 #include <openssl/evp.h>
 
 #include <functional>
@@ -26,7 +25,7 @@ class EcUtil
 		static QSharedPointer<EC_POINT> oct2point(const QSharedPointer<const EC_GROUP>& pCurve, const QByteArray& pCompressedData);
 
 		static QSharedPointer<EC_GROUP> create(EC_GROUP* pEcGroup);
-#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 		static QSharedPointer<EC_KEY> create(EC_KEY* pEcKey);
 #endif
 		static QSharedPointer<EC_POINT> create(EC_POINT* pEcPoint);
@@ -34,15 +33,15 @@ class EcUtil
 		static QSharedPointer<EVP_PKEY> create(EVP_PKEY* pEcGroup);
 		static QSharedPointer<EVP_PKEY_CTX> create(EVP_PKEY_CTX* pEcGroup);
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
 		static QByteArray getEncodedPublicKey(const QSharedPointer<EVP_PKEY>& pKey, bool pCompressed = false);
 		static QSharedPointer<BIGNUM> getPrivateKey(const QSharedPointer<const EVP_PKEY>& pKey);
 		static QSharedPointer<OSSL_PARAM> create(const std::function<bool(OSSL_PARAM_BLD* pBuilder)>& pFunc);
-		static QSharedPointer<EVP_PKEY> generateKey(const QSharedPointer<const EC_GROUP>& pCurve);
+		static QSharedPointer<EVP_PKEY> generateKey(int pNid);
 #else
 		static QByteArray getEncodedPublicKey(const QSharedPointer<EC_KEY>& pKey, bool pCompressed = false);
 		static QSharedPointer<BIGNUM> getPrivateKey(const QSharedPointer<const EC_KEY>& pKey);
-		static QSharedPointer<EC_KEY> generateKey(const QSharedPointer<const EC_GROUP>& pCurve);
+		static QSharedPointer<EC_KEY> generateKey(int pNid);
 #endif
 
 		static QSharedPointer<EC_GROUP> createCurve(int pNid);
@@ -60,7 +59,7 @@ inline QSharedPointer<EC_GROUP> EcUtil::create(EC_GROUP* pEcGroup)
 }
 
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L || defined(USE_LEGACY_OPENSSL_API)
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 inline QSharedPointer<EC_KEY> EcUtil::create(EC_KEY* pEcKey)
 {
 	static auto deleter = [](EC_KEY* ecKey)

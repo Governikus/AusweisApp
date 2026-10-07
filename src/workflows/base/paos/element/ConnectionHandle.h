@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
 #include <QString>
+
+
+class test_DidAuthenticateMessage;
+
 
 namespace governikus
 {
@@ -13,6 +17,7 @@ class ConnectionHandle
 {
 	friend class ConnectionHandleParser;
 	friend class DIDList;
+	friend class ::test_DidAuthenticateMessage;
 
 	private:
 		QString mContextHandle;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "DiagnosisController.h"
@@ -75,27 +75,27 @@ static QString getWindowsFileVersionString(LPVOID pVersionData, const char* cons
 }
 
 
-static void addWindowsComponentInfo(QList<DiagnosisContext::ComponentInfo>& pComponents, const QString& pFileName)
+static std::optional<DiagnosisContext::ComponentInfo> getWindowsComponentInfo(const QString& pFileName)
 {
 	std::wstring fileName = pFileName.toStdWString();
 
 	const auto infoSize = GetFileVersionInfoSize(fileName.data(), nullptr);
 	if (infoSize == 0)
 	{
-		return;
+		return {};
 	}
 
 	LPVOID versionData = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, infoSize);
 	if (versionData == nullptr)
 	{
-		return;
+		return {};
 	}
 	const auto guard = qScopeGuard([versionData] {
 				HeapFree(GetProcessHeap(), 0, versionData);
 			});
 	if (!GetFileVersionInfo(fileName.data(), 0, infoSize, versionData))
 	{
-		return;
+		return {};
 	}
 
 	struct
@@ -108,7 +108,7 @@ static void addWindowsComponentInfo(QList<DiagnosisContext::ComponentInfo>& pCom
 
 	if (!VerQueryValue(versionData, L"\\VarFileInfo\\Translation", reinterpret_cast<void**>(&translateInfo), &translateInfoLength))
 	{
-		return;
+		return {};
 	}
 
 	QString description;
@@ -135,10 +135,10 @@ static void addWindowsComponentInfo(QList<DiagnosisContext::ComponentInfo>& pCom
 
 	if (description.isEmpty() && version.isEmpty() && company.isEmpty())
 	{
-		return;
+		return {};
 	}
 
-	pComponents += DiagnosisContext::ComponentInfo(pFileName, description, version, company);
+	return DiagnosisContext::ComponentInfo(pFileName, description, version, company);
 }
 
 
@@ -239,20 +239,42 @@ static QString getWindowsServiceDriverFileName(const QString& pServiceName)
 #endif
 
 
-void DiagnosisController::getPcscInfo(QList<DiagnosisContext::ComponentInfo>& pComponents,
-		QList<DiagnosisContext::ComponentInfo>& pDrivers)
+DiagnosisController::PcscInfo DiagnosisController::getPcscInfo()
 {
+	PcscInfo result;
+
 #ifndef Q_OS_WINRT
-	addWindowsComponentInfo(pComponents, toAbsoluteWindowsDirectoryPath(QStringLiteral("System32\\WinSCard.dll")));
-	addWindowsComponentInfo(pComponents, toAbsoluteWindowsDirectoryPath(QStringLiteral("System32\\SCardDlg.dll")));
-	addWindowsComponentInfo(pComponents, toAbsoluteWindowsDirectoryPath(QStringLiteral("System32\\SCardSvr.dll")));
-	addWindowsComponentInfo(pDrivers, toAbsoluteWindowsDirectoryPath(QStringLiteral("System32\\drivers\\smclib.sys")));
+	for (const auto& file : {QStringLiteral("System32\\WinSCard.dll"), QStringLiteral("System32\\SCardDlg.dll"), QStringLiteral("System32\\SCardSvr.dll")})
+	{
+		const auto& componentInfo = getWindowsComponentInfo(toAbsoluteWindowsDirectoryPath(file));
+		if (componentInfo)
+		{
+			result.mPcscComponents += componentInfo.value();
+		}
+	}
+
+	const auto& driverInfo = getWindowsComponentInfo(toAbsoluteWindowsDirectoryPath(QStringLiteral("System32\\drivers\\smclib.sys")));
+	if (driverInfo)
+	{
+		result.mPcscDrivers += driverInfo.value();
+	}
 
 	const QSet<QString> moduleNames = getWindowsSmartCardDriverModuleNames();
 	for (const QString& moduleName : moduleNames)
 	{
 		const QString path = getWindowsServiceDriverFileName(moduleName);
-		addWindowsComponentInfo(pDrivers, path);
+		const auto& moduleInfo = getWindowsComponentInfo(path);
+		if (moduleInfo)
+		{
+			result.mPcscDrivers += moduleInfo.value();
+		}
 	}
 #endif
+
+	if (!result.mPcscComponents.isEmpty())
+	{
+		result.mPcscVersion = result.mPcscComponents.first().getVersion();
+	}
+
+	return result;
 }

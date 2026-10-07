@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -41,6 +41,7 @@ class UiPluginModel
 	Q_PROPERTY(bool isUpdatePending READ isUpdatePending NOTIFY fireIsUpdatePendingChanged)
 	Q_PROPERTY(bool a11yButtonShapeActive READ isA11yButtonShapeActive NOTIFY fireA11yButtonShapeActiveChanged)
 	Q_PROPERTY(bool a11yOnOffSwitchLabelActive READ isA11yOnOffSwitchLabelActive NOTIFY fireA11yOnOffSwitchLabelActiveChanged)
+	Q_PROPERTY(QString fontFamily READ getFontFamily NOTIFY fireFontFamilyChanged)
 
 	bool mUpdateInformationPending;
 
@@ -68,9 +69,9 @@ class UiPluginModel
 		[[nodiscard]] virtual bool isChromeOS() const = 0;
 		[[nodiscard]] virtual bool isA11yButtonShapeActive() const = 0;
 		[[nodiscard]] virtual bool isA11yOnOffSwitchLabelActive() const = 0;
+		[[nodiscard]] virtual QString getFontFamily() const = 0;
 
 		Q_INVOKABLE virtual void hideFromTaskbar() const = 0;
-		Q_INVOKABLE virtual void doRefresh() = 0;
 		Q_INVOKABLE bool showUpdateInformationIfPending();
 
 		[[nodiscard]] bool isUpdatePending() const;
@@ -92,6 +93,7 @@ class UiPluginModel
 		void fireIsUpdatePendingChanged();
 		void fireA11yButtonShapeActiveChanged();
 		void fireA11yOnOffSwitchLabelActiveChanged();
+		void fireFontFamilyChanged();
 };
 
 } // namespace governikus

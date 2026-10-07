@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -63,7 +63,7 @@ ProgressBar {
 				width: parent.width * mutableVisualPosition
 
 				Behavior on mutableVisualPosition {
-					enabled: SettingsModel.useAnimations
+					enabled: SettingsModel.useAnimations && targetValue > bar.mutableVisualPosition
 
 					SmoothedAnimation {
 						velocity: 0.5

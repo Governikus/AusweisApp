@@ -1,0 +1,24 @@
+From 479d66b5a7213de8c08767ced087de8576a09640 Mon Sep 17 00:00:00 2001
+From: Klitzing <andre.klitzing@governikus.de>
+Date: Thu, 31 Aug 2023 13:19:55 +0200
+Subject: Do not override OPENSSL_API_COMPAT
+
+See QTBUG-83733 and AUTENTAPP-24481
+
+Change-Id: Ied55e3d6ebd90fbbecb8c4d8d1638b1de3ba6969
+---
+ src/plugins/tls/openssl/CMakeLists.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git x/qtbase/src/plugins/tls/openssl/CMakeLists.txt y/qtbase/src/plugins/tls/openssl/CMakeLists.txt
+index f90d9c2eda1517b54e3fbd1008bac4ac466fb76c..047d0086b1c8cc62d82e593d529638d9acfb40f2 100644
+--- x/qtbase/src/plugins/tls/openssl/CMakeLists.txt
++++ y/qtbase/src/plugins/tls/openssl/CMakeLists.txt
+@@ -21,7 +21,6 @@ qt_internal_add_plugin(QTlsBackendOpenSSLPlugin
+         Qt::NetworkPrivate
+         Qt::CorePrivate
+     DEFINES
+-        OPENSSL_API_COMPAT=0x10100000L
+         "QT_ENABLE_STRICT_MODE_UP_TO=QT_VERSION_CHECK(6,11,0)"
+         QT_NO_CAST_FROM_ASCII
+ )

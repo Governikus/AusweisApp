@@ -1,8 +1,10 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 package com.governikus.ausweisapp2;
+
+import java.util.logging.Level;
 
 import android.content.Intent;
 import android.os.IBinder;
@@ -48,7 +50,14 @@ extends QtService
 	public void onDestroy()
 	{
 		LogHandler.getLogger().info("Android service destroyed.");
-		BootstrapHelper.triggerShutdown();
+		try
+		{
+			BootstrapHelper.triggerShutdown();
+		}
+		catch (UnsatisfiedLinkError e)
+		{
+			LogHandler.getLogger().log(Level.SEVERE, "Cannot find native implementation", e);
+		}
 		super.onDestroy();
 	}
 

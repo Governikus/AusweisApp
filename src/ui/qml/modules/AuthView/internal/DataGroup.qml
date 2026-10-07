@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -16,18 +16,18 @@ ColumnLayout {
 	property alias title: dataTitle.text
 
 	Accessible.focusable: true
-	Accessible.ignored: title === "" && !Style.is_layout_desktop
+	Accessible.ignored: !Style.is_layout_desktop || title === ""
 	Accessible.name: title
 	Accessible.role: Accessible.Grouping
 	spacing: Style.dimens.pane_spacing
 	visible: count > 0
 
-	onFocusChanged: if (focus)
+	Accessible.onShowOnScreenAction: Utils.positionViewAtItem(this)
+	onActiveFocusChanged: if (activeFocus)
 		Utils.positionViewAtItem(this)
 
 	Subheading {
 		id: dataTitle
-
 	}
 	GridLayout {
 		columnSpacing: Style.dimens.pane_spacing

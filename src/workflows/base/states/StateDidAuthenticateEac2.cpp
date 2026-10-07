@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateDidAuthenticateEac2.h"
 
 #include "CardConnection.h"
 
+
 using namespace governikus;
+
 
 StateDidAuthenticateEac2::StateDidAuthenticateEac2(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext)
@@ -21,7 +23,6 @@ void StateDidAuthenticateEac2::run()
 	const auto& context = getContext();
 	Q_ASSERT(!context->getDidAuthenticateEac2().isNull());
 	Q_ASSERT(!context->getCardConnection().isNull());
-	Q_ASSERT(context->getPaceOutputData() != nullptr);
 	auto cardConnection = context->getCardConnection();
 	const auto ephemeralPublicKeyAsHex = context->getDidAuthenticateEac2()->getEphemeralPublicKey().toLatin1();
 	QByteArray authenticatedAuxiliaryDataAsBinary = context->getDidAuthenticateEac1()->getAuthenticatedAuxiliaryDataAsBinary();
@@ -36,7 +37,7 @@ void StateDidAuthenticateEac2::run()
 		signatureAsHex = context->getDidAuthenticateEacAdditional()->getSignature().toLatin1();
 	}
 
-	auto cvcChain = context->getChainForCertificationAuthority(*context->getPaceOutputData());
+	auto cvcChain = context->getChainForCertificationAuthority(context->getPaceOutput());
 	if (!cvcChain.isValid())
 	{
 		updateStatus(GlobalStatus::Code::Workflow_No_Permission_Error);

@@ -1,0 +1,158 @@
+From 96a9f0e40976b33d61c5dac2499326c5b141da8d Mon Sep 17 00:00:00 2001
+From: Marc Mutz <marc.mutz@qt.io>
+Date: Mon, 13 Jul 2026 10:01:16 +0200
+Subject: QtNetwork: port nextNonWhitespace() and all its users to qsizetype
+
+Coverity complained that QNetworkReplyHttpImpl's
+parseHttpOptionHeader() could overflow. It showed a 51-step trace,
+which I didn't bother to follow. It's pretty clear that the use of int
+here narrows from the qizetype used by QByteArray, so all kinds of
+things can go wrong, incl. that the if (pos == header.size()) can
+never trigger, if header.size() > INT_MAX.
+
+So port nextNonWhitespace() from int to qsizetype and ditto all its
+callers.
+
+As a drive-by, mark some variables const (the functions are long...),
+and replace the re-use of `comma` with a narrowly-scoped, shadowing
+use to avoid having to leave `comma` non-const.
+
+Amends the port of QByteArray to qsizetype (6.0).
+
+Pick-to: 6.12 6.11 6.8 6.5
+Coverity-Id: 911179
+Change-Id: Ida3185a4aa9cf953c6b52840c6fdedac6257ef5b
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+(cherry picked from commit 623cbf2a071b1709377ba841e47b52cc472c5dfc)
+---
+ src/network/access/qnetworkcookie.cpp        | 16 ++++++++--------
+ src/network/access/qnetworkcookie_p.h        |  2 +-
+ src/network/access/qnetworkreplyhttpimpl.cpp | 16 ++++++++--------
+ 3 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git x/qtbase/src/network/access/qnetworkcookie.cpp y/qtbase/src/network/access/qnetworkcookie.cpp
+index 6c44e42dbba4767ae2dc535b7903792b8b7c4664..6f20518cfe6b4d7d944499e4d1bd6aad6e64d6a4 100644
+--- x/qtbase/src/network/access/qnetworkcookie.cpp
++++ y/qtbase/src/network/access/qnetworkcookie.cpp
+@@ -376,20 +376,20 @@ void QNetworkCookie::setValue(const QByteArray &value)
+ }
+ 
+ // ### move this to qnetworkcookie_p.h and share with qnetworkaccesshttpbackend
+-static std::pair<QByteArray, QByteArray> nextField(QByteArrayView text, int &position, bool isNameValue)
++static std::pair<QByteArray, QByteArray> nextField(QByteArrayView text, qsizetype &position, bool isNameValue)
+ {
+     // format is one of:
+     //    (1)  token
+     //    (2)  token = token
+     //    (3)  token = quoted-string
+-    const int length = text.size();
++    const qsizetype length = text.size();
+     position = nextNonWhitespace(text, position);
+ 
+-    int semiColonPosition = text.indexOf(';', position);
++    qsizetype semiColonPosition = text.indexOf(';', position);
+     if (semiColonPosition < 0)
+         semiColonPosition = length; //no ';' means take everything to end of string
+ 
+-    int equalsPosition = text.indexOf('=', position);
++    qsizetype equalsPosition = text.indexOf('=', position);
+     if (equalsPosition < 0 || equalsPosition > semiColonPosition) {
+         if (isNameValue)
+             return std::pair(QByteArray(), QByteArray()); //'=' is required for name-value-pair (RFC6265 section 5.2, rule 2)
+@@ -398,7 +398,7 @@ static std::pair<QByteArray, QByteArray> nextField(QByteArrayView text, int &pos
+ 
+     QByteArray first = text.mid(position, equalsPosition - position).trimmed().toByteArray();
+     QByteArray second;
+-    int secondLength = semiColonPosition - equalsPosition - 1;
++    qsizetype secondLength = semiColonPosition - equalsPosition - 1;
+     if (secondLength > 0)
+         second = text.mid(equalsPosition + 1, secondLength).trimmed().toByteArray();
+ 
+@@ -958,8 +958,8 @@ QList<QNetworkCookie> QNetworkCookiePrivate::parseSetCookieHeaderLine(QByteArray
+     QList<QNetworkCookie> result;
+     const QDateTime now = QDateTime::currentDateTimeUtc();
+ 
+-    int position = 0;
+-    const int length = cookieString.size();
++    qsizetype position = 0;
++    const qsizetype length = cookieString.size();
+     while (position < length) {
+         QNetworkCookie cookie;
+ 
+@@ -980,7 +980,7 @@ QList<QNetworkCookie> QNetworkCookiePrivate::parseSetCookieHeaderLine(QByteArray
+ 
+                 if (field.first.compare("expires", Qt::CaseInsensitive) == 0) {
+                     position -= field.second.size();
+-                    int end;
++                    qsizetype end;
+                     for (end = position; end < length; ++end)
+                         if (isValueSeparator(cookieString.at(end)))
+                             break;
+diff --git x/qtbase/src/network/access/qnetworkcookie_p.h y/qtbase/src/network/access/qnetworkcookie_p.h
+index b768727f00f75542ff277b5cf4b7696dfafb755b..40cad6d9b2369b98456f1ae7dfc5a9a3fd938311 100644
+--- x/qtbase/src/network/access/qnetworkcookie_p.h
++++ y/qtbase/src/network/access/qnetworkcookie_p.h
+@@ -46,7 +46,7 @@ inline bool isLWS(char c)
+ }
+ 
+ // Used in qnetworkcookie.cpp and qnetworkreplyhttpimpl.cpp
+-inline int nextNonWhitespace(QByteArrayView text, int from)
++inline qsizetype nextNonWhitespace(QByteArrayView text, qsizetype from)
+ {
+     // RFC 2616 defines linear whitespace as:
+     //  LWS = [CRLF] 1*( SP | HT )
+diff --git x/qtbase/src/network/access/qnetworkreplyhttpimpl.cpp y/qtbase/src/network/access/qnetworkreplyhttpimpl.cpp
+index ae03127f90d2580f0285d43c7caadfc61a4bfce2..b339d9fd3822e21d37b1ba12b34a0a6476228334 100644
+--- x/qtbase/src/network/access/qnetworkreplyhttpimpl.cpp
++++ y/qtbase/src/network/access/qnetworkreplyhttpimpl.cpp
+@@ -51,7 +51,7 @@ static QHash<QByteArray, QByteArray> parseHttpOptionHeader(QByteArrayView header
+     // value-directive = token "=" (token | quoted-string)
+     QHash<QByteArray, QByteArray> result;
+ 
+-    int pos = 0;
++    qsizetype pos = 0;
+     while (true) {
+         // skip spaces
+         pos = nextNonWhitespace(header, pos);
+@@ -59,15 +59,15 @@ static QHash<QByteArray, QByteArray> parseHttpOptionHeader(QByteArrayView header
+             return result;      // end of parsing
+ 
+         // pos points to a non-whitespace
+-        int comma = header.indexOf(',', pos);
+-        int equal = header.indexOf('=', pos);
++        const qsizetype comma = header.indexOf(',', pos);
++        const qsizetype equal = header.indexOf('=', pos);
+         if (comma == pos || equal == pos)
+             // huh? Broken header.
+             return result;
+ 
+         // The key name is delimited by either a comma, an equal sign or the end
+         // of the header, whichever comes first
+-        int end = comma;
++        qsizetype end = comma;
+         if (end == -1)
+             end = header.size();
+         if (equal != -1 && end > equal)
+@@ -75,7 +75,7 @@ static QHash<QByteArray, QByteArray> parseHttpOptionHeader(QByteArrayView header
+         const auto key = header.sliced(pos, end - pos).trimmed();
+         pos = end + 1;
+ 
+-        if (uint(equal) < uint(comma)) {
++        if (size_t(equal) < size_t(comma)) {
+             // case: token "=" (token | quoted-string)
+             // skip spaces
+             pos = nextNonWhitespace(header, pos);
+@@ -126,10 +126,10 @@ static QHash<QByteArray, QByteArray> parseHttpOptionHeader(QByteArrayView header
+             result.insert(key.toByteArray().toLower(), value);
+ 
+             // find the comma now:
+-            comma = header.indexOf(',', pos);
+-            if (comma == -1)
++            if (qsizetype comma = header.indexOf(',', pos); comma == -1)
+                 return result;  // end of parsing
+-            pos = comma + 1;
++            else
++                pos = comma + 1;
+         } else {
+             // case: token
+             // key is already set
