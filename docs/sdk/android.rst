@@ -615,6 +615,7 @@ by way of example.
   import android.nfc.NfcAdapter;
   import android.nfc.tech.IsoDep;
   import java.util.Arrays;
+  import android.os.Bundle;
 
   import com.governikus.ausweisapp2.IAusweisApp2Sdk;
 
@@ -623,6 +624,7 @@ by way of example.
     private final Activity mActivity;
     private final NfcAdapter mAdapter;
     private final int mFlags;
+    private final Bundle mBundle;
     private final NfcAdapter.ReaderCallback mReaderCallback;
 
     ForegroundDispatcher(Activity pActivity, final IAusweisApp2Sdk pSdk, final String pSdkSessionID)
@@ -630,6 +632,8 @@ by way of example.
       mActivity = pActivity;
       mAdapter = NfcAdapter.getDefaultAdapter(mActivity);
       mFlags = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_NFC_B | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
+      mBundle = new Bundle();
+      mBundle.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, 1000);
       mReaderCallback = new NfcAdapter.ReaderCallback()
       {
         public void onTagDiscovered(Tag pTag)
@@ -646,7 +650,7 @@ by way of example.
     {
       if (mAdapter != null)
       {
-        mAdapter.enableReaderMode(mActivity, mReaderCallback, mFlags, null);
+        mAdapter.enableReaderMode(mActivity, mReaderCallback, mFlags, mBundle);
       }
     }
 
