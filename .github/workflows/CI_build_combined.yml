@@ -34,7 +34,7 @@ jobs:
         run: echo "C:\Program Files\Git\usr\bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Add nmake
         uses: ilammy/msvc-dev-cmd@v1
@@ -72,7 +72,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install packages via apt
         run: |
@@ -111,7 +111,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install packages via apt
         run: |
@@ -154,7 +154,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: install ninja
         run: |
@@ -192,7 +192,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: install ninja
         run: |
