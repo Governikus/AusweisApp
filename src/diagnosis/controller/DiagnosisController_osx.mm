@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 
@@ -131,9 +131,10 @@ static QString runProcessAndReadAllOutput(const QString& pProgram, const QString
 }
 
 
-void DiagnosisController::getPcscInfo(QList<DiagnosisContext::ComponentInfo>& /*pComponents*/,
-		QList<DiagnosisContext::ComponentInfo>& pDrivers)
+DiagnosisController::PcscInfo DiagnosisController::getPcscInfo()
 {
+	PcscInfo result;
+
 	QString driverDirectory = QStringLiteral("/usr/libexec/SmartCardServices/drivers");
 	QString driverDirectoryLocal = QStringLiteral("/usr/local/libexec/SmartCardServices/drivers");
 
@@ -213,10 +214,12 @@ void DiagnosisController::getPcscInfo(QList<DiagnosisContext::ComponentInfo>& /*
 					? driverInfo.mBundleShortVersion : driverInfo.mBundleVersion;
 		}
 
-		pDrivers += DiagnosisContext::ComponentInfo(
+		result.mPcscDrivers += DiagnosisContext::ComponentInfo(
 				driverPath,
 				description,
 				version,
 				driverInfo.mIfdManufacturer);
 	}
+
+	return result;
 }

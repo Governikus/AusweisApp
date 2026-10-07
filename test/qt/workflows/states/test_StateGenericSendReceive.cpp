@@ -1,14 +1,18 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
+
+#include "states/StateGenericSendReceive.h"
 
 #include "Env.h"
 #include "states/StateBuilder.h"
-#include "states/StateGenericSendReceive.h"
 
 #include "MockNetworkManager.h"
-#include "TestAuthContext.h"
 #include "VolatileSettings.h"
+
+#include "TestAuthContext.h"
+#include "TestFileHelper.h"
+#include "TestParserHelper.h"
 
 #include <QList>
 #include <QtTest>
@@ -18,6 +22,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 Q_DECLARE_METATYPE(QSharedPointer<PaosMessage>)
 using Pair = std::pair<QByteArray, QByteArray>;
@@ -95,10 +100,10 @@ class test_StateGenericSendReceive
 
 			QSharedPointer<PaosMessage> tmp;
 
-			tmp = QSharedPointer<StartPaosResponse>::create(QByteArray());
+			tmp = QSharedPointer<StartPaosResponse>::create(TestParserHelper::create(QByteArray()));
 			QTest::newRow("startpaosResponse") << PaosType::STARTPAOS_RESPONSE << QStringLiteral("startpaosResponse") << tmp;
 
-			tmp = QSharedPointer<InitializeFramework>::create(QByteArray());
+			tmp = QSharedPointer<InitializeFramework>::create();
 			QTest::newRow("initializeFramework") << PaosType::INITIALIZE_FRAMEWORK << QStringLiteral("initializeFramework") << tmp;
 
 			tmp = QSharedPointer<DIDAuthenticateEAC1>::create();
@@ -319,7 +324,15 @@ class test_StateGenericSendReceive
 			QFETCH(QList<Pair>, attributes);
 			QFETCH(bool, enabled);
 
-			MockNetworkReply* reply = new MockNetworkReply(QByteArrayLiteral("TEST"));
+			Env::getSingleton<LogHandler>()->init();
+			const auto guard = qScopeGuard([] {
+						Env::getSingleton<LogHandler>()->reset();
+						Env::getSingleton<LogHandler>()->resetBacklog();
+					});
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+
+			const auto content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
+			MockNetworkReply* reply = new MockNetworkReply(content);
 			for (const auto& attribute : attributes)
 			{
 				reply->setRawHeader(attribute.first, attribute.second);
@@ -329,21 +342,24 @@ class test_StateGenericSendReceive
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
-			QTest::ignoreMessage(QtDebugMsg, "Status Code: 200 \"OK\"");
-			if (enabled)
-			{
-				QTest::ignoreMessage(QtDebugMsg, "Received raw data:\n TEST");
-			}
-			else
-			{
-				QTest::ignoreMessage(QtDebugMsg, "no-log was requested, skip logging of raw data");
-			}
-
 			QSignalSpy spyMock(mNetworkManager.data(), &MockNetworkManager::fireReply);
 
 			mAuthContext->setStateApproved();
-			QTRY_COMPARE(spyMock.count(), 1);     // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyMock.count(), 1); // clazy:exclude=qstring-allocations
 			mNetworkManager->fireFinished();
+
+			QTRY_VERIFY(!logSpy.isEmpty());
+			QVERIFY(TestFileHelper::containsLog(logSpy, "Status Code: 200 \"OK\""_L1));
+			if (enabled)
+			{
+				QVERIFY(TestFileHelper::containsLog(logSpy, "CardApplication"_L1));
+				QVERIFY(TestFileHelper::containsLog(logSpy, "/CardApplication"_L1));
+			}
+			else
+			{
+				QVERIFY(TestFileHelper::containsLog(logSpy, "no-log was requested, skip logging of xml data"_L1));
+				QVERIFY(!TestFileHelper::containsLog(logSpy, "CardApplication"_L1));
+			}
 		}
 
 

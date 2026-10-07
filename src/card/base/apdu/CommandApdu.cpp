@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "CommandApdu.h"
@@ -290,17 +290,6 @@ CommandApdu::operator QByteArray() const
 
 	return cmd;
 }
-
-
-#if !defined(QT_NO_DEBUG) && __has_include(<QTest>)
-	#include <QTest>
-char* governikus::toString(const CommandApdu& pCommandApdu)
-{
-	return QTest::toString(QByteArray(pCommandApdu).toHex());
-}
-
-
-#endif
 
 
 #include "moc_CommandApdu.cpp"

@@ -1,10 +1,12 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "MockCard.h"
 
+
 using namespace governikus;
+
 
 MockCard::MockCard(const MockCardConfig& pCardConfig)
 	: mConnected(false)
@@ -46,11 +48,10 @@ ResponseApduResult MockCard::transmit(const CommandApdu& pCmd)
 
 EstablishPaceChannelOutput MockCard::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription)
 {
-	Q_UNUSED(pPasswordId)
 	Q_UNUSED(pPreferredPinLength)
 	Q_UNUSED(pChat)
 	Q_UNUSED(pCertificateDescription)
-	return EstablishPaceChannelOutput(CardReturnCode::INVALID_PASSWORD);
+	return EstablishPaceChannelOutput(pPasswordId, CardReturnCode::PROTOCOL_ERROR);
 }
 
 

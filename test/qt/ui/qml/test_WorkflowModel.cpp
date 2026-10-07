@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "WorkflowModel.h"
@@ -181,7 +181,7 @@ class test_WorkflowModel
 			model.resetWorkflowContext(context);
 			QVERIFY(!model.isPukInoperative());
 
-			context->setStatus(GlobalStatus::Code::Card_Invalid_Pin);
+			context->setStatus(GlobalStatus::Code::No_Error);
 			QVERIFY(!model.isPukInoperative());
 
 			context->setStatus(GlobalStatus::Code::Card_Puk_Blocked);
@@ -189,17 +189,24 @@ class test_WorkflowModel
 		}
 
 
-		void test_getLastReturnCode()
+		void test_getLastPaceResult()
 		{
 			WorkflowModel model;
-			QCOMPARE(model.getLastReturnCode(), CardReturnCode::UNDEFINED);
+			QCOMPARE(model.getLastPaceResult(), PaceResult::UNDEFINED);
 
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			model.resetWorkflowContext(context);
-			QCOMPARE(model.getLastReturnCode(), CardReturnCode::OK);
+			QCOMPARE(model.getLastPaceResult(), PaceResult::UNDEFINED);
 
-			context->setLastPaceResult(CardReturnCode::CANCELLATION_BY_USER);
-			QCOMPARE(model.getLastReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
+			EstablishPaceChannelOutput output(PacePasswordId::PACE_PIN, CardReturnCode::OK);
+			output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC2);
+			output.setStatusMseSetAt(QByteArray::fromHex("9000"));
+			context->setPaceOutput(output);
+			QCOMPARE(model.getLastPaceResult(), PaceResult::INVALID_PIN_1);
+
+			output.setReturnCode(CardReturnCode::CANCELLATION_BY_USER);
+			context->setPaceOutput(output);
+			QCOMPARE(model.getLastPaceResult(), PaceResult::UNDEFINED);
 		}
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateDidAuthenticateEac2.h"
@@ -70,7 +70,7 @@ class test_StateDidAuthenticateEac2
 				const EstablishPaceChannelOutput invalidOutput;
 
 				mAuthContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
-				mAuthContext->setPaceOutputData(invalidOutput);
+				mAuthContext->setPaceOutput(invalidOutput);
 
 				mState->run();
 				QCOMPARE(mState->mConnections.size(), 0);

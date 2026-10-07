@@ -13,7 +13,7 @@ if(WIN32)
 	target_link_libraries(AusweisAppCardDrivers ${WIN_DEFAULT_LIBS})
 endif()
 
-if(MAC)
+if(MACOS)
 	target_link_libraries(AusweisAppCardDrivers ${IOKIT})
 endif()
 

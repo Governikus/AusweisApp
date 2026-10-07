@@ -1,0 +1,961 @@
+image: ${DOCKER_REGISTRY_MIRROR}/alpine:3.24
+
+variables:
+  GIT_STRATEGY: empty
+  BINARY_DIR: $CI_PROJECT_DIR/bin
+  VIRTUAL_ENV: $CI_PROJECT_DIR/venv
+  UV_CACHE_DIR: $CI_PROJECT_DIR/uv
+  CCACHE_BASEDIR: "$CI_PROJECT_DIR"
+  CCACHE_REMOTE_ONLY: true
+  CCACHE_RESHARE: true
+  MIRROR_GITHUB: https://github.com
+  MIRROR_QT: https://download.qt.io
+  MIRROR_NODEJS: https://nodejs.org
+
+workflow:
+  name: '$PIPELINE_NAME'
+
+.prepare:
+  setup:
+    - env
+    - !reference [.prepare, pkg]
+    - !reference [.prepare, uv]
+    - hg clone --stream ${REPOSITORY} -u $REVISION source
+  pkg:
+    - |
+      if command -v apk >/dev/null 2>&1; then
+        if [ -n "$MIRROR_ALPINE" ]; then
+          sed -i "s|https://[^/]*/alpine/|$MIRROR_ALPINE/|g" /etc/apk/repositories
+        fi
+        apk add mercurial cmake samurai make gdb lldb uv python3
+      elif command -v apt-get >/dev/null 2>&1; then
+        . /etc/os-release
+
+        if [ -n "$MIRROR_UBUNTU" ] && [ "$ID" = "ubuntu" ]; then
+          sed -i "s|http[s]\?://[^/]*/ubuntu/|$MIRROR_UBUNTU/|g" /etc/apt/sources.list.d/ubuntu.sources
+          echo "Acquire::https::$(echo $MIRROR_UBUNTU | sed -E 's|https?://([^/]*).*|\1|')::Verify-Peer \"false\";" \
+                >> /etc/apt/apt.conf.d/99disable-ssl-check
+        fi
+        if [ -n "$MIRROR_DEBIAN" ] && [ "$ID" = "debian" ]; then
+          sed -i "s|http[s]\?://[^/]*|$MIRROR_DEBIAN|g" /etc/apt/sources.list.d/debian.sources
+          echo "Acquire::https::$(echo $MIRROR_DEBIAN | sed -E 's|https?://([^/]*).*|\1|')::Verify-Peer \"false\";" \
+                >> /etc/apt/apt.conf.d/99disable-ssl-check
+        fi
+
+        echo "Acquire::https::Pipeline-Depth "0";" > /etc/apt/apt.conf.d/99fix-connection
+
+        apt-get update
+        apt-get install -y mercurial cmake ninja-build make gdb lldb python3 curl ca-certificates
+        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/astral-sh/uv/releases/download/0.12.3/uv-installer.sh | sh
+        source $HOME/.local/bin/env
+      elif command -v dnf >/dev/null 2>&1; then
+        rm -rf /etc/yum.repos.d/fedora-cisco-openh264.repo /etc/yum.repos.d/fedora-updates-testing.repo
+        if [ -n "$MIRROR_FEDORA" ]; then
+          sed -i -e 's/^metalink=/#metalink=/g' -e "s|^#baseurl=.*|baseurl=$MIRROR_FEDORA/releases/\$releasever/Everything/\$basearch/os/|g" \
+              /etc/yum.repos.d/fedora.repo
+          sed -i -e 's/^metalink=/#metalink=/g' -e "s|^#baseurl=.*|baseurl=$MIRROR_FEDORA/updates/\$releasever/Everything/\$basearch/|g" \
+              /etc/yum.repos.d/fedora-updates.repo
+        fi
+        dnf -y install mercurial cmake ninja-build make gdb lldb uv python3
+      elif command -v zypper >/dev/null 2>&1; then
+        if [ -n "$MIRROR_OPENSUSE" ]; then
+          rm /etc/zypp/repos.d/*
+          zypper ar -f $MIRROR_OPENSUSE/tumbleweed/repo/oss/ repo-mirror
+        fi
+        zypper update -y
+        zypper install -y mercurial cmake ninja make gdb lldb python313-uv
+      elif command -v sw_vers >/dev/null 2>&1; then
+        export UV_NO_MODIFY_PATH=1
+        export UV_INSTALL_DIR=$BINARY_DIR
+        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/astral-sh/uv/releases/download/0.12.3/uv-installer.sh | sh
+        curl --proto '=https' --tlsv1.2 -LsSf $MIRROR_GITHUB/ccache/ccache/releases/download/v4.14/ccache-4.14-darwin.tar.gz \
+             | tar -C $BINARY_DIR --strip-components=1 -xz "*/ccache"
+        export PATH="$BINARY_DIR/:$PATH"
+      fi
+  uv:
+    - uv venv $VIRTUAL_ENV
+    - source $VIRTUAL_ENV/bin/activate
+    - |
+      if command -v sw_vers >/dev/null 2>&1; then
+        uv pip install mercurial==7.2.4 cmake==4.4.2 ninja==1.13.0
+      fi
+
+.Base:
+  tags:
+    - $LOW_RUNNER
+  rules:
+    - if: '$SELECT_JOB_REGEX != null && $CI_JOB_NAME !~ $SELECT_JOB_REGEX && ($CI_JOB_NAME =~ /^Libraries/ || $SELECT_JOB_MANUAL == null)'
+      when: never
+    - if: '$USE_APPSTORE_PROFILE == "ON" && $RELEASE != "true"'
+      when: never
+    - if: '$SELECT_JOB_REGEX != null && $CI_JOB_NAME !~ $SELECT_JOB_REGEX'
+      when: manual
+    - if: '$CI_JOB_NAME =~ /^Deploy_Final/ && $RELEASE_FINAL != "ON"'
+      when: never
+    - if: '$CI_JOB_NAME =~ /^Deploy/ && $RELEASE == "true"'
+      when: manual
+    - if: '$CI_JOB_NAME =~ /^Deploy/'
+      when: never
+    - if: '$CI_JOB_NAME =~ /^Light/ && $SELECT_JOB_REGEX != null && $CI_JOB_NAME =~ $SELECT_JOB_REGEX'
+      when: on_success
+    - if: '$CI_JOB_NAME =~ /^Light/'
+      when: never
+    - when: on_success
+
+default:
+  before_script:
+    - export PATH=$BINARY_DIR:$PATH
+    - !reference [.prepare, setup]
+
+Libraries_Linux:
+  extends: .Base
+  tags:
+    - $HIGH_RUNNER
+  before_script:
+    - !reference [.prepare, setup]
+    - |
+      apk add wget g++ ccache perl \
+              pkgconf lld pcsc-lite-dev \
+              mesa-dev libx11-dev libxkbcommon-dev xcb-util-wm-dev xcb-util-image-dev xcb-util-keysyms-dev
+  script:
+    - cmake -P source/ci.cmake
+
+Linux_Debian_Vanilla:
+  extends: .Base
+  tags:
+    - $MEDIUM_RUNNER
+  parallel:
+    matrix:
+      - version:
+          - trixie-slim
+  image: ${DOCKER_REGISTRY_MIRROR}/debian:$version
+  variables:
+    XDG_RUNTIME_DIR: "$CI_PROJECT_DIR/xdg"
+    LANG: "C.UTF-8"
+    LC_ALL: "C.UTF-8"
+  script:
+    - mkdir -p "$XDG_RUNTIME_DIR"
+    - chmod 700 "$XDG_RUNTIME_DIR"
+    - |
+      apt-get install -y g++ pkgconf ccache \
+                     libllhttp-dev libpcsclite-dev libssl-dev \
+                     qt6-base-dev qt6-base-private-dev qt6-declarative-dev \
+                     qt6-scxml-dev qt6-svg-dev \
+                     qt6-tools-dev qt6-websockets-dev qt6-connectivity-dev \
+                     \
+                     libqt6svg6 qml6-module-qt-labs-platform qml6-module-qtqml \
+                     qml6-module-qtqml-models qml6-module-qtqml-statemachine \
+                     qml6-module-qtqml-workerscript qml6-module-qtquick-controls \
+                     qml6-module-qtquick-layouts qml6-module-qtquick-templates \
+                     qml6-module-qtquick-window qml6-module-qtquick-dialogs \
+                     qml6-module-qtcore
+
+      if [ "$version" == "bookworm-slim" ]; then
+        apt-get install -y qml6-module-qt-labs-folderlistmodel
+      fi
+
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: build/**/results.*.junit.xml
+
+Linux_Alpine:
+  extends: Libraries_Linux
+  tags:
+    - $MEDIUM_RUNNER
+  variables:
+    GRYPE_DB_CACHE_DIR: $CI_PROJECT_DIR/grype
+  cache:
+    - key: grype
+      paths:
+        - grype
+  needs:
+    - job: Libraries_Linux
+      artifacts: false
+      optional: true
+  parallel:
+    matrix:
+      - variant: [App, Integrated]
+        compiler: [g++, clang++, clazy]
+        cxx_standard: [20]
+      - variant: [App]
+        compiler: [g++]
+        cxx_standard: [23, 26]
+  script:
+    - apk add clang clazy gnupg gcovr check-jsonschema typos py3-codespell yamllint ruff grype
+    - uv pip install sphinx-lint
+    - cmake -P source/ci.cmake -- -DCMAKE_CXX_COMPILER=${compiler} -DCMAKE_CXX_STANDARD=${cxx_standard}
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: build/**/results.*.junit.xml
+
+Linux_Memcheck:
+  extends: Libraries_Linux
+  tags:
+    - $MEDIUM_RUNNER
+  needs:
+    - job: Libraries_Linux
+      artifacts: false
+      optional: true
+  parallel:
+    matrix:
+      - variant: [App]
+        compiler: [g++]
+  script:
+    - apk add valgrind
+    - !reference [Linux_Alpine, script]
+  artifacts:
+    expire_in: 1 week
+    when: always
+    paths:
+      - build/Testing/Temporary/MemoryChecker*
+
+Translations:
+  extends: Libraries_Linux
+  tags:
+    - $LOW_RUNNER
+  needs:
+    - job: Libraries_Linux
+      artifacts: false
+      optional: true
+  script:
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - source/resources/translations/*.ts
+
+Linux_OpenSSL:
+  extends: Libraries_Linux
+  tags:
+    - $HIGH_RUNNER
+  parallel:
+    matrix:
+      - openssl:
+@OPENSSL_VERSIONS@
+  script:
+    - apk add gcovr
+    - cmake -DOPENSSL=${openssl} -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: build/**/results.*.junit.xml
+
+Linux_Fedora_Vanilla:
+  extends: .Base
+  tags:
+    - $MEDIUM_RUNNER
+  image: ${DOCKER_REGISTRY_MIRROR}/fedora:43
+  script:
+    - |
+      dnf -y install gcc-c++ libxkbcommon-devel libudev-devel \
+                     ccache llhttp-devel pcsc-lite-devel openssl-devel \
+                     qt6-qtbase-devel qt6-qtbase-private-devel \
+                     qt6-qtscxml-devel qt6-qtshadertools-devel qt6-qtsvg-devel \
+                     qt6-qttools-devel qt6-qtwebsockets-devel qt6-qtconnectivity-devel
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: build/**/results.*.junit.xml
+
+Linux_openSUSE_Vanilla:
+  extends: .Base
+  tags:
+    - $MEDIUM_RUNNER
+  image: ${DOCKER_REGISTRY_MIRROR}/opensuse/tumbleweed
+  script:
+    - |
+      zypper install -y gcc-c++ libxkbcommon-devel \
+                     ccache llhttp-devel pcsc-lite-devel libopenssl-devel \
+                     qt6-core-devel qt6-core-private-devel qt6-concurrent-devel \
+                     qt6-declarative-devel qt6-network-devel qt6-connectivity-devel \
+                     qt6-qml-devel qt6-qmlcore-private-devel \
+                     qt6-statemachine-devel qt6-svg-devel \
+                     qt6-websockets-devel qt6-linguist-devel
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: build/**/results.*.junit.xml
+
+SonarQube:
+  extends: .Base
+  tags:
+    - $HIGH_RUNNER
+  image: ${DOCKER_REGISTRY_MIRROR}/ubuntu:26.04
+  variables:
+    LANG: "C.UTF-8"
+    LC_ALL: "C.UTF-8"
+  cache:
+    - key: "${CI_JOB_NAME}-${REVIEWBOARD_REVIEW_BRANCH}"
+      paths:
+        - sonar
+      when: always
+  script:
+    - |
+      apt-get install -y openjdk-25-jdk-headless g++ pkgconf ccache mold \
+                     libpcsclite-dev perl libgl1-mesa-dev libglu1-mesa-dev libegl1-mesa-dev
+    - uv pip install gcovr
+    - cmake -DSPLIT=OFF -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: build/**/results.*.junit.xml
+
+Light_Analyze:
+  extends: SonarQube
+  resource_group: SonarQube
+
+Formatting:
+  extends: Libraries_Linux
+  tags:
+    - $LOW_RUNNER
+  needs:
+    - job: Libraries_Linux
+      artifacts: false
+      optional: true
+  script:
+    - apk add dos2unix ruff yamlfmt uncrustify
+    - uv pip install python-hglib
+    - cmake -P source/ci.cmake | tee output.log
+    - if grep -q "FORMATTING FAILED" output.log; then exit 1; fi
+
+Linux_Debian_Qt:
+  extends: .Base
+  tags:
+    - $MEDIUM_RUNNER
+  parallel:
+    matrix:
+      - QT:
+          - 6.8.0
+          - 6.9.0
+          - 6.10.0
+          - 6.11.0
+          - 6.12.0
+  image: ${DOCKER_REGISTRY_MIRROR}/debian:stable-slim
+  variables:
+    LANG: "C.UTF-8"
+    LC_ALL: "C.UTF-8"
+  script:
+    - |
+      apt-get install -y g++ pkgconf ccache libpcsclite-dev libssl-dev libllhttp-dev libudev-dev \
+                         libglib2.0-0 libvulkan-dev libegl1-mesa-dev libxkbcommon0 libdbus-1-3 \
+                         libfontconfig1 libwayland-dev
+    - uv pip install aqtinstall
+    - cmake -DQT=$QT -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: build/**/results.*.junit.xml
+
+.AndroidBase:
+  extends: .Base
+  variables:
+    ANDROID_CMDLINE_TOOLS: 14742923
+    ANDROID_NDK_VERSION: 29.0.14206865
+    ANDROID_COMPONENTS: '"cmdline-tools;21.0" "build-tools;37.0.0" "platforms;android-36" "ndk;${ANDROID_NDK_VERSION}"'
+    ANDROID_SDK_ROOT: $CI_PROJECT_DIR/android-sdk
+    ANDROID_NDK_ROOT: $ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION
+    ANDROID_CMDLINE_TOOLS_ZIP: commandlinetools-linux-${ANDROID_CMDLINE_TOOLS}_latest.zip
+    GRADLE_VERSION: 9.3.1
+    GRADLE_USER_HOME: $CI_PROJECT_DIR/.gradle
+    SDK_TEST_BASE_URL: https://dl.google.com/android/repository/
+  cache:
+    - key: "${CI_JOB_NAME}-gradle"
+      paths:
+        - .gradle/caches/
+  before_script:
+    - !reference [.prepare, setup]
+    - apk add gcompat maven gradle ccache unzip perl bash g++ linux-headers libxslt
+    - uv pip install numpy
+    - |
+      GRADLE_FILE="gradle-$GRADLE_VERSION-bin"
+      GRADLE_URL="https://services.gradle.org/distributions/$GRADLE_FILE.zip"
+      GRADLE_HASH=$(python -c 'import hashlib,numpy;print(numpy.base_repr(int.from_bytes(hashlib.md5(b"'"$GRADLE_URL"'").digest(),"big"),36).lower())')
+      GRADLE_PATH="$GRADLE_USER_HOME/wrapper/dists/$GRADLE_FILE/$GRADLE_HASH"
+      mkdir -p "$GRADLE_PATH"
+      wget -O $GRADLE_PATH/$GRADLE_FILE.zip "$MIRROR_GITHUB/gradle/gradle-distributions/releases/download/v$GRADLE_VERSION/$GRADLE_FILE.zip"
+      wget -O /tmp/$ANDROID_CMDLINE_TOOLS_ZIP "$MIRROR_GOOGLE/android/repository/$ANDROID_CMDLINE_TOOLS_ZIP"
+      unzip -d /tmp/cmd /tmp/$ANDROID_CMDLINE_TOOLS_ZIP
+      set +o pipefail
+      yes | /tmp/cmd/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT $(eval echo $ANDROID_COMPONENTS)
+      set -o pipefail
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/dist/**
+      - build/src/libAusweisApp*
+
+Libraries_Android:
+  extends: .AndroidBase
+  tags:
+    - $HIGH_RUNNER
+  parallel:
+    matrix:
+      - arch: arm64-v8a
+      - arch: armeabi-v7a
+      - arch: x86_64
+  script:
+    - cmake -P source/ci.cmake -- -DCMAKE_ANDROID_ARCH_ABI=${arch}
+
+Android_AAR:
+  extends: .AndroidBase
+  tags:
+    - $MEDIUM_RUNNER
+  needs:
+    - job: Libraries_Android
+      artifacts: false
+      optional: true
+  parallel:
+    matrix:
+      - arch:
+          - arm64-v8a
+          - armeabi-v7a
+          - x86_64
+  script:
+    - cmake -DPROPAGATE=ON -P source/ci.cmake -- -DCMAKE_ANDROID_ARCH_ABI=${arch}
+  artifacts:
+    reports:
+      junit: build/lint-results-junit.xml
+
+Android_Merged-AAR:
+  extends: .Base
+  tags:
+    - $LOW_RUNNER
+  needs:
+    - job: Android_AAR
+      artifacts: true
+  script:
+    - apk add maven gnupg
+    - find build/dist -type f -exec mv {} $CI_PROJECT_DIR/ \;
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/dist/**
+
+Android_APK:
+  extends: .AndroidBase
+  tags:
+    - $MEDIUM_RUNNER
+  needs:
+    - job: Libraries_Android
+      artifacts: false
+      optional: true
+  parallel:
+    matrix:
+      - arch:
+          - arm64-v8a
+          - armeabi-v7a
+          - x86_64
+  script:
+    - |
+      if [ "$RELEASE" == "true" ]; then
+        uv pip install google-api-python-client
+      fi
+    - cmake -DPROPAGATE=ON -P source/ci.cmake -- -DCMAKE_ANDROID_ARCH_ABI=${arch}
+  artifacts:
+    reports:
+      junit: build/lint-results-junit.xml
+
+Docs:
+  extends: .Base
+  script:
+    - |
+      apk add py3-setuptools icu poppler zziplib enscript ghostscript \
+              py3-sphinx py3-sphinx_rtd_theme py3-sphinx-copybutton py3-sphinxcontrib-tabs \
+              pandoc texlive texmf-dist-latexrecommended texmf-dist-fontsrecommended texmf-dist-latexextra \
+              texmf-dist-langgerman
+    - uv pip install doc8
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/*-Lizenz.pdf
+      - build/*-Lizenz.txt
+      - build/docs/**/*.pdf
+      - build/docs/**/*.tar.xz
+      - build/docs/notes/singlehtml/**/appcast.html
+      - build/docs/**/*.inv
+
+Source:
+  extends: .Base
+  script:
+    - apk add gnupg
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/*.tar.gz*
+
+Container:
+  image: ${DOCKER_REGISTRY_MIRROR}/alpine:3.23
+  extends: .Base
+  tags:
+    - $CONTAINER_RUNNER
+  parallel:
+    matrix:
+      - target:
+          - SDK
+          - VNC
+  variables:
+    STORAGE_DRIVER: vfs
+  script:
+    - apk add podman buildah runc netavark iptables
+    - |
+      cat <<EOF > /etc/containers/registries.conf.d/mirror.conf
+
+      [[registry]]
+      location = "docker.io"
+      mirror-by-digest-only = false
+
+      [[registry.mirror]]
+      location = "${DOCKER_REGISTRY_MIRROR}"
+      EOF
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/AusweisApp*.tar
+
+FreeBSD:
+  extends: .Base
+  tags:
+    - freebsd
+  script:
+    - unset CCACHE_REMOTE_STORAGE
+    - unset CCACHE_REMOTE_ONLY
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: build/**/results.*.junit.xml
+
+Libraries_iOS:
+  extends: .Base
+  parallel:
+    matrix:
+      - target:
+          - OS
+          - Simulator_x86_64
+          - Simulator_arm64
+  tags:
+    - iOS
+  script:
+    - cmake -P source/ci.cmake
+
+.iOS:
+  extends: .Base
+  tags:
+    - iOS
+  script:
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/*.ipa
+      - build/*.zip
+      - build/*.bcsymbolmap
+      - AusweisApp_BuildDir.tar.zstd
+
+iOS_IPA:
+  extends: .iOS
+  needs:
+    - job: Libraries_iOS
+      artifacts: false
+      optional: true
+      parallel:
+        matrix:
+          - target: OS
+  parallel:
+    matrix:
+      - USE_APPSTORE_PROFILE:
+          - 'ON'
+          - 'OFF'
+  script:
+    - cmake -P source/ci.cmake -- -DUSE_APPSTORE_PROFILE=${USE_APPSTORE_PROFILE}
+
+iOS_Framework:
+  extends: .iOS
+  needs:
+    - job: Libraries_iOS
+      artifacts: false
+      optional: true
+  parallel:
+    matrix:
+      - target:
+          - OS
+          - Simulator_x86_64
+          - Simulator_arm64
+
+iOS_SwiftPackage:
+  extends: .iOS
+  needs:
+    - job: iOS_Framework
+      artifacts: true
+  script:
+    - find build -type f -exec mv {} $CI_PROJECT_DIR/ \;
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/dist/*.zip
+
+Libraries_MacOS:
+  extends: .Base
+  tags:
+    - macOS
+  script:
+    - cmake -P source/ci.cmake
+
+MacOS:
+  extends: Libraries_MacOS
+  needs:
+    - job: Libraries_MacOS
+      artifacts: false
+      optional: true
+  parallel:
+    matrix:
+      - target: PKG
+        USE_APPSTORE_PROFILE: 'ON'
+      - target: PKG_DMG
+        USE_APPSTORE_PROFILE: 'OFF'
+      - target: dev
+      - target: Integrated
+  script:
+    - cmake -P source/ci.cmake -- -DUSE_APPSTORE_PROFILE=${USE_APPSTORE_PROFILE}
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/*.zip
+      - build/*.dmg*
+      - build/*.pkg*
+    reports:
+      junit: build/**/results.*.junit.xml
+
+Appium_macOS:
+  extends: .Base
+  tags:
+    - macOS
+  needs:
+    - job: MacOS
+      artifacts: true
+      parallel:
+        matrix:
+          - target: dev
+  resource_group: appium_$CI_RUNNER_ID
+  variables:
+    NODEJS_VERSION: 24.14.1
+    APPIUM_VERSION: 3.4.2
+    MAC2_DRIVER_VERSION: 3.2.16
+    NODEJS_DIR: $CI_PROJECT_DIR/nodejs
+    APPIUM_HOME: $NODEJS_DIR/appium
+    APPIUM_LOGFILE_SAVE_FOLDER: $CI_PROJECT_DIR/logs
+  script:
+    - mkdir ${NODEJS_DIR}
+    - |
+      curl --proto '=https' --tlsv1.2 -LsSf -o nodejs.xz -w "Finished: %{url}\n" \
+           $MIRROR_NODEJS/download/release/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-darwin-x64.tar.xz
+      tar -xf nodejs.xz -C $NODEJS_DIR --strip-components=1
+    - export PATH="$NODEJS_DIR/bin:$PATH"
+    - export NPM_CONFIG_CACHE=$NODEJS_DIR/cache
+    - npm install --prefix=${APPIUM_HOME} appium@${APPIUM_VERSION}
+    - export APPIUM_HOME=${APPIUM_HOME}
+    - export NODE_PATH=$APPIUM_HOME/node_modules
+    - export PATH="$APPIUM_HOME/node_modules/.bin:$PATH"
+    - appium driver install mac2@${MAC2_DRIVER_VERSION}
+    - pkgutil --expand $(find $CI_PROJECT_DIR -name AusweisApp*.pkg) pkg
+    - cmake -E tar xf pkg/com.governikus.ausweisapp2.pkg/Payload
+    - export APPIUM_APP_PATH=$CI_PROJECT_DIR/AusweisApp.app
+    - export AUSWEISAPP_INI_FILE=$APPIUM_APP_PATH/Contents/Resources/settings.ini
+    - export AUSWEISAPP_LOGFILE_FOLDER=$HOME/Library/Containers/com.governikus.ausweisapp2/Data/tmp
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    when: always
+    paths:
+      - $APPIUM_LOGFILE_SAVE_FOLDER/*.log
+
+.Windows:
+  extends: .Base
+  variables:
+    UV_VERSION: 0.12.3
+    CCACHE_VERSION: 4.14
+    JOM_VERSION: "1_1_7"
+    PERL_VERSION: 5.42.2.1
+    MSYS2_VERSION: "2025-12-13"
+  before_script:
+    - "ls env:"
+    - mkdir $env:BINARY_DIR -ErrorAction Stop | Out-Null
+    - |
+      curl --proto '=https' --tlsv1.2 -LsSf -o uv.zip -w "Finished: %{url}\n" `
+           $MIRROR_GITHUB/astral-sh/uv/releases/download/${UV_VERSION}/uv-x86_64-pc-windows-msvc.zip
+      tar -xf uv.zip -C $env:BINARY_DIR uv.exe
+    - |
+      curl --proto '=https' --tlsv1.2 -LsSf -o ccache.zip -w "Finished: %{url}\n" `
+           $MIRROR_GITHUB/ccache/ccache/releases/download/v${CCACHE_VERSION}/ccache-${CCACHE_VERSION}-windows-x86_64.zip
+      tar -xf ccache.zip --strip-components=1 -C $env:BINARY_DIR */ccache.exe
+      & "$env:BINARY_DIR/ccache.exe" --set-config=max_size=15.0G
+    - |
+      curl --proto '=https' --tlsv1.2 -LsSf -o jom.zip -w "Finished: %{url}\n" `
+           $MIRROR_QT/official_releases/jom/jom_${JOM_VERSION}.zip
+      tar -xf jom.zip -C $env:BINARY_DIR jom.exe
+    - |
+      if ($env:CI_RUNNER_TAGS -match 'MSVC') {
+            $baseUrl = "$MIRROR_GITHUB/StrawberryPerl/Perl-Dist-Strawberry/releases/download"
+            $PERL_VERSION_STRIPPED = ${PERL_VERSION} -replace '\.', ''
+            curl --proto '=https' --tlsv1.2 -LsSf -o perl.zip -w "Finished: %{url}\n" `
+                 ${baseUrl}/SP_${PERL_VERSION_STRIPPED}_64bit/strawberry-perl-${PERL_VERSION}-64bit-portable.zip
+            mkdir $env:BINARY_DIR/perl -ErrorAction Stop | Out-Null
+            tar -xf perl.zip -C $env:BINARY_DIR/perl
+      }
+      if ($env:CI_RUNNER_TAGS -match 'GNU') {
+            $baseUrl = "$MIRROR_GITHUB/msys2/msys2-installer/releases/download"
+            $MSYS2_VERSION_STRIPPED = ${MSYS2_VERSION} -replace '-', ''
+            curl --proto '=https' --tlsv1.2 -LsSf -o msys2.tar.xz -w "Finished: %{url}\n" `
+                 ${baseUrl}/${MSYS2_VERSION}/msys2-base-x86_64-${MSYS2_VERSION_STRIPPED}.tar.xz
+            tar -xf msys2.tar.xz -C $env:BINARY_DIR
+      }
+    - |
+      $env:PATH = "$env:BINARY_DIR;$env:PATH"
+      if ($env:CI_RUNNER_TAGS -match 'MSVC') {
+        $env:PATH = "$env:PATH;$env:BINARY_DIR/perl/perl/bin"
+      }
+      if ($env:CI_RUNNER_TAGS -match 'GNU') {
+        $env:PATH = "$env:PATH;$env:BINARY_DIR/msys64/usr/bin"
+      }
+    - uv venv $env:VIRTUAL_ENV --python 3.12
+    - '& "$env:VIRTUAL_ENV/Scripts/activate.ps1"'
+    - uv pip install mercurial==7.2.4 cmake==4.4.2 ninja==1.13.2
+    # https://foss.heptapod.net/mercurial/mercurial-devel/-/issues/6635
+    - $env:PATH = "$env:PATH;$env:VIRTUAL_ENV/Lib/site-packages"
+    - hg clone --stream ${REPOSITORY} -u $REVISION source
+  script:
+    - cmake -P source/ci.cmake
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build/*.msi*
+      - build/Appcast*
+      - build/sbom/*.spdx
+    reports:
+      junit: build/**/results.*.junit.xml
+
+Libraries_Win_GNU:
+  extends: .Windows
+  tags:
+    - Win64_GNU
+
+Libraries_Win_MSVC:
+  extends: .Windows
+  tags:
+    - Win64_MSVC
+  parallel:
+    matrix:
+      - target:
+          - release
+          - dev
+
+Win_GNU:
+  extends: Libraries_Win_GNU
+  needs:
+    - job: Libraries_Win_GNU
+      artifacts: false
+      optional: true
+  parallel:
+    matrix:
+      - target:
+          - MSI
+          - dev
+
+Win_MSVC:
+  extends: Libraries_Win_MSVC
+  needs:
+    - job: Libraries_Win_MSVC
+      artifacts: false
+      optional: true
+  parallel:
+    matrix:
+      - target: MSI
+        compiler: [cl, clang-cl, clang++]
+      - target: dev
+        compiler: cl
+  script:
+    - cmake -P source/ci.cmake -- -DCMAKE_CXX_COMPILER="$env:compiler"
+
+.Deploy:
+  extends: .Base
+  tags:
+    - $DEPLOY_RUNNER
+  stage: deploy
+  script:
+    - find build -type f -exec mv {} $CI_PROJECT_DIR/ \;
+    - cmake -P source/ci.cmake
+
+Deploy_iOS_IPA:
+  extends: .Deploy
+  tags:
+    - iOS
+  needs:
+    - job: iOS_IPA
+      parallel:
+        matrix:
+          - USE_APPSTORE_PROFILE: 'ON'
+
+Deploy_Final_Framework:
+  extends: .Deploy
+  needs:
+    - job: iOS_SwiftPackage
+  script:
+    - apk add github-cli gnupg
+    - !reference [.Deploy, script]
+
+Deploy_MacOS_PKG:
+  extends: .Deploy
+  tags:
+    - macOS
+  needs:
+    - job: MacOS
+      parallel:
+        matrix:
+          - target: PKG
+            USE_APPSTORE_PROFILE: 'ON'
+
+Deploy_Android_APK:
+  extends: .Deploy
+  needs:
+    - job: Android_APK
+  script:
+    - uv pip install google-api-python-client
+    - !reference [.Deploy, script]
+
+Deploy_Android_AAR:
+  extends: .Deploy
+  needs:
+    - job: Android_Merged-AAR
+  script:
+    - apk add curl
+    - !reference [.Deploy, script]
+
+Deploy_Archive:
+  extends: .Deploy
+  needs:
+    - job: Android_APK
+    - job: Android_Merged-AAR
+    - job: iOS_SwiftPackage
+    - job: iOS_IPA
+      parallel:
+        matrix:
+          - USE_APPSTORE_PROFILE: 'ON'
+          - USE_APPSTORE_PROFILE: 'OFF'
+    - job: MacOS
+      parallel:
+        matrix:
+          - target: PKG
+            USE_APPSTORE_PROFILE: 'ON'
+          - target: PKG_DMG
+            USE_APPSTORE_PROFILE: 'OFF'
+    - job: Win_MSVC
+      parallel:
+        matrix:
+          - target: MSI
+            compiler: cl
+    - job: Docs
+    - job: Source
+    - job: Container
+      parallel:
+        matrix:
+          - target: SDK
+  script:
+    - apk add samba-client
+    - uv pip install python-gitlab
+    - !reference [.Deploy, script]
+
+Deploy_Allowlist:
+  extends: .Deploy
+  needs:
+    - job: Win_MSVC
+      parallel:
+        matrix:
+          - target: MSI
+            compiler: cl
+    - job: MacOS
+      parallel:
+        matrix:
+          - target: PKG_DMG
+            USE_APPSTORE_PROFILE: 'OFF'
+  script:
+    - apk add curl
+    - !reference [.Deploy, script]
+
+Deploy_Cloud:
+  extends: .Deploy
+  needs:
+    - job: Android_APK
+    - job: iOS_IPA
+      parallel:
+        matrix:
+          - USE_APPSTORE_PROFILE: 'OFF'
+    - job: MacOS
+      parallel:
+        matrix:
+          - target: PKG_DMG
+            USE_APPSTORE_PROFILE: 'OFF'
+    - job: Win_MSVC
+      parallel:
+        matrix:
+          - target: MSI
+            compiler: cl
+  script:
+    - apk add curl
+    - !reference [.Deploy, script]
+
+Deploy_Final_Container:
+  extends: .Deploy
+  needs:
+    - job: Container
+      parallel:
+        matrix:
+          - target: SDK
+  script:
+    - apk add skopeo
+    - !reference [.Deploy, script]
+
+Deploy_Final_GitHub:
+  extends: .Deploy
+  needs:
+    - job: Android_APK
+    - job: Source
+    - job: MacOS
+      parallel:
+        matrix:
+          - target: PKG_DMG
+            USE_APPSTORE_PROFILE: 'OFF'
+    - job: Win_MSVC
+      parallel:
+        matrix:
+          - target: MSI
+            compiler: cl
+    - job: Docs
+  script:
+    - apk add github-cli gnupg
+    - !reference [.Deploy, script]
+
+Light_Configuration:
+  extends: Libraries_Linux
+  needs:
+    - job: Libraries_Linux
+      artifacts: false
+      optional: true
+  script:
+    - apk add check-jsonschema typos py3-codespell yamllint ruff
+    - cmake -P source/ci.cmake
+
+Light_Packages:
+  extends: .Base
+  script:
+    - uv pip install python-gitlab
+    - cmake -P source/ci.cmake

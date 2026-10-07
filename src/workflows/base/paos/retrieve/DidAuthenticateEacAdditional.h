@@ -1,11 +1,10 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
-#include "paos/PaosMessage.h"
-#include "paos/element/ConnectionHandle.h"
+#include "DidAuthenticateMessage.h"
 
 #include <QString>
 
@@ -13,24 +12,19 @@ namespace governikus
 {
 
 class DIDAuthenticateEACAdditional
-	: public PaosMessage
+	: public DidAuthenticateMessage
 {
 	friend class DidAuthenticateEacAdditionalParser;
 
 	private:
-		ConnectionHandle mConnectionHandle;
-		QString mDidName;
 		QString mSignature;
 
-		void setConnectionHandle(const ConnectionHandle& pConnectionHandle);
-		void setDidName(const QString& didName);
 		void setSignature(const QString& signature);
 
 	public:
 		DIDAuthenticateEACAdditional();
 		~DIDAuthenticateEACAdditional() override;
 
-		[[nodiscard]] const QString& getDidName() const;
 		[[nodiscard]] const QString& getSignature() const;
 };
 

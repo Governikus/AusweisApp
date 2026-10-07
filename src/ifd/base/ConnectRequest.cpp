@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "ConnectRequest.h"
@@ -40,7 +40,7 @@ ConnectRequest::ConnectRequest(const Discovery& pDiscovery,
 	}
 	else
 	{
-		auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+		const auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 		if (!remoteServiceSettings.checkAndGenerateKey(Env::getSingleton<SecureStorage>()->getIfdCreateSize()))
 		{
 			qCCritical(ifd) << "Cannot get required key/certificate for tls";
@@ -64,7 +64,7 @@ QSslConfiguration ConnectRequest::getTlsConfiguration() const
 	}
 	else
 	{
-		auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+		const auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 		if (mPsk.isEmpty())
 		{
 			config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd().getConfiguration();
@@ -329,6 +329,14 @@ void ConnectRequest::start()
 		connect(socket.data(), &QWebSocket::sslErrors, this, [socket, this](const QList<QSslError>& pErrors){onSslErrors(socket, pErrors);});
 		connect(socket.data(), &QWebSocket::connected, this, [socket, this](){onConnected(socket);});
 		connect(socket.data(), &QWebSocket::errorOccurred, this, [socket, this](QAbstractSocket::SocketError pError){onError(socket, pError);});
+		connect(socket.data(), &QWebSocket::alertReceived, this, [](QSsl::AlertLevel pLevel, QSsl::AlertType pType, const QString& pDesc)
+				{
+					qCInfo(ifd) << "Got TLS alert:" << pLevel << pType << pDesc;
+				});
+		connect(socket.data(), &QWebSocket::alertSent, this, [](QSsl::AlertLevel pLevel, QSsl::AlertType pType, const QString& pDesc)
+				{
+					qCInfo(ifd) << "Sent TLS alert:" << pLevel << pType << pDesc;
+				});
 
 		mSockets << socket;
 		QMetaObject::invokeMethod(this, [socket, address] {

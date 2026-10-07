@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -62,12 +62,11 @@ class AccessRightManager
 
 	private:
 		QSharedPointer<const CVCertificate> mTerminalCvc;
-		QSharedPointer<DIDAuthenticateEAC1> mDIDAuthenticateEAC1;
 		QSet<AccessRight> mOptionalAccessRights;
 		QSet<AccessRight> mEffectiveAccessRights;
 		QSet<AccessRight> mRequiredAccessRights;
 
-		void removeForbiddenAccessRights(QSet<AccessRight>& pAccessRights);
+		void removeForbiddenAccessRights(QSet<AccessRight>& pAccessRights, QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1);
 };
 
 } // namespace governikus

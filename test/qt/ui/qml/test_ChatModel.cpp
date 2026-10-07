@@ -1,14 +1,14 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "ChatModel.h"
 
 #include "context/SelfAuthContext.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
+#include "paos/retrieve/PaosParser.h"
 
 #include "TestAuthContext.h"
-#include "TestFileHelper.h"
+#include "TestParserHelper.h"
 
 #include <QDebug>
 #include <QPointer>
@@ -189,12 +189,13 @@ class test_ChatModel
 		void test_DataNameRole()
 		{
 			mModel->resetContext(mAuthContext);
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
-			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			const auto& parser = TestParserHelper::create(":/paos/DIDAuthenticateEAC1.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
 			mAuthContext->setDidAuthenticateEac1(eac1);
 			mAuthContext->setDvCvc(eac1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).at(0));
 			mAuthContext->initAccessRightManager(eac1->getCvCertificates({AccessRole::AT}).at(0));
-			const QString requiredAge = mAuthContext->getDidAuthenticateEac1()->getAuthenticatedAuxiliaryData()->getRequiredAge();
+			const QString requiredAge = eac1->getAuthenticatedAuxiliaryData()->getRequiredAge();
 
 			QModelIndex index = mModel->createIndex(0, 0);
 			mModel->mAllRights = {AccessRight::AGE_VERIFICATION, AccessRight::READ_DG15};

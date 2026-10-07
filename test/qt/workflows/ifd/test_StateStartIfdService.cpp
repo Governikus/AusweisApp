@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateStartIfdService.h"
@@ -41,7 +41,7 @@ class test_StateStartIfdService
 			QCOMPARE(context->getCan(), QString());
 			QCOMPARE(context->getPuk(), QString());
 			QCOMPARE(context->getCardConnection(), QSharedPointer<CardConnection>());
-			QCOMPARE(context->getLastPaceResult(), CardReturnCode::OK);
+			QCOMPARE(context->getPaceOutput().getReturnCode(), CardReturnCode::UNDEFINED);
 			QVERIFY(context->getSlotHandle().isEmpty());
 			QCOMPARE(context->getModifyPinMessage(), QSharedPointer<const IfdModifyPin>());
 		}

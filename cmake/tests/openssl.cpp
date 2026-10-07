@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 #include <QCoreApplication>
@@ -24,10 +24,6 @@
 
 #ifdef OPENSSL_NO_PSK
 	#error RSA-PSK is required.
-#endif
-
-#ifdef OPENSSL_NO_EC_EXPLICIT_CURVES
-	#error Enable "ec_explicit_curves" in OpenSSL or use -DUSE_LEGACY_OPENSSL_API=ON if possible.
 #endif
 
 int main(int argc, char** argv)

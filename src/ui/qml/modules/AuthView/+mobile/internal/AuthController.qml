@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -39,7 +39,7 @@ Controller {
 	}
 	function displayInputError() {
 		replace(inputErrorView, {
-			returnCode: AuthModel.lastReturnCode,
+			returnCode: AuthModel.lastPaceResult,
 			inputError: NumberModel.inputError,
 			passwordType: NumberModel.passwordType
 		});
@@ -101,10 +101,10 @@ Controller {
 			AuthModel.continueWorkflow();
 			break;
 		case "StateEnterPacePassword":
-			if (AuthModel.lastReturnCode === CardReturnCode.OK_CAN) {
+			if (AuthModel.lastPaceResult === PaceResult.OK_CAN) {
 				displaySuccessView(NumberModel.PasswordType.CAN);
 				return;
-			} else if (AuthModel.lastReturnCode === CardReturnCode.OK_PUK) {
+			} else if (AuthModel.lastPaceResult === PaceResult.OK_PUK) {
 				displaySuccessView(NumberModel.PasswordType.PUK);
 				return;
 			}
@@ -115,7 +115,7 @@ Controller {
 			}
 			if (NumberModel.initialInputError !== "") {
 				replace(inputErrorView, {
-					returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? CardReturnCode.INVALID_CAN : CardReturnCode.INVALID_PUK,
+					returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? PaceResult.INVALID_CAN : PaceResult.INVALID_PUK,
 					inputError: NumberModel.initialInputError,
 					passwordType: NumberModel.passwordType,
 					titleVisible: false
@@ -144,7 +144,7 @@ Controller {
 		case "StateSendDIDAuthenticateResponseEAC1":
 			userCancelAndManualRedirect = false;
 			if (AuthModel.isCancellationByUser()) {
-				if (SettingsModel.autoRedirectAfterAuthentication) {
+				if (SettingsModel.autoRedirectAfterAuthentication || AuthModel.changeTransportPin) {
 					push(regularAbortedAuthView);
 				} else {
 					userCancelAndManualRedirect = true;
@@ -304,6 +304,7 @@ Controller {
 			qsTr("Back to start page")
 
 			navigationAction: NavigationAction {
+				Accessible.id: "SelfAuthenticationData_backAction"
 				action: root.startedByOnboarding ? NavigationAction.Action.Back : NavigationAction.Action.Close
 
 				onClicked: {
@@ -372,7 +373,7 @@ Controller {
 
 		EnterPasswordView {
 			//: MOBILE A11y button to confirm the PIN and start the provider authentication
-			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
+			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Confirm password and authenticate with provider") : ""
 			moreInformationText: infoData.linkText
 			title: root.title
 
@@ -477,7 +478,6 @@ Controller {
 
 			LogModel {
 				id: logModel
-
 			}
 		}
 	}

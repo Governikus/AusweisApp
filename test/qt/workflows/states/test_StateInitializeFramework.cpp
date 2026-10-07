@@ -1,10 +1,13 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
-#include "TestFileHelper.h"
-#include "states/StateBuilder.h"
 #include "states/StateInitializeFramework.h"
+
+#include "paos/retrieve/PaosParser.h"
+#include "states/StateBuilder.h"
+
+#include "TestParserHelper.h"
 
 #include <QtCore>
 #include <QtTest>
@@ -30,8 +33,10 @@ class test_StateInitializeFramework
 		void initTestCase()
 		{
 			mAuthContext.reset(new AuthContext());
-			auto fileContent = TestFileHelper::readFile(":/paos/InitializeFramework.xml"_L1);
-			mAuthContext->setInitializeFramework(QSharedPointer<InitializeFramework>(new InitializeFramework(fileContent)));
+			auto parser = TestParserHelper::create(":/paos/InitializeFramework.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const QSharedPointer<InitializeFramework> initFramework(static_cast<InitializeFramework*>(pm));
+			mAuthContext->setInitializeFramework(initFramework);
 
 			mState.reset(StateBuilder::createState<StateInitializeFramework>(mAuthContext));
 			mState->onEntry(nullptr);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -76,11 +76,13 @@ FlickableSectionPage {
 		snapMode: ListView.SnapOneItem
 
 		delegate: Tile {
+			required property string a11yId
 			required property url imagePath
 			required property int index
 			required property int module
 			required property string titleText
 
+			Accessible.id: a11yId
 			Accessible.name: titleText + ". " + qsTr("Item %1 of %2").arg(index + 1).arg(tileView.count) + (tileView.allItemsVisible ? "" : " . " + tileView.scrollHint)
 			focusPolicy: ApplicationModel.screenReaderRunning ? Qt.StrongFocus : Qt.TabFocus
 			height: ListView.view.height
@@ -92,9 +94,9 @@ FlickableSectionPage {
 				tileView.decrementCurrentIndex()
 			Accessible.onScrollRightAction: if (tileView.isIos)
 				tileView.incrementCurrentIndex()
-			onClicked: root.show(module)
-			onFocusChanged: if (focus && (!tileView.moving || ApplicationModel.screenReaderRunning))
+			onActiveFocusChanged: if (activeFocus && (!tileView.moving || ApplicationModel.screenReaderRunning))
 				tileView.positionViewAtIndex(index, ListView.SnapPosition)
+			onClicked: root.show(module)
 
 			FocusFrame {
 				marginFactor: -2
@@ -102,18 +104,21 @@ FlickableSectionPage {
 		}
 		model: ListModel {
 			ListElement {
+				a11yId: "MainView_CheckDevice"
 				imagePath: "qrc:///images/mobile/device_tile.svg"
 				module: UiModule.CHECK_ID_CARD
 				//: MOBILE
 				titleText: qsTr("Check device and ID card")
 			}
 			ListElement {
+				a11yId: "MainView_ChangePin"
 				imagePath: "qrc:///images/lock.svg"
 				module: UiModule.PINMANAGEMENT
 				//: MOBILE
 				titleText: qsTr("Change PIN")
 			}
 			ListElement {
+				a11yId: "MainView_SelfAuthentication"
 				imagePath: "qrc:///images/mydata_tile.svg"
 				module: UiModule.SELF_AUTHENTICATION
 				//: MOBILE

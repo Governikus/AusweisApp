@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 
@@ -10,7 +10,6 @@
 #include "SingletonHelper.h"
 
 #include <QDebug>
-#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonDocument>
@@ -22,7 +21,9 @@
 
 using namespace governikus;
 
+
 Q_DECLARE_LOGGING_CATEGORY(securestorage)
+
 
 namespace
 {
@@ -71,6 +72,7 @@ CONFIG_NAME(CONFIGURATION_NAME_SIZES_IFD_MIN, "min")
 
 } // namespace
 
+
 defineSingleton(SecureStorage)
 
 
@@ -98,17 +100,6 @@ SecureStorage::SecureStorage()
 	, mCreateKeySizeIfd()
 {
 	load();
-}
-
-
-QString SecureStorage::getDeveloperConfig() const
-{
-	if (BuildHelper::getCertificateType() == CertificateType::DEVELOPER)
-	{
-		return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QStringLiteral("/config.json");
-	}
-
-	return QString();
 }
 
 
@@ -177,7 +168,7 @@ QJsonObject SecureStorage::loadFile(const QStringList& pFiles) const
 
 void SecureStorage::load()
 {
-	const QStringList files({getDeveloperConfig(), getCustomConfig(), getEmbeddedConfig()});
+	const QStringList files({getCustomConfig(), getEmbeddedConfig()});
 	qCDebug(securestorage) << "Try locations:" << files;
 	const auto& config = loadFile(files);
 	if (config.isEmpty())
@@ -192,7 +183,6 @@ void SecureStorage::load()
 
 	mCvcasTest.clear();
 	mCvcasTest = readByteArrayList(config, CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE_TEST());
-	mCvcasTest = loadTestCvcsFromAppDir() + mCvcasTest;
 
 	QByteArrayList certificates = readByteArrayList(config, CONFIGURATION_GROUP_NAME_UPDATE_CERTIFICATES());
 	mUpdateCertificates.clear();
@@ -279,44 +269,6 @@ bool SecureStorage::isValid() const
 		   && mTlsConfigLocalIfd.isValid()
 		   && !mMinKeySizes.isEmpty()
 		   && mLocalIfdMinPskSize > 0;
-}
-
-
-QByteArrayList SecureStorage::loadTestCvcsFromAppDir() const
-{
-	QByteArrayList testCvcs;
-	const QDir appDir(QCoreApplication::applicationDirPath());
-	const QStringList& dirEntries = appDir.entryList({QStringLiteral("*.cvcert.hex")}, QDir::Files);
-	for (QString cvcFilePath : dirEntries)
-	{
-		cvcFilePath = appDir.absolutePath() + QDir::separator() + cvcFilePath;
-		const QByteArray& hex = loadTestCvc(cvcFilePath);
-		if (hex.isEmpty())
-		{
-			qWarning() << "Can not load CVC from" << cvcFilePath;
-			continue;
-		}
-
-		qDebug() << "Adding CVC from" << cvcFilePath << ':' << hex;
-		testCvcs += hex;
-	}
-	return testCvcs;
-}
-
-
-QByteArray SecureStorage::loadTestCvc(const QString& pPath) const
-{
-	QFile cvcFile(pPath);
-	const int TEN_MEGA_BYTE = 10 * 1024 * 1024;
-	if (cvcFile.size() > TEN_MEGA_BYTE)
-	{
-		return QByteArray();
-	}
-	if (!cvcFile.open(QFile::ReadOnly | QFile::Text))
-	{
-		return QByteArray();
-	}
-	return cvcFile.readAll();
 }
 
 

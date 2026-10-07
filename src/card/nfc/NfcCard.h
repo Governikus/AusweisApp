@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -25,7 +25,6 @@ class NfcCard
 	public:
 		explicit NfcCard(QNearFieldTarget* pNearFieldTarget);
 
-		[[nodiscard]] bool isValid() const;
 		[[nodiscard]] bool invalidateTarget(const QNearFieldTarget* pNearFieldTarget);
 		[[nodiscard]] bool matchesTarget(const QNearFieldTarget* pNearFieldTarget) const;
 

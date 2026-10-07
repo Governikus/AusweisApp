@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -7,31 +7,32 @@
 #include "paos/PaosMessage.h"
 #include "paos/element/ElementParser.h"
 
+class test_PaosParser;
+
 namespace governikus
 {
 
 class PaosParser
-	: public ElementParser
 {
-	public:
-		explicit PaosParser(const QString& pMessageName);
-		~PaosParser() override;
-
-		PaosMessage* parse(const QByteArray& pXmlData);
-
-	protected:
-		virtual PaosMessage* parseMessage() = 0;
-
-		[[nodiscard]] QStringView getElementType() const;
+	friend class ::test_PaosParser;
 
 	private:
-		QString mMessageName;
+		QSharedPointer<ElementParser> mParser;
 		QString mMessageID;
 		QString mRelatesTo;
 
-		PaosMessage* parseEnvelope();
+		[[nodiscard]] std::unique_ptr<PaosMessage> parseMessage();
+		[[nodiscard]] QSharedPointer<ElementParser> getParser();
+		[[nodiscard]] std::unique_ptr<PaosMessage> parseEnvelope();
+		[[nodiscard]] std::unique_ptr<PaosMessage> parseBody();
 		void parseHeader();
-		PaosMessage* parseBody();
+
+	public:
+		explicit PaosParser();
+		virtual ~PaosParser();
+
+		[[nodiscard]] std::unique_ptr<PaosMessage> parse(const QSharedPointer<ElementParser>& pParser);
+
 
 };
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus Service GmbH, Germany
  */
 
 #include "RedirectRequest.h"
@@ -16,7 +16,8 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(rproxy)
 
 RedirectRequest::RedirectRequest(const QSharedPointer<HttpRequest>& pRequest, QObject* pParent)
-	: QTcpSocket(pParent)
+	: QObject(pParent)
+	, mSocket()
 	, mRequest(pRequest)
 	, mPortWrapper(pRequest->getLocalPort(), pRequest->getPeerPort())
 	, mAnswerReceived(false)
@@ -31,25 +32,24 @@ RedirectRequest::RedirectRequest(const QSharedPointer<HttpRequest>& pRequest, QO
 				}
 			});
 
-	connect(this, &QAbstractSocket::disconnected, this, &QObject::deleteLater);
+	connect(&mSocket, &QAbstractSocket::disconnected, this, &QObject::deleteLater);
 
-	connect(this, &QAbstractSocket::errorOccurred, this, [this] {
+	connect(&mSocket, &QAbstractSocket::errorOccurred, this, [this] {
 				if (!isAnswerReceived())
 				{
-					qCWarning(rproxy) << "Cannot redirect:" << error();
-					mPortWrapper.invalidate();
+					qCWarning(rproxy) << "Cannot redirect:" << mSocket.error();
 					redirect();
 					return;
 				}
 				deleteLater();
 			});
 
-	connect(this, &QAbstractSocket::readyRead, this, [this] {
-				mRequest->send(readAll());
+	connect(&mSocket, &QAbstractSocket::readyRead, this, [this] {
+				mRequest->send(mSocket.readAll());
 				answerReceived();
 			});
 
-	connect(this, &QAbstractSocket::connected, this, [this] {
+	connect(&mSocket, &QAbstractSocket::connected, this, [this] {
 				if (qEnvironmentVariableIsSet("AUSWEISAPP_PROXY_USE_REDIRECT"))
 				{
 					sendHttpRedirect();
@@ -63,8 +63,8 @@ RedirectRequest::RedirectRequest(const QSharedPointer<HttpRequest>& pRequest, QO
 			});
 
 	connect(mRequest.data(), &HttpRequest::fireSocketBuffer, this, [this] (const QByteArray& pBuffer){
-				write(pBuffer);
-				flush();
+				mSocket.write(pBuffer);
+				mSocket.flush();
 			});
 
 	if (mPortWrapper.isEmpty())
@@ -109,7 +109,7 @@ RedirectRequest::~RedirectRequest()
 void RedirectRequest::sendHttpRedirect()
 {
 	const auto& scheme = mRequest->isUpgrade() ? QByteArrayLiteral("ws://") : QByteArrayLiteral("http://");
-	const auto host = mRequest->getHeader(QByteArrayLiteral("host")).replace(QByteArray::number(mRequest->getLocalPort()), QByteArray::number(peerPort()));
+	const auto host = mRequest->getHeader(QByteArrayLiteral("host")).replace(QByteArray::number(mRequest->getLocalPort()), QByteArray::number(mSocket.peerPort()));
 	const auto url = scheme + host + mRequest->getUrl().toString().toLatin1();
 
 	HttpResponse response(HTTP_STATUS_TEMPORARY_REDIRECT);
@@ -120,11 +120,11 @@ void RedirectRequest::sendHttpRedirect()
 
 void RedirectRequest::redirect()
 {
-	const auto port = mPortWrapper.fetchPort();
+	const auto port = mPortWrapper.pop();
 	if (port > 0)
 	{
 		qCDebug(rproxy) << "Redirect to port:" << port;
-		connectToHost(QHostAddress::LocalHost, port);
+		mSocket.connectToHost(QHostAddress::LocalHost, port);
 	}
 	else
 	{

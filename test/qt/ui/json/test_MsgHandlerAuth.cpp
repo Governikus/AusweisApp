@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "messages/MsgHandlerAuth.h"
@@ -230,7 +230,7 @@ class test_MsgHandlerAuth
 			QTest::addColumn<int>("statusMessages");
 
 			QTest::newRow("noStatus") << QVariant(false) << 0;
-			QTest::newRow("Status") << QVariant(true) << 2; // StateGetTcToken, StateCheckRefreshAddress
+			QTest::newRow("Status") << QVariant(true) << 1; // StateGetTcToken
 		}
 
 

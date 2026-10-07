@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -39,7 +39,7 @@ Item {
 			visible: availablePairedDevices.count > 0
 			width: parent.width
 
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
 
 			Repeater {
@@ -50,7 +50,7 @@ Item {
 				delegate: RemoteReaderDelegate {
 					Layout.fillWidth: true
 
-					onFocusChanged: if (focus)
+					onActiveFocusChanged: if (activeFocus)
 						Utils.positionViewAtItem(this)
 					onUnpairDevice: pDeviceId => RemoteServiceModel.forgetDevice(pDeviceId)
 				}
@@ -63,7 +63,7 @@ Item {
 			visible: unavailablePairedDevices.count > 0
 			width: parent.width
 
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
 
 			Repeater {
@@ -74,7 +74,7 @@ Item {
 				delegate: RemoteReaderDelegate {
 					Layout.fillWidth: true
 
-					onFocusChanged: if (focus)
+					onActiveFocusChanged: if (activeFocus)
 						Utils.positionViewAtItem(this)
 					onUnpairDevice: pDeviceId => RemoteServiceModel.forgetDevice(pDeviceId)
 				}
@@ -87,7 +87,7 @@ Item {
 			title: qsTr("Add pairing")
 			width: parent.width
 
-			onFocusChanged: if (focus)
+			onActiveFocusChanged: if (activeFocus)
 				Utils.positionViewAtItem(this)
 
 			Repeater {
@@ -98,7 +98,7 @@ Item {
 				delegate: RemoteReaderDelegate {
 					Layout.fillWidth: true
 
-					onFocusChanged: if (focus)
+					onActiveFocusChanged: if (activeFocus)
 						Utils.positionViewAtItem(this)
 					onPairDevice: pDeviceId => root.pairDevice(pDeviceId)
 				}

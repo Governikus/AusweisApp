@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -26,7 +26,5 @@ class Msg final
 		operator MsgType() const;
 		explicit operator bool() const;
 };
-
-char* toString(const Msg& pMsg);
 
 } // namespace governikus

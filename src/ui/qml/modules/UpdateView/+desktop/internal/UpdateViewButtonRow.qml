@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -38,7 +38,7 @@ ColumnLayout {
 		visible: root.downloadInProgress
 	}
 	GButton {
-		enabledTooltipText: SettingsModel.appUpdateData.url
+		enabledToolTipText: SettingsModel.appUpdateData.url
 		//: DESKTOP Start to download the update and execute it on Windows
 		text: qsTr("Start update")
 		visible: !root.downloadInProgress

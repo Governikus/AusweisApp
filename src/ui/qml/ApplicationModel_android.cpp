@@ -1,8 +1,10 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
+#include "AppSettings.h"
 #include "ApplicationModel.h"
+#include "VolatileSettings.h"
 
 #include <QJniEnvironment>
 #include <QJniObject>
@@ -187,4 +189,25 @@ bool ApplicationModel::isScreenRecording() const
 	QJniObject context = QNativeInterface::QAndroidApplication::context();
 	const jboolean result = context.callMethod<jboolean>("isScreenRecordingRunning", "()Z");
 	return result != JNI_FALSE;
+}
+
+
+void ApplicationModel::showAppStoreRatingDialog() const
+{
+	const bool appRatingShown = Env::getSingleton<VolatileSettings>()->appRatingShown();
+	const bool shouldShowAppRating = Env::getSingleton<AppSettings>()->getGeneralSettings().shouldShowAppStoreRatingDialog();
+	if (appRatingShown || isStartedByAuth() || !shouldShowAppRating)
+	{
+		return;
+	}
+
+	Env::getSingleton<VolatileSettings>()->setAppRatingShown(true);
+	QJniObject context = QNativeInterface::QAndroidApplication::context();
+	context.callMethod<void>("launchReviewFlow");
+}
+
+
+bool ApplicationModel::isStartedByAuth() const
+{
+	return QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
 }

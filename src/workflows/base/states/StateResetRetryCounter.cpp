@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateResetRetryCounter.h"
@@ -53,6 +53,7 @@ void StateResetRetryCounter::onResetRetryCounterDone(QSharedPointer<BaseCardComm
 				return;
 
 			case StatusCode::ACCESS_DENIED:
+			case StatusCode::DIRECTORY_OR_PASSWORD_LOCKED_OR_NOT_ALLOWED:
 				updateStatus(GlobalStatus::Code::Card_Puk_Blocked);
 				Q_EMIT fireAbort(FailureCode::Reason::Reset_Retry_Counter_Puk_Inoperative);
 				return;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "CardReturnCode.h"
@@ -349,6 +349,10 @@ class test_ECardApiResult
 			QTest::newRow("unknownWebserviceBinding") << ECardApiResult::Minor::DP_Unknown_Webservice_Binding << tr("The operation was aborted as an unknown web service binding was used.");
 			QTest::newRow("NodeNotReachable") << ECardApiResult::Minor::DP_Node_Not_Reachable << tr("A Communication error occurred during processing.");
 			QTest::newRow("IfdlTimeoutError") << ECardApiResult::Minor::IFDL_Timeout_Error << tr("The operation was terminated as the set time was exceeded.");
+			QTest::newRow("IfdlUnknownSlot") << ECardApiResult::Minor::IFDL_UnknownSlot << QString();
+			QTest::newRow("IfdlInvalidSlotHandle") << ECardApiResult::Minor::IFDL_InvalidSlotHandle << QString();
+			QTest::newRow("IfdlCancellationByUser") << ECardApiResult::Minor::IFDL_CancellationByUser << QString();
+			QTest::newRow("IfdlSharingViolation") << ECardApiResult::Minor::IFDL_IFD_SharingViolation << QString();
 			QTest::newRow("terminalNoCard") << ECardApiResult::Minor::IFDL_Terminal_NoCard << tr("The card is missing or was removed.");
 			QTest::newRow("repeatedDataMismatch") << ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch << tr("The new PIN and the confirmation do not match.");
 			QTest::newRow("unknownPinFormat") << ECardApiResult::Minor::IFDL_IO_UnknownPINFormat << tr("The format of the PIN is wrong.");
@@ -361,7 +365,6 @@ class test_ECardApiResult
 			QTest::newRow("communityVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_CommunityVerificationFailedWarning << tr("The community verification failed.");
 			QTest::newRow("documentValidityVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_DocumentValidityVerificationFailed << tr("The ID card is invalid or disabled.");
 			QTest::newRow("null") << ECardApiResult::Minor::null << QString();
-			QTest::newRow("default") << ECardApiResult::Minor::IFDL_IFD_SharingViolation << QString();
 		}
 
 
@@ -373,6 +376,61 @@ class test_ECardApiResult
 			ECardApiResult result(GlobalStatus::Code::Unknown_Error);
 
 			QCOMPARE(result.getMessage(minor), message);
+		}
+
+
+		void getRedirectStrings_data()
+		{
+			QTest::addColumn<ECardApiResult::Minor>("minor");
+			QTest::addColumn<QString>("majorString");
+			QTest::addColumn<QString>("minorString");
+
+			QTest::newRow("null") << ECardApiResult::Minor::null << "ok" << "clientError";
+			QTest::newRow("unknownError") << ECardApiResult::Minor::AL_Unknown_Error << "error" << "clientError";
+			QTest::newRow("noPermission") << ECardApiResult::Minor::AL_No_Permission << "error" << "clientError";
+			QTest::newRow("internalError") << ECardApiResult::Minor::AL_Internal_Error << "error" << "clientError";
+			QTest::newRow("parameterError") << ECardApiResult::Minor::AL_Parameter_Error << "error" << "clientError";
+			QTest::newRow("unknownApiFunction") << ECardApiResult::Minor::AL_Unknown_API_Function << "error" << "clientError";
+			QTest::newRow("notInitialized") << ECardApiResult::Minor::AL_Not_Initialized << "error" << "clientError";
+			QTest::newRow("warningDisconnected") << ECardApiResult::Minor::AL_Warning_Connection_Disconnected << "error" << "clientError";
+			QTest::newRow("sessionTerminated") << ECardApiResult::Minor::AL_Session_Terminated_Warning << "error" << "clientError";
+			QTest::newRow("communicationError") << ECardApiResult::Minor::AL_Communication_Error << "error" << "communicationError";
+			QTest::newRow("timeoutError") << ECardApiResult::Minor::DP_Timeout_Error << "error" << "clientError";
+			QTest::newRow("unknownChannelHandle") << ECardApiResult::Minor::DP_Unknown_Channel_Handle << "error" << "clientError";
+			QTest::newRow("dpCommunicationError") << ECardApiResult::Minor::DP_Communication_Error << "error" << "clientError";
+			QTest::newRow("channelEstablishmentFailed") << ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed << "error" << "trustedChannelEstablishmentFailed";
+			QTest::newRow("unknownProtocol") << ECardApiResult::Minor::DP_Unknown_Protocol << "error" << "clientError";
+			QTest::newRow("unknownCipherSuite") << ECardApiResult::Minor::DP_Unknown_Cipher_Suite << "error" << "clientError";
+			QTest::newRow("unknownWebserviceBinding") << ECardApiResult::Minor::DP_Unknown_Webservice_Binding << "error" << "clientError";
+			QTest::newRow("NodeNotReachable") << ECardApiResult::Minor::DP_Node_Not_Reachable << "error" << "clientError";
+			QTest::newRow("IfdlTimeoutError") << ECardApiResult::Minor::IFDL_Timeout_Error << "error" << "clientError";
+			QTest::newRow("IfdlUnknownSlot") << ECardApiResult::Minor::IFDL_UnknownSlot << "error" << "clientError";
+			QTest::newRow("IfdlInvalidSlotHandle") << ECardApiResult::Minor::IFDL_InvalidSlotHandle << "error" << "clientError";
+			QTest::newRow("IfdlCancellationByUser") << ECardApiResult::Minor::IFDL_CancellationByUser << "error" << "clientError";
+			QTest::newRow("IfdlSharingViolation") << ECardApiResult::Minor::IFDL_IFD_SharingViolation << "error" << "clientError";
+			QTest::newRow("terminalNoCard") << ECardApiResult::Minor::IFDL_Terminal_NoCard << "error" << "clientError";
+			QTest::newRow("repeatedDataMismatch") << ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch << "error" << "clientError";
+			QTest::newRow("unknownPinFormat") << ECardApiResult::Minor::IFDL_IO_UnknownPINFormat << "error" << "clientError";
+			QTest::newRow("invalidCertificatePath") << ECardApiResult::Minor::IL_Signature_InvalidCertificatePath << "error" << "clientError";
+			QTest::newRow("keyGenerationNotPossible") << ECardApiResult::Minor::KEY_KeyGenerationNotPossible << "error" << "clientError";
+			QTest::newRow("cancellationByUser") << ECardApiResult::Minor::SAL_Cancellation_by_User << "error" << "cancellationByUser";
+			QTest::newRow("invalidKey") << ECardApiResult::Minor::SAL_Invalid_Key << "error" << "clientError";
+			QTest::newRow("securityConditionNotSatisfied") << ECardApiResult::Minor::SAL_SecurityConditionNotSatisfied << "error" << "clientError";
+			QTest::newRow("ageVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_AgeVerificationFailedWarning << "error" << "clientError";
+			QTest::newRow("communityVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_CommunityVerificationFailedWarning << "error" << "clientError";
+			QTest::newRow("documentValidityVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_DocumentValidityVerificationFailed << "error" << "clientError";
+		}
+
+
+		void getRedirectStrings()
+		{
+			QFETCH(ECardApiResult::Minor, minor);
+			QFETCH(QString, majorString);
+			QFETCH(QString, minorString);
+
+			ECardApiResult result(minor == ECardApiResult::Minor::null ? ECardApiResult::Major::Ok : ECardApiResult::Major::Error, minor);
+			QCOMPARE(result.getRedirectMajor(), majorString);
+			QCOMPARE(result.getRedirectMinor(), minorString);
 		}
 
 

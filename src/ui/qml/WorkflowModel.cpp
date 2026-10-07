@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "WorkflowModel.h"
@@ -63,8 +63,8 @@ void WorkflowModel::resetWorkflowContext(const QSharedPointer<WorkflowContext>& 
 		connect(mContext.data(), &WorkflowContext::fireEidTypeMismatchChanged, this, &WorkflowModel::fireEidTypeMismatchErrorChanged);
 		connect(mContext.data(), &WorkflowContext::fireNextWorkflowPending, this, &WorkflowModel::fireNextWorkflowPendingChanged);
 		connect(mContext.data(), &WorkflowContext::fireRemoveCardFeedbackChanged, this, &WorkflowModel::fireRemoveCardFeedbackChanged);
-		connect(mContext.data(), &WorkflowContext::firePaceResultUpdated, this, &WorkflowModel::onPaceResultUpdated);
-		connect(mContext.data(), &WorkflowContext::firePaceResultUpdated, this, &WorkflowModel::fireLastReturnCodeChanged);
+		connect(mContext.data(), &WorkflowContext::firePaceOutputUpdated, this, &WorkflowModel::onPaceResultUpdated);
+		connect(mContext.data(), &WorkflowContext::firePaceOutputUpdated, this, &WorkflowModel::fireLastPaceResultChanged);
 		Q_EMIT fireWorkflowStarted();
 	}
 	else
@@ -117,17 +117,19 @@ bool WorkflowModel::isPukInoperative() const
 	{
 		return false;
 	}
+
 	return mContext->getStatus().getStatusCode() == GlobalStatus::Code::Card_Puk_Blocked;
 }
 
 
-CardReturnCode WorkflowModel::getLastReturnCode() const
+PaceResult WorkflowModel::getLastPaceResult() const
 {
 	if (mContext)
 	{
-		return mContext->getLastPaceResult();
+		return mContext->getPaceOutput().getPaceResult();
 	}
-	return CardReturnCode::UNDEFINED;
+
+	return PaceResult::UNDEFINED;
 }
 
 
@@ -305,15 +307,6 @@ GAnimation WorkflowModel::getStatusCodeAnimation() const
 		case GlobalStatus::Code::Card_ValidityVerificationFailed:
 			return GAnimation::CARD_ERROR;
 
-		case GlobalStatus::Code::Card_Invalid_Pin:
-			return GAnimation::PIN_ERROR;
-
-		case GlobalStatus::Code::Card_Invalid_Can:
-			return GAnimation::CAN_ERROR;
-
-		case GlobalStatus::Code::Card_Invalid_Puk:
-			return GAnimation::PUK_ERROR;
-
 		case GlobalStatus::Code::Card_Puk_Blocked:
 			return GAnimation::PUK_BLOCKED;
 
@@ -385,14 +378,14 @@ bool WorkflowModel::isCancellationByUser() const
 }
 
 
-QString WorkflowModel::getEmailHeader() const
+QString WorkflowModel::getEmailHeader(bool pPercentEncoding) const
 {
 	if (!mContext)
 	{
 		return QString();
 	}
 
-	return tr("%1 error report - %2").arg(QCoreApplication::applicationName(), mContext->getStatus().toErrorDescription());
+	return generateMailHeader(mContext->getStatus(), pPercentEncoding);
 }
 
 
@@ -411,7 +404,7 @@ QString WorkflowModel::getEmailBody(bool pPercentEncoding, bool pAddLogNotice) c
 void WorkflowModel::sendResultMail() const
 {
 	Q_ASSERT(mContext);
-	QString mailSubject = getEmailHeader();
+	QString mailSubject = getEmailHeader(true);
 	QString mailBody = getEmailBody(true, true);
 	const auto url = QUrl(QStringLiteral("mailto:support@ausweisapp.de?subject=%1&body=%2").arg(mailSubject, mailBody));
 
@@ -421,19 +414,24 @@ void WorkflowModel::sendResultMail() const
 
 void WorkflowModel::onPaceResultUpdated()
 {
-	if (mContext->getLastPaceResult() == CardReturnCode::OK_PUK)
+	if (mContext->getPaceOutput().getReturnCode() != CardReturnCode::OK)
 	{
-		Q_EMIT fireOnPinUnlocked();
-		return;
-	}
-	if (mContext->getLastPaceResult() == CardReturnCode::OK_CAN)
-	{
-		Q_EMIT fireOnCanSuccess();
 		return;
 	}
 
-	Q_EMIT fireOnPasswordUsed();
+	switch (mContext->getPaceOutput().getPaceResult())
+	{
+		case PaceResult::OK_CAN:
+			Q_EMIT fireOnCanSuccess();
+			return;
 
+		case PaceResult::OK_PUK:
+			Q_EMIT fireOnPinUnlocked();
+			return;
+
+		default:
+			return;
+	}
 }
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateProcessCertificatesFromEac2.h"
@@ -20,7 +20,7 @@ StateProcessCertificatesFromEac2::StateProcessCertificatesFromEac2(const QShared
 
 void StateProcessCertificatesFromEac2::run()
 {
-	if (getContext()->hasChainForCertificationAuthority(*getContext()->getPaceOutputData()))
+	if (getContext()->hasChainForCertificationAuthority(getContext()->getPaceOutput()))
 	{
 		qDebug() << "CVC chain already determined, skip further processing";
 		Q_EMIT fireContinue();
@@ -40,7 +40,7 @@ void StateProcessCertificatesFromEac2::run()
 	}
 	getContext()->initCvcChainBuilder(cvcs);
 
-	if (!getContext()->hasChainForCertificationAuthority(*getContext()->getPaceOutputData()))
+	if (!getContext()->hasChainForCertificationAuthority(getContext()->getPaceOutput()))
 	{
 		qCritical() << "No cvc chain determined, abort authentication";
 		updateStatus(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity);

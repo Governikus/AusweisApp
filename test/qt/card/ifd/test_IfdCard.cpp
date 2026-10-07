@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
 #include "IfdCard.h"
@@ -63,7 +63,7 @@ class test_IfdCard
 			QCOMPARE(card.transmit(CommandApdu()).mReturnCode, CardReturnCode::INPUT_TIME_OUT);
 
 			QTest::ignoreMessage(QtDebugMsg, "Expected answer ( IFDEstablishPACEChannelResponse ) was not received within 100 ms.");
-			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, QByteArray(), QByteArray()), EstablishPaceChannelOutput(CardReturnCode::INPUT_TIME_OUT));
+			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, QByteArray(), QByteArray()), EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::INPUT_TIME_OUT));
 
 			QTest::ignoreMessage(QtDebugMsg, "Expected answer ( IFDDestroyPACEChannelResponse ) was not received within 100 ms.");
 			QCOMPARE(card.destroyPaceChannel(), CardReturnCode::INPUT_TIME_OUT);
@@ -95,7 +95,7 @@ class test_IfdCard
 
 			QTest::ignoreMessage(QtWarningMsg, "Invalid messageType received: \"IFDTest\"");
 			QTest::ignoreMessage(QtCriticalMsg, "The value of msg should be IFDEstablishPACEChannelResponse");
-			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, QByteArray(), QByteArray()), EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED));
+			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, QByteArray(), QByteArray()), EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::COMMAND_FAILED));
 
 			QTest::ignoreMessage(QtWarningMsg, "Invalid messageType received: \"IFDTest\"");
 			QTest::ignoreMessage(QtCriticalMsg, "The value of msg should be IFDDestroyPACEChannelResponse");
@@ -112,13 +112,13 @@ class test_IfdCard
 			IfdCard card(mDispatcher, QStringLiteral("IfdReader"));
 
 			mDispatcher->setState(MockIfdDispatcher::DispatcherState::ReaderWithCard);
-			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, QByteArray(), QByteArray()), EstablishPaceChannelOutput(CardReturnCode::OK));
+			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, QByteArray(), QByteArray()), EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::OK));
 			QCOMPARE(card.setEidPin(1).mReturnCode, CardReturnCode::OK);
 
 			mDispatcher->setState(MockIfdDispatcher::DispatcherState::ReaderWithCardRemoved);
 			QTest::ignoreMessage(QtDebugMsg, "Card was removed while waiting for IFDEstablishPACEChannelResponse");
 			QTest::ignoreMessage(QtWarningMsg, "Ignoring unexpected message type: IFDStatus");
-			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, QByteArray(), QByteArray()), EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND));
+			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, QByteArray(), QByteArray()), EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::CARD_NOT_FOUND));
 			QTest::ignoreMessage(QtDebugMsg, "Card was removed while waiting for IFDModifyPINResponse");
 			QTest::ignoreMessage(QtWarningMsg, "Ignoring unexpected message type: IFDStatus");
 			QCOMPARE(card.setEidPin(1).mReturnCode, CardReturnCode::CARD_NOT_FOUND);

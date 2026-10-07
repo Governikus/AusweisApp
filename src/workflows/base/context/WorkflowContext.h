@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -15,6 +15,7 @@
 #include <QSharedPointer>
 #include <QString>
 #include <optional>
+
 
 namespace governikus
 {
@@ -44,9 +45,8 @@ class WorkflowContext
 		QString mPin;
 		QString mPuk;
 		PacePasswordId mEstablishPaceChannelType;
-		QScopedPointer<EstablishPaceChannelOutput> mPaceOutputData;
+		EstablishPaceChannelOutput mPaceOutput;
 		ReaderInfo mExpectedReader;
-		CardReturnCode mLastPaceResult;
 		GlobalStatus mStatus;
 		std::optional<FailureCode> mFailureCode;
 		ECardApiResult mStartPaosResult;
@@ -78,7 +78,7 @@ class WorkflowContext
 		void fireCanChanged();
 		void firePinChanged();
 		void firePukChanged();
-		void firePaceResultUpdated();
+		void firePaceOutputUpdated();
 		void fireResultChanged();
 		void fireCanAllowedModeChanged();
 		void firePasswordTypeChanged();
@@ -151,13 +151,11 @@ class WorkflowContext
 
 		virtual void resetPacePasswords();
 
-		[[nodiscard]] EstablishPaceChannelOutput* getPaceOutputData() const;
-		void setPaceOutputData(const EstablishPaceChannelOutput& pPaceOutputData);
+		[[nodiscard]] const EstablishPaceChannelOutput& getPaceOutput() const;
+		void setPaceOutput(const EstablishPaceChannelOutput& pPaceOutput);
+		void resetPaceOutput();
 
 		bool isPinBlocked();
-		[[nodiscard]] CardReturnCode getLastPaceResult() const;
-		void setLastPaceResult(CardReturnCode pLastPaceResult);
-		void resetLastPaceResult();
 
 		void rememberReader();
 		[[nodiscard]] bool remembersReader() const;

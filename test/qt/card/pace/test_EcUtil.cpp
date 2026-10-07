@@ -1,10 +1,8 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "pace/ec/EcUtil.h"
-
-#include "SimulatorFileSystem.h"
 
 #include "Converter.h"
 
@@ -22,12 +20,39 @@ class test_EcUtil
 {
 	Q_OBJECT
 
-	private Q_SLOTS:
-		void initTestCase()
+	private:
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+		QSharedPointer<EVP_PKEY> readPrivateKey()
+#else
+		QSharedPointer<EC_KEY> readPrivateKey()
+#endif
 		{
+			const QByteArray rawKey = QByteArray::fromHex(
+					"308202050201003081EC06072A8648CE3D02013081E0020101302C06072A8648CE3D0101022100A9FB57DBA1EEA9BC3E"
+					"660A909D838D726E3BF623D52620282013481D1F6E5377304404207D5A0975FC2C3057EEF67530417AFFE7FB8055C126"
+					"DC5C6CE94A4B44F330B5D9042026DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B6044104"
+					"8BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9"
+					"C27745132DED8E545C1D54C72F046997022100A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E8297"
+					"4856A70201010482010F3082010B0201010420A07EB62E891DAA84643E0AFCC1AF006891B669B8F51E379477DBEAB8C9"
+					"87A610A081E33081E0020101302C06072A8648CE3D0101022100A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D526"
+					"20282013481D1F6E5377304404207D5A0975FC2C3057EEF67530417AFFE7FB8055C126DC5C6CE94A4B44F330B5D90420"
+					"26DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B60441048BD2AEB9CB7E57CB2C4B482FFC"
+					"81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F"
+					"046997022100A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7020101");
+
+			const auto* dataPointer = reinterpret_cast<const unsigned char*>(rawKey.constData());
+			const auto& privateKey = EcUtil::create(d2i_PrivateKey(EVP_PKEY_EC, nullptr, &dataPointer, static_cast<long>(rawKey.length())));
+
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+			return privateKey;
+
+#else
+			return EcUtil::create(EVP_PKEY_get1_EC_KEY(privateKey.data()));
+
+#endif
 		}
 
-
+	private Q_SLOTS:
 		void compressPoint_data()
 		{
 			QTest::addColumn<QByteArray>("input");
@@ -134,10 +159,9 @@ class test_EcUtil
 
 		void generateKey()
 		{
-			QVERIFY(EcUtil::generateKey(nullptr).isNull());
+			QVERIFY(EcUtil::generateKey(NID_undef).isNull());
 
-			const auto& curve = EcUtil::createCurve(NID_brainpoolP256r1);
-			QVERIFY(!EcUtil::generateKey(curve).isNull());
+			QVERIFY(!EcUtil::generateKey(NID_brainpoolP256r1).isNull());
 		}
 
 
@@ -146,7 +170,7 @@ class test_EcUtil
 			QVERIFY(EcUtil::getEncodedPublicKey(nullptr, true).isNull());
 			QVERIFY(EcUtil::getEncodedPublicKey(nullptr, false).isNull());
 
-			const auto& key = SimulatorFileSystem().getKey(41);
+			const auto& key = readPrivateKey();
 			QCOMPARE(EcUtil::getEncodedPublicKey(key, true), QByteArray::fromHex("19D4B7447788B0E1993DB35500999627E739A4E5E35F02D8FB07D6122E76567F"));
 			QCOMPARE(EcUtil::getEncodedPublicKey(key, false), QByteArray::fromHex("0419D4B7447788B0E1993DB35500999627E739A4E5E35F02D8FB07D6122E76567F17758D7A3AA6943EF23E5E2909B3E8B31BFAA4544C2CBF1FB487F31FF239C8F8"));
 		}
@@ -156,7 +180,7 @@ class test_EcUtil
 		{
 			QVERIFY(EcUtil::getPrivateKey(nullptr).isNull());
 
-			const auto& key = SimulatorFileSystem().getKey(41);
+			const auto& key = readPrivateKey();
 			QCOMPARE(Converter::toHex(EcUtil::getPrivateKey(key).data()), QByteArray("A07EB62E891DAA84643E0AFCC1AF006891B669B8F51E379477DBEAB8C987A610"));
 		}
 

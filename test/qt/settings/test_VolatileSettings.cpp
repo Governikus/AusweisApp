@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus Service GmbH, Germany
  */
 
 #include "VolatileSettings.h"
@@ -93,6 +93,15 @@ class test_VolatileSettings
 			QCOMPARE(messages.getSessionFailed(), failed);
 			QCOMPARE(messages.getSessionSucceeded(), succeeded);
 			QCOMPARE(messages.getSessionInProgress(), progress);
+		}
+
+
+		void test_appRatingShown()
+		{
+			auto* settings = Env::getSingleton<VolatileSettings>();
+			QVERIFY(!settings->appRatingShown());
+			settings->setAppRatingShown(true);
+			QVERIFY(settings->appRatingShown());
 		}
 
 

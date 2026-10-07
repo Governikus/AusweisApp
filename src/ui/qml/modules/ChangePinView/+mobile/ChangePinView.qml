@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -46,11 +46,6 @@ SectionPage {
 		onClicked: root.close()
 	}
 
-	QtObject {
-		id: d
-
-		property bool oldLockedAndHiddenStatus
-	}
 	FadeInAnimation {
 		target: root
 	}
@@ -64,8 +59,6 @@ SectionPage {
 
 		function onFireWorkflowStarted() {
 			changePinController.createObject(root);
-			d.oldLockedAndHiddenStatus = root.getLockedAndHidden();
-			root.setLockedAndHidden(true);
 			ChangePinModel.setInitialPluginType();
 			enabled = false;
 		}
@@ -92,7 +85,6 @@ SectionPage {
 
 			onWorkflowFinished: pSuccess => {
 				root.pop(root);
-				root.setLockedAndHidden(d.oldLockedAndHiddenStatus);
 				root.workflowFinished(pSuccess);
 				this.destroy();
 			}
@@ -119,11 +111,7 @@ SectionPage {
 				root.push(changeTransportPinInfoView);
 			}
 		}
-		onNoPinAvailable: {
-			d.oldLockedAndHiddenStatus = root.getLockedAndHidden();
-			root.setLockedAndHidden();
-			root.push(multiInfoViewNoPin);
-		}
+		onNoPinAvailable: root.push(multiInfoViewNoPin)
 	}
 	ProgressTracker {
 		id: pinInfoProgress
@@ -186,6 +174,7 @@ SectionPage {
 
 		MultiInfoView {
 			continueButtonText: root.usedInOnboarding ? qsTr("Abort setup") : ""
+			lockAndHideNavigation: true
 
 			infoContent: MultiInfoData {
 				contentType: MultiInfoData.Type.NO_PIN
@@ -193,10 +182,7 @@ SectionPage {
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Back
 
-				onClicked: {
-					root.pop();
-					root.setLockedAndHidden(d.oldLockedAndHiddenStatus);
-				}
+				onClicked: root.pop()
 			}
 			progress: ProgressTracker {
 				baseProgressTracker: pinInfoProgress

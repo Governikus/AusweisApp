@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateEstablishPaceChannelIfd.h"
 
-#include "ServerMessageHandler.h"
 
 #include <QLoggingCategory>
+
 
 Q_DECLARE_LOGGING_CATEGORY(statemachine)
 
@@ -17,7 +17,6 @@ using namespace governikus;
 StateEstablishPaceChannelIfd::StateEstablishPaceChannelIfd(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
-	, mPasswordId(PacePasswordId::UNKNOWN)
 {
 }
 
@@ -28,21 +27,21 @@ void StateEstablishPaceChannelIfd::run()
 	Q_ASSERT(!getContext()->getSlotHandle().isEmpty());
 
 	const QSharedPointer<IfdServiceContext>& context = getContext();
+	const EstablishPaceChannel& paceChannel = context->getEstablishPaceChannel();
+	const auto passwordId = paceChannel.getPasswordId();
+
 	auto cardConnection = context->getCardConnection();
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "No card connection available";
-		EstablishPaceChannelOutput channelOutput;
-		channelOutput.setPaceReturnCode(CardReturnCode::CARD_NOT_FOUND);
-		getContext()->setEstablishPaceChannelOutput(channelOutput);
+		EstablishPaceChannelOutput channelOutput(passwordId, CardReturnCode::CARD_NOT_FOUND);
+		getContext()->setPaceOutput(channelOutput);
 		Q_EMIT fireContinue();
 		return;
 	}
 
-	const EstablishPaceChannel& paceChannel = context->getEstablishPaceChannel();
-	mPasswordId = paceChannel.getPasswordId();
 	QByteArray pacePassword;
-	switch (mPasswordId)
+	switch (passwordId)
 	{
 		case PacePasswordId::PACE_CAN:
 			pacePassword = context->getCan().toLatin1();
@@ -61,28 +60,15 @@ void StateEstablishPaceChannelIfd::run()
 			return;
 	}
 
-	qDebug() << "Establish connection using" << mPasswordId;
+	qDebug() << "Establish connection using" << passwordId;
 	Q_ASSERT(!pacePassword.isEmpty() || !cardConnection->getReaderInfo().isBasicReader());
 
 	*this << cardConnection->callEstablishPaceChannelCommand(this,
 			&StateEstablishPaceChannelIfd::onEstablishConnectionDone,
-			mPasswordId,
+			passwordId,
 			pacePassword,
 			paceChannel.getChat(),
 			paceChannel.getCertificateDescription());
-}
-
-
-void StateEstablishPaceChannelIfd::onReaderInfoChanged(const ReaderInfo& pReaderInfo)
-{
-	if (!pReaderInfo.hasEid())
-	{
-		EstablishPaceChannelOutput channelOutput;
-		channelOutput.setPaceReturnCode(CardReturnCode::CARD_NOT_FOUND);
-		getContext()->setEstablishPaceChannelOutput(channelOutput);
-
-		Q_EMIT fireContinue();
-	}
 }
 
 
@@ -95,25 +81,26 @@ void StateEstablishPaceChannelIfd::onEstablishConnectionDone(QSharedPointer<Base
 		qCDebug(statemachine) << "Expected an EstablishPaceChannelCommand as response!";
 	}
 
-	getContext()->setEstablishPaceChannelOutput(establishPaceChannelCommand->getPaceOutput());
+	const auto& context = getContext();
+	const auto& output = establishPaceChannelCommand->getPaceOutput();
+	context->setPaceOutput(output);
 
-	const CardReturnCode paceReturnCode = establishPaceChannelCommand->getReturnCode();
-	const bool isWrongPacePassword = CardReturnCodeUtil::equalsWrongPacePassword(paceReturnCode);
-
-	switch (mPasswordId)
+	const CardReturnCode paceReturnCode = output.getReturnCode();
+	const bool isWrongPacePassword = output.wrongPasswordUsed();
+	switch (output.getPasswordId())
 	{
 		case PacePasswordId::PACE_PIN:
 			if (isWrongPacePassword)
 			{
-				const int nextExpectedCounter = getContext()->getExpectedRetryCounter() - 1;
+				const int nextExpectedCounter = context->getExpectedRetryCounter() - 1;
 				qCDebug(statemachine) << "Wrong PACE password. Decreasing expected retry counter to" << nextExpectedCounter;
-				getContext()->setExpectedRetryCounter(nextExpectedCounter);
+				context->setExpectedRetryCounter(nextExpectedCounter);
 			}
 			else if (paceReturnCode == CardReturnCode::OK)
 			{
 				const int nextExpectedCounter = 3;
 				qCDebug(statemachine) << "Correct PACE password. Expected retry counter is now" << nextExpectedCounter;
-				getContext()->setExpectedRetryCounter(nextExpectedCounter);
+				context->setExpectedRetryCounter(nextExpectedCounter);
 			}
 			break;
 
@@ -121,8 +108,8 @@ void StateEstablishPaceChannelIfd::onEstablishConnectionDone(QSharedPointer<Base
 			if (paceReturnCode == CardReturnCode::OK || isWrongPacePassword)
 			{
 				qCDebug(statemachine) << "Resetting PACE passwords and setting expected retry counter to -1";
-				getContext()->resetPacePasswords();
-				getContext()->setExpectedRetryCounter(-1);
+				context->resetPacePasswords();
+				context->setExpectedRetryCounter(-1);
 			}
 			break;
 

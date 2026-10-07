@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -33,8 +33,7 @@ class DiagnosisController
 		void collectInterfaceInformation();
 
 		static PcscInfo retrievePcscInfo();
-		static void getPcscInfo(QList<DiagnosisContext::ComponentInfo>& pComponents,
-				QList<DiagnosisContext::ComponentInfo>& pDrivers);
+		static PcscInfo getPcscInfo();
 
 	public:
 		explicit DiagnosisController(const QSharedPointer<DiagnosisContext>& pContext, QObject* pParent = nullptr);

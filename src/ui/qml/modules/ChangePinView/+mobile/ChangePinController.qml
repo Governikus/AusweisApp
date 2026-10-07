@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -38,7 +38,7 @@ Controller {
 	}
 	function displayInputError() {
 		push(inputErrorView, {
-			returnCode: ChangePinModel.lastReturnCode,
+			returnCode: ChangePinModel.lastPaceResult,
 			inputError: NumberModel.inputError,
 			passwordType: NumberModel.passwordType
 		});
@@ -80,10 +80,10 @@ Controller {
 			break;
 		case "StateEnterPacePassword":
 			d.setWorkflowProgress(1);
-			if (ChangePinModel.lastReturnCode === CardReturnCode.OK_CAN) {
+			if (ChangePinModel.lastPaceResult === PaceResult.OK_CAN) {
 				displaySuccessView(NumberModel.PasswordType.CAN);
 				return;
-			} else if (ChangePinModel.lastReturnCode === CardReturnCode.OK_PUK) {
+			} else if (ChangePinModel.lastPaceResult === PaceResult.OK_PUK) {
 				displaySuccessView(NumberModel.PasswordType.PUK);
 				return;
 			}
@@ -93,7 +93,7 @@ Controller {
 			}
 			if (NumberModel.initialInputError !== "") {
 				push(inputErrorView, {
-					returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? CardReturnCode.INVALID_CAN : CardReturnCode.INVALID_PUK,
+					returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? PaceResult.INVALID_CAN : PaceResult.INVALID_PUK,
 					inputError: NumberModel.initialInputError,
 					passwordType: NumberModel.passwordType,
 					titleVisible: false
@@ -305,9 +305,9 @@ Controller {
 			if (NumberModel.inputError === "" || !ChangePinModel.requestTransportPin) {
 				return fromPasswordType(NumberModel.passwordType);
 			}
-			switch (ChangePinModel.lastReturnCode) {
-			case CardReturnCode.INVALID_CAN:
-			case CardReturnCode.INVALID_PUK:
+			switch (ChangePinModel.lastPaceResult) {
+			case PaceResult.INVALID_CAN:
+			case PaceResult.INVALID_PUK:
 				return fromPasswordType(NumberModel.passwordType);
 			default:
 				return MultiInfoData.Type.TRANSPORT_PIN_NOT_WORKING;

@@ -1,0 +1,45 @@
+From 45b375761587006343d546787f12ddc8786bc5a6 Mon Sep 17 00:00:00 2001
+From: Volker Hilsheimer <volker.hilsheimer@qt.io>
+Date: Mon, 22 Jun 2026 16:08:41 +0200
+Subject: QAccessibleViewportInterface: pass QPointF by value into setPosition
+
+It's a small, trivially copyable type that should be passed by value.
+
+Amends 89ea7832e7d5bbed47271bea3df14e37531c9a4b.
+
+Pick-to: 6.12
+Task-number: QTBUG-146286
+Change-Id: I401e4ba949f288fab23391294441c0d9e43b2dbf
+Reviewed-by: MohammadHossein Qanbari <mohammad.qanbari@qt.io>
+(cherry-picked from commit b4f70cd4fb1969d50acd194632bb97b3cecbb483)
+---
+ src/gui/accessible/qaccessible.cpp | 2 +-
+ src/gui/accessible/qaccessible.h   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/gui/accessible/qaccessible.cpp y/qtbase/src/gui/accessible/qaccessible.cpp
+index 67ad4b9c73cef5f9a97a2b66497e5a593bf6f2e3..59884c172ce68e9eb7f60c25d878dae6517dbb9c 100644
+--- x/qtbase/src/gui/accessible/qaccessible.cpp
++++ y/qtbase/src/gui/accessible/qaccessible.cpp
+@@ -3398,7 +3398,7 @@ QAccessibleViewportInterface::~QAccessibleViewportInterface()
+ */
+ 
+ /*!
+-    \fn void QAccessibleViewportInterface::setPosition(const QPointF &position)
++    \fn void QAccessibleViewportInterface::setPosition(QPointF position)
+ 
+     Sets the viewport's position to the given \a position defined in normalized values.
+ */
+diff --git x/qtbase/src/gui/accessible/qaccessible.h y/qtbase/src/gui/accessible/qaccessible.h
+index c15f4af70dbb22d07ec31df39e841d3851a7c537..afb1078a37acee1b48b020b9516b39e24e24dd1f 100644
+--- x/qtbase/src/gui/accessible/qaccessible.h
++++ y/qtbase/src/gui/accessible/qaccessible.h
+@@ -310,7 +310,7 @@ public:
+     virtual QPointF position() const = 0;
+     virtual QSizeF viewportSize() const = 0;
+     virtual bool isIndexed() const = 0;
+-    virtual void setPosition(const QPointF &position) = 0;
++    virtual void setPosition(QPointF position) = 0;
+ };
+ 
+ 

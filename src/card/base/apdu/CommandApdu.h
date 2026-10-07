@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -97,8 +97,6 @@ inline QDebug operator<<(QDebug pDbg, const CommandApdu& pCommandApdu)
 	return privacy::logApdu(pDbg, pCommandApdu);
 }
 
-
-char* toString(const CommandApdu& pCommandApdu);
 
 #ifndef QT_NO_DEBUG
 inline bool operator==(const CommandApdu& pLeft, const CommandApdu& pRight)

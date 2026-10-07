@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 #include "SimulatorFileSystem.h"
@@ -9,7 +9,6 @@
 #include "apdu/ResponseApdu.h"
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/ASN1Util.h"
-#include "pace/ec/EcUtil.h"
 
 #include <QCryptographicHash>
 #include <QFile>
@@ -347,33 +346,15 @@ QByteArray SimulatorFileSystem::getPassword(PacePasswordId pPasswordId) const
 }
 
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
-QSharedPointer<EVP_PKEY> SimulatorFileSystem::getKey(int pKeyId) const
-#else
-QSharedPointer<EC_KEY> SimulatorFileSystem::getKey(int pKeyId) const
-#endif
+QByteArray SimulatorFileSystem::getKey(int pKeyId) const
 {
-	if (!mKeys.contains(pKeyId))
+	if (mKeys.contains(pKeyId))
 	{
-		return nullptr;
+		return mKeys.value(pKeyId);
 	}
 
-	const auto& key = mKeys[pKeyId];
-	const auto* dataPointer = reinterpret_cast<const unsigned char*>(key.constData());
-	const auto& privateKey = EcUtil::create(d2i_PrivateKey(EVP_PKEY_EC, nullptr, &dataPointer, static_cast<long>(key.length())));
-	if (privateKey.isNull())
-	{
-		qCCritical(card_simulator) << "Interpreting private key" << pKeyId << "failed:" << getOpenSslError();
-		return nullptr;
-	}
-
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
-	return privateKey;
-
-#else
-	return EcUtil::create(EVP_PKEY_get1_EC_KEY(privateKey.data()));
-
-#endif
+	qCCritical(card_simulator) << "Missing private key with ID" << pKeyId;
+	return QByteArray();
 }
 
 

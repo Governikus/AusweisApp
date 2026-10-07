@@ -228,17 +228,17 @@ Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedin
 
 OpenSSL
   Lizenz: Apache 2.0
-  Version: 3.6.3
+  Version: 4.0.3
   Adresse: https://www.openssl.org/
 
 Qt
   Lizenz: LGPL v3
-  Version: 6.10.2
+  Version: 6.11.1
   Adresse: https://www.qt.io/
 
 llhttp
   Lizenz: MIT
-  Version: 9.4.2
+  Version: 9.4.3
   Adresse: https://github.com/nodejs/llhttp/
 
 

@@ -1,9 +1,12 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
-#include "TestFileHelper.h"
 #include "paos/retrieve/StartPaosResponse.h"
+
+#include "paos/retrieve/PaosParser.h"
+
+#include "TestParserHelper.h"
 
 #include <QtCore>
 #include <QtTest>
@@ -11,6 +14,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_StartPAOSResponse
 	: public QObject
@@ -38,11 +42,14 @@ class test_StartPAOSResponse
 			QFETCH(ECardApiResult::Minor, minor);
 			QFETCH(QLatin1String, message);
 
-			QByteArray content = TestFileHelper::readFile(filename);
-			StartPaosResponse startPaosResponse(content);
-			QCOMPARE(startPaosResponse.getResult().getMajor(), major);
-			QCOMPARE(startPaosResponse.getResult().getMinor(), minor);
-			QCOMPARE(startPaosResponse.getResult().getMessage(), message);
+			auto parser = TestParserHelper::create(filename);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<StartPaosResponse> startPaosResponseMessage(static_cast<StartPaosResponse*>(pm));
+
+			QCOMPARE(startPaosResponseMessage->mType, PaosType::STARTPAOS_RESPONSE);
+			QCOMPARE(startPaosResponseMessage->getResult().getMajor(), major);
+			QCOMPARE(startPaosResponseMessage->getResult().getMinor(), minor);
+			QCOMPARE(startPaosResponseMessage->getResult().getMessage(), message);
 		}
 
 

@@ -1,7 +1,15 @@
 ignore:
-  - vulnerability: CVE-2026-54876
-    reason: 'Patch was added to our OpenSSL build.'
-
   - package:
       name: Core_Attribution_tika-mimetypes
-    reason: 'Only used by Android in a safe way.'
+    reason: 'Misattributed CVEs, qtbase does not use apache tika directly, only derived static data (MIME-types).'
+
+  - vulnerability: CVE-2026-89157
+  - vulnerability: CVE-2026-89158
+  - vulnerability: CVE-2026-89160
+  - vulnerability: CVE-2026-89156
+  - vulnerability: CVE-2026-89161
+  - vulnerability: CVE-2026-89162
+    reason: 'The application does not accept input strings for regular expressions'
+
+  - vulnerability: CVE-2026-85091
+    reason: 'Qt does not use any of the affected APIs of zlib'

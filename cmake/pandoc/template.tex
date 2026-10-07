@@ -26,22 +26,17 @@ $passoptions.latex()$
 \usepackage{longtable}
 % pandoc imports
 \usepackage{fancyvrb}
-\usepackage{tcolorbox}
+\usepackage{framed}
+\usepackage{environ}
 \newcommand{\VerbBar}{|}
 \newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
 \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
 \definecolor{code_box_background}{RGB}{242, 242, 242}
-\newenvironment{Shaded}{
-  \begin{tcolorbox}[
-    colback=code_box_background,
-    colframe=black,
-    boxsep=5pt,
-    arc=4pt,
-    boxrule=0.5pt,
-    verbatim
-  ]
-}{
-  \end{tcolorbox}
+\newenvironment{Shaded}{%
+  \def\FrameCommand{\fboxsep=5pt \fcolorbox{black}{code_box_background}}%
+  \MakeFramed{\FrameRestore}%
+}{%
+  \endMakeFramed
 }
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
@@ -112,48 +107,28 @@ $passoptions.latex()$
 \definecolor{important_box_background}{RGB}{248, 228, 210}
 \definecolor{see_also_box_background}{RGB}{219, 239, 230}
 \definecolor{note_box_background}{RGB}{208, 222, 250}
-\newenvironment{ImportantBox}{
-  \begin{tcolorbox}[
-    colback=boxes_background,
-    colbacktitle=important_box_background,
-    colframe=boxes_frame,
-    coltitle=black,
-    boxsep=5pt,
-    arc=1pt,
-    boxrule=0.5pt,
-    parbox=false,
-    title=Important
-  ]
-}{
-  \end{tcolorbox}
+\newcommand{\newadmonitionbox}[3]{%
+  \NewEnviron{#1}{%
+    \par\addvspace{1em}%
+    \noindent
+    \fcolorbox{boxes_frame}{boxes_background}{%
+      \parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+        \vspace*{-\fboxsep}%
+        \noindent
+        \hspace*{-\fboxsep}%
+        \colorbox{#3}{%
+          \makebox[\linewidth][l]{\textbf{#2}}%
+        }%
+        \par\nobreak\vspace{0.4em}
+        \BODY
+      }%
+    }%
+    \par\addvspace{1em}%
+  }%
 }
-\newenvironment{SeeAlsoBox}{
-  \begin{tcolorbox}[
-    colback=boxes_background,
-    colbacktitle=see_also_box_background,
-    colframe=boxes_frame,
-    coltitle=black,
-    boxsep=5pt,
-    boxrule=0.5pt,
-    parbox=false,
-    title=See also
-  ]
-}{
-  \end{tcolorbox}
-}\newenvironment{NoteBox}{
-  \begin{tcolorbox}[
-    colback=boxes_background,
-    colbacktitle=note_box_background,
-    colframe=boxes_frame,
-    coltitle=black,
-    boxsep=5pt,
-    boxrule=0.5pt,
-    parbox=false,
-    title=Note
-  ]
-}{
-  \end{tcolorbox}
-}
+\newadmonitionbox{ImportantBox}{Important}{important_box_background}
+\newadmonitionbox{SeeAlsoBox}{See also}{see_also_box_background}
+\newadmonitionbox{NoteBox}{Note}{note_box_background}
 % Footnote numbering
 \newcounter{originalfootnotevalue}
 \setcounter{secnumdepth}{3} % Numbering depth

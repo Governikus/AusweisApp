@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -34,7 +34,6 @@ class IfdServiceContext
 		EstablishPaceChannel mEstablishPaceChannel;
 		bool mRequestTransportPin;
 		bool mAllowToChangePinLength;
-		EstablishPaceChannelOutput mEstablishPaceChannelOutput;
 		QSharedPointer<AccessRightManager> mAccessRightManager;
 
 		QSharedPointer<const IfdModifyPin> mModifyPinMessage;
@@ -81,9 +80,6 @@ class IfdServiceContext
 		void changePinLength();
 		[[nodiscard]] bool allowToChangePinLength() const;
 		[[nodiscard]] bool isRequestTransportPin() const override;
-
-		void setEstablishPaceChannelOutput(const EstablishPaceChannelOutput& pEstablishPaceChannelOutput);
-		[[nodiscard]] const EstablishPaceChannelOutput& getEstablishPaceChannelOutput() const;
 
 		void setModifyPinMessage(const QSharedPointer<const IfdModifyPin>& pMessage);
 		[[nodiscard]] const QSharedPointer<const IfdModifyPin>& getModifyPinMessage() const;

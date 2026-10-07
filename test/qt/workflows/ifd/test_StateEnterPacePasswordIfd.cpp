@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateEnterPacePasswordIfd.h"
@@ -57,12 +57,12 @@ class test_StateEnterPacePasswordIfd
 
 			Q_EMIT mContext->fireUserError(StatusCode::FILE_NOT_FOUND);
 			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(mContext->getEstablishPaceChannelOutput().getPaceReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
+			QCOMPARE(mContext->getPaceOutput().getReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
 			spyAbort.clear();
 
 			Q_EMIT mIfdServer->getMessageHandler()->destroyed();
 			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(mContext->getEstablishPaceChannelOutput().getPaceReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
+			QCOMPARE(mContext->getPaceOutput().getReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
 		}
 
 

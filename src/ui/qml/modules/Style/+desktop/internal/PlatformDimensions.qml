@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQml
@@ -43,11 +43,13 @@ QtObject {
 	readonly property real switch_width: UiPluginModel.scaleFactor * 58.2
 	readonly property real text: UiPluginModel.scaleFactor * 16.2
 	readonly property real textHeadline: UiPluginModel.scaleFactor * 24
+	readonly property real textNumberField: UiPluginModel.fontScaleFactor * 30
 	readonly property real textSubline: UiPluginModel.scaleFactor * 18
 	readonly property real textTitle: UiPluginModel.scaleFactor * 36
 	readonly property real text_navigation: UiPluginModel.scaleFactor * 30
 	readonly property int text_spacing: UiPluginModel.scaleFactor * 6
 	readonly property real text_tile: UiPluginModel.scaleFactor * 30
+	readonly property real text_toolTip: UiPluginModel.scaleFactor * 13
 	readonly property real titlebar_padding: UiPluginModel.scaleFactor * 12
 	readonly property real titlepane_radius: UiPluginModel.scaleFactor * 30
 }

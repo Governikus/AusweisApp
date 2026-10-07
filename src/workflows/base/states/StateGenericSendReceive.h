@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -33,7 +33,6 @@ class StateGenericSendReceive
 		const QList<PaosType> mOtherResponseTypes;
 		QSharedPointer<QNetworkReply> mReply;
 
-		void logRawData(const QByteArray& pMessage);
 		void setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage) const;
 		std::optional<FailureCode> checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration) const;
 		void onSslErrors(const QList<QSslError>& pErrors);

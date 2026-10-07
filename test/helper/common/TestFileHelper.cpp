@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "TestFileHelper.h"
@@ -28,6 +28,15 @@ static const uchar qm_content[48] = {
 	0x01, 0x53, 0x07, 0x00, 0x00, 0x00, 0x01, 0x54,
 	0x01, 0x88, 0x00, 0x00, 0x00, 0x02, 0x01, 0x01
 };
+
+
+QSharedPointer<QFile> TestFileHelper::getFile(const QString& pFileName)
+{
+	const auto file = QSharedPointer<QFile>::create(pFileName);
+	Q_ASSERT(file->exists());
+	Q_ASSERT(file->open(QIODevice::ReadOnly | QIODevice::Unbuffered));
+	return file;
+}
 
 
 QByteArray TestFileHelper::readFile(const QString& pFileName, bool pFromHex)

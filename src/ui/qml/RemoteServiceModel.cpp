@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteServiceModel.h"
@@ -12,10 +12,16 @@
 #include "RemoteServiceSettings.h"
 #include "controller/IfdServiceController.h"
 
+#include <chrono>
+
 #include <QOperatingSystemVersion>
 
 
 using namespace governikus;
+using namespace std::chrono_literals;
+
+
+static constexpr std::chrono::minutes cPSK_VALIDITY = 2min;
 
 
 RemoteServiceModel::RemoteServiceModel()
@@ -34,7 +40,8 @@ RemoteServiceModel::RemoteServiceModel()
 	, mConnectionInfo()
 	, mConnectedServerDeviceNames()
 	, mRememberedServerEntry()
-	, mRequiresLocalNetworkPermission(QOperatingSystemVersion::currentType() == QOperatingSystemVersion::IOS)
+	, mPskValidityTimer()
+	, mRemainingPskValiditySignalTimer()
 #ifdef Q_OS_IOS
 	, mWasRunning(false)
 	, mWasPairing(false)
@@ -64,6 +71,16 @@ RemoteServiceModel::RemoteServiceModel()
 	connect(ifdClient, &IfdClient::fireCertificateRemoved, this, &RemoteServiceModel::fireCertificateRemoved);
 
 	connect(this, &WorkflowModel::fireReaderPluginTypeChanged, this, &RemoteServiceModel::onReaderPluginTypesChanged);
+
+	mPskValidityTimer.setInterval(getPskValidity());
+	connect(&mPskValidityTimer, &QTimer::timeout, this, [this]{
+				if (mContext)
+				{
+					mContext->getIfdServer()->rotatePsk();
+				}
+			});
+	mRemainingPskValiditySignalTimer.setInterval(1s);
+	connect(&mRemainingPskValiditySignalTimer, &QTimer::timeout, this, &RemoteServiceModel::fireRemainingPskValidityChanged);
 
 	QMetaObject::invokeMethod(this, &RemoteServiceModel::onEnvironmentChanged, Qt::QueuedConnection);
 }
@@ -123,9 +140,27 @@ const
 }
 
 
+void RemoteServiceModel::onIsRunningChanged()
+{
+	setStarting(false);
+
+	Q_EMIT fireIsRunningChanged();
+}
+
+
+void RemoteServiceModel::onPskChanged(const QByteArray& pPsk)
+{
+	const bool initialPsk = mPsk.isEmpty();
+	mPsk = pPsk;
+
+	Q_EMIT firePskChanged(pPsk, initialPsk);
+}
+
+
 void RemoteServiceModel::onPairingCompleted(const QSslCertificate& pCertificate)
 {
 	mAllDevices.setLastPairedReader(pCertificate);
+	setPairing(false);
 	Q_EMIT firePairingCompleted();
 }
 
@@ -337,15 +372,9 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServi
 
 	if (mContext)
 	{
-		connect(mContext.data(), &IfdServiceContext::fireIsRunningChanged, this, [this](){
-					setStarting(false);
-				});
-		connect(mContext.data(), &IfdServiceContext::fireIsRunningChanged, this, &RemoteServiceModel::fireIsRunningChanged);
-		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, [this](const QByteArray& pPsk){
-					mPsk = pPsk;
-				});
+		connect(mContext.data(), &IfdServiceContext::fireIsRunningChanged, this, &RemoteServiceModel::onIsRunningChanged);
+		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, &RemoteServiceModel::onPskChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::fireNameChanged, this, &RemoteServiceModel::onNameChanged);
-		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
 		connect(mContext.data(), &IfdServiceContext::fireDisplayTextChanged, this, &RemoteServiceModel::fireDisplayTextChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::firePairingCompleted, this, &RemoteServiceModel::onPairingCompleted);
@@ -369,8 +398,20 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServi
 }
 
 
-void RemoteServiceModel::setPairing(bool pEnabled) const
+void RemoteServiceModel::setPairing(bool pEnabled)
 {
+	if (pEnabled)
+	{
+		mPskValidityTimer.start();
+		mRemainingPskValiditySignalTimer.start();
+	}
+	else
+	{
+		mPskValidityTimer.stop();
+		mRemainingPskValiditySignalTimer.stop();
+	}
+	Q_EMIT fireRemainingPskValidityChanged();
+
 	if (mContext)
 	{
 		mContext->getIfdServer()->setPairing(pEnabled);
@@ -566,4 +607,16 @@ void RemoteServiceModel::onConnectedDevicesChanged()
 void RemoteServiceModel::onNameChanged()
 {
 	onConnectionInfoChanged(true);
+}
+
+
+int RemoteServiceModel::getPskValidity() const
+{
+	return std::chrono::duration_cast<std::chrono::milliseconds>(cPSK_VALIDITY).count();
+}
+
+
+int RemoteServiceModel::getRemainingPskValidity() const
+{
+	return mPskValidityTimer.remainingTime();
 }

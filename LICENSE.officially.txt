@@ -231,7 +231,7 @@ B. ZUSATZVEREINBARUNGEN
 § 2 Vertragsgegenstand und Unentgeltlichkeit
 (1) Die AusweisApp wird regelmäßig hinsichtlich ihrer Konformität zu den Technischen Richtlinien des Bundesamtes für Sicherheit in der Informationstechnik [TR-03124-2] zertifiziert sowie hinsichtlich ihrer Nutzerfreundlichkeit [EN ISO 9241 Teil 110 Ergonomie Mensch-System-Integration zur Prüfung der Benutzbarkeit und Funktionalität und Trusted Design Guidelines zur Prüfung der Vertrauenswürdigkeit] und auf Barrierefreiheit [BITV 2.0] überprüft.
 (2) Die AusweisApp wird in maschinenlesbarer Form unentgeltlich überlassen. Der Quellcode der AusweisApp wird ebenfalls unentgeltlich veröffentlicht. Eine Auflistung der verwendeten Open Source-Bestandteile der AusweisApp findet sich im Anhang.
-(3) Die AusweisApp wird von der Governikus GmbH & Co. KG (Governikus) als Erfüllungsgehilfe des Bundes überlassen.
+(3) Die AusweisApp wird von der Governikus Service GmbH (Governikus) als Erfüllungsgehilfe des Bundes überlassen.
 
 § 3 Verwendungszweck
 Die AusweisApp und alle ihre Bestandteile dienen ausschließlich dazu, im Zusammenhang mit der Nutzung der Online-Ausweisfunktion des Personalausweises, des elektronischen Aufenthaltstitels, der eID-Karte für Bürgerinnen und Bürger der EU und des EWR und der Übermittlung der damit verbundenen Daten gemäß den gesetzlichen Vorgaben verwendet zu werden.
@@ -260,17 +260,17 @@ Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedin
 
 OpenSSL
   Lizenz: Apache 2.0
-  Version: 3.6.3
+  Version: 4.0.3
   Adresse: https://www.openssl.org/
 
 Qt
   Lizenz: LGPL v3
-  Version: 6.10.2
+  Version: 6.11.1
   Adresse: https://www.qt.io/
 
 llhttp
   Lizenz: MIT
-  Version: 9.4.2
+  Version: 9.4.3
   Adresse: https://github.com/nodejs/llhttp/
 
 

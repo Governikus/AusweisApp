@@ -21,6 +21,7 @@ if(CMAKE_CTEST_COMMAND MATCHES " ")
 endif()
 
 set(CMAKE_DIR "${CMAKE_SOURCE_DIR}/cmake")
+set(LIBS_DIR "${CMAKE_SOURCE_DIR}/libs")
 set(CI_DIR "${CMAKE_SOURCE_DIR}/ci")
 set(CI_RUNNER_DIR "${CI_DIR}/runner")
 file(GLOB RUNNER_FILES "${CI_RUNNER_DIR}/*.cmake")

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -77,7 +77,6 @@ Item {
 	}
 	CardPositionModel {
 		id: cardPositionModel
-
 	}
 	Timer {
 		id: modelActivationTimer

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -84,6 +84,7 @@ FlickableSectionPage {
 		qsTr("By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:")
 	}
 	GButton {
+		Accessible.id: "EditRights_confirmButton"
 		Layout.alignment: Qt.AlignHCenter
 		icon.source: "qrc:///images/identify.svg"
 		//: MOBILE %1 can be "CAN" or "PIN"

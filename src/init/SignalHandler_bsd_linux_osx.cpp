@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "SignalHandler.h"
@@ -9,11 +9,14 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+
 using namespace governikus;
+
 
 Q_DECLARE_LOGGING_CATEGORY(system)
 
-int SignalHandler::cSignalSocketPair[2];
+
+std::array<int, 2> SignalHandler::cSignalSocketPair;
 
 
 void SignalHandler::initUnix()
@@ -23,7 +26,7 @@ void SignalHandler::initUnix()
 	// socketpair to cross thread borders.
 	// http://doc.qt.io/qt-5/unix-signals.html
 
-	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, cSignalSocketPair))
+	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, cSignalSocketPair.data()))
 	{
 		qCCritical(system) << "** Failed to set up socket pair for signaling! **";
 		return;

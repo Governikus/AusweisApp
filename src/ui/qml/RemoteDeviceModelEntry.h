@@ -1,10 +1,12 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
 #include "IfdListEntry.h"
+
+#include "RemoteServiceSettings.h"
 
 #include <QDateTime>
 #include <QSharedPointer>
@@ -35,13 +37,11 @@ class RemoteDeviceModelEntry
 
 	public:
 		explicit RemoteDeviceModelEntry(const QSharedPointer<IfdListEntry>& pListEntry);
-		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped,
-				const QByteArray& pId,
+		RemoteDeviceModelEntry(const RemoteServiceSettings::RemoteInfo& pRemoteInfo,
 				bool pNetworkVisible,
 				bool pConnected,
 				bool pSupported,
 				bool pIsPairing,
-				const QDateTime& pLastConnected,
 				const QSharedPointer<IfdListEntry>& pRemoteDeviceListEntry);
 		explicit RemoteDeviceModelEntry(const QString& pDeviceNameEscaped = QStringLiteral("UnknownReader"));
 

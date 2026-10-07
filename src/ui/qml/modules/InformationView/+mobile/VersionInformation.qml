@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -73,9 +73,6 @@ FlickableSectionPage {
 					Layout.fillWidth: true
 					label: key
 					text: value
-
-					onFocusChanged: if (focus)
-						root.positionViewAtItem(this)
 				}
 			}
 		}

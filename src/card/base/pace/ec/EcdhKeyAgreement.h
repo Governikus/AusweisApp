@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -11,7 +11,9 @@
 #include <QSharedPointer>
 #include <openssl/ec.h>
 
+
 class test_EcdhKeyAgreement;
+
 
 namespace governikus
 {
@@ -22,9 +24,9 @@ class EcdhKeyAgreement
 	friend class ::test_EcdhKeyAgreement;
 
 	private:
-		QSharedPointer<EcdhGenericMapping> mMapping;
-		QSharedPointer<EC_POINT> mTerminalPublicKey;
-		QSharedPointer<const EC_POINT> mCardPublicKey;
+		EcdhGenericMapping mMapping;
+		QByteArray mTerminalPublicKey;
+		QByteArray mCardPublicKey;
 
 		CardReturnCode determineEphemeralDomainParameters(const QByteArray& pNonce);
 		CardResult performKeyExchange();
@@ -36,7 +38,7 @@ class EcdhKeyAgreement
 
 		explicit EcdhKeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo,
 				const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker,
-				const QSharedPointer<EcdhGenericMapping>& pMapping);
+				const QSharedPointer<EC_GROUP>& pCurve);
 
 	public:
 		static QSharedPointer<EcdhKeyAgreement> create(const QSharedPointer<const PaceInfo>& pPaceInfo,

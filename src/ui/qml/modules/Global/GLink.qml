@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -24,6 +24,7 @@ GAbstractButton {
 	Layout.maximumWidth: Math.ceil(implicitWidth)
 	background: null
 	baselineOffset: linkText.baselineOffset + verticalPadding + (contentItem.height - linkText.height) / 2
+	font.family: UiPluginModel.fontFamily
 	font.pixelSize: textStyle.textSize
 	font.underline: UiPluginModel.a11yButtonShapeActive
 	font.weight: textStyle.fontWeight

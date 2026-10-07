@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -14,6 +14,7 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -29,16 +30,38 @@ import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 
+import androidx.core.view.WindowCompat;
+
 import org.qtproject.qt.android.QtNative;
 import org.qtproject.qt.android.bindings.QtActivity;
 
-import androidx.core.view.WindowCompat;
+import com.google.android.gms.tasks.Task;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.appupdate.AppUpdateOptions;
+import com.google.android.play.core.install.InstallStateUpdatedListener;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.InstallErrorCode;
+import com.google.android.play.core.install.model.InstallStatus;
+import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.android.play.core.review.ReviewException;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.review.model.ReviewErrorCode;
 
 
 public class MainActivity extends QtActivity
 {
 	private static Intent cIntent;
 
+	private AppUpdateManager mAppUpdateManager;
+	private AppUpdateInfo mAppUpdateInfo;
+	private InstallStateUpdatedListener mInstallListener;
+	private static final int IN_APP_FLEXIBLE_UPDATE_REQUEST_CODE = 24_727;
+	private static final int IN_APP_IMMEDIATE_UPDATE_REQUEST_CODE = 24_728;
+	private boolean mUpdateCanceledInSession;
 
 	private NfcReaderMode mNfcReaderMode;
 	private boolean mIsResumed;
@@ -59,6 +82,10 @@ public class MainActivity extends QtActivity
 	// Native methods provided by ApplicationModel
 	public static native void notifyScreenReaderRunningChanged();
 	public static native void notifyScreenRecordingChanged();
+	// Native methods provided by AppUpdateDataModel
+	public static native void notifyUpdateFound(int pVersionCode, int pStalenessDays, int pPriority);
+	public static native void notifyUpdateReadyForInstallation();
+	public static native void notifyImmediateUpdateCanceled();
 
 	private class NfcReaderMode
 	{
@@ -188,6 +215,7 @@ public class MainActivity extends QtActivity
 		cIntent = getIntent();
 
 		mNfcReaderMode = new NfcReaderMode();
+		mAppUpdateManager = AppUpdateManagerFactory.create(this);
 
 		AccessibilityManager accessibilityManager = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
 		refreshAccessibilityState(accessibilityManager);
@@ -263,6 +291,7 @@ public class MainActivity extends QtActivity
 		mIsResumed = true;
 
 		setReaderModeNative(true);
+		handleAppUpdateInfo();
 	}
 
 
@@ -281,6 +310,34 @@ public class MainActivity extends QtActivity
 	{
 		LogHandler.getLogger().log(Level.INFO, () -> "onDestroy");
 		super.onDestroy();
+	}
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == IN_APP_FLEXIBLE_UPDATE_REQUEST_CODE || requestCode == IN_APP_IMMEDIATE_UPDATE_REQUEST_CODE)
+		{
+			if (resultCode == RESULT_OK)
+			{
+				LogHandler.getLogger().log(Level.INFO, () -> "Update accepted/completed");
+			}
+			else if (resultCode == RESULT_CANCELED)
+			{
+				if (requestCode == IN_APP_IMMEDIATE_UPDATE_REQUEST_CODE)
+				{
+					mUpdateCanceledInSession = true;
+					notifyImmediateUpdateCanceled();
+				}
+				LogHandler.getLogger().log(Level.INFO, () -> "User canceled the update");
+			}
+			else if (resultCode == com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED)
+			{
+				LogHandler.getLogger().log(Level.INFO, () -> "Update failed");
+			}
+		}
 	}
 
 
@@ -430,6 +487,123 @@ public class MainActivity extends QtActivity
 	public void resetStoredIntent()
 	{
 		cIntent = null;
+	}
+
+
+	public void launchReviewFlow()
+	{
+		ReviewManager manager = ReviewManagerFactory.create(this);
+		Task<ReviewInfo> request = manager.requestReviewFlow();
+		request.addOnCompleteListener(task -> {
+					if (task.isSuccessful())
+					{
+						LogHandler.getLogger().log(Level.INFO, () -> "In-app review flow requested");
+
+						ReviewInfo reviewInfo = task.getResult();
+						Task<Void> flow = manager.launchReviewFlow(this, reviewInfo);
+						flow.addOnCompleteListener(flowTask -> {
+							LogHandler.getLogger().log(Level.INFO, () -> "In-app review flow finished");
+						});
+					}
+					else
+					{
+						@ReviewErrorCode int reviewErrorCode = ((ReviewException) task.getException()).getErrorCode();
+						LogHandler.getLogger().log(Level.WARNING, () -> "Couldn't launch in-app review flow " + reviewErrorCode);
+					}
+				});
+
+	}
+
+
+	private void handleAppUpdateInfo()
+	{
+		Task<AppUpdateInfo> appUpdateInfoTask = mAppUpdateManager.getAppUpdateInfo();
+		appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+					if (appUpdateInfo.updateAvailability() != UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.updateAvailability() != UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS)
+					{
+						return;
+					}
+
+					mAppUpdateInfo = appUpdateInfo;
+					if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED)
+					{
+						LogHandler.getLogger().log(Level.INFO, () -> "Found a downloaded but not installed flexible update");
+						notifyUpdateReadyForInstallation();
+					}
+					else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS)
+					{
+						LogHandler.getLogger().log(Level.INFO, () -> "Found an interrupted immediate update, continuing");
+						startUpdateFlow(true);
+					}
+					else if (!mUpdateCanceledInSession)
+					{
+						final Integer stalenessDays = appUpdateInfo.clientVersionStalenessDays();
+						notifyUpdateFound(appUpdateInfo.availableVersionCode(), stalenessDays != null ? stalenessDays : -1, appUpdateInfo.updatePriority());
+					}
+				});
+
+		appUpdateInfoTask.addOnFailureListener(error -> {
+					LogHandler.getLogger().log(Level.WARNING, () -> "Failed to check for update: " + error);
+				});
+	}
+
+
+	public void startUpdateFlow(boolean pImmediate)
+	{
+		if (mAppUpdateInfo == null)
+		{
+			LogHandler.getLogger().log(Level.WARNING, () -> "No AppUpdateInfo present for update");
+			return;
+		}
+
+		final int updateType = pImmediate ? AppUpdateType.IMMEDIATE : AppUpdateType.FLEXIBLE;
+		if (!mAppUpdateInfo.isUpdateTypeAllowed(updateType))
+		{
+			LogHandler.getLogger().log(Level.WARNING, () -> "AppUpdateInfo does not allow update type " + updateType);
+			return;
+		}
+
+		if (!pImmediate)
+		{
+			mInstallListener = state -> {
+				if (state.installErrorCode() != InstallErrorCode.NO_ERROR)
+				{
+					LogHandler.getLogger().log(Level.WARNING, () -> "In-app update installation failed" + state.installErrorCode());
+				}
+				if (state.installStatus() == InstallStatus.DOWNLOADED)
+				{
+					LogHandler.getLogger().log(Level.INFO, () -> "Flexible update successfully downloaded, notifying user");
+					notifyUpdateReadyForInstallation();
+				}
+			};
+			mAppUpdateManager.registerListener(mInstallListener);
+		}
+
+		try
+		{
+			final boolean startResult = mAppUpdateManager.startUpdateFlowForResult(
+					mAppUpdateInfo,
+					this,
+					AppUpdateOptions.newBuilder(updateType).build(),
+					pImmediate ? IN_APP_IMMEDIATE_UPDATE_REQUEST_CODE : IN_APP_FLEXIBLE_UPDATE_REQUEST_CODE
+					);
+			LogHandler.getLogger().log(Level.INFO, () -> "Update flow started with result: " + startResult);
+		}
+		catch (IntentSender.SendIntentException e)
+		{
+			LogHandler.getLogger().log(Level.WARNING, () -> "Start of update flow failed: " + e.toString());
+		}
+		mAppUpdateInfo = null;
+	}
+
+
+	public void completeUpdate()
+	{
+		mAppUpdateManager.completeUpdate();
+		if (mInstallListener != null)
+		{
+			mAppUpdateManager.unregisterListener(mInstallListener);
+		}
 	}
 
 

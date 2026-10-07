@@ -1,16 +1,16 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "CardConnectionWorker.h"
 
 #include "apdu/CommandApdu.h"
 #include "apdu/FileCommand.h"
-#include "apdu/PacePinStatus.h"
 #include "pace/PaceHandler.h"
 
 #include <QLoggingCategory>
 #include <QThread>
+
 
 using namespace governikus;
 
@@ -112,12 +112,6 @@ CardReturnCode CardConnectionWorker::updateRetryCounter()
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
 	return mReader->updateRetryCounter(sharedFromThis());
-}
-
-
-QSharedPointer<const EFCardAccess> CardConnectionWorker::getEfCardAccess() const
-{
-	return getReaderInfo().getCardInfo().getEfCardAccess();
 }
 
 
@@ -259,28 +253,19 @@ EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswo
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (!card)
 	{
-		return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
+		return EstablishPaceChannelOutput(pPasswordId, CardReturnCode::CARD_NOT_FOUND);
 	}
 
 	EstablishPaceChannelOutput output;
-
 	qCInfo(support) << "Starting PACE for" << pPasswordId;
 	if (mReader->getReaderInfo().isBasicReader())
 	{
 		Q_ASSERT(!pPasswordValue.isEmpty());
 		PaceHandler paceHandler(sharedFromThis());
 		paceHandler.setChat(pChat);
-		const auto returnCode = paceHandler.establishPaceChannel(pPasswordId, pPasswordValue);
-		output.setPaceReturnCode(returnCode);
-		output.setStatusMseSetAt(paceHandler.getStatusMseSetAt());
-
-		if (returnCode == CardReturnCode::OK)
+		output = paceHandler.establishPaceChannel(pPasswordId, pPasswordValue);
+		if (output.isOk())
 		{
-			output.setCarCurr(paceHandler.getCarCurr());
-			output.setCarPrev(paceHandler.getCarPrev());
-			output.setIdIcc(paceHandler.getIdIcc());
-			output.setEfCardAccess(getEfCardAccess()->getContentBytes());
-			output.setPaceReturnCode(CardReturnCode::OK);
 			mSecureMessaging.reset(new SecureMessaging(paceHandler.getPaceProtocol(), paceHandler.getEncryptionKey(), paceHandler.getMacKey()));
 		}
 	}
@@ -289,67 +274,9 @@ EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswo
 		const bool isTransportPin = (pPasswordValue == QByteArray(5, 0));
 		Q_ASSERT(pPasswordValue.isNull() || isTransportPin);
 		output = card->establishPaceChannel(pPasswordId, isTransportPin ? 5 : 6, pChat, pCertificateDescription);
-
-		if (mReader->getReaderInfo().getPluginType() == ReaderManagerPluginType::PCSC
-				&& output.getPaceReturnCode() == CardReturnCode::INVALID_PASSWORD
-				&& pPasswordId == PacePasswordId::PACE_PIN
-				&& output.getStatusCodeMseSetAt() == StatusCode::UNKNOWN)
-		{
-			qCWarning(::card) << "Add missing StatusCodeMseSet in EstablishPaceChannelOutput for Reiner SCT reader with pin pad"
-								 " that do not follow PCSC Part 10 IFDs with Secure PIN Entry Capabilities - AMENDMENT 1.1";
-			switch (mReader->getReaderInfo().getRetryCounter())
-			{
-				case 2:
-					output.setStatusMseSetAt(QByteArray::fromHex("63C2"));
-					break;
-
-				case 1:
-					output.setStatusMseSetAt(QByteArray::fromHex("63C1"));
-					break;
-
-				default:
-					output.setStatusMseSetAt(QByteArray::fromHex("9000"));
-
-			}
-		}
 	}
 
-	if (output.getPaceReturnCode() == CardReturnCode::INVALID_PASSWORD)
-	{
-		CardReturnCode invalidPasswordId;
-		switch (pPasswordId)
-		{
-			case PacePasswordId::PACE_CAN:
-				invalidPasswordId = CardReturnCode::INVALID_CAN;
-				break;
-
-			case PacePasswordId::PACE_PIN:
-				switch (PacePinStatus::getRetryCounter(output.getStatusCodeMseSetAt()))
-				{
-					case 2:
-						invalidPasswordId = CardReturnCode::INVALID_PIN_2;
-						break;
-
-					case 1:
-						invalidPasswordId = CardReturnCode::INVALID_PIN_3;
-						break;
-
-					default:
-						invalidPasswordId = CardReturnCode::INVALID_PIN;
-				}
-				break;
-
-			case PacePasswordId::PACE_PUK:
-				invalidPasswordId = CardReturnCode::INVALID_PUK;
-				break;
-
-			default:
-				invalidPasswordId = CardReturnCode::UNKNOWN;
-		}
-		output.setPaceReturnCode(invalidPasswordId);
-	}
-
-	qCInfo(support) << "Finished PACE for" << pPasswordId << "with result" << output.getPaceReturnCode();
+	qCInfo(support) << "Finished PACE for" << pPasswordId << "with result" << output.getReturnCode();
 	return output;
 }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 import QtQml
@@ -123,7 +123,6 @@ FlickableSectionPage {
 			}
 			LogModel {
 				id: logModel
-
 			}
 		}
 		SecondaryButton {
@@ -137,6 +136,7 @@ FlickableSectionPage {
 				}
 			}
 
+			Accessible.id: "ResultView_details"
 			icon.source: "qrc:/images/info.svg"
 			//: DESKTOP
 			text: qsTr("See details")
@@ -158,7 +158,7 @@ FlickableSectionPage {
 		id: hintItem
 
 		Layout.fillWidth: true
-		buttonTooltip: linkToOpen
+		buttonToolTip: linkToOpen
 		linkToOpen: root.hintButtonLink
 		//: DESKTOP
 		title: qsTr("Hint")
@@ -176,12 +176,13 @@ FlickableSectionPage {
 
 		readonly property bool hasLink: root.linkToOpen !== ""
 
-		Accessible.description: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, Accessible.name) : ""
+		Accessible.id: "ResultView_button"
+		Accessible.name: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, text) : text
 		Accessible.role: hasLink ? Accessible.Link : Accessible.Button
 		Layout.alignment: Style.scanPatternAlignment
 		Layout.preferredHeight: height
 		Layout.preferredWidth: width
-		enabledTooltipText: hasLink ? root.linkToOpen : ""
+		enabledToolTipText: hasLink ? root.linkToOpen : ""
 		text: qsTr("OK")
 		tintIcon: true
 		visible: text !== ""

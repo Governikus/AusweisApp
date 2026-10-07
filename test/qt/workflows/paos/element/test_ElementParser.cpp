@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus Service GmbH, Germany
  */
 
 #include "paos/element/ElementParser.h"
@@ -9,50 +9,30 @@
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
-const auto dummyXmlData = "<rootElement>"
-						  "	<subElement></subElement>"
-						  "</rootElement>";
-
 class test_ElementParser
 	: public QObject
 {
 	Q_OBJECT
 
-	private:
-		ElementParser mParser = ElementParser(QSharedPointer<QXmlStreamReader>::create());
-
-		bool nextElementNameEquals(const QString& pName)
-		{
-			if (mParser.readNextStartElement())
-			{
-				return mParser.getElementName() == pName;
-			}
-
-			return false;
-		}
-
 	private Q_SLOTS:
-		void test_initData_verifyClearData()
+		void test_nextElementNameEquals()
 		{
-			mParser.initData(dummyXmlData);
+			const auto dummyXmlData = "<rootElement>"
+									  "	<subElement>hello</subElement>"
+									  "</rootElement>";
 
-			QVERIFY(nextElementNameEquals("rootElement"_L1));
-
-			mParser.initData(dummyXmlData);
-
-			QVERIFY(nextElementNameEquals("rootElement"_L1));
-			QVERIFY(nextElementNameEquals("subElement"_L1));
-
+			ElementParser parser = ElementParser(QSharedPointer<QXmlStreamReader>::create(dummyXmlData), true);
+			QCOMPARE(parser.readElementText(), QLatin1String("hello"));
 		}
 
 
-		void test_initData_verifyClearParserError()
+		void test_parserFailed()
 		{
-			mParser.setParserFailed();
-			QVERIFY(mParser.parserFailed());
+			ElementParser parser = ElementParser(QSharedPointer<QXmlStreamReader>::create(), true);
 
-			mParser.initData(dummyXmlData);
-			QVERIFY(!mParser.parserFailed());
+			QVERIFY(!parser.parserFailed());
+			parser.setParserFailed();
+			QVERIFY(parser.parserFailed());
 		}
 
 

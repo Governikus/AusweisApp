@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteServiceSettings.h"
@@ -34,22 +34,22 @@ class test_RemoteServiceSettings
 		{
 			RemoteServiceSettings settings;
 
-			QCOMPARE(settings.getDeviceName(), DeviceInfo::getName());
+			QCOMPARE(settings.getDeviceName(), DeviceInfo::getDeviceName());
 		}
 
 
 		void testDeviceName()
 		{
 			RemoteServiceSettings settings;
-			QCOMPARE(settings.getDeviceName(), DeviceInfo::getName());
+			QCOMPARE(settings.getDeviceName(), DeviceInfo::getDeviceName());
 
-			QCOMPARE(settings.getDeviceName(), DeviceInfo::getName());
+			QCOMPARE(settings.getDeviceName(), DeviceInfo::getDeviceName());
 
 			settings.setDeviceName(QStringLiteral("   "));
-			QCOMPARE(settings.getDeviceName(), DeviceInfo::getName());
+			QCOMPARE(settings.getDeviceName(), DeviceInfo::getDeviceName());
 
 			settings.setDeviceName(QStringLiteral("  \n "));
-			QCOMPARE(settings.getDeviceName(), DeviceInfo::getName());
+			QCOMPARE(settings.getDeviceName(), DeviceInfo::getDeviceName());
 
 			settings.setDeviceName(QStringLiteral("Google Pixel"));
 			QCOMPARE(settings.getDeviceName(), QLatin1String("Google Pixel"));
@@ -64,10 +64,10 @@ class test_RemoteServiceSettings
 			QCOMPARE(settings.getDeviceName(), QLatin1String("Google Pixel"));
 
 			settings.setDeviceName(QStringLiteral("   "));
-			QCOMPARE(settings.getDeviceName(), DeviceInfo::getName());
+			QCOMPARE(settings.getDeviceName(), DeviceInfo::getDeviceName());
 
 			settings.setDeviceName(QString());
-			QCOMPARE(settings.getDeviceName(), DeviceInfo::getName());
+			QCOMPARE(settings.getDeviceName(), DeviceInfo::getDeviceName());
 		}
 
 
@@ -249,10 +249,8 @@ class test_RemoteServiceSettings
 			QCOMPARE(settings.getRemoteInfos().size(), 0);
 
 			const auto& current = QDateTime::currentDateTime();
-			RemoteServiceSettings::RemoteInfo a(QByteArrayLiteral("a"), current);
-			a.setNameUnescaped(QStringLiteral("dummy for A"));
-			RemoteServiceSettings::RemoteInfo b(QByteArrayLiteral("b"), current);
-			b.setNameUnescaped(QStringLiteral("dummy for B"));
+			RemoteServiceSettings::RemoteInfo a(QByteArrayLiteral("a"), current, QStringLiteral("dummy for A"));
+			RemoteServiceSettings::RemoteInfo b(QByteArrayLiteral("b"), current, QStringLiteral("dummy for B"));
 
 			QVERIFY(a == a);
 			QVERIFY(b == b);

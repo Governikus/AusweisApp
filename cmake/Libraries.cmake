@@ -2,10 +2,16 @@
 
 set(MIN_QT_VERSION_DESKTOP 6.8)
 set(MIN_QT_VERSION_MOBILE 6.10)
+set(MIN_OPENSSL_VERSION 1.1.1)
 
 if(LIBS_GOVERNIKUS)
 	message(STATUS "Library revision: ${LIBS_REVISION}")
 	string(REGEX REPLACE "-.*" "" MIN_QT_VERSION "${LIBS_QT}")
+
+	set(MIN_OPENSSL_VERSION ${LIBS_OPENSSL})
+	string(REGEX REPLACE "[-a-zA-Z].*$" "" MIN_OPENSSL_VERSION "${MIN_OPENSSL_VERSION}")
+
+	set(MIN_LLHTTP_VERSION ${LIBS_LLHTTP})
 else()
 	if(DESKTOP)
 		set(MIN_QT_VERSION ${MIN_QT_VERSION_DESKTOP})
@@ -82,21 +88,12 @@ if(MINGW AND NOT CMAKE_CROSSCOMPILING)
 	set(CMAKE_CROSSCOMPILING ON)
 endif()
 
-if(LIBS_GOVERNIKUS)
-	set(MIN_OPENSSL_VERSION ${LIBS_OPENSSL})
-	string(REGEX REPLACE "[-a-zA-Z].*$" "" MIN_OPENSSL_VERSION "${MIN_OPENSSL_VERSION}")
-else()
-	set(MIN_OPENSSL_VERSION 1.1.1)
-endif()
 find_package(OpenSSL ${MIN_OPENSSL_VERSION} REQUIRED)
 
 if(tmp_crosscompile_enabled)
 	set(CMAKE_CROSSCOMPILING OFF)
 endif()
 
-if(LIBS_GOVERNIKUS)
-	set(MIN_LLHTTP_VERSION ${LIBS_LLHTTP})
-endif()
 find_package(llhttp ${MIN_LLHTTP_VERSION} REQUIRED)
 
 
@@ -125,7 +122,7 @@ elseif(IOS)
 	find_library(IOS_IMAGEIO ImageIO)
 	find_library(IOS_CORENFC CoreNFC)
 	find_library(IOS_MESSAGEUI MessageUI)
-elseif(MAC)
+elseif(MACOS)
 	find_package(PCSC REQUIRED)
 
 	find_library(OSX_USERNOTIFICATIONS UserNotifications)

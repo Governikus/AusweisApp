@@ -1,19 +1,23 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "paos/retrieve/DidAuthenticateEacAdditional.h"
 
 #include "Env.h"
 #include "LogHandler.h"
+#include "paos/retrieve/PaosParser.h"
+
 #include "TestFileHelper.h"
-#include "paos/retrieve/DidAuthenticateEacAdditionalParser.h"
+#include "TestParserHelper.h"
 
 #include <QtCore>
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_DidAuthenticateEacAdditional
 	: public QObject
@@ -33,13 +37,11 @@ class test_DidAuthenticateEacAdditional
 		}
 
 
-		void parse()
+		void parsing()
 		{
-			QByteArray content = TestFileHelper::readFile(":paos/DIDAuthenticateEACAdditionalInput.xml"_L1);
-			PaosMessage* paosMessage = DidAuthenticateEacAdditionalParser().parse(content);
-
-			QScopedPointer<DIDAuthenticateEACAdditional> eacAdd(static_cast<DIDAuthenticateEACAdditional*>(paosMessage));
-
+			const auto& parser = TestParserHelper::create(":paos/DIDAuthenticateEACAdditionalInput.xml"_L1);
+			auto* pm = PaosParser().parse(parser).release();
+			const std::unique_ptr<DIDAuthenticateEACAdditional> eacAdd(static_cast<DIDAuthenticateEACAdditional*>(pm));
 			QVERIFY(eacAdd);
 			QCOMPARE(eacAdd->getSignature(), "86E24ACCE25E2B4623A3558EED7AA65658FEE70CC7B46CB9D34BD50B2F27E1E2221473D5B871497563693E0F28BE9C8896062A9C02CE3959AD4BD58DEA0E984B"_L1);
 		}
@@ -47,8 +49,9 @@ class test_DidAuthenticateEacAdditional
 
 		void noSignature()
 		{
-			QByteArray content = TestFileHelper::readFile(":paos/DIDAuthenticateEACAdditionalInput_noSignature.xml"_L1);
-			PaosMessage* paosMessage = DidAuthenticateEacAdditionalParser().parse(content);
+			const auto& parser = TestParserHelper::create(":paos/DIDAuthenticateEACAdditionalInput_noSignature.xml"_L1);
+			PaosParser paosParser;
+			auto paosMessage = paosParser.parse(parser);
 
 			QVERIFY(paosMessage == nullptr);
 		}
@@ -56,8 +59,9 @@ class test_DidAuthenticateEacAdditional
 
 		void manySignature()
 		{
-			QByteArray content = TestFileHelper::readFile(":paos/DIDAuthenticateEACAdditionalInput_manySignature.xml"_L1);
-			PaosMessage* paosMessage = DidAuthenticateEacAdditionalParser().parse(content);
+			const auto& parser = TestParserHelper::create(":paos/DIDAuthenticateEACAdditionalInput_manySignature.xml"_L1);
+			PaosParser paosParser;
+			auto paosMessage = paosParser.parse(parser);
 
 			QVERIFY(paosMessage == nullptr);
 		}
@@ -96,7 +100,9 @@ class test_DidAuthenticateEacAdditional
 			QByteArray content = TestFileHelper::readFile(templateXml);
 			content = content.replace(replaceIdentifier, data + data);
 
-			PaosMessage* paosMessage = DidAuthenticateEacAdditionalParser().parse(content);
+			const auto& parser = TestParserHelper::create(content);
+			PaosParser paosParser;
+			auto paosMessage = paosParser.parse(parser);
 			QVERIFY(paosMessage == nullptr);
 
 			const QByteArray duplicateUniqueElement = "Duplicate unique element: \"" + tag + "\"";

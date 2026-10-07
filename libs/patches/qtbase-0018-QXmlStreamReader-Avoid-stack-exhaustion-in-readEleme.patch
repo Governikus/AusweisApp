@@ -1,0 +1,109 @@
+From 967382194ef0674e7bfaa278fb3d3edb40a587e5 Mon Sep 17 00:00:00 2001
+From: Fabian Kosmale <fabian.kosmale@qt.io>
+Date: Tue, 21 Jul 2026 16:18:48 +0200
+Subject: QXmlStreamReader: Avoid stack-exhaustion in readElementText
+
+The current algorithm calls the function recursively, which can be
+problematic if one encounters deeply nested elements.
+There is no need for recursion here, though: We can just keep track of
+the nesting level in the loop instead.
+Amends the start of the public history.
+While modifying the control structure anyway, move the result
+declaration out of the conditional, so that NRVO can apply.
+
+Fixes: QTBUG-148482
+Pick-to: 6.12 6.11 6.8 6.5 5.15
+Change-Id: I9ec0aa9339f586737609aa031e882e163ac02caa
+Reviewed-by: Ivan Solovev <ivan.solovev@qt.io>
+Reviewed-by: Marc Mutz <marc.mutz@qt.io>
+(cherry-picked from commit 50cc08f278c6961d00b5b8bae408d4ccc2fbca4d)
+
+Change-Id: I492fdd23d2c3b38059b7e5eaef29ebad2b82ced9
+---
+ src/corelib/serialization/qxmlstream.cpp      | 11 +++++---
+ .../qxmlstream/tst_qxmlstream.cpp             | 25 +++++++++++++++++++
+ 2 files changed, 32 insertions(+), 4 deletions(-)
+
+diff --git x/qtbase/src/corelib/serialization/qxmlstream.cpp y/qtbase/src/corelib/serialization/qxmlstream.cpp
+index ff70289013ab3784eeb9b8ce263cb1d9b3ef1ded..47db7a94503585685984abe17f744f7f11f947bf 100644
+--- x/qtbase/src/corelib/serialization/qxmlstream.cpp
++++ y/qtbase/src/corelib/serialization/qxmlstream.cpp
+@@ -2368,14 +2368,16 @@ QString QXmlStreamReader::readElementText(ReadElementTextBehaviour behaviour)
+     Q_D(QXmlStreamReader);
+     if (isStartElement()) {
+         QString result;
+-        forever {
++        qsizetype nestingLevel = 1;
++        do {
+             switch (readNext()) {
+             case Characters:
+             case EntityReference:
+                 result.insert(result.size(), d->text);
+                 break;
+             case EndElement:
+-                return result;
++                --nestingLevel;
++                break;
+             case ProcessingInstruction:
+             case Comment:
+                 break;
+@@ -2384,7 +2386,7 @@ QString QXmlStreamReader::readElementText(ReadElementTextBehaviour behaviour)
+                     skipCurrentElement();
+                     break;
+                 } else if (behaviour == IncludeChildElements) {
+-                    result += readElementText(behaviour);
++                    ++nestingLevel;
+                     break;
+                 }
+                 Q_FALLTHROUGH();
+@@ -2395,7 +2397,8 @@ QString QXmlStreamReader::readElementText(ReadElementTextBehaviour behaviour)
+                     return result;
+                 }
+             }
+-        }
++        } while (nestingLevel);
++        return result;
+     }
+     return QString();
+ }
+diff --git x/qtbase/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp y/qtbase/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp
+index db7abe9fa36bc93e61302c0179bc4a7f02ea9ff9..b4fea7d1a315a8a76022df8738ca17e44ed0cbed 100644
+--- x/qtbase/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp
++++ y/qtbase/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp
+@@ -651,6 +651,7 @@ private slots:
+     void tokenErrorHandling() const;
+     void checkStreamNotationDeclarations() const;
+     void checkStreamEntityDeclarations() const;
++    void readElementTextDeepNesting() const;
+ 
+ private:
+     static QByteArray readFile(const QString &filename);
+@@ -2968,4 +2969,28 @@ void tst_QXmlStream::checkStreamEntityDeclarations() const
+         QT_TEST_EQUALITY_OPS(entity, entityDeclarations.at(1), true);
+     }
+ }
++
++void tst_QXmlStream::readElementTextDeepNesting() const
++{
++    // readElementText(IncludeChildElements) must not recurse per nested element: deep nesting
++    // would otherwise exhaust the stack.
++    constexpr qsizetype depth = 300'000;
++
++    QByteArray xml;
++    xml.reserve(depth * 7 + 8);
++    for (qsizetype i = 0; i < depth; ++i)
++        xml += "<a>";
++    xml += 'x';
++    for (qsizetype i = 0; i < depth; ++i)
++        xml += "</a>";
++
++    QString result;
++    QXmlStreamReader reader(xml);
++    if (reader.readNextStartElement())
++        result = reader.readElementText(QXmlStreamReader::IncludeChildElements);
++    QVERIFY(!reader.hasError());
++
++    QCOMPARE(result, "x"_L1);
++}
++
+ #include "tst_qxmlstream.moc"

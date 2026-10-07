@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteWebSocketServerImpl.h"
@@ -119,4 +119,10 @@ void RemoteWebSocketServerImpl::setPairing(bool pEnable)
 QSslCertificate RemoteWebSocketServerImpl::getCurrentCertificate() const
 {
 	return mRemoteTlsServer->getCurrentCertificate();
+}
+
+
+void RemoteWebSocketServerImpl::rotatePsk()
+{
+	mRemoteTlsServer->setRandomPsk();
 }

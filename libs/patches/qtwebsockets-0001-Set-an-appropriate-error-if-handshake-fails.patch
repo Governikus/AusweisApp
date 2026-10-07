@@ -1,0 +1,43 @@
+From ce2e6a58f7db54f214a00fb478a65cfc00730797 Mon Sep 17 00:00:00 2001
+From: Timon Sassor <timon.sassor@governikus.de>
+Date: Mon, 27 Apr 2026 17:14:34 +0200
+Subject: Set an appropriate error if handshake fails
+
+In the event of a failed handshake we set an error to notify the user.
+To be able to signal consecutively failing connections, we need to reset
+the error state after a disconnect, so if the new connection fails with
+the same error, the error signal is emitted again.
+
+Pick-to: 6.10 6.11
+Change-Id: I0e6cca13c4dc7147ad9949bf0059273750c0d3de
+---
+ src/websockets/qwebsocketserver_p.cpp | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git x/qtwebsockets/src/websockets/qwebsocketserver_p.cpp y/qtwebsockets/src/websockets/qwebsocketserver_p.cpp
+index 73b83dc288cf3a01979d17c499208d11e82f6bfd..6bdd04aad14e9b910c1cf62fc23b2eba1460d17b 100644
+--- x/qtwebsockets/src/websockets/qwebsocketserver_p.cpp
++++ y/qtwebsockets/src/websockets/qwebsocketserver_p.cpp
+@@ -418,8 +418,11 @@ void QWebSocketServerPrivate::onSocketDisconnected()
+     QObject *sender = q->sender();
+     if (Q_LIKELY(sender)) {
+         QTcpSocket *pTcpSocket = qobject_cast<QTcpSocket*>(sender);
+-        if (Q_LIKELY(pTcpSocket))
++        if (Q_LIKELY(pTcpSocket)) {
+             pTcpSocket->deleteLater();
++            m_error = QWebSocketProtocol::CloseCode::CloseCodeNormal;
++            m_errorString = QString();
++        }
+     }
+ }
+ 
+@@ -529,6 +532,9 @@ void QWebSocketServerPrivate::handshakeReceived()
+             setError(QWebSocketProtocol::CloseCodeProtocolError,
+                      QWebSocketServer::tr("Invalid response received."));
+         }
++    } else {
++        setError(QWebSocketProtocol::CloseCodeProtocolError,
++                 QWebSocketServer::tr("Invalid handshake request."));
+     }
+     if (!success) {
+         pTcpSocket->close();

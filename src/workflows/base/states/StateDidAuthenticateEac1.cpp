@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateDidAuthenticateEac1.h"
@@ -23,7 +23,6 @@ StateDidAuthenticateEac1::StateDidAuthenticateEac1(const QSharedPointer<Workflow
 void StateDidAuthenticateEac1::run()
 {
 	Q_ASSERT(!getContext()->getDidAuthenticateEac1().isNull());
-	Q_ASSERT(getContext()->getPaceOutputData() != nullptr);
 	Q_ASSERT(getContext()->getCardConnection());
 	auto cardConnection = getContext()->getCardConnection();
 	Q_ASSERT(cardConnection);
@@ -44,13 +43,13 @@ void StateDidAuthenticateEac1::onCardCommandDone(QSharedPointer<BaseCardCommand>
 		eac1Response->setCertificateHolderAuthorizationTemplate(getContext()->encodeEffectiveChat().toHex());
 		eac1Response->setChallenge(challenge.toHex());
 
-		auto paceOutput = getContext()->getPaceOutputData();
-		eac1Response->setEFCardAccess(paceOutput->getEfCardAccess().toHex());
-		eac1Response->setIDPICC(paceOutput->getIdIcc().toHex());
-		if (!getContext()->hasChainForCertificationAuthority(*paceOutput))
+		const auto& paceOutput = getContext()->getPaceOutput();
+		eac1Response->setEFCardAccess(paceOutput.getEfCardAccess().toHex());
+		eac1Response->setIDPICC(paceOutput.getIdIcc().toHex());
+		if (!getContext()->hasChainForCertificationAuthority(paceOutput))
 		{
 			qDebug() << "No cvc chain determined, request new cvc list";
-			eac1Response->setCertificationAuthorityReference(*paceOutput);
+			eac1Response->setCertificationAuthorityReference(paceOutput);
 		}
 		Q_EMIT fireContinue();
 	}

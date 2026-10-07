@@ -1,5 +1,8 @@
 extends: default
 
+ignore: |
+  .qtcreator/
+
 rules:
   document-start: disable
   line-length:

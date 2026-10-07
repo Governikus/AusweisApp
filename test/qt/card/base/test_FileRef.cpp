@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 #include "FileRef.h"
@@ -58,9 +58,13 @@ class test_FileRef
 
 		void unknownType()
 		{
+			QTest::ignoreMessage(QtCriticalMsg, "Ignoring unknown file type \"0x01\"");
 			QCOMPARE(FileRef(0x01, QByteArray()).getType(), FileRef::TYPE::UNKNOWN);
+			QTest::ignoreMessage(QtCriticalMsg, "Ignoring unknown file type \"0x03\"");
 			QCOMPARE(FileRef(0x03, QByteArray()).getType(), FileRef::TYPE::UNKNOWN);
+			QTest::ignoreMessage(QtCriticalMsg, "Ignoring unknown file type \"0x05\"");
 			QCOMPARE(FileRef(0x05, QByteArray()).getType(), FileRef::TYPE::UNKNOWN);
+			QTest::ignoreMessage(QtCriticalMsg, "Ignoring unknown file type \"0xFF\"");
 			QCOMPARE(FileRef(0xFF, QByteArray()).getType(), FileRef::TYPE::UNKNOWN);
 		}
 

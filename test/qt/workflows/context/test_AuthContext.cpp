@@ -1,14 +1,16 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "context/AuthContext.h"
 
 #include "AppSettings.h"
+#include "VolatileSettings.h"
+#include "paos/retrieve/PaosParser.h"
+
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
-#include "VolatileSettings.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
+#include "TestParserHelper.h"
 
 #include <QSharedPointer>
 #include <QtTest>
@@ -83,7 +85,9 @@ class test_AuthContext
 		{
 			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_template.xml"_L1);
 			content = content.replace(QByteArray("<!-- PLACEHOLDER -->"), QByteArray("<AcceptedEIDType>SECertified</AcceptedEIDType>"));
-			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			const auto& parser = TestParserHelper::create(content);
+			auto* pm = PaosParser().parse(parser).release();
+			const QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
 
 			AuthContext context;
 			QCOMPARE(context.getAcceptedEidTypes(), {AcceptedEidType::CARD_CERTIFIED});
@@ -158,7 +162,7 @@ class test_AuthContext
 		void test_DidAuthenticateEacResponse1()
 		{
 			AuthContext context;
-			const QSharedPointer<DIDAuthenticateResponseEAC1> eac(new DIDAuthenticateResponseEAC1());
+			const auto& eac = QSharedPointer<DIDAuthenticateResponseEAC1>::create();
 
 			QCOMPARE(context.getDidAuthenticateResponseEac1(), nullptr);
 
@@ -170,7 +174,7 @@ class test_AuthContext
 		void test_DidAuthenticateResponseEacAdditionalInputType()
 		{
 			AuthContext context;
-			const QSharedPointer<DIDAuthenticateResponseEAC2> eac(new DIDAuthenticateResponseEAC2());
+			const auto& eac = QSharedPointer<DIDAuthenticateResponseEAC2>::create();
 
 			QCOMPARE(context.getDidAuthenticateResponseEacAdditionalInputType(), nullptr);
 
@@ -182,7 +186,7 @@ class test_AuthContext
 		void test_DidAuthenticateEacAdditional()
 		{
 			AuthContext context;
-			const QSharedPointer<DIDAuthenticateEACAdditional> eac(new DIDAuthenticateEACAdditional());
+			const auto& eac = QSharedPointer<DIDAuthenticateEACAdditional>::create();
 
 			QCOMPARE(context.getDidAuthenticateEacAdditional(), nullptr);
 
@@ -194,7 +198,7 @@ class test_AuthContext
 		void test_DidAuthenticateResponseEac2()
 		{
 			AuthContext context;
-			const QSharedPointer<DIDAuthenticateResponseEAC2> eac(new DIDAuthenticateResponseEAC2());
+			const auto& eac = QSharedPointer<DIDAuthenticateResponseEAC2>::create();
 
 			QCOMPARE(context.getDidAuthenticateResponseEac2(), nullptr);
 
@@ -206,7 +210,7 @@ class test_AuthContext
 		void test_TransmitResponse()
 		{
 			AuthContext context;
-			QSharedPointer<TransmitResponse> response(new TransmitResponse());
+			const auto& response = QSharedPointer<TransmitResponse>::create();
 
 			QCOMPARE(context.getTransmitResponse(), nullptr);
 
@@ -218,7 +222,7 @@ class test_AuthContext
 		void test_Transmit()
 		{
 			AuthContext context;
-			const QSharedPointer<Transmit> transmit(new Transmit());
+			const auto& transmit = QSharedPointer<Transmit>::create();
 
 			QCOMPARE(context.getTransmit(), nullptr);
 
@@ -231,7 +235,7 @@ class test_AuthContext
 		{
 			AuthContext context;
 			const QByteArray data("paos");
-			const QSharedPointer<StartPaos> paos(new StartPaos(data));
+			const auto& paos = QSharedPointer<StartPaos>::create(data);
 
 			QCOMPARE(context.getStartPaos(), nullptr);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "ReaderConfigurationParser.h"
@@ -10,10 +10,14 @@
 #include <QLoggingCategory>
 #include <QVersionNumber>
 
+#include <algorithm>
+
 
 using namespace governikus;
 
+
 Q_DECLARE_LOGGING_CATEGORY(card_drivers)
+
 
 ReaderConfigurationParser::EntryParser::EntryParser(const QJsonValue& pJsonValue)
 	: mJsonValue(pJsonValue)
@@ -268,27 +272,26 @@ QList<ReaderConfigurationInfo> ReaderConfigurationParser::fail(const QString& pL
 bool ReaderConfigurationParser::hasUniqueId(const ReaderConfigurationInfo& pInfo, const QList<ReaderConfigurationInfo>& pInfos)
 {
 	const uint vendorId = pInfo.getVendorId();
-	const QSet<uint> productIds = pInfo.getProductIds();
+	const QSet<uint>& productIds = pInfo.getProductIds();
 	const QString& name = pInfo.getName();
 	const QString& pattern = pInfo.getPattern();
 
-	for (const ReaderConfigurationInfo& info : pInfos)
-	{
-		if (vendorId > 0 && !productIds.isEmpty() && vendorId == info.getVendorId() && productIds.intersects(info.getProductIds()))
-		{
-			return false;
-		}
+	return std::ranges::all_of(pInfos, [&vendorId, &productIds, &name, &pattern](const ReaderConfigurationInfo& info) {
+				if (vendorId > 0 && !productIds.isEmpty() && vendorId == info.getVendorId() && productIds.intersects(info.getProductIds()))
+				{
+					return false;
+				}
 
-		if (name == info.getName())
-		{
-			return false;
-		}
+				if (name == info.getName())
+				{
+					return false;
+				}
 
-		if (!pattern.isEmpty() && pattern == info.getPattern())
-		{
-			return false;
-		}
-	}
+				if (!pattern.isEmpty() && pattern == info.getPattern())
+				{
+					return false;
+				}
 
-	return true;
+				return true;
+			});
 }

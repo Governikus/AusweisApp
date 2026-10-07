@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -33,6 +33,7 @@ FlickableSectionPage {
 
 		Layout.alignment: Qt.AlignHCenter
 		Layout.topMargin: Style.dimens.pane_spacing
+		visible: status === Loader.Ready
 	}
 	Subheading {
 		id: subtitle
@@ -53,6 +54,7 @@ FlickableSectionPage {
 		id: customContentLoader
 
 		Layout.fillWidth: true
+		Layout.preferredHeight: (item as Item)?.visible ? (item as Item)?.implicitHeight : 0
 		Layout.topMargin: (item as Item)?.visible ? Style.dimens.pane_spacing : 0
 		visible: status === Loader.Ready
 	}
@@ -71,6 +73,7 @@ FlickableSectionPage {
 		GButton {
 			id: primaryButton
 
+			Accessible.id: "DecisionView_ok"
 			Layout.maximumWidth: buttonBox.uniformButtonWidth
 			Layout.preferredWidth: buttonBox.uniformButtonWidth
 			visible: text !== ""

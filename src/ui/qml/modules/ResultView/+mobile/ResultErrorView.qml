@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -40,7 +40,6 @@ ResultView {
 		}
 		GText {
 			id: textErrorDescription
-
 		}
 	}
 }

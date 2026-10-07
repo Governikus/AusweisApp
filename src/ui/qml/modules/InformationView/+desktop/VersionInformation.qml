@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -22,9 +22,9 @@ ColumnLayout {
 			buttonIconSource: "qrc:///images/open_website.svg"
 			//: DESKTOP
 			buttonText: qsTr("Open website")
-			buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
+			buttonToolTip: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
 			iconSource: "qrc:/images/desktop/privacy_icon.svg"
-			linkToOpen: buttonTooltip
+			linkToOpen: buttonToolTip
 
 			//: DESKTOP
 			title: qsTr("Privacy statement")
@@ -37,9 +37,9 @@ ColumnLayout {
 			buttonIconSource: "qrc:///images/open_website.svg"
 			//: DESKTOP
 			buttonText: qsTr("Open website")
-			buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/a11y".arg(SettingsModel.language)
+			buttonToolTip: "https://www.ausweisapp.bund.de/%1/aa2/a11y".arg(SettingsModel.language)
 			iconSource: "qrc:/images/desktop/a11y_icon.svg"
-			linkToOpen: buttonTooltip
+			linkToOpen: buttonToolTip
 
 			//: DESKTOP
 			title: qsTr("Accessibility statement")
@@ -69,8 +69,6 @@ ColumnLayout {
 
 					Accessible.onPressAction: mouseArea.clicked(null)
 					Keys.onSpacePressed: mouseArea.clicked(null)
-					onFocusChanged: if (focus)
-						Utils.positionViewAtItem(this)
 				}
 			}
 		}

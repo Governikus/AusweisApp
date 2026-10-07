@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 /*!
@@ -70,6 +70,7 @@ class VolatileSettings
 		Messages mMessages;
 		ulong mDelay;
 		bool mOnboardingShown;
+		bool mAppRatingShown;
 
 	public:
 		[[nodiscard]] bool isUsedAsSDK() const;
@@ -89,6 +90,9 @@ class VolatileSettings
 
 		[[nodiscard]] bool onboardingShown() const;
 		void setOnboardingShown(bool pOnboardingShown);
+
+		[[nodiscard]] bool appRatingShown() const;
+		void setAppRatingShown(bool pShown);
 
 	Q_SIGNALS:
 		void fireUsedAsSdkChanged();

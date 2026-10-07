@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -216,7 +216,9 @@ class Env
 			obj = mInstancesSingleton.value(id);
 			if (!obj)
 #endif
-			obj = fetchRealSingleton<T>();
+			{
+				obj = fetchRealSingleton<T>();
+			}
 			Q_ASSERT(obj);
 			return checkObjectInfo(id, static_cast<T*>(obj));
 		}

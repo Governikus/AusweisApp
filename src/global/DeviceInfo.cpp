@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "DeviceInfo.h"
@@ -65,11 +65,11 @@ QString DeviceInfo::getBuildNumber()
 
 QString DeviceInfo::getPrettyInfo()
 {
-	return QStringLiteral("%1 (%2)").arg(getName(), getFingerprint());
+	return QStringLiteral("%1 (%2)").arg(getDeviceName(), getFingerprint());
 }
 
 
-QString DeviceInfo::getName()
+QString DeviceInfo::getDeviceName()
 {
 #if defined(Q_OS_ANDROID)
 	return getField("MODEL");

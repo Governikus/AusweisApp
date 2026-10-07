@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick.Controls
@@ -25,5 +25,7 @@ GCollapsible {
 		id: radioGroup
 
 		buttons: root.content.filter(child => child instanceof GRadioButton)
+
+		onButtonsChanged: buttons.forEach(button => button.ButtonGroup.group = this)
 	}
 }

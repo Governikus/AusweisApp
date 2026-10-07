@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -52,7 +52,7 @@ ProgressView {
 	}
 	function displayInputError() {
 		push(inputErrorView, {
-			returnCode: AuthModel.lastReturnCode,
+			returnCode: AuthModel.lastPaceResult,
 			inputError: NumberModel.inputError,
 			passwordType: NumberModel.passwordType
 		});
@@ -113,10 +113,10 @@ ProgressView {
 			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Processing);
 			break;
 		case "StateEnterPacePassword":
-			if (AuthModel.lastReturnCode === CardReturnCode.OK_CAN) {
+			if (AuthModel.lastPaceResult === PaceResult.OK_CAN) {
 				displaySuccessView(NumberModel.PasswordType.CAN);
 				return;
-			} else if (AuthModel.lastReturnCode === CardReturnCode.OK_PUK) {
+			} else if (AuthModel.lastPaceResult === PaceResult.OK_PUK) {
 				displaySuccessView(NumberModel.PasswordType.PUK);
 				return;
 			}
@@ -127,7 +127,7 @@ ProgressView {
 			}
 			if (NumberModel.initialInputError !== "") {
 				push(inputErrorView, {
-					returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? CardReturnCode.INVALID_CAN : CardReturnCode.INVALID_PUK,
+					returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? PaceResult.INVALID_CAN : PaceResult.INVALID_PUK,
 					inputError: NumberModel.initialInputError,
 					passwordType: NumberModel.passwordType,
 					titleVisible: false
@@ -143,7 +143,7 @@ ProgressView {
 		case "StateSendDIDAuthenticateResponseEAC1":
 			userCancelAndManualRedirect = false;
 			if (AuthModel.isCancellationByUser()) {
-				if (SettingsModel.autoRedirectAfterAuthentication || AuthModel.autoFinishBeforeQuit) {
+				if (SettingsModel.autoRedirectAfterAuthentication || AuthModel.autoFinishBeforeQuit || AuthModel.changeTransportPin) {
 					push(regularAbortedAuthView);
 				} else {
 					userCancelAndManualRedirect = true;
@@ -371,7 +371,8 @@ ProgressView {
 		id: enterPasswordView
 
 		EnterPasswordView {
-			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
+			//: DESKTOP A11y button to confirm the PIN and start the provider authentication
+			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Confirm password and authenticate with provider") : ""
 			moreInformationText: infoData.linkText
 			passwordType: NumberModel.passwordType
 			title: root.title

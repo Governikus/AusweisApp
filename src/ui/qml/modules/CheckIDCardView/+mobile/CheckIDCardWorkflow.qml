@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -26,6 +26,7 @@ SectionPage {
 	signal showRemoteServiceSettings
 
 	contentIsScrolled: nfcWorkflow.visible && !nfcWorkflow.atYBeginning || progressView.visible && progressView.contentIsScrolled
+	lockAndHideNavigation: true
 
 	//: MOBILE
 	title: qsTr("Check device and ID card")
@@ -65,6 +66,7 @@ SectionPage {
 		id: checkIDCardResultView
 
 		CheckIDCardResultView {
+			lockAndHideNavigation: root.lockAndHideNavigation
 			progress: progressTracker
 			title: root.title
 			usedInOnboarding: root.usedInOnboarding
@@ -100,6 +102,7 @@ SectionPage {
 
 		CardNotActivatedView {
 			continueButtonVisible: root.usedInOnboarding
+			lockAndHideNavigation: root.lockAndHideNavigation
 			progress: progressTracker
 			title: root.title
 
@@ -116,6 +119,7 @@ SectionPage {
 		id: checkIDCardSuggestionView
 
 		CheckIDCardSuggestionView {
+			lockAndHideNavigation: root.lockAndHideNavigation
 			progress: progressTracker
 			usedInOnboarding: root.usedInOnboarding
 
@@ -137,6 +141,7 @@ SectionPage {
 		id: nfcConnectionInfoView
 
 		NfcConnectionInfoView {
+			lockAndHideNavigation: root.lockAndHideNavigation
 			progress: root.progress
 		}
 	}
@@ -169,6 +174,7 @@ SectionPage {
 
 		//: MOBILE
 		headline: qsTr("Checking ID card")
+		lockAndHideNavigation: root.lockAndHideNavigation
 		//: MOBILE
 		text: qsTr("Please do not move the ID card.")
 		title: root.title

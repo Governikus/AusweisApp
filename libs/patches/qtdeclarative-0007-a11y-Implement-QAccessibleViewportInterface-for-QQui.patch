@@ -1,0 +1,298 @@
+From 87ead7768b31cf06c30297f5972dcfb74cef604d Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Tue, 2 Jun 2026 08:04:29 +0200
+Subject: a11y: Implement QAccessibleViewportInterface for QQuickFlickable
+
+This will allow the a11y layer to inform the screen reader
+about the currently visible portion of a scrollable view.
+
+Task-number: QTBUG-139833
+Pick-to: 6.12
+Change-Id: I2b81a930d22e198b5438affc126c85c9383b7b46
+Reviewed-by: MohammadHossein Qanbari <mohammad.qanbari@qt.io>
+(cherry-picked from commit 928ed01d21cbde95f6931f2d2701d1f99ca88c67)
+---
+ src/quick/CMakeLists.txt                      |   1 +
+ .../accessible/qaccessiblequickflickable.cpp  | 101 ++++++++++++++++++
+ .../accessible/qaccessiblequickflickable_p.h  |  49 +++++++++
+ .../accessible/qquickaccessiblefactory.cpp    |   4 +
+ .../qquickaccessible/tst_qquickaccessible.cpp |  54 ++++++++++
+ 5 files changed, 209 insertions(+)
+ create mode 100644 src/quick/accessible/qaccessiblequickflickable.cpp
+ create mode 100644 src/quick/accessible/qaccessiblequickflickable_p.h
+
+diff --git x/qtdeclarative/src/quick/CMakeLists.txt y/qtdeclarative/src/quick/CMakeLists.txt
+index 561ca6d54565ac3cea330fe802dc2d32068d49a2..4faf6d4cd652b0961019336886e3606be275bf98 100644
+--- x/qtdeclarative/src/quick/CMakeLists.txt
++++ y/qtdeclarative/src/quick/CMakeLists.txt
+@@ -586,6 +586,7 @@ qt_internal_extend_target(Quick CONDITION QT_FEATURE_accessibility
+         accessible/qaccessiblequicktextedit.cpp accessible/qaccessiblequicktextedit_p.h
+         accessible/qaccessiblequicktextinput.cpp accessible/qaccessiblequicktextinput_p.h
+         accessible/qaccessiblequickview.cpp accessible/qaccessiblequickview_p.h
++        accessible/qaccessiblequickflickable.cpp accessible/qaccessiblequickflickable_p.h
+         accessible/qquickaccessiblefactory.cpp accessible/qquickaccessiblefactory_p.h
+     LIBRARIES
+         Qt::CorePrivate
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickflickable.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickflickable.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..f1ed4b732262e19ff0829ae0307683575cb856b9
+--- /dev/null
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickflickable.cpp
+@@ -0,0 +1,101 @@
++// Copyright (C) 2026 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++// Qt-Security score:significant reason:default
++
++#include "qaccessiblequickflickable_p.h"
++
++#include <QtQuick/private/qquickflickable_p.h>
++
++QT_BEGIN_NAMESPACE
++
++#if QT_CONFIG(accessibility)
++
++QAccessibleQuickFlickable::QAccessibleQuickFlickable(QQuickFlickable *flickable)
++    : QAccessibleQuickItem(flickable)
++{
++}
++
++QSizeF QAccessibleQuickFlickable::contentSize() const
++{
++    if (auto *f = flickable())
++        return { f->contentWidth(), f->contentHeight() };
++
++    return { };
++}
++
++QPointF QAccessibleQuickFlickable::position() const
++{
++    if (auto *f = flickable()) {
++        const qreal contentWidth = f->contentWidth();
++        const qreal contentHeight = f->contentHeight();
++
++        if (contentWidth == 0 || contentHeight == 0)
++            return { 0, 0 };
++
++        // The QML Flickable uses the contentX property to realize the leftMargin
++        // so the normalized position needs to account for this. The same goes
++        // for the Y position.
++        const qreal effectiveXPosition = f->contentX() + f->leftMargin() + f->originX();
++        const qreal effectiveYPosition = f->contentY() + f->topMargin() + f->originY();
++        return { effectiveXPosition / contentWidth, effectiveYPosition / contentHeight };
++    }
++
++    return { };
++}
++
++QSizeF QAccessibleQuickFlickable::viewportSize() const
++{
++    if (auto *f = flickable()) {
++        const qreal contentWidth = f->contentWidth();
++        const qreal contentHeight = f->contentHeight();
++
++        if (contentWidth == 0 || contentHeight == 0)
++            return { 1, 1 };
++
++        const qreal effectiveWidth = f->width() - f->leftMargin() - f->rightMargin();
++        const qreal effectiveHeight = f->height() - f->topMargin() - f->bottomMargin();
++        return { std::min(1.0, effectiveWidth / contentWidth),
++                 std::min(1.0, effectiveHeight / contentHeight) };
++    }
++
++    return { };
++}
++
++bool QAccessibleQuickFlickable::isIndexed() const
++{
++    return false;
++}
++
++void QAccessibleQuickFlickable::setPosition(const QPointF &position)
++{
++    if (auto *f = flickable()) {
++        const qreal contentWidth = f->contentWidth();
++        const qreal contentHeight = f->contentHeight();
++
++        if (contentWidth == 0 || contentHeight == 0) {
++            f->setContentX(0);
++            f->setContentY(0);
++            return;
++        }
++
++        f->setContentX(position.x() * contentWidth - f->leftMargin() - f->originX());
++        f->setContentY(position.y() * contentHeight - f->topMargin() - f->originY());
++    }
++}
++
++void *QAccessibleQuickFlickable::interface_cast(QAccessible::InterfaceType t)
++{
++    if (t == QAccessible::ViewportInterface)
++        return static_cast<QAccessibleViewportInterface *>(this);
++
++    return QAccessibleQuickItem::interface_cast(t);
++}
++
++QQuickFlickable *QAccessibleQuickFlickable::flickable() const
++{
++    return qobject_cast<QQuickFlickable *>(object());
++}
++
++#endif // accessibility
++
++QT_END_NAMESPACE
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickflickable_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequickflickable_p.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..a7c34d672fc0a18656b867362a8824989089b49d
+--- /dev/null
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickflickable_p.h
+@@ -0,0 +1,49 @@
++// Copyright (C) 2026 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++// Qt-Security score:significant reason:default
++
++#ifndef QACCESSIBLEQUICKFLICKABLE_P_H
++#define QACCESSIBLEQUICKFLICKABLE_P_H
++
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++#include "qaccessiblequickitem_p.h"
++
++QT_BEGIN_NAMESPACE
++
++#if QT_CONFIG(accessibility)
++
++class QQuickFlickable;
++
++class Q_QUICK_EXPORT QAccessibleQuickFlickable : public QAccessibleQuickItem,
++                                                 public QAccessibleViewportInterface
++{
++public:
++    QAccessibleQuickFlickable(QQuickFlickable *flickable);
++
++    // Viewport Interface
++    QSizeF contentSize() const override;
++    QPointF position() const override;
++    QSizeF viewportSize() const override;
++    bool isIndexed() const override;
++    void setPosition(const QPointF &position) override;
++
++protected:
++    QQuickFlickable *flickable() const;
++    void *interface_cast(QAccessible::InterfaceType t) override;
++};
++
++#endif // accessibility
++
++QT_END_NAMESPACE
++
++#endif // QACCESSIBLEQUICKFLICKABLE_P_H
+diff --git x/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp y/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
+index 9f0a0cd04afca2afaab292489fda9e7ec31fc663..75615002ad75a6d4c9172c30bdb30e00d980076a 100644
+--- x/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
++++ y/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
+@@ -8,6 +8,8 @@
+ #include "qaccessiblequickitem_p.h"
+ #include "qaccessiblequicktextedit_p.h"
+ #include "qaccessiblequicktextinput_p.h"
++#include "qaccessiblequickflickable_p.h"
++#include <QtQuick/private/qquickflickable_p.h>
+ #include <QtQuick/private/qquickitem_p.h>
+ #include <QtQuick/private/qquicktextedit_p.h>
+ #include <QtQuick/private/qquicktextinput_p.h>
+@@ -23,6 +25,8 @@ QAccessibleInterface *qQuickAccessibleFactory(const QString &classname, QObject
+         return new QAccessibleQuickTextEdit(qobject_cast<QQuickTextEdit *>(object));
+     if (classname == QLatin1String("QQuickTextInput"))
+         return new QAccessibleQuickTextInput(qobject_cast<QQuickTextInput *>(object));
++    if (classname == QLatin1String("QQuickFlickable"))
++        return new QAccessibleQuickFlickable(qobject_cast<QQuickFlickable *>(object));
+     if (classname == QLatin1String("QQuickItem")) {
+         QQuickItem *item = qobject_cast<QQuickItem *>(object);
+         Q_ASSERT(item);
+diff --git x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+index 59d573dbec8f36b209ac3aced8d2158578f8503c..9f26a4e3b06ab04760ed37f7991d9b3e79e1f51e 100644
+--- x/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
++++ y/qtdeclarative/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+@@ -23,6 +23,7 @@
+ #include <QtQuick/private/qquicktext_p.h>
+ #include <QtQuick/private/qquicktextinput_p.h>
+ #include <QtQuick/private/qaccessiblequickitem_p.h>
++#include <QtQuick/private/qaccessiblequickflickable_p.h>
+ 
+ #include <QtQuickTestUtils/private/qmlutils_p.h>
+ #include <QtQuickTestUtils/private/visualtestutils_p.h>
+@@ -80,6 +81,9 @@ private slots:
+ 
+     void editableTextInterface_data();
+     void editableTextInterface();
++
++    void flickableViewportTest_data();
++    void flickableViewportTest();
+ };
+ 
+ tst_QQuickAccessible::tst_QQuickAccessible()
+@@ -1121,6 +1125,56 @@ void tst_QQuickAccessible::editableTextInterface()
+     }
+ }
+ 
++void tst_QQuickAccessible::flickableViewportTest_data()
++{
++    QTest::addColumn<QSizeF>("size");
++    QTest::addColumn<QSizeF>("contentSize");
++    QTest::addColumn<QPointF>("content");
++    QTest::addColumn<QPointF>("position");
++    QTest::addColumn<QSizeF>("viewportSize");
++
++    QTest::addRow("Fully visible") << QSizeF(100, 200) << QSizeF(100, 200) << QPointF(0, 0)
++                                   << QPointF(0, 0) << QSizeF(1, 1);
++    QTest::addRow("Quarter visible") << QSizeF(50, 100) << QSizeF(100, 200) << QPointF(0, 0)
++                                     << QPointF(0, 0) << QSizeF(0.5, 0.5);
++    QTest::addRow("Quarter visible - centered")
++            << QSizeF(50, 100) << QSizeF(100, 200) << QPointF(25, 50) << QPointF(0.25, 0.25)
++            << QSizeF(0.5, 0.5);
++    QTest::addRow("Quarter visible - at end")
++            << QSizeF(50, 100) << QSizeF(100, 200) << QPointF(50, 100) << QPointF(0.5, 0.5)
++            << QSizeF(0.5, 0.5);
++    QTest::addRow("Zero-size content")
++            << QSizeF(50, 100) << QSizeF(0, 0) << QPointF(0, 0) << QPointF(0, 0) << QSizeF(1, 1);
++    QTest::addRow("Content smaller than Flickable")
++            << QSizeF(100, 200) << QSizeF(50, 100) << QPointF(0, 0) << QPointF(0, 0)
++            << QSizeF(1, 1);
++}
++
++void tst_QQuickAccessible::flickableViewportTest()
++{
++    auto clearEvents = qScopeGuard([] { QTestAccessibility::clearEvents(); });
++
++    QFETCH(QSizeF, size);
++    QFETCH(QSizeF, contentSize);
++    QFETCH(QPointF, content);
++    QFETCH(QPointF, position);
++    QFETCH(QSizeF, viewportSize);
++
++    QQuickFlickable flickable;
++    flickable.setWidth(size.width());
++    flickable.setHeight(size.height());
++    flickable.setContentWidth(contentSize.width());
++    flickable.setContentHeight(contentSize.height());
++    flickable.setContentX(content.x());
++    flickable.setContentY(content.y());
++
++    QAccessibleQuickFlickable a11yFlickable(&flickable);
++    QCOMPARE(a11yFlickable.contentSize(), contentSize);
++    QCOMPARE(a11yFlickable.position(), position);
++    QCOMPARE(a11yFlickable.viewportSize(), viewportSize);
++    QCOMPARE(a11yFlickable.isIndexed(), false);
++}
++
+ QTEST_MAIN(tst_QQuickAccessible)
+ 
+ #include "tst_qquickaccessible.moc"

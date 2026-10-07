@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
-#include "paos/element/ConnectionHandle.h"
+#include "LogHandler.h"
 
 #include <QList>
 #include <QLoggingCategory>
@@ -18,19 +18,17 @@ class test_ElementParser;
 namespace governikus
 {
 
-class ElementParser
+class ElementParser final
 {
 	friend class ::test_ElementParser;
 
 	public:
-		explicit ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader);
-		virtual ~ElementParser();
+		ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader, bool pLoggingAllowed);
 
 		[[nodiscard]] bool parserFailed() const;
 
-	protected:
-		// helper methods
-		[[nodiscard]] ConnectionHandle parseConnectionHandle();
+		using HandleFoundElement = std::function<bool (QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes)>;
+		void detectStartElements(const QStringList& pStartElementNames, const HandleFoundElement& pFunc);
 
 		/*!
 		 * \brief Like QXmlStreamReader::readNextStartElement(), but also checks mParseError.
@@ -92,8 +90,6 @@ class ElementParser
 
 		void setParserFailed();
 
-		void initData(const QByteArray& pXmlData);
-
 		[[nodiscard]] QStringView getElementTypeByNamespace(const QString& pNamespace) const;
 
 	private:
@@ -101,6 +97,13 @@ class ElementParser
 
 		QSharedPointer<QXmlStreamReader> mXmlReader;
 		bool mParseError;
+		MessageLogger mLogger;
+		qsizetype mLoggerIndent;
+
+		[[nodiscard]] static QString toString(const QXmlStreamAttributes& pAttributes, QLatin1Char pJoin = QLatin1Char(' '));
+
+		bool handleStartElements(const QStringList& pStartElementNames, const HandleFoundElement& pFunc);
+		[[nodiscard]] QDebug logXml() const;
 };
 
 

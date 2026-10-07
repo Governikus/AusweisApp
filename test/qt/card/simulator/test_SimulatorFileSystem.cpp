@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 
@@ -233,6 +233,30 @@ class test_SimulatorFileSystem
 			QCOMPARE(fileSystem.getPassword(PacePasswordId::PACE_CAN), QByteArray("500540"));
 			QCOMPARE(fileSystem.getPassword(PacePasswordId::PACE_PIN), QByteArray("123456"));
 			QCOMPARE(fileSystem.getPassword(PacePasswordId::PACE_PUK), QByteArray("9876543210"));
+		}
+
+
+		void keys_data()
+		{
+			QTest::addColumn<int>("keyId");
+			QTest::addColumn<bool>("existing");
+
+			QTest::newRow("0") << 0 << false;
+			QTest::newRow("1") << 1 << true;
+			QTest::newRow("2") << 2 << true;
+			QTest::newRow("41") << 41 << true;
+			QTest::newRow("42") << 42 << false;
+
+		}
+
+
+		void keys()
+		{
+			QFETCH_GLOBAL(SimulatorFileSystem, fileSystem);
+			QFETCH(int, keyId);
+			QFETCH(bool, existing);
+
+			QCOMPARE(fileSystem.getKey(keyId).isEmpty(), !existing);
 		}
 
 

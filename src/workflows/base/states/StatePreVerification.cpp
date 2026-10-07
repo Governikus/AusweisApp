@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "StatePreVerification.h"
@@ -24,7 +24,7 @@ StatePreVerification::StatePreVerification(const QSharedPointer<WorkflowContext>
 	, GenericContextContainer(pContext)
 	, mTrustedCvcas(CVCertificate::fromRaw(Env::getSingleton<SecureStorage>()->getCVRootCertificates(true))
 			+ CVCertificate::fromRaw(Env::getSingleton<SecureStorage>()->getCVRootCertificates(false)))
-	, mValidationDateTime(QDateTime::currentDateTime())
+	, mValidationDateTime(QDateTime::currentDateTimeUtc())
 {
 }
 
@@ -102,7 +102,7 @@ void StatePreVerification::run()
 
 bool StatePreVerification::isValid(const QList<QSharedPointer<const CVCertificate>>& pCertificates) const
 {
-	qDebug() << "Check certificate chain validity on" << mValidationDateTime.toString(Qt::ISODate);
+	qDebug() << "Check certificate chain validity on UTC:" << mValidationDateTime.toUTC().toString(Qt::ISODate);
 
 	for (auto iter = pCertificates.crbegin(); iter != pCertificates.crend(); ++iter)
 	{

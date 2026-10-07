@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -16,13 +16,13 @@ namespace governikus
 class ConnectionHandle;
 
 class ConnectionHandleParser
-	: public ElementParser
 {
 	public:
-		explicit ConnectionHandleParser(QSharedPointer<QXmlStreamReader> pXmlReader);
-		~ConnectionHandleParser() override;
+		explicit ConnectionHandleParser(const QSharedPointer<ElementParser>& pParser);
 
 	private:
+		QSharedPointer<ElementParser> mParser;
+
 		void parseUniqueElementText(const std::function<void(const QString&)>& pFunc, QString& pText);
 
 	public:

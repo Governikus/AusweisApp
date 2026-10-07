@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateDidAuthenticateEac1.h"
@@ -65,7 +65,7 @@ class test_StateDidAuthenticateEac1
 				const EstablishPaceChannelOutput output;
 				mAuthContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 				mAuthContext->setDidAuthenticateEac1(eac1);
-				mAuthContext->setPaceOutputData(output);
+				mAuthContext->setPaceOutput(output);
 
 				StateDidAuthenticateEac1 state(mAuthContext);
 				QSignalSpy spyAbort(&state, &StateDidAuthenticateEac1::fireAbort);
@@ -100,7 +100,7 @@ class test_StateDidAuthenticateEac1
 			QSharedPointer<DIDAuthenticateResponseEAC1> response(new DIDAuthenticateResponseEAC1());
 			mAuthContext->setDidAuthenticateResponseEac1(response);
 			EstablishPaceChannelOutput output;
-			mAuthContext->setPaceOutputData(output);
+			mAuthContext->setPaceOutput(output);
 			QTest::ignoreMessage(QtDebugMsg, "No cvc chain determined, request new cvc list");
 			state.onCardCommandDone(command);
 			QCOMPARE(spyContinue.count(), 1);

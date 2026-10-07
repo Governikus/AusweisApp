@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -12,10 +12,12 @@ QtObject {
 	// If this font size changes, it has to be changed in UiPluginModel, too.
 	readonly property real text: scaleText(15) * UiPluginModel.fontScaleFactor
 	readonly property real textHeadline: scaleText(26) * UiPluginModel.fontScaleFactor
+	readonly property real textNumberField: scaleText(24) * UiPluginModel.fontScaleFactor
 	readonly property real textSubline: scaleText(18) * UiPluginModel.fontScaleFactor
 	readonly property real textTitle: scaleText(30) * UiPluginModel.fontScaleFactor
 	readonly property real text_navigation: scaleText(12) * UiPluginModel.fontScaleFactor
 	readonly property real text_tile: scaleText(30) * UiPluginModel.fontScaleFactor
+	readonly property real text_toolTip: scaleText(13) * UiPluginModel.fontScaleFactor
 
 	// Scale the text on small devices like the iPhone SE
 	function scaleText(value) {

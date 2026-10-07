@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -11,7 +11,7 @@ import QtQml.Models
 import Governikus.Global
 import Governikus.View
 import Governikus.TitleBar
-import Governikus.FeedbackView
+import Governikus.LogView
 import Governikus.InformationView
 import Governikus.Style
 import Governikus.Type

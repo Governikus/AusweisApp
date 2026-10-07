@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "MockIfdDispatcher.h"
@@ -167,7 +167,8 @@ void MockIfdDispatcher::send(const QSharedPointer<const IfdMessage>& pMessage)
 	{
 		const QSharedPointer<const IfdEstablishPaceChannel> request = pMessage.staticCast<const IfdEstablishPaceChannel>();
 		const QString readerName = request->getSlotHandle();
-		const QSharedPointer<IfdMessage> message(new IfdEstablishPaceChannelResponse(readerName, EstablishPaceChannelOutput(CardReturnCode::OK), resultMinor));
+		const auto passwordId = request->getInputData().getPasswordId();
+		const QSharedPointer<IfdMessage> message(new IfdEstablishPaceChannelResponse(readerName, EstablishPaceChannelOutput(passwordId, CardReturnCode::OK), resultMinor));
 		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(IfdVersion::Version::v2, mContextHandle)).object(), mId);
 	}
 

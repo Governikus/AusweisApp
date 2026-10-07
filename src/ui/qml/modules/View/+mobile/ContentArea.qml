@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -140,7 +140,6 @@ Item {
 			onWorkflowFinished: {
 				popAll();
 				show(UiModule.DEFAULT);
-				setLockedAndHidden(false);
 				this.destroy();
 			}
 

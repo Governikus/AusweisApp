@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -8,7 +8,9 @@
 #include "GenericContextContainer.h"
 #include "context/WorkflowContext.h"
 
+
 class test_StateEstablishPaceChannel;
+
 
 namespace governikus
 {
@@ -23,8 +25,6 @@ class StateEstablishPaceChannel
 
 	private:
 		explicit StateEstablishPaceChannel(const QSharedPointer<WorkflowContext>& pContext);
-
-		PacePasswordId mPasswordId;
 
 		void run() override;
 		void onUserCancelled() override;

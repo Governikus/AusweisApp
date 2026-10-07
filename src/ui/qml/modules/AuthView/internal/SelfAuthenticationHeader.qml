@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -21,6 +21,7 @@ RowLayout {
 		symbol.type: Symbol.Type.CHECK
 	}
 	GText {
+		Accessible.id: "SelfAuthenticationData_successText"
 		//: ALL_PLATFORMS Status message that the self authentication successfully completed (1/2).
 		text: qsTr("Successfully read data.") + "<br>" +
 		//: ALL_PLATFORMS Status message that the self authentication successfully completed (2/2).

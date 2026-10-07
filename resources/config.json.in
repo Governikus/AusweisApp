@@ -82,19 +82,23 @@
 			"brainpoolP512r1",
 			"brainpoolP384r1",
 			"brainpoolP256r1",
+			"secp521r1",
 			"secp384r1",
 			"prime256v1"
 		],
 		"signatureAlgorithms": [
-			"RSA+SHA512",
-			"DSA+SHA512",
-			"ECDSA+SHA512",
-			"RSA+SHA384",
-			"DSA+SHA384",
-			"ECDSA+SHA384",
-			"RSA+SHA256",
-			"DSA+SHA256",
-			"ECDSA+SHA256"
+			"rsa_pss_rsae_sha512",
+			"rsa_pss_rsae_sha384",
+			"rsa_pss_rsae_sha256",
+			"rsa_pss_pss_sha512",
+			"rsa_pss_pss_sha384",
+			"rsa_pss_pss_sha256",
+			"ecdsa_brainpoolP512r1tls13_sha512",
+			"ecdsa_brainpoolP384r1tls13_sha384",
+			"ecdsa_brainpoolP256r1tls13_sha256",
+			"ecdsa_secp521r1_sha512",
+			"ecdsa_secp384r1_sha384",
+			"ecdsa_secp256r1_sha256"
 		]
 	},
 
@@ -129,6 +133,7 @@
 			"brainpoolP512r1",
 			"brainpoolP384r1",
 			"brainpoolP256r1",
+			"secp521r1",
 			"secp384r1",
 			"prime256v1"
 		],
@@ -139,9 +144,9 @@
 			"rsa_pss_pss_sha512",
 			"rsa_pss_pss_sha384",
 			"rsa_pss_pss_sha256",
-			"RSA+SHA512",
-			"RSA+SHA384",
-			"RSA+SHA256"
+			"rsa_pkcs1_sha512",
+			"rsa_pkcs1_sha384",
+			"rsa_pkcs1_sha256"
 		]
 	},
 
@@ -180,14 +185,11 @@
 			"brainpoolP512r1",
 			"brainpoolP384r1",
 			"brainpoolP256r1",
+			"secp521r1",
 			"secp384r1",
 			"prime256v1"
 		],
-		"signatureAlgorithms": [
-			"RSA+SHA512",
-			"RSA+SHA384",
-			"RSA+SHA256"
-		]
+		"signatureAlgorithms": []
 	},
 
 	"minKeySizes": {

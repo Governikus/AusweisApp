@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "NetworkManager.h"
@@ -62,7 +62,8 @@ class test_NetworkManager
 			reply->abort();
 			QVERIFY(request.hasRawHeader("PAOS"));
 			QCOMPARE(request.rawHeader("PAOS"), QByteArray("ver=\"paosNamespace\""));
-			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 5);
+			const bool suse = QSysInfo::prettyProductName().contains(QLatin1String("openSUSE"));
+			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), suse ? 3 : 6);
 			QVERIFY(request.sslConfiguration().ellipticCurves().contains(QSslEllipticCurve::fromLongName("prime256v1"_L1)));
 			const auto cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig().getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);

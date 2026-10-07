@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -12,7 +12,7 @@ RowLayout {
 
 	property alias buttonIconSource: button.icon.source
 	property alias buttonText: button.text
-	property alias buttonTooltip: button.enabledTooltipText
+	property alias buttonToolTip: button.enabledToolTipText
 	property string description: ""
 	property alias iconSource: icon.source
 	property string linkToOpen
@@ -38,17 +38,14 @@ RowLayout {
 		Layout.fillWidth: true
 		label: root.title
 		text: root.description
-
-		onFocusChanged: if (focus)
-			Utils.positionViewAtItem(this)
 	}
 	GButton {
 		id: button
 
+		readonly property string a11yName: (root.title && hasLink ? root.title + ", " : "") + text
 		readonly property bool hasLink: root.linkToOpen !== ""
 
-		Accessible.description: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, Accessible.name) : ""
-		Accessible.name: (root.title && hasLink ? root.title + ", " : "") + text
+		Accessible.name: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, a11yName) : a11yName
 		Accessible.role: hasLink ? Accessible.Link : Accessible.Button
 		Layout.alignment: Qt.AlignRight | Qt.AlignTop
 		tintIcon: true

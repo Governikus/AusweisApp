@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2026 Governikus Service GmbH, Germany
  */
 
 #include "UiPluginQml.h"
@@ -110,19 +110,26 @@ class test_UiPluginQml
 		}
 
 
-		void test_useSystemFontChanged()
+		void test_onUseSystemFontChanged()
 		{
 			ResourceLoader::getInstance().init();
-			UiPluginQml plugin;
 
+			UiPluginQml plugin;
+			QSignalSpy spy(&plugin, &UiPluginQml::fireFontFamilyChanged);
 			auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-			QVERIFY(!generalSettings.isUseSystemFont());
-			QTRY_VERIFY(QGuiApplication::font().family().contains(QStringLiteral("roboto"), Qt::CaseInsensitive));
+
+			generalSettings.setUseSystemFont(false);
+			// Must be called manually, since the connection is established with UiPluginQml::onApplicationInitialized(),
+			// but is not called here because it has many dependencies that are not relevant to the test.
+			plugin.onUseSystemFontChanged();
+			QCOMPARE(plugin.mFontFamily.contains(QStringLiteral("roboto"), Qt::CaseInsensitive), true);
+			QCOMPARE(spy.count(), 1);
 
 			generalSettings.setUseSystemFont(true);
-			//We call this manually, because the signal-connection is tied to an application window being present.
 			plugin.onUseSystemFontChanged();
-			QTRY_VERIFY(!QGuiApplication::font().family().contains(QStringLiteral("roboto"), Qt::CaseInsensitive));
+			QCOMPARE(plugin.mFontFamily.contains(QStringLiteral("roboto"), Qt::CaseInsensitive), false);
+			QCOMPARE(spy.count(), 2);
+
 			ResourceLoader::getInstance().shutdown();
 		}
 
@@ -349,5 +356,5 @@ class test_UiPluginQml
 
 };
 
-QTEST_MAIN(test_UiPluginQml)
 #include "test_UiPluginQml.moc"
+QTEST_MAIN(test_UiPluginQml)

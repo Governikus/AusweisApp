@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "TlsConfiguration.h"
@@ -84,15 +84,17 @@ void TlsConfiguration::load(const QJsonObject& pConfig)
 	mConfiguration.setOcspStaplingEnabled(ocspStapling);
 	mConfiguration.setCiphers(ciphers);
 	mConfiguration.setEllipticCurves(ellipticCurves);
-	mConfiguration.setBackendConfigurationOption(QByteArrayLiteral("SignatureAlgorithms"), signatureAlgorithms.join(':'));
+	if (!signatureAlgorithms.isEmpty())
+	{
+		mConfiguration.setBackendConfigurationOption(QByteArrayLiteral("SignatureAlgorithms"), signatureAlgorithms.join(':'));
+	}
 	mConfiguration.setDiffieHellmanParameters(QSslDiffieHellmanParameters()); // use SSL_CTX_set_dh_auto
 }
 
 
 bool TlsConfiguration::isValid() const
 {
-	return !getCiphers().isEmpty()
-		   && !getSignatureAlgorithms().isEmpty();
+	return !getCiphers().isEmpty();
 }
 
 

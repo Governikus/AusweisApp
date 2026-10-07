@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -31,6 +31,7 @@ class LocalIfdServer
 		[[nodiscard]] bool isPairingConnection() const override;
 		[[nodiscard]] QSslCertificate getCurrentCertificate() const override;
 		[[nodiscard]] const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
+		void rotatePsk() override;
 
 		[[nodiscard]] bool isLocal() const override;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "ServerMessageHandlerImpl.h"
@@ -242,11 +242,12 @@ void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& 
 {
 	const auto& ifdEstablishPaceChannel = QSharedPointer<IfdEstablishPaceChannel>::create(pJsonObject);
 	const QString& slotHandle = ifdEstablishPaceChannel->getSlotHandle();
+	const auto passwordId = ifdEstablishPaceChannel->getInputData().getPasswordId();
 
 	if (!mCardConnections.contains(slotHandle))
 	{
 		qCWarning(ifd) << "Card is not connected" << slotHandle;
-		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, EstablishPaceChannelOutput(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, EstablishPaceChannelOutput(passwordId, CardReturnCode::COMMAND_FAILED), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 		mDispatcher->send(response);
 		return;
 	}
@@ -254,7 +255,7 @@ void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& 
 	const auto& cardConnection = mCardConnections.value(slotHandle);
 	if (!isAllowed(cardConnection, QStringView(u"EstablishPaceChannel")))
 	{
-		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, EstablishPaceChannelOutput(), ECardApiResult::Minor::AL_Unknown_Error);
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, EstablishPaceChannelOutput(passwordId, CardReturnCode::COMMAND_FAILED), ECardApiResult::Minor::AL_Unknown_Error);
 		mDispatcher->send(response);
 		return;
 	}
@@ -266,7 +267,7 @@ void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& 
 void ServerMessageHandlerImpl::sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput)
 {
 	ECardApiResult::Minor minor = ECardApiResult::Minor::null;
-	switch (pChannelOutput.getPaceReturnCode())
+	switch (pChannelOutput.getReturnCode())
 	{
 
 		case CardReturnCode::INPUT_TIME_OUT:

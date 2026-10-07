@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -30,6 +30,7 @@ SectionPage {
 			topMargin: Style.dimens.pane_spacing + Math.max(0, (root.height - root.width) / 2)
 		}
 		Tile {
+			Accessible.id: "MainView_PinManagement"
 			icon.source: "qrc:/images/lock.svg"
 
 			//: DESKTOP
@@ -38,6 +39,7 @@ SectionPage {
 			onClicked: root.requestUiModule(UiModule.PINMANAGEMENT)
 		}
 		Tile {
+			Accessible.id: "MainView_SelfAuthentication"
 			icon.source: "qrc:/images/mydata_tile.svg"
 
 			//: DESKTOP

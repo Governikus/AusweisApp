@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -52,9 +52,10 @@ class RemoteServiceModel
 	Q_PROPERTY(governikus::RemoteDeviceFilterModel * unavailablePairedDevices READ getUnavailablePairedDevices CONSTANT)
 	Q_PROPERTY(bool enableTransportPinLink READ enableTransportPinLink NOTIFY fireEstablishPaceChannelUpdated)
 	Q_PROPERTY(bool remoteReaderVisible READ getRemoteReaderVisible NOTIFY fireRemoteReaderVisibleChanged)
-	Q_PROPERTY(bool requiresLocalNetworkPermission MEMBER mRequiresLocalNetworkPermission CONSTANT)
 	Q_PROPERTY(QString transactionInfo READ getTransactionInfo NOTIFY fireTransactionInfoChanged)
 	Q_PROPERTY(QString connectedClientName READ getConnectedClientName NOTIFY fireConnectionInfoChanged)
+	Q_PROPERTY(int pskValidity READ getPskValidity CONSTANT)
+	Q_PROPERTY(int remainingPskValidity READ getRemainingPskValidity NOTIFY fireRemainingPskValidityChanged)
 
 	private:
 		QSharedPointer<IfdServiceContext> mContext;
@@ -71,7 +72,8 @@ class RemoteServiceModel
 		QString mConnectionInfo;
 		QString mConnectedServerDeviceNames;
 		QSharedPointer<IfdListEntry> mRememberedServerEntry;
-		const bool mRequiresLocalNetworkPermission;
+		QTimer mPskValidityTimer;
+		QTimer mRemainingPskValiditySignalTimer;
 #if defined(Q_OS_IOS)
 		bool mWasRunning;
 		bool mWasPairing;
@@ -97,6 +99,8 @@ class RemoteServiceModel
 #else
 		void onApplicationStateChanged(const bool pIsAppInForeground) const;
 #endif
+		void onIsRunningChanged();
+		void onPskChanged(const QByteArray& pPsk);
 		void onPairingCompleted(const QSslCertificate& pCertificate);
 		void onNameChanged();
 
@@ -120,7 +124,7 @@ class RemoteServiceModel
 		[[nodiscard]] QList<ReaderManagerPluginType> getSupportedReaderPluginTypes() const override;
 
 		void resetRemoteServiceContext(const QSharedPointer<IfdServiceContext>& pContext = QSharedPointer<IfdServiceContext>());
-		void setPairing(bool pEnabled) const;
+		void setPairing(bool pEnabled);
 		[[nodiscard]] bool isPairing() const;
 		[[nodiscard]] bool isConnectedToPairedDevice() const;
 		[[nodiscard]] bool enableTransportPinLink() const;
@@ -142,13 +146,15 @@ class RemoteServiceModel
 		Q_INVOKABLE void passwordsDiffer();
 		Q_INVOKABLE void changePinLength();
 		[[nodiscard]] Q_INVOKABLE bool isPinAuthentication() const;
+		[[nodiscard]] int getPskValidity() const;
+		[[nodiscard]] int getRemainingPskValidity() const;
 
 	Q_SIGNALS:
 		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
 		void fireIsStartingChanged();
 		void fireIsRunningChanged();
 		void fireEnvironmentChanged();
-		void firePskChanged(const QByteArray& pPsk);
+		void firePskChanged(const QByteArray& pPsk, bool pInitialPsk);
 		void fireDisplayTextChanged();
 		void fireConnectedChanged();
 		void fireConnectedServerDisconnected();
@@ -162,6 +168,7 @@ class RemoteServiceModel
 		void fireEstablishPaceChannelUpdated();
 		void fireCertificateRemoved(const QString& pDeviceName);
 		void fireTransactionInfoChanged();
+		void fireRemainingPskValidityChanged();
 };
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "IfdDispatcherClient.h"
@@ -221,7 +221,7 @@ class test_IfdDispatcher
 
 			IfdDispatcherSpy spy(serverDispatcher);
 
-			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getName())));
+			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getDeviceName())));
 			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdConnect(QStringLiteral("NFC Reader"))));
 			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdTransmit(QStringLiteral("NFC Reader"), QByteArray::fromHex("00A402022F00"))));
 			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdDisconnect(QStringLiteral("NFC Reader"))));
@@ -290,8 +290,8 @@ class test_IfdDispatcher
 			connect(clientChannel.data(), &MockDataChannel::fireSend, serverChannel.data(), &MockDataChannel::onReceived, Qt::DirectConnection);
 			connect(serverChannel.data(), &MockDataChannel::fireSend, clientChannel.data(), &MockDataChannel::onReceived, Qt::DirectConnection);
 
-			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getName())));
-			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getName())));
+			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getDeviceName())));
+			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getDeviceName())));
 
 			const QList<QByteArray>& clientReceivedDataBlocks = clientChannel->getReceivedDataBlocks();
 			QCOMPARE(clientReceivedDataBlocks.size(), 2);
@@ -321,7 +321,7 @@ class test_IfdDispatcher
 			connect(clientChannel.data(), &MockDataChannel::fireSend, serverChannel.data(), &MockDataChannel::onReceived, Qt::DirectConnection);
 			connect(serverChannel.data(), &MockDataChannel::fireSend, clientChannel.data(), &MockDataChannel::onReceived, Qt::DirectConnection);
 
-			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::Unknown, DeviceInfo::getName())));
+			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::Unknown, DeviceInfo::getDeviceName())));
 
 			const QList<QByteArray>& clientReceivedDataBlocks = clientChannel->getReceivedDataBlocks();
 			QCOMPARE(clientReceivedDataBlocks.size(), 1);

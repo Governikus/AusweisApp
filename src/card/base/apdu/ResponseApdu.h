@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -57,26 +57,6 @@ defineTypedEnumType(StatusCode, quint16,
 		NO_PRECISE_DIAGNOSIS = 0x6F00
 		)
 
-// According to ISO-7816-4, 5.6 Status bytes, Table 6
-defineTypedEnumType(SW1, quint8,
-		UNKNOWN = 0x00,
-		MORE_DATA_AVAILABLE = 0x61,
-		NONVOLATILE_MEMORY_UNCHANGED_1 = 0x62,
-		NONVOLATILE_MEMORY_CHANGED_1 = 0x63,
-		NONVOLATILE_MEMORY_UNCHANGED_2 = 0x64,
-		NONVOLATILE_MEMORY_CHANGED_2 = 0x65,
-		SECURITY_ISSUE = 0x66,
-		WRONG_LENGTH = 0x67,
-		FUNCTIONS_IN_CLASS_NOT_SUPPORTED = 0x68,
-		ERROR_COMMAND_NOT_ALLOWED = 0x69,
-		WRONG_PARAMETERS_P1_P2 = 0x6A,
-		WRONG_PARAMETERS_P1_P2_NO_INFO = 0x6B,
-		WRONG_LE_FIELD = 0x6C,
-		INSTRUCTION_CODE_INVALID = 0x6D,
-		CLASS_NOT_SUPPORTED = 0x6E,
-		NO_PRECISE_DIAGNOSIS = 0x6F,
-		SUCCESS = 0x90
-		)
 
 class ResponseApdu final
 {
@@ -92,8 +72,7 @@ class ResponseApdu final
 		[[nodiscard]] const QByteArray& getData() const;
 		[[nodiscard]] StatusCode getStatusCode() const;
 		[[nodiscard]] QByteArray getStatusBytes() const;
-		[[nodiscard]] SW1 getSW1() const;
-		[[nodiscard]] char getSW2() const;
+		[[nodiscard]] int getRetryCounter() const;
 
 		operator QByteArray() const;
 };
@@ -103,9 +82,6 @@ inline QDebug operator<<(QDebug pDbg, const ResponseApdu& pResponseApdu)
 {
 	return privacy::logApdu(pDbg, pResponseApdu);
 }
-
-
-char* toString(const ResponseApdu& pResponseApdu);
 
 
 struct ResponseApduResult

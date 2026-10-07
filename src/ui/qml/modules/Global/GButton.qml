@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import Governikus.Global
 import Governikus.Style
+import Governikus.Type
 import Governikus.View
 
 GAbstractButton {
@@ -15,11 +15,11 @@ GAbstractButton {
 
 	property int borderWidth: Style.dimens.border_width
 	property alias buttonColor: colors.controlBackground
-	property string disabledTooltipText
+	property string disabledToolTipText
 
-	// Similar to "enabled", but tooltips will continue to work
+	// Similar to "enabled", but toolTips will continue to work
 	property bool enableButton: true
-	property string enabledTooltipText
+	property string enabledToolTipText
 	property alias iconSize: buttonIcon.sourceSize.height
 	property alias layoutDirection: contentLayout.layoutDirection
 	property alias maximumLineCount: buttonText.maximumLineCount
@@ -27,9 +27,9 @@ GAbstractButton {
 	property alias style: colors.controlStyle
 	property TextStyle textStyle: Style.text.button
 	property bool tintIcon: false
-	readonly property string tooltipText: {
+	readonly property string toolTipText: {
 		const charLimit = 74;
-		let text = enableButton ? enabledTooltipText : disabledTooltipText;
+		let text = enableButton ? enabledToolTipText : disabledToolTipText;
 		return text.length <= charLimit ? text : text.slice(0, charLimit) + "…";
 	}
 
@@ -37,10 +37,8 @@ GAbstractButton {
 	Accessible.name: text
 	Layout.maximumWidth: Math.ceil(implicitWidth)
 	Layout.minimumWidth: background ? Style.dimens.min_button_width : -1
-	ToolTip.delay: Style.toolTipDelay
-	ToolTip.text: tooltipText
-	ToolTip.visible: hovered && ToolTip.text !== ""
 	activeFocusOnTab: enableButton
+	font.family: UiPluginModel.fontFamily
 	font.pixelSize: textStyle.textSize
 	font.weight: textStyle.fontWeight
 	horizontalPadding: Style.dimens.control_horizontalPadding
@@ -98,9 +96,12 @@ GAbstractButton {
 	onActiveFocusOnTabChanged: if (!activeFocusOnTab)
 		focus = false
 
+	GToolTip {
+		text: root.toolTipText
+		visible: root.hovered && text !== ""
+	}
 	HoverHandler {
 		id: hoverHandler
-
 	}
 	StatefulColors {
 		id: colors

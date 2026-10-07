@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -41,6 +41,7 @@ class MockIfdServer
 		void setConnected(bool pConnected);
 		[[nodiscard]] QSslCertificate getCurrentCertificate() const override;
 		[[nodiscard]] const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
+		void rotatePsk() override;
 		void setMessageHandler(const QSharedPointer<ServerMessageHandler>& pHandler);
 
 		[[nodiscard]] virtual bool isLocal() const override

@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import os
 import sys
 
 from google.oauth2 import service_account
@@ -115,7 +116,15 @@ def UploadFiles(parser, service, edit_id):
             track=parser.track,
             packageName=parser.package,
             body={
-                'releases': [{'versionCodes': versionCodes, 'status': 'draft'}]
+                'releases': [
+                    {
+                        'versionCodes': versionCodes,
+                        'status': 'draft',
+                        'inAppUpdatePriority': int(
+                            os.getenv('ANDROID_PRIORITY', 0)
+                        ),
+                    }
+                ]
             },
         )
         .execute()

@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "ReaderConfigurationParser.h"
 
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -444,6 +445,8 @@ class test_ReaderConfigurationParser
 													  "    }\n"
 													  "  ]\n"
 													  "}");
+
+			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Invalid reader configuration entry:.*REINER SCT cyberJack RFID standard"_L1));
 			const QList<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
 			QCOMPARE(infos.size(), 0);
 		}

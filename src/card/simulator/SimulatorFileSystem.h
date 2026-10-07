@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -13,7 +13,6 @@
 #include <QByteArray>
 #include <QJsonObject>
 #include <QMap>
-#include <openssl/ec.h>
 
 
 namespace governikus
@@ -43,11 +42,7 @@ class SimulatorFileSystem
 
 		[[nodiscard]] QByteArray getEfCardAccess() const;
 		[[nodiscard]] QByteArray getPassword(PacePasswordId pPasswordId) const;
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
-		[[nodiscard]] QSharedPointer<EVP_PKEY> getKey(int pKeyId) const;
-#else
-		[[nodiscard]] QSharedPointer<EC_KEY> getKey(int pKeyId) const;
-#endif
+		[[nodiscard]] QByteArray getKey(int pKeyId) const;
 		[[nodiscard]] QSharedPointer<const CVCertificate> getTrustPoint() const;
 		void setTrustPoint(const QSharedPointer<const CVCertificate>& pTrustPoint);
 

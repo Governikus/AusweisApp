@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -64,8 +64,6 @@ FlickableSectionPage {
 		}
 		GSwitch {
 			//: MOBILE
-			description: qsTr("Toggling will restart the %1").arg(Qt.application.name)
-			//: MOBILE
 			text: qsTr("Use system font")
 
 			Component.onCompleted: {
@@ -74,26 +72,7 @@ FlickableSectionPage {
 			onCheckedChanged: {
 				if (checked !== SettingsModel.useSystemFont) {
 					SettingsModel.useSystemFont = checked;
-					refreshPopup.open();
 				}
-			}
-
-			ConfirmationPopup {
-				id: refreshPopup
-
-				//: MOBILE
-				cancelButtonText: qsTr("Later")
-				okButtonText: Qt.platform.os === "ios" ?
-				//: IOS
-				qsTr("Restart") :
-				//: ANDROID
-				qsTr("Restart now")
-				//: MOBILE
-				text: qsTr("The font change applies only after restarting the application.")
-				//: MOBILE
-				title: qsTr("Restart required")
-
-				onConfirmed: UiPluginModel.doRefresh()
 			}
 		}
 		SettingsViewSeparator {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "PortFile.h"
@@ -43,9 +43,16 @@ class test_PortFile
 			{
 				PortFile portFile(usage);
 				QCOMPARE(PortFile::getAllPortFiles().size(), 0);
+				QCOMPARE(PortFile::readAllPortFiles().size(), 0);
 				QVERIFY(!QFile::exists(filename));
 				portFile.handlePort(port);
 				QCOMPARE(PortFile::getAllPortFiles().size(), fileCreated ? 1 : 0);
+				const auto& ports = PortFile::readAllPortFiles();
+				QCOMPARE(ports.size(), fileCreated ? 1 : 0);
+				if (fileCreated)
+				{
+					QCOMPARE(ports.constFirst(), port);
+				}
 				QCOMPARE(QFile::exists(filename), fileCreated);
 
 				if (!usage.isEmpty())

@@ -1,0 +1,62 @@
+From 4862abcff54e06db9f1f3782142d2145fb9c81d8 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Mon, 13 Jul 2026 12:06:18 +0200
+Subject: a11y Android: Amend 68bc0af327415489c0d482094656a0c8ebadbe7d to fix
+ nomenclature
+
+Task-number: QTBUG-139833
+Pick-to: 6.12
+Change-Id: Ic47cb785a8485e2906490561760b36f7087313ba
+Reviewed-by: Timon Sassor <timon.sassor@governikus.de>
+Reviewed-by: MohammadHossein Qanbari <mohammad.qanbari@qt.io>
+(cherry-picked from commit 7be6264f040034cef694e28c9339b6826e04a5cd)
+---
+ .../android/androidjniaccessibility.cpp        | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+index f1998ac478bbae24ae6feb6c6874166335cf1bd6..d2c89e3da59000834194629e1b0fe6cc00f6ad04 100644
+--- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+@@ -49,9 +49,9 @@ namespace QtAndroidAccessibility
+     static jmethodID m_setScrollXMethodID = 0;
+     static jmethodID m_setMaxScrollYMethodID = 0;
+     static jmethodID m_setScrollYMethodID = 0;
+-    static jmethodID m_setItemCount = 0;
+-    static jmethodID m_setFromIndex = 0;
+-    static jmethodID m_setToIndex = 0;
++    static jmethodID m_setItemCountMethodID = 0;
++    static jmethodID m_setFromIndexMethodID = 0;
++    static jmethodID m_setToIndexMethodID = 0;
+ 
+     static int RANGE_TYPE_INT = 0;
+     static int RANGE_TYPE_FLOAT = 0;
+@@ -944,12 +944,12 @@ namespace QtAndroidAccessibility
+ 
+         if (info.isIndexed) {
+             const int itemCount = std::max(info.contentSize.width(), info.contentSize.height());
+-            env->CallVoidMethod(event, m_setItemCount, itemCount);
++            env->CallVoidMethod(event, m_setItemCountMethodID, itemCount);
+             const int fromIndex = std::max(info.position.x(), info.position.y()) * itemCount;
+-            env->CallVoidMethod(event, m_setFromIndex, fromIndex);
++            env->CallVoidMethod(event, m_setFromIndexMethodID, fromIndex);
+             const int toIndex = fromIndex
+                     + std::min(info.viewportSize.width(), info.viewportSize.height() * itemCount);
+-            env->CallVoidMethod(event, m_setToIndex, toIndex);
++            env->CallVoidMethod(event, m_setToIndexMethodID, toIndex);
+ 
+         } else {
+             env->CallVoidMethod(event, m_setScrollXMethodID,
+@@ -1035,9 +1035,9 @@ namespace QtAndroidAccessibility
+         GET_AND_CHECK_STATIC_METHOD(m_setScrollXMethodID, eventClass, "setScrollX", "(I)V");
+         GET_AND_CHECK_STATIC_METHOD(m_setMaxScrollYMethodID, eventClass, "setMaxScrollY", "(I)V");
+         GET_AND_CHECK_STATIC_METHOD(m_setScrollYMethodID, eventClass, "setScrollY", "(I)V");
+-        GET_AND_CHECK_STATIC_METHOD(m_setItemCount, eventClass, "setItemCount", "(I)V");
+-        GET_AND_CHECK_STATIC_METHOD(m_setFromIndex, eventClass, "setFromIndex", "(I)V");
+-        GET_AND_CHECK_STATIC_METHOD(m_setToIndex, eventClass, "setToIndex", "(I)V");
++        GET_AND_CHECK_STATIC_METHOD(m_setItemCountMethodID, eventClass, "setItemCount", "(I)V");
++        GET_AND_CHECK_STATIC_METHOD(m_setFromIndexMethodID, eventClass, "setFromIndex", "(I)V");
++        GET_AND_CHECK_STATIC_METHOD(m_setToIndexMethodID, eventClass, "setToIndex", "(I)V");
+ 
+         jclass rangeInfoClass =
+                 env->FindClass("android/view/accessibility/AccessibilityNodeInfo$RangeInfo");

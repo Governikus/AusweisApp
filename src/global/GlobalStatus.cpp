@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "GlobalStatus.h"
@@ -322,18 +322,6 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 							//: ALL_PLATFORMS Link text to the app support. %1 is the app name.
 					tr("%1 Support").arg(QCoreApplication::applicationName())));
 
-		case Code::Card_Invalid_Pin:
-			//: ALL_PLATFORMS The ID card declined the PIN.
-			return tr("The given PIN is not correct.");
-
-		case Code::Card_Invalid_Can:
-			//: ALL_PLATFORMS The ID card declined the CAN.
-			return tr("The given Card Access Number (CAN) is not correct.");
-
-		case Code::Card_Invalid_Puk:
-			//: ALL_PLATFORMS The ID card declined the PUK.
-			return tr("The given PUK is not correct.");
-
 		case Code::Card_Pin_Not_Blocked:
 			//: ALL_PLATFORMS It was attempted to unlock the ID card via PUK even though it was not locked in the first place. This scenario is avoided in the UI by hiding the respective UI elements.
 			return tr("The PIN is not blocked.");
@@ -412,14 +400,14 @@ QString GlobalStatus::getExternalInfo(const QString& pToken) const
 
 	if (d->mExternalInformation.size() == 1)
 	{
-		return d->mExternalInformation.first();
+		return d->mExternalInformation.first().toHtmlEscaped();
 	}
 
 	QStringList keyValue;
 	const auto& keys = d->mExternalInformation.keys();
 	for (const auto key : keys)
 	{
-		keyValue << QStringLiteral("%1: %2").arg(Enum<ExternalInformation>::getName(key), d->mExternalInformation[key]);
+		keyValue << QStringLiteral("%1: %2").arg(Enum<ExternalInformation>::getName(key), d->mExternalInformation[key].toHtmlEscaped());
 	}
 
 	return keyValue.join(pToken);

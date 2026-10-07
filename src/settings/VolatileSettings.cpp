@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2026 Governikus Service GmbH, Germany
  */
 
 #include "VolatileSettings.h"
@@ -53,6 +53,7 @@ VolatileSettings::VolatileSettings()
 	, mMessages()
 	, mDelay(0)
 	, mOnboardingShown(false)
+	, mAppRatingShown(false)
 {
 }
 
@@ -144,4 +145,18 @@ void VolatileSettings::setOnboardingShown(bool pOnboardingShown)
 {
 	const QWriteLocker locker(&mLock);
 	mOnboardingShown = pOnboardingShown;
+}
+
+
+bool VolatileSettings::appRatingShown() const
+{
+	const QReadLocker locker(&mLock);
+	return mAppRatingShown;
+}
+
+
+void VolatileSettings::setAppRatingShown(bool pShown)
+{
+	const QWriteLocker locker(&mLock);
+	mAppRatingShown = pShown;
 }

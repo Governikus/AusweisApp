@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "GlobalStatus.h"
@@ -7,6 +7,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -42,42 +43,51 @@ class test_GlobalStatus
 		void test_ToDescriptionError_data()
 		{
 			QTest::addColumn<GlobalStatus::Code>("code");
+			QTest::addColumn<GlobalStatus::ExternalInfoMap>("externalInfoMap");
 			QTest::addColumn<QString>("message");
 
-			QTest::newRow("inProgress") << GlobalStatus::Code::Workflow_AlreadyInProgress_Error << tr("Cannot start authentication. An operation is already active.");
-			QTest::newRow("cardRemoved") << GlobalStatus::Code::Workflow_Card_Removed << tr("Restart the authentication process and make sure that the position of the ID card does not change during the reading process.");
-			QTest::newRow("unknownPaos") << GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer << tr("The program received an unknown message from the server.");
-			QTest::newRow("unexpectedMessage") << GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer << tr("The program received an unexpected message from the server.");
-			QTest::newRow("preverificationDevelopermode") << GlobalStatus::Code::Workflow_Preverification_Developermode_Error << tr("Using the developer mode is only allowed in a test environment.");
-			QTest::newRow("noUniqueAtCvc") << GlobalStatus::Code::Workflow_No_Unique_AtCvc << tr("No unique AT CVC");
-			QTest::newRow("noUniqueDvCvc") << GlobalStatus::Code::Workflow_No_Unique_DvCvc << tr("No unique DV CVC");
-			QTest::newRow("noPermission") << GlobalStatus::Code::Workflow_No_Permission_Error << tr("Authentication failed.");
-			QTest::newRow("certificateNoDescription") << GlobalStatus::Code::Workflow_Certificate_No_Description << tr("No certificate description available.");
-			QTest::newRow("certificateNoUrl") << GlobalStatus::Code::Workflow_Certificate_No_Url_In_Description << tr("No subject url available in certificate description.");
-			QTest::newRow("hashError") << GlobalStatus::Code::Workflow_Certificate_Hash_Error << tr("The certificate description does not match the certificate.");
-			QTest::newRow("certificateSop") << GlobalStatus::Code::Workflow_Certificate_Sop_Error << tr("The subject URL in the certificate description and the TCToken URL do not satisfy the same origin policy.");
-			QTest::newRow("wrongParameter") << GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation << tr("Application was invoked with wrong parameters.");
-			QTest::newRow("incompleteInformation") << GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided << tr("The server provided no or incomplete information. Your personal data could not be read out.");
-			QTest::newRow("abnormalClose") << GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose << tr("The smartphone as card reader (SaC) connection was aborted.");
-			QTest::newRow("invalidRequest") << GlobalStatus::Code::IfdConnector_InvalidRequest << tr("Smartphone as card reader (SaC) connection request was invalid.");
-			QTest::newRow("noSupportedApiLevel") << GlobalStatus::Code::IfdConnector_NoSupportedApiLevel << tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest %1 version on both your smartphone and your computer.").arg(QCoreApplication::applicationName());
-			QTest::newRow("connectionError") << GlobalStatus::Code::IfdConnector_ConnectionError << tr("An error occurred while trying to establish a connection to the smartphone as card reader (SaC).");
-			QTest::newRow("hostRefused") << GlobalStatus::Code::IfdConnector_RemoteHostRefusedConnection << tr("The smartphone to be paired has rejected the connection. Please check the pairing code.");
-			QTest::newRow("fileNotFound") << GlobalStatus::Code::Downloader_File_Not_Found << tr("File not found.");
-			QTest::newRow("cannotSaveFile") << GlobalStatus::Code::Downloader_Cannot_Save_File << tr("Cannot save file.");
-			QTest::newRow("dataCorrupted") << GlobalStatus::Code::Downloader_Data_Corrupted << tr("Received data were corrupted.");
-			QTest::newRow("missingPlatform") << GlobalStatus::Code::Downloader_Missing_Platform << tr("Received data does not contain data for the current platform.");
-			QTest::newRow("downloadAborted") << GlobalStatus::Code::Downloader_Aborted << tr("Download aborted.");
-			QTest::newRow("updateFailed") << GlobalStatus::Code::Update_Execution_Failed << tr("A new process to start the update could not be launched.");
+			QTest::newRow("inProgress") << GlobalStatus::Code::Workflow_AlreadyInProgress_Error << GlobalStatus::ExternalInfoMap() << tr("Cannot start authentication. An operation is already active.");
+			QTest::newRow("cardRemoved") << GlobalStatus::Code::Workflow_Card_Removed << GlobalStatus::ExternalInfoMap() << tr("Restart the authentication process and make sure that the position of the ID card does not change during the reading process.");
+			QTest::newRow("unknownPaos") << GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer << GlobalStatus::ExternalInfoMap() << tr("The program received an unknown message from the server.");
+			QTest::newRow("unexpectedMessage") << GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer << GlobalStatus::ExternalInfoMap() << tr("The program received an unexpected message from the server.");
+			QTest::newRow("preverificationDevelopermode") << GlobalStatus::Code::Workflow_Preverification_Developermode_Error << GlobalStatus::ExternalInfoMap() << tr("Using the developer mode is only allowed in a test environment.");
+			QTest::newRow("noUniqueAtCvc") << GlobalStatus::Code::Workflow_No_Unique_AtCvc << GlobalStatus::ExternalInfoMap() << tr("No unique AT CVC");
+			QTest::newRow("noUniqueDvCvc") << GlobalStatus::Code::Workflow_No_Unique_DvCvc << GlobalStatus::ExternalInfoMap() << tr("No unique DV CVC");
+			QTest::newRow("noPermission") << GlobalStatus::Code::Workflow_No_Permission_Error << GlobalStatus::ExternalInfoMap() << tr("Authentication failed.");
+			QTest::newRow("certificateNoDescription") << GlobalStatus::Code::Workflow_Certificate_No_Description << GlobalStatus::ExternalInfoMap() << tr("No certificate description available.");
+			QTest::newRow("certificateNoUrl") << GlobalStatus::Code::Workflow_Certificate_No_Url_In_Description << GlobalStatus::ExternalInfoMap() << tr("No subject url available in certificate description.");
+			QTest::newRow("hashError") << GlobalStatus::Code::Workflow_Certificate_Hash_Error << GlobalStatus::ExternalInfoMap() << tr("The certificate description does not match the certificate.");
+			QTest::newRow("certificateSop") << GlobalStatus::Code::Workflow_Certificate_Sop_Error << GlobalStatus::ExternalInfoMap() << tr("The subject URL in the certificate description and the TCToken URL do not satisfy the same origin policy.");
+			QTest::newRow("wrongParameter") << GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation << GlobalStatus::ExternalInfoMap() << tr("Application was invoked with wrong parameters.");
+			QTest::newRow("incompleteInformation") << GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided << GlobalStatus::ExternalInfoMap() << tr("The server provided no or incomplete information. Your personal data could not be read out.");
+			QTest::newRow("abnormalClose") << GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose << GlobalStatus::ExternalInfoMap() << tr("The smartphone as card reader (SaC) connection was aborted.");
+			QTest::newRow("invalidRequest") << GlobalStatus::Code::IfdConnector_InvalidRequest << GlobalStatus::ExternalInfoMap() << tr("Smartphone as card reader (SaC) connection request was invalid.");
+			QTest::newRow("noSupportedApiLevel") << GlobalStatus::Code::IfdConnector_NoSupportedApiLevel << GlobalStatus::ExternalInfoMap() << tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest %1 version on both your smartphone and your computer.").arg(QCoreApplication::applicationName());
+			QTest::newRow("connectionError") << GlobalStatus::Code::IfdConnector_ConnectionError << GlobalStatus::ExternalInfoMap() << tr("An error occurred while trying to establish a connection to the smartphone as card reader (SaC).");
+			QTest::newRow("hostRefused") << GlobalStatus::Code::IfdConnector_RemoteHostRefusedConnection << GlobalStatus::ExternalInfoMap() << tr("The smartphone to be paired has rejected the connection. Please check the pairing code.");
+			QTest::newRow("fileNotFound") << GlobalStatus::Code::Downloader_File_Not_Found << GlobalStatus::ExternalInfoMap() << tr("File not found.");
+			QTest::newRow("cannotSaveFile") << GlobalStatus::Code::Downloader_Cannot_Save_File << GlobalStatus::ExternalInfoMap() << tr("Cannot save file.");
+			QTest::newRow("dataCorrupted") << GlobalStatus::Code::Downloader_Data_Corrupted << GlobalStatus::ExternalInfoMap() << tr("Received data were corrupted.");
+			QTest::newRow("missingPlatform") << GlobalStatus::Code::Downloader_Missing_Platform << GlobalStatus::ExternalInfoMap() << tr("Received data does not contain data for the current platform.");
+			QTest::newRow("downloadAborted") << GlobalStatus::Code::Downloader_Aborted << GlobalStatus::ExternalInfoMap() << tr("Download aborted.");
+			QTest::newRow("updateFailed") << GlobalStatus::Code::Update_Execution_Failed << GlobalStatus::ExternalInfoMap() << tr("A new process to start the update could not be launched.");
+			QTest::newRow("genericServerErrorOneValueHtml") << GlobalStatus::Code::Paos_Generic_Server_Error << GlobalStatus::ExternalInfoMap({
+						{GlobalStatus::ExternalInformation::ECARDAPI_SERVERMESSAGE, "<a href=\"https://www.governikus.de\">https://www.governikus.de</a>"_L1}
+					}) << tr("&lt;a href=&quot;https://www.governikus.de&quot;&gt;https://www.governikus.de&lt;/a&gt;");
+			QTest::newRow("genericServerErrorTwoValuesHtml") << GlobalStatus::Code::Paos_Generic_Server_Error << GlobalStatus::ExternalInfoMap({
+						{GlobalStatus::ExternalInformation::ECARDAPI_ERROR, "The operation was terminated as the set time was exceeded."_L1},
+						{GlobalStatus::ExternalInformation::ECARDAPI_SERVERMESSAGE, "<a href=\"https://www.governikus.de\">https://www.governikus.de</a>"_L1}
+					}) << tr("ECARDAPI_ERROR: The operation was terminated as the set time was exceeded.; ECARDAPI_SERVERMESSAGE: &lt;a href=&quot;https://www.governikus.de&quot;&gt;https://www.governikus.de&lt;/a&gt;");
 		}
 
 
 		void test_ToDescriptionError()
 		{
 			QFETCH(GlobalStatus::Code, code);
+			QFETCH(GlobalStatus::ExternalInfoMap, externalInfoMap);
 			QFETCH(QString, message);
 
-			GlobalStatus status(code, Origin::Client);
+			GlobalStatus status(code, externalInfoMap, Origin::Client);
 
 			QCOMPARE(status.toErrorDescription(false), message);
 		}

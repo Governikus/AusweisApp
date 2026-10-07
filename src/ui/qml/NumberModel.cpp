@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "NumberModel.h"
@@ -19,7 +19,9 @@ QString addBoldFormatting(const QString& inputString)
 
 } // namespace
 
+
 using namespace governikus;
+
 
 NumberModel::NumberModel()
 	: QObject()
@@ -67,7 +69,7 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &NumberModel::onCardConnectionChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &NumberModel::fireReaderInfoChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &NumberModel::fireInputErrorChanged);
-		connect(mContext.data(), &WorkflowContext::firePaceResultUpdated, this, &NumberModel::fireInputErrorChanged);
+		connect(mContext.data(), &WorkflowContext::firePaceOutputUpdated, this, &NumberModel::fireInputErrorChanged);
 		connect(mContext.data(), &WorkflowContext::fireInitialInputErrorShownChanged, this, &NumberModel::firePasswordTypeChanged);
 	}
 
@@ -232,7 +234,7 @@ void NumberModel::resetInputError()
 {
 	if (mContext)
 	{
-		mContext->resetLastPaceResult();
+		mContext->resetPaceOutput();
 		Q_EMIT fireInputErrorChanged();
 	}
 }
@@ -250,21 +252,6 @@ void NumberModel::setPuk(const QString& pPuk)
 	{
 		mContext->setPuk(pPuk);
 	}
-}
-
-
-CardReturnCode NumberModel::getInputErrorCode() const
-{
-	if (mContext.isNull()
-			|| mContext->getLastPaceResult() == CardReturnCode::OK
-			|| mContext->getLastPaceResult() == CardReturnCode::OK_PUK
-			|| mContext->getLastPaceResult() == CardReturnCode::OK_CAN
-			|| mContext->getLastPaceResult() == CardReturnCode::CANCELLATION_BY_USER)
-	{
-		return CardReturnCode::OK;
-	}
-
-	return mContext->getLastPaceResult();
 }
 
 
@@ -319,21 +306,44 @@ void NumberModel::setInitialInputErrorShown()
 
 QString NumberModel::getInputError() const
 {
-	const CardReturnCode paceResult = getInputErrorCode();
-	const bool isRequestTransportPin = mContext && mContext->isRequestTransportPin();
-
 	if (!mNewPinConfirmation.isEmpty() && !newPinAndConfirmationMatch())
 	{
 		//: ALL_PLATFORMS Error message if the new pin confirmation mismatches.
 		return tr("The input does not match. Please choose a new ID card PIN.");
 	}
 
-	switch (paceResult)
+	if (mContext.isNull())
+	{
+		return QString();
+	}
+
+	const auto& paceOutput = mContext->getPaceOutput();
+	switch (const auto returnCode = paceOutput.getReturnCode(); returnCode)
 	{
 		case CardReturnCode::OK:
+			break;
+
+		case CardReturnCode::UNDEFINED:
+		case CardReturnCode::CANCELLATION_BY_USER:
 			return QString();
 
-		case CardReturnCode::INVALID_PIN:
+		default:
+			return CardReturnCodeUtil::toGlobalStatus(returnCode).toErrorDescription(true);
+	}
+
+	PaceResult paceResult = paceOutput.getPaceResult();
+	const bool isRequestTransportPin = mContext && mContext->isRequestTransportPin();
+	switch (paceResult)
+	{
+		case PaceResult::UNDEFINED:
+		case PaceResult::OK_PIN:
+		case PaceResult::OK_PIN_AUTH:
+		case PaceResult::OK_CAN:
+		case PaceResult::OK_CAN_AUTH:
+		case PaceResult::OK_PUK:
+			return QString();
+
+		case PaceResult::INVALID_PIN_1:
 			if (isRequestTransportPin)
 			{
 				return QStringLiteral("%1<br/><br/>%2").arg(
@@ -352,7 +362,7 @@ QString NumberModel::getInputError() const
 						addBoldFormatting(tr("You have%1 2 further attempts%2 to enter the correct ID card PIN.")));
 			}
 
-		case CardReturnCode::INVALID_PIN_2:
+		case PaceResult::INVALID_PIN_2:
 			if (isRequestTransportPin)
 			{
 				return addBoldFormatting(QStringLiteral("%1<br/><br/>%2").arg(
@@ -373,7 +383,7 @@ QString NumberModel::getInputError() const
 						   "You can find your CAN in the %1bottom right on the front of your ID card%2.")));
 			}
 
-		case CardReturnCode::INVALID_PIN_3:
+		case PaceResult::INVALID_PIN_3:
 			if (isRequestTransportPin)
 			{
 				//: ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. %1 + %2 are used to emphasize.
@@ -390,18 +400,17 @@ QString NumberModel::getInputError() const
 						   "You can find the PUK in the bottom %1right next%2 to the Transport PIN in the %1authority's letter%2.")));
 			}
 
-		case CardReturnCode::INVALID_CAN:
+		case PaceResult::INVALID_CAN:
 			//: ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again. %1 + %2 are used to emphasize.
 			return addBoldFormatting(tr("You have entered an %1incorrect Card Access Number (CAN)%2. Please try again. "
 										"You can find your CAN in the %1bottom right on the front of your ID card%2."));
 
-		case CardReturnCode::INVALID_PUK:
+		case PaceResult::INVALID_PUK:
 			//: ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.
 			return tr("You have entered an incorrect, 10-digit PUK. Please try again.");
-
-		default:
-			return CardReturnCodeUtil::toGlobalStatus(paceResult).toErrorDescription(true);
 	}
+
+	Q_UNREACHABLE();
 }
 
 

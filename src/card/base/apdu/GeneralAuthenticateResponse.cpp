@@ -1,15 +1,16 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "GeneralAuthenticateResponse.h"
 
-#include "PacePinStatus.h"
 #include "asn1/ASN1Util.h"
 
 #include <QLoggingCategory>
 
+
 Q_DECLARE_LOGGING_CATEGORY(card)
+
 
 using namespace governikus;
 
@@ -42,15 +43,15 @@ bool GAResponseApdu::isEmpty() const
 }
 
 
-SW1 GAResponseApdu::getSW1() const
+StatusCode GAResponseApdu::getStatusCode() const
 {
-	return mResponseApdu.getSW1();
+	return mResponseApdu.getStatusCode();
 }
 
 
 int GAResponseApdu::getRetryCounter() const
 {
-	return PacePinStatus::getRetryCounter(mResponseApdu.getStatusCode());
+	return mResponseApdu.getRetryCounter();
 }
 
 

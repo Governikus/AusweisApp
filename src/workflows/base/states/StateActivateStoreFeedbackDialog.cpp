@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateActivateStoreFeedbackDialog.h"
@@ -21,10 +21,9 @@ StateActivateStoreFeedbackDialog::StateActivateStoreFeedbackDialog(const QShared
 void StateActivateStoreFeedbackDialog::run()
 {
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-	auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	if (getContext()->getStatus().isNoError() && settings.askForStoreFeedback() && !Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	if (getContext()->getStatus().isNoError() && !Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
-		settings.setRequestStoreFeedback(true);
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setShowAppStoreRatingDialog(true);
 	}
 #endif
 	Q_EMIT fireContinue();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "apdu/CommandApdu.h"
@@ -21,6 +21,12 @@ class test_CommandApdu
 		void initTestCase()
 		{
 			Env::getSingleton<LogHandler>()->init();
+		}
+
+
+		void init()
+		{
+			QLoggingCategory::setFilterRules(QStringLiteral("secure.debug=true"));
 		}
 
 
@@ -328,17 +334,33 @@ class test_CommandApdu
 		}
 
 
+		void test_logging_data()
+		{
+			QTest::addColumn<bool>("debug");
+			QTest::addColumn<QByteArray>("input");
+			QTest::addColumn<QLatin1String>("output");
+
+			QTest::newRow("short private") << false << QByteArray::fromHex("01020304") << "01020304"_L1;
+			QTest::newRow("long private") << false << QByteArray::fromHex("0cb0890000000e970200008e08b4332dac29510ece0000") << "\"0cb0890000~0000\" (23)"_L1;
+
+			QTest::newRow("short public") << true << QByteArray::fromHex("01020304") << "01020304"_L1;
+			QTest::newRow("long public") << true << QByteArray::fromHex("0cb0890000000e970200008e08b4332dac29510ece0000") << "0cb0890000000e970200008e08b4332dac29510ece0000"_L1;
+		}
+
+
 		void test_logging()
 		{
+			QFETCH(bool, debug);
+			QFETCH(QByteArray, input);
+			QFETCH(QLatin1String, output);
+
+			QLoggingCategory::setFilterRules(QStringLiteral("secure.debug=%1").arg(QVariant(debug).toString()));
+
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			qDebug() << CommandApdu(QByteArray::fromHex("01020304"));
+			qDebug() << CommandApdu(input);
 			QTRY_COMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("01020304"_L1));
-
-			qDebug() << CommandApdu(QByteArray::fromHex("0cb0890000000e970200008e08b4332dac29510ece0000"));
-			QTRY_COMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("\"0cb0890000~0000\" (23)"_L1));
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains(output));
 		}
 
 

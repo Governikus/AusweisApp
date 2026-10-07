@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "AppSettings.h"
 #include "VolatileSettings.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
+#include "paos/retrieve/PaosParser.h"
 
 #include "TestAuthContext.h"
-#include "TestFileHelper.h"
+#include "TestParserHelper.h"
 
 #include <QSharedPointer>
 #include <QSignalSpy>
@@ -141,8 +141,9 @@ class test_AccessRightManager
 					file = ":/paos/DIDAuthenticateEAC1_3.xml"_L1;
 				}
 			}
-			const auto& content = TestFileHelper::readFile(file);
-			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			const auto& parser = TestParserHelper::create(file);
+			auto* pm = PaosParser().parse(parser).release();
+			const QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(pm));
 
 			const auto terminalCvc = eac1->getCvCertificates({AccessRole::AT}).at(0);
 			QCOMPARE(terminalCvc->getBody().getCHAT().getAccessRights().contains(AccessRight::CAN_ALLOWED), requested);

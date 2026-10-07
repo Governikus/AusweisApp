@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateEnterPacePasswordIfd.h"
@@ -25,11 +25,11 @@ void StateEnterPacePasswordIfd::run()
 
 void StateEnterPacePasswordIfd::onUserError()
 {
-	if (getContext() && getContext()->getIfdServer() && getContext()->getIfdServer()->getMessageHandler())
+	const auto& context = getContext();
+	if (context && context->getIfdServer() && context->getIfdServer()->getMessageHandler())
 	{
-		EstablishPaceChannelOutput channelOutput;
-		channelOutput.setPaceReturnCode(CardReturnCode::CANCELLATION_BY_USER);
-		getContext()->setEstablishPaceChannelOutput(channelOutput);
+		EstablishPaceChannelOutput channelOutput(context->getEstablishPaceChannelType(), CardReturnCode::CANCELLATION_BY_USER);
+		context->setPaceOutput(channelOutput);
 	}
 
 	Q_EMIT fireAbort(FailureCode::Reason::Enter_Pace_Password_Ifd_User_Cancelled);

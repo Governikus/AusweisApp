@@ -1,0 +1,73 @@
+From 11d89cef07e9fde89ca5537530529f02c44362a5 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Wed, 8 Apr 2026 10:28:25 +0200
+Subject: a11y macOS: Inform VoiceOver about used language
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is helpful if the app's language is different from the OS language.
+Without this change english texts are read with a german accent if
+the OS language is set to German and the app language to English.
+
+For now, only QAccessibleWidget, QAccessibleQuickControl, and
+QAccessibleQuickItem return useful values for Attribute::Locale.
+All three rely on on specific setter (QWidget::setLocale,
+Control.locale, ApplicationWindow.locale for the QML Item) and
+do not consider other application wide means of setting the
+language (like installed QTranslator or QJSEngine::uiLanguage).
+
+Task-number: QTBUG-141701
+Pick-to: 6.11
+Change-Id: Ibf221e71ea4b765b4fac226663023c3e1da3a311
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+(Cherry-picked from commit 70427c82885b8803ef34772026820410ef44e876)
+---
+ .../cocoa/qcocoaaccessibilityelement.mm       | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibilityelement.mm y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibilityelement.mm
+index 238f2ea2307c3001a11f583a3198d30577ae2b4a..a1db0979c6b5e8a86e00ed45f699b0a4a5272076 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibilityelement.mm
+@@ -833,6 +833,40 @@ static void convertLineOffset(QAccessibleTextInterface *text, int *line, int *of
+     return 0;
+ }
+ 
++- (NSArray *)accessibilityAttributeNames {
++#if QT_MACOS_PLATFORM_SDK_EQUAL_OR_ABOVE(260000)
++    if (@available(macOS 26, *))
++        return @[ NSAccessibilityLanguageAttribute ];
++#endif
++
++    return nil;
++}
++
++- (id)accessibilityAttributeValue:(NSString *)attribute {
++    QAccessibleInterface *iface = self.qtInterface;
++    if (!iface) {
++        qWarning() << "Called attribute on invalid object: " << axid;
++        return nil;
++    }
++
++#if QT_MACOS_PLATFORM_SDK_EQUAL_OR_ABOVE(260000)
++    if (@available(macOS 26, *)) {
++        if ([attribute isEqualToString:NSAccessibilityLanguageAttribute]) {
++            QAccessibleAttributesInterface *attributesIface = iface->attributesInterface();
++            if (!attributesIface
++                || !attributesIface->attributeKeys().contains(QAccessible::Attribute::Locale))
++                return nil;
++
++            const auto &localeVariant =
++                    attributesIface->attributeValue(QAccessible::Attribute::Locale);
++            return localeVariant.toLocale().bcp47Name().toNSString();
++        }
++    }
++#endif
++
++    return nil;
++}
++
+ - (NSArray *)accessibilityParameterizedAttributeNames {
+ 
+     QAccessibleInterface *iface = self.qtInterface;

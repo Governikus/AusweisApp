@@ -171,6 +171,55 @@ class QmlFileCache:
 
         return files_with_id_errors
 
+    def a11y_errors(self):
+        a11y_resolve_description = 'Utils.resolveA11yDescription'
+        a11y_resolve_name = 'Utils.resolveA11yName'
+
+        files_with_errors = set()
+
+        for file, lines in self.cache.items():
+            if '+mobile' in file:
+                continue
+
+            expecting_name = False
+
+            for line in lines:
+                if not expecting_name and line.startswith(
+                    'Accessible.description'
+                ):
+                    expecting_name = True
+
+                    if a11y_resolve_description not in line:
+                        print(
+                            f'Use {a11y_resolve_description} in line "{line}" {file}'
+                        )
+                        files_with_errors.add(file)
+
+                    continue
+
+                if expecting_name:
+                    if line.startswith('Accessible.name'):
+                        if a11y_resolve_name not in line:
+                            print(
+                                f'Use {a11y_resolve_name} in "{line}" {file}'
+                            )
+                            files_with_errors.add(file)
+
+                        expecting_name = False
+                        continue
+
+                    if line.startswith('Accessible.'):
+                        continue
+
+                    print(
+                        f'Only Accessible.description set, '
+                        f'Accessible.name is required as well {file}'
+                    )
+                    files_with_errors.add(file)
+                    expecting_name = False
+
+        return files_with_errors
+
 
 class ResourceCache:
     def __init__(self, resources_dir):
@@ -297,6 +346,7 @@ if __name__ == '__main__':
 
     platform_conflicts = qml_cache.platform_selector_conflict()
     files_with_id_errors = qml_cache.id_error_in_component()
+    files_with_a11y_errors = qml_cache.a11y_errors()
 
     if any(
         [
@@ -306,6 +356,7 @@ if __name__ == '__main__':
             len(unused_resources),
             len(platform_conflicts),
             len(files_with_id_errors),
+            len(files_with_a11y_errors),
         ]
     ):
         print('\n')
@@ -315,6 +366,7 @@ if __name__ == '__main__':
         print_if_not_empty(unused_resources, 'Unused resources:')
         print_if_not_empty(platform_conflicts, 'Platform conflicts:')
         print_if_not_empty(files_with_id_errors, 'QML id errors:')
+        print_if_not_empty(files_with_a11y_errors, 'QML a11y errors:')
         sys.exit(1)
     else:
         sys.exit(0)

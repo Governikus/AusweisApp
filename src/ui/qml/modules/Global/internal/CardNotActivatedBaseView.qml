@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -123,15 +123,18 @@ ResultView {
 				text: qsTr("Enter your activation code of your present PIN Reset Letter into the following website.")
 			}
 			GButton {
-				Accessible.description: Utils.platformAgnosticLinkOpenText(PinResetInformationModel.pinResetActivationUrl, Accessible.name)
+				readonly property url activationUrl: PinResetInformationModel.pinResetActivationUrl
+
+				Accessible.name: Utils.platformAgnosticLinkOpenText(activationUrl, text)
 				Accessible.role: Accessible.Link
 				Layout.alignment: Style.scanPatternAlignment
+				enabledToolTipText: activationUrl
 				icon.source: "qrc:///images/open_website.svg"
 				//: ALL_PLATFORMS
 				text: qsTr("Enter activation code")
 				tintIcon: true
 
-				onClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetActivationUrl)
+				onClicked: Qt.openUrlExternally(activationUrl)
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "messages/IfdEstablishPaceChannelResponse.h"
@@ -8,6 +8,7 @@
 #include "TestFileHelper.h"
 
 #include <QtTest>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -56,7 +57,7 @@ class test_IfdEstablishPaceChannelResponse
 			const auto& obj = QJsonDocument::fromJson(message).object();
 			QVERIFY(obj.isEmpty());
 
-			IfdEstablishPaceChannelResponse msg(obj);
+			IfdEstablishPaceChannelResponse msg(PacePasswordId::PACE_PIN, obj);
 			QVERIFY(msg.isIncomplete());
 
 			QTRY_COMPARE(logSpy.count(), v0Supported ? 8 : 9);
@@ -113,7 +114,7 @@ class test_IfdEstablishPaceChannelResponse
 
 			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(
 				QStringLiteral("SlotHandle"),
-				EstablishPaceChannelOutput(),
+				EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::COMMAND_FAILED),
 				ECardApiResult::Minor::null
 				);
 
@@ -155,7 +156,7 @@ class test_IfdEstablishPaceChannelResponse
 			QTest::addColumn<bool>("withResultCode");
 			QTest::addColumn<bool>("incomplete");
 
-			EstablishPaceChannelOutput outputData(CardReturnCode::OK);
+			EstablishPaceChannelOutput outputData(PacePasswordId::PACE_PIN, CardReturnCode::OK);
 			QTest::newRow("CCID - With ResultCode") << outputData.toCcid() << true << true;
 			QTest::newRow("CCID - Without ResultCode") << outputData.toCcid() << false << !IfdVersion(IfdVersion::Version::v0).isSupported();
 			QTest::newRow("PCSC - With ResultCode") << outputData.toOutputData() << true << false;
@@ -187,12 +188,12 @@ class test_IfdEstablishPaceChannelResponse
 			message.replace("[RESULT]", withResultCode ? QByteArray(R"("ResultCode": "00000000",)") : QByteArray());
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
-			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(obj);
+			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(PacePasswordId::PACE_PIN, obj);
 			QCOMPARE(ifdEstablishPaceChannelResponse.isIncomplete(), incomplete);
 			QCOMPARE(ifdEstablishPaceChannelResponse.getType(), IfdMessageType::IFDEstablishPACEChannelResponse);
 			QCOMPARE(ifdEstablishPaceChannelResponse.getContextHandle(), "TestContext"_L1);
 			QCOMPARE(ifdEstablishPaceChannelResponse.getSlotHandle(), "SlotHandle"_L1);
-			QCOMPARE(ifdEstablishPaceChannelResponse.getOutputData().getPaceReturnCode(), incomplete && !withResultCode ? CardReturnCode::COMMAND_FAILED : CardReturnCode::OK);
+			QCOMPARE(ifdEstablishPaceChannelResponse.getOutputData().getReturnCode(), incomplete && !withResultCode ? CardReturnCode::UNDEFINED : CardReturnCode::OK);
 			QVERIFY(!ifdEstablishPaceChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getResultMinor(), ECardApiResult::Minor::null);
 
@@ -248,7 +249,7 @@ class test_IfdEstablishPaceChannelResponse
 			message.replace("[TYPE]", QTest::currentDataTag());
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
-			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(obj);
+			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(PacePasswordId::PACE_PIN, obj);
 
 			if (type == IfdMessageType::IFDEstablishPACEChannelResponse)
 			{
@@ -293,7 +294,7 @@ class test_IfdEstablishPaceChannelResponse
 			message.replace("[OK]", RESULT_OK());
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
-			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(obj);
+			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(PacePasswordId::PACE_PIN, obj);
 			QVERIFY(ifdEstablishPaceChannelResponse.isIncomplete());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getType(), IfdMessageType::IFDEstablishPACEChannelResponse);
 			QCOMPARE(ifdEstablishPaceChannelResponse.getContextHandle(), QStringLiteral("TestContext"));
@@ -324,13 +325,13 @@ class test_IfdEstablishPaceChannelResponse
 			message.replace("[OK]", RESULT_OK());
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
-			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(obj);
+			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(PacePasswordId::PACE_PIN, obj);
 
 			QVERIFY(ifdEstablishPaceChannelResponse.isIncomplete());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getType(), IfdMessageType::IFDEstablishPACEChannelResponse);
 			QCOMPARE(ifdEstablishPaceChannelResponse.getContextHandle(), QStringLiteral("TestContext"));
 			QCOMPARE(ifdEstablishPaceChannelResponse.getSlotHandle(), QStringLiteral("SlotHandle"));
-			QCOMPARE(ifdEstablishPaceChannelResponse.getOutputData(), EstablishPaceChannelOutput());
+			QCOMPARE(ifdEstablishPaceChannelResponse.getOutputData(), EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, CardReturnCode::COMMAND_FAILED));
 			QVERIFY(!ifdEstablishPaceChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getResultMinor(), ECardApiResult::Minor::null);
 
@@ -371,13 +372,13 @@ class test_IfdEstablishPaceChannelResponse
 			message.replace("[RESULT]", withResultCode ? QByteArray(R"("ResultCode": "00000000",)") : QByteArray());
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
-			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(obj);
+			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(PacePasswordId::PACE_PIN, obj);
 
 			QVERIFY(ifdEstablishPaceChannelResponse.isIncomplete());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getType(), IfdMessageType::IFDEstablishPACEChannelResponse);
 			QCOMPARE(ifdEstablishPaceChannelResponse.getContextHandle(), QStringLiteral("TestContext"));
 			QCOMPARE(ifdEstablishPaceChannelResponse.getSlotHandle(), QStringLiteral("SlotHandle"));
-			QCOMPARE(ifdEstablishPaceChannelResponse.getOutputData(), EstablishPaceChannelOutput(withResultCode ? CardReturnCode::OK : CardReturnCode::COMMAND_FAILED));
+			QCOMPARE(ifdEstablishPaceChannelResponse.getOutputData(), EstablishPaceChannelOutput(PacePasswordId::PACE_PIN, withResultCode ? CardReturnCode::OK : CardReturnCode::COMMAND_FAILED));
 			QVERIFY(!ifdEstablishPaceChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getResultMinor(), ECardApiResult::Minor::null);
 

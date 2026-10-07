@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -25,7 +25,7 @@ Control {
 		echoField.insert(echoField.length, number);
 	}
 	function handleKeyEvent(eventKey, eventModifiers = Qt.NoModifier) {
-		if (!grid.focus)
+		if (!grid.activeFocus)
 			return false;
 		if (Qt.platform.os === "android" && (eventKey & Qt.KeypadModifier) === Qt.KeypadModifier)
 			eventKey = eventKey & ~Qt.KeypadModifier;
@@ -70,7 +70,7 @@ Control {
 			Accessible.focusable: true
 			Accessible.name: (button.showNumber ?
 				//: ALL_PLATFORMS Screenreader text for the password field
-				qsTr("The number is visible. Digits entered so far: %1").arg(root.number.split("").join(" ")) :
+				qsTr("The number is visible. Digits entered so far: %1").arg(Utils.splitCharacters(root.number)) :
 				//: ALL_PLATFORMS Screenreader text for the password field
 				qsTr("The number is hidden.")) + (text === undefined ? " " + passwordState : "")
 			Accessible.role: Accessible.EditableText
@@ -85,7 +85,7 @@ Control {
 			Repeater {
 				model: root.passwordLength
 
-				Text {
+				GText {
 					id: digit
 
 					required property int index
@@ -97,10 +97,9 @@ Control {
 					Layout.minimumWidth: Layout.preferredWidth
 					Layout.preferredHeight: fontMetrics.height + Style.dimens.text_spacing
 					Layout.preferredWidth: grid.markerWidth
-					color: Style.color.textNormal.basic_unchecked
-					font: fontMetrics.font
 					horizontalAlignment: Text.AlignHCenter
 					text: button.showNumber ? root.number.substr(digit.index, 1) : ""
+					textStyle: fontMetrics.textStyle
 					verticalAlignment: Text.AlignTop
 
 					Rectangle {
@@ -137,15 +136,11 @@ Control {
 
 			background: null
 			padding: Style.dimens.text_spacing / 2
-			text: (showNumber ? (Style.is_layout_desktop ?
-					//: DESKTOP Screenreader text for the eye icon to change the password visibility
-					qsTr("Click to hide the number") :
-					//: MOBILE Screenreader text for the eye icon to change the password visibility
-					qsTr("Tap to hide the number")) : (Style.is_layout_desktop ?
-					//: DESKTOP Screenreader text for the eye icon to change the password visibility
-					qsTr("Click to show the number") :
-					//: MOBILE Screenreader text for the eye icon to change the password visibility
-					qsTr("Tap to show the number")))
+			text: showNumber ?
+			//: ALL_PLATFORMS Screenreader text for the eye icon to hide the password
+			qsTr("Hide password") :
+			//: ALL_PLATFORMS Screenreader text for the eye icon to show the password
+			qsTr("Show password")
 
 			contentItem: TintableIcon {
 				source: button.showNumber ? "qrc:///images/eye_visibility_on.svg" : "qrc:///images/eye_visibility_off.svg"
@@ -175,8 +170,11 @@ Control {
 	FontMetrics {
 		id: fontMetrics
 
-		font.pixelSize: Style.is_layout_desktop ? UiPluginModel.scaleFactor * 30 : 24
-		font.weight: Style.font.bold
+		readonly property TextStyle textStyle: Style.text.numberField
+
+		font.family: UiPluginModel.fontFamily
+		font.pixelSize: textStyle.textSize
+		font.weight: textStyle.fontWeight
 	}
 	TextInput {
 		id: echoField

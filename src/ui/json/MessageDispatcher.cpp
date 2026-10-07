@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -384,16 +384,14 @@ const
 		const auto& workflowContext = mContext.getContext();
 		return handleCurrentState(cmdType, allowedStates, [&workflowContext] {
 					workflowContext->setInterruptRequested(true);
-					switch (workflowContext->getLastPaceResult())
-					{
-						case CardReturnCode::OK:
-						case CardReturnCode::OK_PUK:
-						case CardReturnCode::OK_CAN:
-							Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::NFC); // Null string is interpreted as 'success'
-							break;
 
-						default:
-							Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::NFC, Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed());
+					if (workflowContext->getPaceOutput().isOk() || workflowContext->getPaceOutput().isUndefined())
+					{
+						Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::NFC); // Null string is interpreted as 'success'
+					}
+					else
+					{
+						Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::NFC, Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed());
 					}
 
 					return MsgHandler::Void;

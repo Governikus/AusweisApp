@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 2.6.0
+^^^^^^^^^^^^^
+* Added iOS/iPadOS ABI arm64e in addition to arm64.
+
+
 Version 2.5.4
 ^^^^^^^^^^^^^
 * Added parameter ``header`` to :ref:`run_auth`.

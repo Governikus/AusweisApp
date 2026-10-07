@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -21,7 +21,7 @@ class IfdEstablishPaceChannelResponse
 
 	public:
 		IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pOutputData, ECardApiResult::Minor pResultMinor);
-		explicit IfdEstablishPaceChannelResponse(const QJsonObject& pMessageObject);
+		explicit IfdEstablishPaceChannelResponse(PacePasswordId pPasswordId, const QJsonObject& pMessageObject);
 		~IfdEstablishPaceChannelResponse() override = default;
 
 		[[nodiscard]] const EstablishPaceChannelOutput& getOutputData() const;

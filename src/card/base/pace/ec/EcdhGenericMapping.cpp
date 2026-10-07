@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "EcdhGenericMapping.h"
@@ -9,7 +9,9 @@
 #include <QLoggingCategory>
 #include <QScopeGuard>
 
+
 using namespace governikus;
+
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 
@@ -17,13 +19,19 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 EcdhGenericMapping::EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve)
 	: mCurve(pCurve)
 	, mLocalKey()
+	, mPoint()
 {
 }
 
 
-const QSharedPointer<EC_GROUP>& EcdhGenericMapping::getCurve() const
+int EcdhGenericMapping::getNid() const
 {
-	return mCurve;
+	if (mCurve.isNull())
+	{
+		return NID_undef;
+	}
+
+	return EC_GROUP_get_curve_name(mCurve.data());
 }
 
 
@@ -35,7 +43,7 @@ QByteArray EcdhGenericMapping::generateLocalMappingData()
 		return QByteArray();
 	}
 
-	mLocalKey = EcUtil::generateKey(mCurve);
+	mLocalKey = EcUtil::generateKey(getNid());
 	return EcUtil::getEncodedPublicKey(mLocalKey);
 }
 
@@ -49,7 +57,8 @@ bool EcdhGenericMapping::generateEphemeralDomainParameters(const QByteArray& pRe
 		return false;
 	}
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+
 	const QSharedPointer<const EC_POINT> localPubKeyPtr = EcUtil::oct2point(mCurve, EcUtil::getEncodedPublicKey(mLocalKey));
 	const EC_POINT* localPubKey = localPubKeyPtr.data();
 #else
@@ -68,7 +77,8 @@ bool EcdhGenericMapping::generateEphemeralDomainParameters(const QByteArray& pRe
 		return false;
 	}
 
-	return setGenerator(createNewGenerator(remotePubKey, s));
+	mPoint = createNewGenerator(remotePubKey, s);
+	return !mPoint.isNull();
 }
 
 
@@ -98,34 +108,7 @@ QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(const QSharedPoi
 }
 
 
-bool EcdhGenericMapping::setGenerator(const QSharedPointer<const EC_POINT>& pNewGenerator) const
+QByteArray EcdhGenericMapping::getGenerator() const
 {
-	QSharedPointer<BIGNUM> curveOrder = EcUtil::create(BN_new());
-	if (!EC_GROUP_get_order(mCurve.data(), curveOrder.data(), nullptr))
-	{
-		qCCritical(card) << "Calculation of curveOrder failed";
-		return false;
-	}
-
-	QSharedPointer<BIGNUM> curveCofactor = EcUtil::create(BN_new());
-	if (!EC_GROUP_get_cofactor(mCurve.data(), curveCofactor.data(), nullptr))
-	{
-		qCCritical(card) << "Calculation of curveCofactor failed";
-		return false;
-	}
-
-	// Da Die Kurve Primordnung hat, entspricht die Ordnung des neuen Erzeugers der, des alten Erzeugers
-	if (!EC_GROUP_set_generator(mCurve.data(), pNewGenerator.data(), curveOrder.data(), curveCofactor.data()))
-	{
-		qCCritical(card) << "Error EC_GROUP_set_generator";
-		return false;
-	}
-
-	if (!EC_GROUP_check(mCurve.data(), nullptr))
-	{
-		qCCritical(card) << "Error EC_GROUP_check";
-		return false;
-	}
-
-	return true;
+	return EcUtil::point2oct(mCurve, mPoint.data());
 }

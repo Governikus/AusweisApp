@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -12,7 +12,7 @@ GPane {
 
 	property alias buttonIconSource: hintButton.icon.source
 	property alias buttonText: hintButton.text
-	property alias buttonTooltip: hintButton.enabledTooltipText
+	property alias buttonToolTip: hintButton.enabledToolTipText
 	property string linkToOpen
 	property alias text: hintText.text
 
@@ -35,10 +35,11 @@ GPane {
 
 		readonly property bool hasLink: root.linkToOpen !== ""
 
-		Accessible.description: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, Accessible.name) : ""
+		Accessible.name: hasLink ? Utils.platformAgnosticLinkOpenText(root.linkToOpen, text) : text
 		Accessible.role: hasLink ? Accessible.Link : Accessible.Button
 		Layout.alignment: Qt.AlignHCenter
 		Layout.topMargin: Style.dimens.pane_spacing
+		enabledToolTipText: root.linkToOpen
 		icon.source: "qrc:///images/open_website.svg"
 		tintIcon: true
 		visible: text !== ""

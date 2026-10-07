@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
 #include "RedirectBroadcast.h"
@@ -40,7 +40,7 @@ void RedirectBroadcast::redirect(const QNetworkDatagram& pDatagram)
 	socket.setProxy(QNetworkProxy::NoProxy);
 
 	quint16 port = 0;
-	while ((port = mPortWrapper.fetchPort()) > 0)
+	while ((port = mPortWrapper.pop()) > 0)
 	{
 		if (socket.writeDatagram(pDatagram.data(), QHostAddress::LocalHost, port))
 		{
@@ -50,8 +50,6 @@ void RedirectBroadcast::redirect(const QNetworkDatagram& pDatagram)
 		{
 			qCDebug(rproxy) << "Cannot redirect to port:" << port;
 		}
-
-		mPortWrapper.invalidate();
 	}
 
 	deleteLater();

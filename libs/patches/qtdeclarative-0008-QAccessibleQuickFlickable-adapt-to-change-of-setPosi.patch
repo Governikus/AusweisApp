@@ -1,0 +1,49 @@
+From 64aa46897c60d89b71f251f4b8b541ff17d2f11a Mon Sep 17 00:00:00 2001
+From: Volker Hilsheimer <volker.hilsheimer@qt.io>
+Date: Mon, 22 Jun 2026 16:09:37 +0200
+Subject: QAccessibleQuickFlickable: adapt to change of setPosition signature
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+QPointF should be passed by value. Follow up on change in qtbase,
+amending 928ed01d21cbde95f6931f2d2701d1f99ca88c67.
+
+Pick-to: 6.12
+Task-number: QTBUG-146286
+Change-Id: I540f80b909a2a93fb9c2b3a46ca7fb4ad898f2f9
+Reviewed-by: Kai Köhne <kai.koehne@qt.io>
+Reviewed-by: MohammadHossein Qanbari <mohammad.qanbari@qt.io>
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+(cherry-picked from commit 40494bb2bf2d0edc56cb6a5b34a8c616b7416c1b)
+---
+ src/quick/accessible/qaccessiblequickflickable.cpp | 2 +-
+ src/quick/accessible/qaccessiblequickflickable_p.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickflickable.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickflickable.cpp
+index f1ed4b732262e19ff0829ae0307683575cb856b9..9145463598081d59785e06e92469b2216e0e98e6 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickflickable.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickflickable.cpp
+@@ -66,7 +66,7 @@ bool QAccessibleQuickFlickable::isIndexed() const
+     return false;
+ }
+ 
+-void QAccessibleQuickFlickable::setPosition(const QPointF &position)
++void QAccessibleQuickFlickable::setPosition(QPointF position)
+ {
+     if (auto *f = flickable()) {
+         const qreal contentWidth = f->contentWidth();
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickflickable_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequickflickable_p.h
+index a7c34d672fc0a18656b867362a8824989089b49d..690486c370a5f144a28b45b2767a36b5305b7199 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickflickable_p.h
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickflickable_p.h
+@@ -35,7 +35,7 @@ public:
+     QPointF position() const override;
+     QSizeF viewportSize() const override;
+     bool isIndexed() const override;
+-    void setPosition(const QPointF &position) override;
++    void setPosition(QPointF position) override;
+ 
+ protected:
+     QQuickFlickable *flickable() const;

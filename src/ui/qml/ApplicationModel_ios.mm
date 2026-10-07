@@ -1,9 +1,12 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
+#include "AppSettings.h"
 #include "ApplicationModel.h"
 #include "PlatformTools.h"
+#include "VolatileSettings.h"
+
 
 #include <QAccessible>
 #include <QLoggingCategory>
@@ -194,6 +197,13 @@ void ApplicationModel::keepScreenOn(bool pActive) const
 
 void ApplicationModel::showAppStoreRatingDialog() const
 {
+	const bool appRatingShown = Env::getSingleton<VolatileSettings>()->appRatingShown();
+	const bool shouldShowAppRating = Env::getSingleton<AppSettings>()->getGeneralSettings().shouldShowAppStoreRatingDialog();
+	if (appRatingShown || !shouldShowAppRating)
+	{
+		return;
+	}
+
 	UIWindowScene* windowScene = PlatformTools::getFirstWindowScene();
 	if (!windowScene)
 	{
@@ -202,6 +212,7 @@ void ApplicationModel::showAppStoreRatingDialog() const
 	}
 
 	qCDebug(feedback) << "Requesting iOS AppStore review";
+	Env::getSingleton<VolatileSettings>()->setAppRatingShown(true);
 	QT_WARNING_PUSH
 			QT_WARNING_DISABLE_DEPRECATED
 	[SKStoreReviewController requestReviewInScene: windowScene];

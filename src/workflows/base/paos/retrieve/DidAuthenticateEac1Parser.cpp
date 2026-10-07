@@ -1,10 +1,9 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
-#include "paos/invoke/PaosCreator.h"
 
 #include <QLoggingCategory>
 #include <QRegularExpression>
@@ -17,56 +16,6 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(paos)
 
 
-DidAuthenticateEac1Parser::DidAuthenticateEac1Parser()
-	: PaosParser(QStringLiteral("DIDAuthenticate"))
-{
-}
-
-
-PaosMessage* DidAuthenticateEac1Parser::parseMessage()
-{
-	mDidAuthenticateEac1.reset(new DIDAuthenticateEAC1());
-
-	bool isConnectionHandleNotSet = true;
-	QString didName;
-
-	while (readNextStartElement())
-	{
-		const auto& name = getElementName();
-		if (name == QLatin1String("ConnectionHandle"))
-		{
-			if (assertNoDuplicateElement(isConnectionHandleNotSet))
-			{
-				isConnectionHandleNotSet = false;
-				mDidAuthenticateEac1->setConnectionHandle(parseConnectionHandle());
-			}
-		}
-		else if (name == QLatin1String("DIDName"))
-		{
-			if (readUniqueElementText(didName))
-			{
-				mDidAuthenticateEac1->setDidName(didName);
-			}
-		}
-		else if (name == QLatin1String("AuthenticationProtocolData"))
-		{
-			const auto value = getElementType();
-			if (value.endsWith(QLatin1String("EAC1InputType")))
-			{
-				mDidAuthenticateEac1->setEac1InputType(parseEac1InputType());
-			}
-		}
-		else
-		{
-			qCWarning(paos) << "Unknown element:" << name;
-			skipCurrentElement();
-		}
-	}
-
-	return parserFailed() ? nullptr : mDidAuthenticateEac1.release();
-}
-
-
 Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 {
 	Eac1InputType eac1;
@@ -76,9 +25,10 @@ Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 	QString optionalCHAT;
 	QString authenticatedAuxiliaryData;
 	QString transactionInfo;
-	while (readNextStartElement())
+
+	while (mParser->readNextStartElement())
 	{
-		const auto& name = getElementName();
+		const auto& name = mParser->getElementName();
 		if (name == QLatin1String("CertificateDescription"))
 		{
 			parseCertificateDescription(eac1, certificateDescription);
@@ -110,10 +60,10 @@ Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 		else
 		{
 			qCWarning(paos) << "Unknown element:" << name;
-			skipCurrentElement();
+			mParser->skipCurrentElement();
 		}
 	}
-	assertMandatoryList<QSharedPointer<const CVCertificate>>(eac1.getCvCertificates(), "Certificate");
+	mParser->assertMandatoryList<QSharedPointer<const CVCertificate>>(eac1.getCvCertificates(), "Certificate");
 	if (eac1.getAcceptedEidTypes().isEmpty()) // For legacy eID-Server without explicit Smart-eID information
 	{
 		eac1.appendAcceptedEidType(AcceptedEidType::CARD_CERTIFIED);
@@ -127,7 +77,8 @@ Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 
 void DidAuthenticateEac1Parser::parseCertificateDescription(Eac1InputType& pEac1, QString& pCertificateDescription)
 {
-	if (readUniqueElementText(pCertificateDescription))
+
+	if (mParser->readUniqueElementText(pCertificateDescription))
 	{
 		const QByteArray certDesc = pCertificateDescription.toLatin1();
 		pEac1.setCertificateDescriptionAsBinary(QByteArray::fromHex(certDesc));
@@ -135,7 +86,7 @@ void DidAuthenticateEac1Parser::parseCertificateDescription(Eac1InputType& pEac1
 		if (pEac1.getCertificateDescription() == nullptr)
 		{
 			qCCritical(paos) << "Cannot parse CertificateDescription";
-			setParserFailed();
+			mParser->setParserFailed();
 		}
 	}
 }
@@ -143,13 +94,13 @@ void DidAuthenticateEac1Parser::parseCertificateDescription(Eac1InputType& pEac1
 
 void DidAuthenticateEac1Parser::parseRequiredCHAT(Eac1InputType& pEac1, QString& pRequiredCHAT)
 {
-	if (readUniqueElementText(pRequiredCHAT))
+	if (mParser->readUniqueElementText(pRequiredCHAT))
 	{
 		pEac1.setRequiredChat(CHAT::fromHex(pRequiredCHAT.toLatin1()));
 		if (pEac1.getRequiredChat() == nullptr)
 		{
 			qCCritical(paos) << "Cannot parse required CHAT";
-			setParserFailed();
+			mParser->setParserFailed();
 		}
 		else
 		{
@@ -161,13 +112,13 @@ void DidAuthenticateEac1Parser::parseRequiredCHAT(Eac1InputType& pEac1, QString&
 
 void DidAuthenticateEac1Parser::parseOptionalCHAT(Eac1InputType& pEac1, QString& pOptionalCHAT)
 {
-	if (readUniqueElementText(pOptionalCHAT))
+	if (mParser->readUniqueElementText(pOptionalCHAT))
 	{
 		pEac1.setOptionalChat(CHAT::fromHex(pOptionalCHAT.toLatin1()));
 		if (pEac1.getOptionalChat() == nullptr)
 		{
 			qCCritical(paos) << "Cannot parse optional CHAT";
-			setParserFailed();
+			mParser->setParserFailed();
 		}
 		else
 		{
@@ -179,7 +130,7 @@ void DidAuthenticateEac1Parser::parseOptionalCHAT(Eac1InputType& pEac1, QString&
 
 void DidAuthenticateEac1Parser::parseAuthenticatedAuxiliaryData(Eac1InputType& pEac1, QString& pAuthenticatedAuxiliaryData)
 {
-	if (readUniqueElementText(pAuthenticatedAuxiliaryData))
+	if (mParser->readUniqueElementText(pAuthenticatedAuxiliaryData))
 	{
 		const QByteArray data = pAuthenticatedAuxiliaryData.toUtf8();
 		pEac1.setAuthenticatedAuxiliaryDataAsBinary(QByteArray::fromHex(data));
@@ -187,7 +138,7 @@ void DidAuthenticateEac1Parser::parseAuthenticatedAuxiliaryData(Eac1InputType& p
 		if (pEac1.getAuthenticatedAuxiliaryData() == nullptr)
 		{
 			qCCritical(paos) << "Cannot parse AuthenticatedAuxiliaryData";
-			setParserFailed();
+			mParser->setParserFailed();
 		}
 	}
 }
@@ -195,7 +146,7 @@ void DidAuthenticateEac1Parser::parseAuthenticatedAuxiliaryData(Eac1InputType& p
 
 void DidAuthenticateEac1Parser::parseTransactionInfo(Eac1InputType& pEac1, QString& pTransactionInfo)
 {
-	if (readUniqueElementText(pTransactionInfo))
+	if (mParser->readUniqueElementText(pTransactionInfo))
 	{
 		pEac1.setTransactionInfo(pTransactionInfo);
 	}
@@ -204,21 +155,22 @@ void DidAuthenticateEac1Parser::parseTransactionInfo(Eac1InputType& pEac1, QStri
 
 void DidAuthenticateEac1Parser::parseCertificate(Eac1InputType& pEac1)
 {
-	if (auto cvc = CVCertificate::fromRaw(QByteArray::fromHex(readElementText().toLatin1())))
+	if (auto cvc = CVCertificate::fromRaw(QByteArray::fromHex(mParser->readElementText().toLatin1())))
 	{
 		pEac1.appendCvcerts(cvc);
 	}
 	else
 	{
 		qCCritical(paos) << "Cannot parse Certificate";
-		setParserFailed();
+		mParser->setParserFailed();
 	}
 }
 
 
 void DidAuthenticateEac1Parser::parseAcceptedEidType(Eac1InputType& pEac1)
 {
-	const auto& acceptedEidType = readElementText();
+
+	const auto& acceptedEidType = mParser->readElementText();
 	qCDebug(paos) << "AcceptedEIDType:" << acceptedEidType;
 
 	if (acceptedEidType == QLatin1String("CardCertified"))
@@ -240,6 +192,20 @@ void DidAuthenticateEac1Parser::parseAcceptedEidType(Eac1InputType& pEac1)
 	else
 	{
 		qCCritical(paos) << "Cannot parse AcceptedEidType";
-		setParserFailed();
+		mParser->setParserFailed();
 	}
+}
+
+
+DidAuthenticateEac1Parser::DidAuthenticateEac1Parser(const QSharedPointer<ElementParser>& pParser)
+	: mParser(pParser)
+{
+}
+
+
+std::unique_ptr<DIDAuthenticateEAC1> DidAuthenticateEac1Parser::parse()
+{
+	auto didAuthenticateEac1 = std::make_unique<DIDAuthenticateEAC1>();
+	didAuthenticateEac1->setEac1InputType(parseEac1InputType());
+	return mParser->parserFailed() ? nullptr : std::move(didAuthenticateEac1);
 }

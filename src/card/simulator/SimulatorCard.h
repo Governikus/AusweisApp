@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -11,6 +11,7 @@
 #include "asn1/CVCertificate.h"
 #include "asn1/Oid.h"
 #include "pace/SecureMessaging.h"
+#include "pace/ec/EcKeyPair.h"
 
 #include <QSet>
 
@@ -39,11 +40,7 @@ class SimulatorCard
 		int mPaceKeyId;
 		QByteArray mPaceNonce;
 		QByteArray mPaceTerminalKey;
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
-		QSharedPointer<EVP_PKEY> mCardKey;
-#else
-		QSharedPointer<EC_KEY> mCardKey;
-#endif
+		EcKeyPair mCardKey;
 		QSharedPointer<const CVCertificate> mTaCertificate;
 		QByteArray mTaSigningData;
 		QByteArray mTaAuxData;
@@ -73,7 +70,6 @@ class SimulatorCard
 		ResponseApdu executeExternalAuthenticate(const QByteArray& pSignature);
 		ResponseApdu executePinManagement(const CommandApdu& pCmd) const;
 		ResponseApdu executeResetRetryCounter(const CommandApdu& pCmd) const;
-		QByteArray ecMultiplication(const QByteArray& pPoint) const;
 		QByteArray generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce, const QByteArray& pVerify = QByteArray());
 		QByteArray generateRestrictedId(const QByteArray& pPublicKey) const;
 		StatusCode verifyAuxiliaryData(const QByteArray& pASN1Struct) const;

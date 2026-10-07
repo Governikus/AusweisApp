@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include "NfcCard.h"
@@ -26,12 +26,6 @@ NfcCard::NfcCard(QNearFieldTarget* pNearFieldTarget)
 		pNearFieldTarget->setParent(nullptr);
 		connect(pNearFieldTarget, &QNearFieldTarget::error, this, &NfcCard::fireTargetError);
 	}
-}
-
-
-bool NfcCard::isValid() const
-{
-	return mIsValid;
 }
 
 

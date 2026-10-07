@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -12,12 +12,14 @@ import Governikus.View
 GAbstractButton {
 	id: root
 
+	//: ALL_PLATFORMS
+	readonly property string a11yDescription: qsTr("Show more information about the transaction.")
+	readonly property string a11yName: subheading.text + ". " + contentTextMetrics.elidedText + (showDataNotRequiredText ? ". " + dataNotRequiredText.text : "")
 	property alias showDataNotRequiredText: dataNotRequiredText.visible
 	property alias transactionText: contentText.text
 
-	//: ALL_PLATFORMS
-	Accessible.description: enabled ? qsTr("Show more information about the transaction.") : qsTr("Information about the transaction.")
-	Accessible.name: subheading.text + ". " + contentTextMetrics.elidedText + (showDataNotRequiredText ? ". " + dataNotRequiredText.text : "")
+	Accessible.description: enabled ? Utils.resolveA11yDescription(a11yName, a11yDescription) : ""
+	Accessible.name: enabled ? Utils.resolveA11yName(a11yName, a11yDescription) : a11yName
 	Accessible.role: enabled ? Accessible.Button : Accessible.StaticText
 	enabled: contentText.truncated
 	padding: Style.dimens.pane_padding

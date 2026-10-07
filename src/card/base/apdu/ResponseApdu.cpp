@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "ResponseApdu.h"
@@ -87,22 +87,26 @@ QByteArray ResponseApdu::getStatusBytes() const
 }
 
 
-SW1 ResponseApdu::getSW1() const
+int ResponseApdu::getRetryCounter() const
 {
-	const auto value = static_cast<quint8>(mStatusCode >> 8);
-	if (value != EMPTY && Enum<SW1>::isValue(value))
+	switch (getStatusCode())
 	{
-		return SW1(value);
+		case StatusCode::SUCCESS:
+			return 3;
+
+		case StatusCode::PIN_RETRY_COUNT_2:
+			return 2;
+
+		case StatusCode::PIN_SUSPENDED:
+			return 1;
+
+		case StatusCode::PIN_BLOCKED:
+		case StatusCode::PIN_DEACTIVATED:
+			return 0;
+
+		default:
+			return -1;
 	}
-
-	qCCritical(card) << "Unknown SW1 value, returning UNKNOWN, value:" << QString::number(value, 16);
-	return SW1::UNKNOWN;
-}
-
-
-char ResponseApdu::getSW2() const
-{
-	return static_cast<char>(mStatusCode & 0xFF);
 }
 
 
@@ -115,17 +119,6 @@ ResponseApdu::operator QByteArray() const
 
 	return mData + getStatusBytes();
 }
-
-
-#if !defined(QT_NO_DEBUG) && __has_include(<QTest>)
-	#include <QTest>
-char* governikus::toString(const ResponseApdu& pResponseApdu)
-{
-	return QTest::toString(QByteArray(pResponseApdu).toHex());
-}
-
-
-#endif
 
 
 #include "moc_ResponseApdu.cpp"

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "FileRef.h"
@@ -98,6 +98,9 @@ FileRef::FileRef(uchar pType, const QByteArray& pIdentifier, const QByteArray& p
 		case 0x04:
 			mType = TYPE::APPLICATION;
 			return;
+
+		default:
+			qCritical() << "Ignoring unknown file type" << QString::asprintf("0x%02X", pType);
 	}
 }
 

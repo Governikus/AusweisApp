@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma Singleton
@@ -52,14 +52,11 @@ PlatformStyle {
 	}
 	Dimensions {
 		id: dimensions
-
 	}
 	TextStyles {
 		id: textStyles
-
 	}
 	FontStyle {
 		id: fontStyles
-
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 #include "Email.h"
@@ -10,6 +10,17 @@
 
 namespace governikus
 {
+
+QString generateMailHeader(const GlobalStatus& pStatus, bool pPercentEncoding)
+{
+	auto statusErrorDescription = pStatus.toErrorDescription();
+	if (pPercentEncoding)
+	{
+		statusErrorDescription = statusErrorDescription.replace(QStringLiteral("&"), QStringLiteral("%26"));
+	}
+	return QObject::tr("%1 error report - %2").arg(QCoreApplication::applicationName(), statusErrorDescription);
+}
+
 
 QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl, bool pPercentEncoding, bool pAddLogNotice)
 {

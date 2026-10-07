@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 #include "SimulatorCard.h"
@@ -146,8 +146,8 @@ EstablishPaceChannelOutput SimulatorCard::establishPaceChannel(PacePasswordId pP
 
 	QThread::msleep(Env::getSingleton<VolatileSettings>()->getDelay());
 
-	EstablishPaceChannelOutput output(CardReturnCode::OK);
-	output.setPaceReturnCode(CardReturnCode::OK);
+	EstablishPaceChannelOutput output(pPasswordId, CardReturnCode::OK);
+	output.setReturnCode(CardReturnCode::OK);
 	output.setStatusMseSetAt(QByteArray::fromHex("9000"));
 	output.setEfCardAccess(mFileSystem.getEfCardAccess());
 	if (pChat.isEmpty())
@@ -167,7 +167,7 @@ EstablishPaceChannelOutput SimulatorCard::establishPaceChannel(PacePasswordId pP
 		const auto& nonce = Randomizer::getInstance().createBytes(16);
 		cardMapping.generateLocalMappingData();
 		cardMapping.generateEphemeralDomainParameters(terminalMapping.generateLocalMappingData(), nonce);
-		mTaSigningData = EcUtil::getEncodedPublicKey(EcUtil::generateKey(cardMapping.getCurve()), true);
+		mTaSigningData = EcKeyPair(cardMapping).getPublicKey(true);
 
 		output.setCarCurr(mTaCertificate->getBody().getCertificateHolderReference());
 		output.setIdIcc(mTaSigningData);
@@ -360,7 +360,7 @@ ResponseApdu SimulatorCard::executeMseSetAt(const CommandApdu& pCmd)
 				return ResponseApdu(StatusCode::REFERENCED_DATA_NOT_FOUND);
 			}
 
-			mCardKey = mFileSystem.getKey(cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PRIVATE_KEY_REFERENCE).back());
+			mCardKey = EcKeyPair(mFileSystem.getKey(cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PRIVATE_KEY_REFERENCE).back()));
 
 			return ResponseApdu(StatusCode::SUCCESS);
 		}
@@ -447,7 +447,7 @@ ResponseApdu SimulatorCard::executeGeneralAuthenticate(const CommandApdu& pCmd)
 				const auto& localMappingData = mapping.generateLocalMappingData();
 				const auto& remoteMappingData = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::MAPPING_DATA);
 				mapping.generateEphemeralDomainParameters(remoteMappingData, mPaceNonce);
-				mCardKey = EcUtil::generateKey(mapping.getCurve());
+				mCardKey = EcKeyPair(mapping);
 				mPaceNonce.clear();
 
 				auto asn1Mapping = newObject<GA_MAPNONCEDATA>();
@@ -461,7 +461,7 @@ ResponseApdu SimulatorCard::executeGeneralAuthenticate(const CommandApdu& pCmd)
 				mPaceTerminalKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PACE_EPHEMERAL_PUBLIC_KEY);
 
 				auto asn1KeyAgreement = newObject<GA_PERFORMKEYAGREEMENTDATA>();
-				const auto& encodedPublicKey = EcUtil::getEncodedPublicKey(mCardKey);
+				const auto& encodedPublicKey = mCardKey.getPublicKey();
 				Asn1OctetStringUtil::setValue(encodedPublicKey, asn1KeyAgreement->mEphemeralPublicKey);
 				responseData = encodeObject(asn1KeyAgreement.data());
 				break;
@@ -475,7 +475,7 @@ ResponseApdu SimulatorCard::executeGeneralAuthenticate(const CommandApdu& pCmd)
 					return ResponseApdu(StatusCode::LAST_CHAIN_CMD_EXPECTED);
 				}
 
-				const auto guard = qScopeGuard([this] {mCardKey.reset();});
+				const auto guard = qScopeGuard([this] {mCardKey = EcKeyPair();});
 				const auto& mutualAuthenticationDataCard = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::AUTHENTICATION_TOKEN);
 				const auto& mutualAuthenticationDataTerminal = generateAuthenticationToken(mPaceTerminalKey, QByteArray(), mutualAuthenticationDataCard);
 				mPaceTerminalKey.clear();
@@ -489,7 +489,7 @@ ResponseApdu SimulatorCard::executeGeneralAuthenticate(const CommandApdu& pCmd)
 				Asn1OctetStringUtil::setValue(mutualAuthenticationDataTerminal, ga->mAuthenticationToken);
 				if (mTaCertificate)
 				{
-					mTaSigningData = EcUtil::getEncodedPublicKey(mCardKey, true);
+					mTaSigningData = mCardKey.getPublicKey(true);
 
 					ga->mCarCurr = ASN1_OCTET_STRING_new();
 					Asn1OctetStringUtil::setValue(mTaCertificate->getBody().getCertificateHolderReference(), ga->mCarCurr);
@@ -653,75 +653,9 @@ ResponseApdu SimulatorCard::executeResetRetryCounter(const CommandApdu& pCmd) co
 }
 
 
-QByteArray SimulatorCard::ecMultiplication(const QByteArray& pPoint) const
-{
-	if (mCardKey.isNull())
-	{
-		qCCritical(card_simulator) << "Missing private key";
-		return QByteArray();
-	}
-
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
-	const auto& terminalKey = EcUtil::create(EVP_PKEY_new());
-	if (terminalKey.isNull() || EVP_PKEY_copy_parameters(terminalKey.data(), mCardKey.data()) == 0)
-	{
-		qCCritical(card_simulator) << "Initialization of the terminal key failed";
-		return QByteArray();
-	}
-	if (!EVP_PKEY_set1_encoded_public_key(
-			terminalKey.data(),
-			reinterpret_cast<const unsigned char*>(pPoint.data()),
-			static_cast<size_t>(pPoint.length())))
-	{
-		qCCritical(card_simulator) << "Interpreting the terminal key failed";
-		return QByteArray();
-	}
-
-	const auto& ctx = EcUtil::create(EVP_PKEY_CTX_new_from_pkey(nullptr, mCardKey.data(), nullptr));
-	size_t resultLen = 0;
-	if (EVP_PKEY_derive_init(ctx.data()) <= 0
-			|| EVP_PKEY_derive_set_peer(ctx.data(), terminalKey.data()) <= 0
-			|| EVP_PKEY_derive(ctx.data(), nullptr, &resultLen) <= 0)
-	{
-		qCCritical(card_simulator) << "Initialization or calculation of the result failed";
-		return QByteArray();
-	}
-
-	QByteArray result(static_cast<qsizetype>(resultLen), '\0');
-	if (EVP_PKEY_derive(ctx.data(), reinterpret_cast<uchar*>(result.data()), &resultLen) <= 0)
-	{
-		qCCritical(card_simulator) << "Calculation of the result failed";
-		return QByteArray();
-	}
-
-	return result;
-
-#else
-	const auto& curve = EcUtil::create(EC_GROUP_dup(EC_KEY_get0_group(mCardKey.data())));
-	auto point = EcUtil::oct2point(curve, pPoint);
-	if (!point)
-	{
-		qCCritical(card_simulator) << "Interpreting the point failed";
-		return QByteArray();
-	}
-
-	QSharedPointer<EC_POINT> result = EcUtil::create(EC_POINT_new(curve.data()));
-	const auto& privateKey = EcUtil::getPrivateKey(mCardKey);
-	if (!EC_POINT_mul(curve.data(), result.data(), nullptr, point.data(), privateKey.data(), nullptr))
-	{
-		qCCritical(card_simulator) << "Calculation of the result failed";
-		return QByteArray();
-	}
-
-	return EcUtil::point2oct(curve, result.data(), true);
-
-#endif
-}
-
-
 QByteArray SimulatorCard::generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce, const QByteArray& pVerify)
 {
-	QByteArray sharedSecret = ecMultiplication(pPublicKey);
+	QByteArray sharedSecret = mCardKey.getSharedSecret(pPublicKey);
 
 	const auto protocol = SecurityProtocol(mSelectedProtocol);
 	KeyDerivationFunction kdf(protocol);
@@ -730,7 +664,7 @@ QByteArray SimulatorCard::generateAuthenticationToken(const QByteArray& pPublicK
 	CipherMac cmac(protocol, macKey);
 	if (!pVerify.isNull())
 	{
-		const auto& uncompressedCardPublicKey = EcdhKeyAgreement::encodeUncompressedPublicKey(mSelectedProtocol, EcUtil::getEncodedPublicKey(mCardKey));
+		const auto& uncompressedCardPublicKey = EcdhKeyAgreement::encodeUncompressedPublicKey(mSelectedProtocol, mCardKey.getPublicKey());
 		const auto& mutualAuthenticationCardData = cmac.generate(uncompressedCardPublicKey);
 		if (pVerify != mutualAuthenticationCardData)
 		{
@@ -746,7 +680,7 @@ QByteArray SimulatorCard::generateAuthenticationToken(const QByteArray& pPublicK
 
 QByteArray SimulatorCard::generateRestrictedId(const QByteArray& pPublicKey) const
 {
-	QByteArray sharedSecret = ecMultiplication(pPublicKey);
+	QByteArray sharedSecret = mCardKey.getSharedSecret(pPublicKey);
 
 	return QCryptographicHash::hash(sharedSecret, QCryptographicHash::Sha256);
 }

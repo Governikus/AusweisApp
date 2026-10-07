@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -37,10 +37,7 @@ FlickableSectionPage {
 	QtObject {
 		id: d
 
-		property bool oldLockedAndHiddenStatus
-
 		function close() {
-			root.setLockedAndHidden(oldLockedAndHiddenStatus);
 			root.pop();
 		}
 	}
@@ -132,8 +129,6 @@ FlickableSectionPage {
 
 				onActivate: (pIsSupported, pDeviceId) => {
 					if (pIsSupported && RemoteServiceModel.rememberServer(pDeviceId)) {
-						d.oldLockedAndHiddenStatus = root.getLockedAndHidden();
-						root.setLockedAndHidden();
 						root.push(enterPinView);
 					}
 				}
@@ -154,7 +149,7 @@ FlickableSectionPage {
 			onClicked: ApplicationModel.enableWifi()
 		}
 		LocalNetworkInfo {
-			visible: RemoteServiceModel.requiresLocalNetworkPermission && !RemoteServiceModel.remoteReaderVisible
+			visible: Qt.platform.os === "ios" && !RemoteServiceModel.remoteReaderVisible
 		}
 		PairingProcessInfo {
 			visible: !searchDeviceList.visible && ApplicationModel.wifiEnabled
@@ -182,6 +177,7 @@ FlickableSectionPage {
 		id: enterPinView
 
 		EnterPasswordView {
+			lockAndHideNavigation: true
 			passwordType: NumberModel.PasswordType.REMOTE_PIN
 			progress: root.progress
 			//: MOBILE
@@ -202,6 +198,7 @@ FlickableSectionPage {
 		ProgressView {
 			//: MOBILE
 			headline: qsTr("Pairing the device...")
+			lockAndHideNavigation: true
 			progress: root.progress
 			title: root.title
 
@@ -226,6 +223,7 @@ FlickableSectionPage {
 		id: pairingFailedComponent
 
 		PairingFailedView {
+			lockAndHideNavigation: true
 			progress: root.progress
 			title: root.title
 
@@ -249,6 +247,7 @@ FlickableSectionPage {
 				root.pairedDeviceFound();
 			}
 
+			lockAndHideNavigation: true
 			progress: root.progress
 			title: root.title
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "controller/ChangePinController.h"
@@ -37,9 +37,9 @@ class test_ChangePinController
 			if (mRetryCounterUpdated)
 			{
 				mRetryCounterUpdated = false;
-				if (mChangePinContext->getLastPaceResult() != CardReturnCode::OK)
+				const auto& returnCode = mChangePinContext->getPaceOutput().getReturnCode();
+				if (returnCode != CardReturnCode::OK && returnCode != CardReturnCode::UNDEFINED)
 				{
-					QCOMPARE(mChangePinContext->getLastPaceResult(), CardReturnCode::INVALID_PIN);
 					Q_EMIT mChangePinContext->fireCancelWorkflow();
 					return;
 				}

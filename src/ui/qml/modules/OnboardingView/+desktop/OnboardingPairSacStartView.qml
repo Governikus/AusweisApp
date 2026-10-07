@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -64,7 +64,7 @@ BaseOnboardingView {
 				verticalAlignment: Text.AlignBottom
 			}
 			GText {
-				text: "Governikus GmbH & Co. KG"
+				text: "Governikus Service GmbH"
 				verticalAlignment: Text.AlignTop
 			}
 		}

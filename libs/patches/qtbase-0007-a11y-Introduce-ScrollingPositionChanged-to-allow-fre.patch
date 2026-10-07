@@ -1,0 +1,88 @@
+From 9ba7ec09715be333daca501deb92837582e86a5f Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Tue, 26 May 2026 14:34:29 +0200
+Subject: a11y: Introduce ScrollingPositionChanged to allow frequent updates
+
+This signal may be used by components like QML Flickable/ListView
+to post frequent position updates to the a11y layer. For example,
+Android TalkBack reacts with ascending/descending sounds when
+users scroll views manually.
+
+Thus, exposing only the start/end of a scrolling is not sufficient.
+
+Task-number: QTBUG-139833
+Change-Id: I3b16f7c14cf49dc7b06f2d6b225d246829c0b503
+Reviewed-by: MohammadHossein Qanbari <mohammad.qanbari@qt.io>
+(cherry-picked from commit ce460b99e9bd6969203a381dd0ff42056b3fca42)
+---
+ src/gui/accessible/linux/atspiadaptor.cpp |  1 +
+ src/gui/accessible/qaccessible.cpp        |  1 +
+ src/gui/accessible/qaccessible_base.h     | 31 ++++++++++++-----------
+ 3 files changed, 18 insertions(+), 15 deletions(-)
+
+diff --git x/qtbase/src/gui/accessible/linux/atspiadaptor.cpp y/qtbase/src/gui/accessible/linux/atspiadaptor.cpp
+index dae83437b895eba28eb3515684a1d72d244a888f..edae4e14d23aa7fa19b6892749b5120fdd4dcba6 100644
+--- x/qtbase/src/gui/accessible/linux/atspiadaptor.cpp
++++ y/qtbase/src/gui/accessible/linux/atspiadaptor.cpp
+@@ -1382,6 +1382,7 @@ void AtSpiAdaptor::notify(QAccessibleEvent *event)
+     case QAccessible::DragDropEnd:
+     case QAccessible::ScrollingStart:
+     case QAccessible::ScrollingEnd:
++    case QAccessible::ScrollingPositionChanged:
+     case QAccessible::MenuCommand:
+     case QAccessible::ActionChanged:
+     case QAccessible::ActiveDescendantChanged:
+diff --git x/qtbase/src/gui/accessible/qaccessible.cpp y/qtbase/src/gui/accessible/qaccessible.cpp
+index edaf81965b073de72ba43d98b77ec3bfadd11606..9886f1420bdd9a3a0cec5c859e8aa6181d955c69 100644
+--- x/qtbase/src/gui/accessible/qaccessible.cpp
++++ y/qtbase/src/gui/accessible/qaccessible.cpp
+@@ -236,6 +236,7 @@ Q_STATIC_LOGGING_CATEGORY(lcAccessibilityCore, "qt.accessibility.core");
+     \value ScrollingStart                   A scrollbar scroll operation is about to start; this may
+                                             be caused by a mouse press on the slider handle, for
+                                             example.
++    \value ScrollingPositionChanged         The position changed during a scroll operation.
+     \value SectionChanged
+     \value SelectionAdd                     An item has been added to the selection in an item view.
+     \value SelectionRemove                  An item has been removed from an item view selection.
+diff --git x/qtbase/src/gui/accessible/qaccessible_base.h y/qtbase/src/gui/accessible/qaccessible_base.h
+index 04efeddf06fb19fde822a7b4bc65c49067004c3c..177fc9ad5d693d6bc98c2ca1e2f43fccb522a232 100644
+--- x/qtbase/src/gui/accessible/qaccessible_base.h
++++ y/qtbase/src/gui/accessible/qaccessible_base.h
+@@ -28,21 +28,22 @@ class Q_GUI_EXPORT QAccessible
+ public:
+ 
+     enum Event {
+-        SoundPlayed          = 0x0001,
+-        Alert                = 0x0002,
+-        ForegroundChanged    = 0x0003,
+-        MenuStart            = 0x0004,
+-        MenuEnd              = 0x0005,
+-        PopupMenuStart       = 0x0006,
+-        PopupMenuEnd         = 0x0007,
+-        ContextHelpStart     = 0x000C,
+-        ContextHelpEnd       = 0x000D,
+-        DragDropStart        = 0x000E,
+-        DragDropEnd          = 0x000F,
+-        DialogStart          = 0x0010,
+-        DialogEnd            = 0x0011,
+-        ScrollingStart       = 0x0012,
+-        ScrollingEnd         = 0x0013,
++        SoundPlayed              = 0x0001,
++        Alert                    = 0x0002,
++        ForegroundChanged        = 0x0003,
++        MenuStart                = 0x0004,
++        MenuEnd                  = 0x0005,
++        PopupMenuStart           = 0x0006,
++        PopupMenuEnd             = 0x0007,
++        ContextHelpStart         = 0x000C,
++        ContextHelpEnd           = 0x000D,
++        DragDropStart            = 0x000E,
++        DragDropEnd              = 0x000F,
++        DialogStart              = 0x0010,
++        DialogEnd                = 0x0011,
++        ScrollingStart           = 0x0012,
++        ScrollingEnd             = 0x0013,
++        ScrollingPositionChanged = 0x0014,
+ 
+         MenuCommand          = 0x0018,
+ 

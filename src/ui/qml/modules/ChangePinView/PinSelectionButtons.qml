@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -21,6 +21,7 @@ ColumnLayout {
 	GInformativeButton {
 		id: sixDigitButton
 
+		Accessible.id: "PinSelectionButtons_sixDigitButton"
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
 		//: ALL_PLATFORMS

@@ -1,0 +1,28 @@
+From e807101873b811d49c8fd9947d4cc9922d8e3e6e Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Tue, 26 May 2026 14:33:18 +0200
+Subject: a11y Android: Update TalkBack with ScrollingPositionChanged
+
+Task-number: QTBUG-139833
+Pick-to: 6.12
+Change-Id: I10ac9323de3622808087024c394679faf9804c5a
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry-picked from commit 4aca27f615a0743535fe528d97364aaf13fdd900)
+---
+ .../platforms/android/qandroidplatformaccessibility.cpp        | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp y/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
+index 1d40b8ceef36bdbd934b73a31be8d7bee5b94f0c..9483a6f4a89e1768d84e63d0db093adb12db518e 100644
+--- x/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
+@@ -33,7 +33,8 @@ void QAndroidPlatformAccessibility::notifyAccessibilityUpdate(QAccessibleEvent *
+         QtAndroidAccessibility::notifyObjectFocus(event->uniqueId());
+     } else if (event->type() == QAccessible::ValueChanged) {
+         QtAndroidAccessibility::notifyValueChanged(event->uniqueId());
+-    } else if (event->type() == QAccessible::ScrollingEnd) {
++    } else if (event->type() == QAccessible::ScrollingEnd
++               || event->type() == QAccessible::ScrollingPositionChanged) {
+         QtAndroidAccessibility::notifyScrolledEvent(event->uniqueId());
+     } else if (event->type() == QAccessible::NameChanged
+                || event->type() == QAccessible::DescriptionChanged) {

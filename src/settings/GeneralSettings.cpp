@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "GeneralSettings.h"
@@ -56,6 +56,10 @@ SETTINGS_NAME(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED, "skipRightsOnCanAllowed"
 SETTINGS_NAME(SETTINGS_NAME_IFD_SERVICE_TOKEN, "ifdServiceToken")
 SETTINGS_NAME(SETTINGS_NAME_TRAY_ICON_ENABLED, "enableTrayIcon")
 SETTINGS_NAME(SETTINGS_NAME_SCREEN_PRIVACY, "screenPrivacy")
+#ifdef Q_OS_ANDROID
+SETTINGS_NAME(SETTINGS_NAME_UPDATE_VERSION_CODE, "updateVersionCode")
+SETTINGS_NAME(SETTINGS_NAME_UPDATE_REMINDER_SHOWN, "updateReminderShown")
+#endif
 } // namespace
 
 GeneralSettings::GeneralSettings()
@@ -443,21 +447,15 @@ void GeneralSettings::setDeviceSurveyPending(bool pDeviceSurveyPending)
 }
 
 
-bool GeneralSettings::askForStoreFeedback() const
-{
-	return !mStore->contains(SETTINGS_NAME_REQUEST_STORE_FEEDBACK());
-}
-
-
-bool GeneralSettings::isRequestStoreFeedback() const
+bool GeneralSettings::shouldShowAppStoreRatingDialog() const
 {
 	return mStore->value(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), false).toBool();
 }
 
 
-void GeneralSettings::setRequestStoreFeedback(bool pRequest)
+void GeneralSettings::setShowAppStoreRatingDialog(bool pRequest)
 {
-	if (askForStoreFeedback() || pRequest != isRequestStoreFeedback())
+	if (pRequest != shouldShowAppStoreRatingDialog())
 	{
 		mStore->setValue(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), pRequest);
 		sync(mStore);
@@ -835,6 +833,42 @@ void GeneralSettings::migrateSettings()
 	{
 		setAutoStart(true);
 	}
+}
+
+
+#endif
+
+
+#ifdef Q_OS_ANDROID
+void GeneralSettings::setUpdateVersionCode(int pVersionCode)
+{
+	if (pVersionCode != getUpdateVersionCode())
+	{
+		mStore->setValue(SETTINGS_NAME_UPDATE_VERSION_CODE(), pVersionCode);
+		sync(mStore);
+	}
+}
+
+
+int GeneralSettings::getUpdateVersionCode() const
+{
+	return mStore->value(SETTINGS_NAME_UPDATE_VERSION_CODE(), -1).toInt();
+}
+
+
+void GeneralSettings::setUpdateReminderShown(bool pIsShown)
+{
+	if (isUpdateReminderShown() != pIsShown)
+	{
+		mStore->setValue(SETTINGS_NAME_UPDATE_REMINDER_SHOWN(), pIsShown);
+		sync(mStore);
+	}
+}
+
+
+bool GeneralSettings::isUpdateReminderShown() const
+{
+	return mStore->value(SETTINGS_NAME_UPDATE_REMINDER_SHOWN(), false).toBool();
 }
 
 

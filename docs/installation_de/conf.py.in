@@ -42,8 +42,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = '@PROJECT_NAME@ Erweiterte Dokumentation für Administratoren und Entwickler'
-copyright = '2018-2026, Governikus GmbH & Co. KG'
-author = 'Governikus GmbH & Co. KG'
+copyright = '2018-2026, Governikus Service GmbH'
+author = 'Governikus Service GmbH'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -101,10 +101,10 @@ html_scaled_image_link = False
 htmlhelp_basename = '@PROJECT_NAME@InstallationIntegration'
 
 html_context = {
-    'display_github': False,
-    'display_bitbucket': False,
-    'show_source': False,
-    'html_show_sourcelink': False,
+	'display_github': False,
+	'display_bitbucket': False,
+	'show_source': False,
+	'html_show_sourcelink': False,
 }
 
 html_permalinks = True
@@ -121,12 +121,12 @@ latex_elements = {
 # Additional stuff for the LaTeX preamble.
 'preamble': '''
 \\usepackage{lscape}
-\\hypersetup{pdfauthor={Governikus GmbH \& Co. KG},
-            pdftitle={@PROJECT_NAME@},
-            pdfsubject={Erweiterte Dokumentation für Administratoren und Entwickler},
-            pdfkeywords={installation, integration},
-            pdfproducer={LaTeX},
-            pdfcreator={Sphinx}
+\\hypersetup{pdfauthor={Governikus Service GmbH},
+			pdftitle={@PROJECT_NAME@},
+			pdfsubject={Erweiterte Dokumentation für Administratoren und Entwickler},
+			pdfkeywords={installation, integration},
+			pdfproducer={LaTeX},
+			pdfcreator={Sphinx}
 }
 ''',
 
@@ -152,7 +152,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   (master_doc, '@ARTIFACT_FILENAME@-NetInstallation_Integration_de.tex', '@PROJECT_NAME@ \\linebreak Erweiterte Dokumentation für Administratoren und Entwickler',
-   'Governikus GmbH \& Co. KG', 'howto'),
+   'Governikus Service GmbH', 'howto'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

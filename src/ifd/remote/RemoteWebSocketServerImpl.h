@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -12,6 +12,9 @@
 #include <QWebSocket>
 
 
+class test_IfdConnector;
+
+
 namespace governikus
 {
 
@@ -19,6 +22,7 @@ class RemoteWebSocketServerImpl
 	: public RemoteWebSocketServer
 {
 	Q_OBJECT
+	friend class ::test_IfdConnector;
 
 	private:
 		QSharedPointer<RemoteTlsServer> mRemoteTlsServer;
@@ -39,6 +43,7 @@ class RemoteWebSocketServerImpl
 		QHostAddress getServerAddress() const override;
 		quint16 getServerPort() const override;
 		const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
+		void rotatePsk() override;
 
 		[[nodiscard]] bool isPairingConnection() const override;
 		[[nodiscard]] bool isPairingAnnounced() const override;

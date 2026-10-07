@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -32,9 +32,9 @@ GPane {
 		buttonIconSource: "qrc:///images/open_website.svg"
 		//: DESKTOP
 		buttonText: qsTr("Open website")
-		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/faq".arg(SettingsModel.language)
+		buttonToolTip: "https://www.ausweisapp.bund.de/%1/aa2/faq".arg(SettingsModel.language)
 		iconSource: "qrc:/images/faq_icon.svg"
-		linkToOpen: buttonTooltip
+		linkToOpen: buttonToolTip
 
 		//: DESKTOP
 		title: qsTr("FAQ - Frequently asked questions")
@@ -47,9 +47,9 @@ GPane {
 		buttonIconSource: "qrc:///images/open_website.svg"
 		//: DESKTOP
 		buttonText: qsTr("Open website")
-		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/support".arg(SettingsModel.language)
+		buttonToolTip: "https://www.ausweisapp.bund.de/%1/aa2/support".arg(SettingsModel.language)
 		iconSource: "qrc:/images/desktop/help_icon.svg"
-		linkToOpen: buttonTooltip
+		linkToOpen: buttonToolTip
 
 		//: DESKTOP
 		title: qsTr("Contact")
@@ -62,9 +62,9 @@ GPane {
 		buttonIconSource: "qrc:///images/open_website.svg"
 		//: DESKTOP
 		buttonText: qsTr("Open website")
-		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/providerlist".arg(SettingsModel.language)
+		buttonToolTip: "https://www.ausweisapp.bund.de/%1/aa2/providerlist".arg(SettingsModel.language)
 		iconSource: "qrc:/images/identify.svg"
-		linkToOpen: buttonTooltip
+		linkToOpen: buttonToolTip
 
 		//: DESKTOP
 		title: qsTr("List of Providers")

@@ -10,7 +10,8 @@
       "generator": "Xcode",
       "toolchainFile": "${sourceDir}/cmake/iOS.toolchain.cmake",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "MinSizeRel"
+        "CMAKE_BUILD_TYPE": "MinSizeRel",
+        "CMAKE_XCODE_ATTRIBUTE_COMPILATION_CACHE_ENABLE_CACHING": "YES"
       }
     },
     {

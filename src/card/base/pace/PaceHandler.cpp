@@ -1,33 +1,32 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "pace/PaceHandler.h"
 
 #include "SecurityProtocol.h"
 #include "apdu/CommandApdu.h"
-#include "apdu/PacePinStatus.h"
 #include "asn1/ASN1Struct.h"
 #include "asn1/PaceInfo.h"
 #include "pace/KeyAgreement.h"
 
 #include <QLoggingCategory>
 
+
 using namespace governikus;
 
+
 Q_DECLARE_LOGGING_CATEGORY(card)
+
 
 PaceHandler::PaceHandler(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 	: mCardConnectionWorker(pCardConnectionWorker)
 	, mKeyAgreement()
 	, mPaceInfo()
 	, mStatusMseSetAt()
-	, mIdIcc()
 	, mEncryptionKey()
 	, mMacKey()
 	, mChat()
-	, mCarCurr()
-	, mCarPrev()
 {
 }
 
@@ -42,24 +41,30 @@ SecurityProtocol PaceHandler::getPaceProtocol() const
 }
 
 
-CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pPassword)
+EstablishPaceChannelOutput PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pPassword)
 {
-	auto efCardAccess = mCardConnectionWorker->getReaderInfo().getCardInfo().getEfCardAccess();
+	EstablishPaceChannelOutput output(pPasswordId, CardReturnCode::OK);
+
+	const auto& efCardAccess = mCardConnectionWorker->getReaderInfo().getCardInfo().getEfCardAccess();
+	if (efCardAccess)
+	{
+		output.setEfCardAccess(efCardAccess->getContentBytes());
+	}
 	if (!initialize(efCardAccess))
 	{
-		return CardReturnCode::PROTOCOL_ERROR;
+		output.setReturnCode(CardReturnCode::PROTOCOL_ERROR);
+		return output;
 	}
 
-	switch (transmitMSESetAT(pPasswordId))
+	const auto mseSetAt = transmitMSESetAT(pPasswordId);
+	output.setStatusMseSetAt(mStatusMseSetAt);
+	switch (mseSetAt)
 	{
 		case CardReturnCode::PROTOCOL_ERROR:
-			return CardReturnCode::PROTOCOL_ERROR;
-
 		case CardReturnCode::COMMAND_FAILED:
-			return CardReturnCode::COMMAND_FAILED;
-
 		case CardReturnCode::RESPONSE_EMPTY:
-			return CardReturnCode::RESPONSE_EMPTY;
+			output.setReturnCode(mseSetAt);
+			return output;
 
 		default:
 			break;
@@ -69,25 +74,41 @@ CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, con
 	switch (keyAgreementStatus)
 	{
 		case KeyAgreementStatus::RETRY_ALLOWED:
-			return CardReturnCode::RESPONSE_EMPTY;
+			output.setReturnCode(CardReturnCode::RESPONSE_EMPTY);
+			return output;
 
 		case KeyAgreementStatus::PROTOCOL_ERROR:
-			return CardReturnCode::PROTOCOL_ERROR;
+			output.setReturnCode(CardReturnCode::PROTOCOL_ERROR);
+			return output;
 
 		case KeyAgreementStatus::COMMUNICATION_ERROR:
-			return CardReturnCode::COMMAND_FAILED;
+			output.setReturnCode(CardReturnCode::COMMAND_FAILED);
+			return output;
 
 		case KeyAgreementStatus::FAILED:
-			return CardReturnCode::INVALID_PASSWORD;
+			output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4);
+			return output;
+
+		case KeyAgreementStatus::FAILED_RC0:
+			output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC0);
+			return output;
+
+		case KeyAgreementStatus::FAILED_RC1:
+			output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC1);
+			return output;
+
+		case KeyAgreementStatus::FAILED_RC2:
+			output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC2);
+			return output;
 
 		case KeyAgreementStatus::SUCCESS:
 			mEncryptionKey = mKeyAgreement->getEncryptionKey();
 			mMacKey = mKeyAgreement->getMacKey();
-			mCarCurr = mKeyAgreement->getCarCurr();
-			mCarPrev = mKeyAgreement->getCarPrev();
-			mIdIcc = mKeyAgreement->getCompressedCardPublicKey();
+			output.setCarCurr(mKeyAgreement->getCarCurr());
+			output.setCarPrev(mKeyAgreement->getCarPrev());
+			output.setIdIcc(mKeyAgreement->getCompressedCardPublicKey());
 			qCDebug(card) << "Pace channel established";
-			return CardReturnCode::OK;
+			return output;
 	}
 
 	Q_UNREACHABLE();
@@ -164,7 +185,7 @@ CardReturnCode PaceHandler::transmitMSESetAT(PacePasswordId pPasswordId)
 		qCCritical(card) << "Error on MSE:Set AT";
 		return response.isEmpty() ? CardReturnCode::RESPONSE_EMPTY : CardReturnCode::PROTOCOL_ERROR;
 	}
-	if (PacePinStatus::getRetryCounter(response.getStatusCode()) < 1)
+	if (response.getRetryCounter() < 1)
 	{
 		qCCritical(card) << "Error on MSE:Set AT";
 		return CardReturnCode::PROTOCOL_ERROR;
@@ -188,28 +209,4 @@ const QByteArray& PaceHandler::getEncryptionKey() const
 const QByteArray& PaceHandler::getMacKey() const
 {
 	return mMacKey;
-}
-
-
-const QByteArray& PaceHandler::getCarCurr() const
-{
-	return mCarCurr;
-}
-
-
-const QByteArray& PaceHandler::getCarPrev() const
-{
-	return mCarPrev;
-}
-
-
-const QByteArray& PaceHandler::getIdIcc() const
-{
-	return mIdIcc;
-}
-
-
-const QByteArray& PaceHandler::getStatusMseSetAt() const
-{
-	return mStatusMseSetAt;
 }

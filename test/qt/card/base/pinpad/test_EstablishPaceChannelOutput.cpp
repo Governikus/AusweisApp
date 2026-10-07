@@ -1,12 +1,10 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
-#include <QtCore>
-#include <QtTest>
-
-#include "TestFileHelper.h"
 #include "pinpad/EstablishPaceChannelOutput.h"
+
+#include <QtTest>
 
 
 using namespace governikus;
@@ -42,8 +40,8 @@ class test_EstablishPaceChannelOutput
 			EstablishPaceChannelOutput channelOutput;
 			QVERIFY(channelOutput.parse(QByteArray::fromHex(hexBytes)));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::OK);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("9000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::OK);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::SUCCESS);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex(mEfCardAccess));
 			QCOMPARE(channelOutput.getCarCurr(), mCarCurrAscii);
 			QVERIFY(channelOutput.getCarPrev().isEmpty());
@@ -56,8 +54,8 @@ class test_EstablishPaceChannelOutput
 			EstablishPaceChannelOutput channelOutput;
 			QVERIFY(!channelOutput.parse(QByteArray()));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::COMMAND_FAILED);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("0000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::COMMAND_FAILED);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::UNKNOWN);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QVERIFY(channelOutput.getCarCurr().isEmpty());
 			QVERIFY(channelOutput.getCarPrev().isEmpty());
@@ -78,8 +76,8 @@ class test_EstablishPaceChannelOutput
 			EstablishPaceChannelOutput channelOutput;
 			QVERIFY(!channelOutput.parse(QByteArray::fromHex(hexBytes)));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::OK);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("0000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::OK);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::UNKNOWN);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QVERIFY(channelOutput.getCarCurr().isEmpty());
 			QVERIFY(channelOutput.getCarPrev().isEmpty());
@@ -92,11 +90,11 @@ class test_EstablishPaceChannelOutput
 			QByteArray bytes = QByteArray::fromHex("C26306F0"
 												   "0000");
 
-			EstablishPaceChannelOutput channelOutput;
+			EstablishPaceChannelOutput channelOutput(PacePasswordId::PACE_PIN);
 			QVERIFY(!channelOutput.parse(bytes));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::INVALID_PASSWORD);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("0000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::OK);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::UNKNOWN);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QVERIFY(channelOutput.getCarCurr().isEmpty());
 			QVERIFY(channelOutput.getCarPrev().isEmpty());
@@ -124,10 +122,10 @@ class test_EstablishPaceChannelOutput
 			QTest::newRow("PassiveAuthenticationFailed") << QByteArray("090000E0") << CardReturnCode::UNKNOWN;
 			QTest::newRow("IncorrectTokenForChipAuthentication") << QByteArray("a00000e0") << CardReturnCode::UNKNOWN;
 
-			QTest::newRow("GeneralAuthenticateStep4_RC2 - Wrong PIN 1 time") << QByteArray("c26306f0") << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("GeneralAuthenticateStep4_RC1 - Wrong PIN 2 time") << QByteArray("c16306f0") << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("GeneralAuthenticateStep4_RC0 - Wrong PIN 3 time") << QByteArray("c06306f0") << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("GeneralAuthenticateStep4 - Wrong CAN/PUK") << QByteArray("006306f0") << CardReturnCode::INVALID_PASSWORD;
+			QTest::newRow("GeneralAuthenticateStep1_4_Warning - Wrong PIN 1 time") << QByteArray("c26306f0") << CardReturnCode::OK;
+			QTest::newRow("GeneralAuthenticateStep1_4_Warning - Wrong PIN 2 time") << QByteArray("c16306f0") << CardReturnCode::OK;
+			QTest::newRow("GeneralAuthenticateStep1_4_Warning - Wrong PIN 3 time") << QByteArray("c06306f0") << CardReturnCode::OK;
+			QTest::newRow("GeneralAuthenticateStep1_4_Warning - Wrong CAN/PUK") << QByteArray("006306f0") << CardReturnCode::OK;
 
 			QTest::newRow("CommunicationAbort") << QByteArray("010010f0") << CardReturnCode::COMMAND_FAILED;
 			QTest::newRow("NoCard") << QByteArray("020010f0") << CardReturnCode::CARD_NOT_FOUND;
@@ -141,10 +139,10 @@ class test_EstablishPaceChannelOutput
 			QFETCH(QByteArray, data);
 			QFETCH(CardReturnCode, code);
 
-			EstablishPaceChannelOutput channelOutput;
+			EstablishPaceChannelOutput channelOutput(PacePasswordId::PACE_PIN);
 			QVERIFY(channelOutput.parseResultCode(QByteArray::fromHex(data)));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), code);
+			QCOMPARE(channelOutput.getReturnCode(), code);
 		}
 
 
@@ -166,8 +164,8 @@ class test_EstablishPaceChannelOutput
 			EstablishPaceChannelOutput channelOutput;
 			QVERIFY(channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::OK);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("9000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::OK);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::SUCCESS);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex(mEfCardAccess));
 			QCOMPARE(channelOutput.getIdIcc(), QByteArray::fromHex(mIdIcc));
 			QCOMPARE(channelOutput.getCarCurr(), mCarCurrAscii);
@@ -189,8 +187,8 @@ class test_EstablishPaceChannelOutput
 			EstablishPaceChannelOutput channelOutput;
 			QVERIFY(channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::OK);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("9000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::OK);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::SUCCESS);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex(mEfCardAccess));
 			QCOMPARE(channelOutput.getIdIcc(), QByteArray::fromHex(mIdIcc));
 			QVERIFY(channelOutput.getCarCurr().isEmpty());
@@ -209,8 +207,8 @@ class test_EstablishPaceChannelOutput
 			EstablishPaceChannelOutput channelOutput;
 			QVERIFY(!channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::COMMAND_FAILED);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("0000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::COMMAND_FAILED);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::UNKNOWN);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QVERIFY(channelOutput.getIdIcc().isEmpty());
 			QVERIFY(channelOutput.getCarCurr().isEmpty());
@@ -229,8 +227,8 @@ class test_EstablishPaceChannelOutput
 			EstablishPaceChannelOutput channelOutput;
 			QVERIFY(channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("9000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::SUCCESS);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QCOMPARE(channelOutput.getIdIcc(), QByteArray());
 			QCOMPARE(channelOutput.getCarCurr(), QByteArray());
@@ -255,37 +253,13 @@ class test_EstablishPaceChannelOutput
 			EstablishPaceChannelOutput channelOutput;
 			QVERIFY(channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("9000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::SUCCESS);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QCOMPARE(channelOutput.getIdIcc(), QByteArray::fromHex(mIdIcc));
 			QCOMPARE(channelOutput.getCarCurr(), mCarCurrAscii);
 			QCOMPARE(channelOutput.getCarPrev(), mCarPrevAscii);
 
-		}
-
-
-		/*!
-		 * When the ASN.1 structure is invalid we still try to return the error code
-		 */
-		void parseFromCcid_invalid_ASN1()
-		{
-			QByteArray hexBytes = QByteArray("30 10"
-											 "a1 06 04 04 f00663c2"
-											 "a2 04 04 02 0000"
-											 "a3 00"
-											 "9000");
-
-			EstablishPaceChannelOutput channelOutput;
-			QTest::ignoreMessage(QtWarningMsg, "Determine at least PACE return code by regular expression");
-			QVERIFY(channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
-
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::INVALID_PASSWORD);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("0000"));
-			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
-			QVERIFY(channelOutput.getIdIcc().isEmpty());
-			QVERIFY(channelOutput.getCarCurr().isEmpty());
-			QVERIFY(channelOutput.getCarPrev().isEmpty());
 		}
 
 
@@ -300,15 +274,7 @@ class test_EstablishPaceChannelOutput
 			QTest::newRow("UNEXPECTED_TRANSMIT_STATUS") << CardReturnCode::UNEXPECTED_TRANSMIT_STATUS << QByteArray("020000d0");
 			QTest::newRow("PROTOCOL_ERROR") << CardReturnCode::PROTOCOL_ERROR << QByteArray("020000d0");
 
-			QTest::newRow("INVALID_CAN") << CardReturnCode::INVALID_CAN << QByteArray("006306f0");
-			QTest::newRow("INVALID_PASSWORD") << CardReturnCode::INVALID_PASSWORD << QByteArray("006306f0");
-			QTest::newRow("INVALID_PIN") << CardReturnCode::INVALID_PIN << QByteArray("c26306f0");
-			QTest::newRow("INVALID_PIN_2") << CardReturnCode::INVALID_PIN_2 << QByteArray("c16306f0");
-			QTest::newRow("INVALID_PIN_3") << CardReturnCode::INVALID_PIN_3 << QByteArray("c06306f0");
-			QTest::newRow("INVALID_PUK") << CardReturnCode::INVALID_PUK << QByteArray("006306f0");
-
 			QTest::newRow("OK") << CardReturnCode::OK << QByteArray("00000000");
-			QTest::newRow("OK_PUK") << CardReturnCode::OK_PUK << QByteArray("00000000");
 
 			QTest::newRow("CARD_NOT_FOUND") << CardReturnCode::CARD_NOT_FOUND << QByteArray("020010f0");
 			QTest::newRow("RETRY_ALLOWED") << CardReturnCode::RESPONSE_EMPTY << QByteArray("020010f0");
@@ -326,7 +292,7 @@ class test_EstablishPaceChannelOutput
 			QFETCH(CardReturnCode, code);
 			QFETCH(QByteArray, data);
 
-			EstablishPaceChannelOutput channelOutput(code);
+			EstablishPaceChannelOutput channelOutput(PacePasswordId::PACE_PIN, code);
 			QCOMPARE(channelOutput.toResultCode(), QByteArray::fromHex(data));
 		}
 
@@ -342,16 +308,16 @@ class test_EstablishPaceChannelOutput
 			hexBytes.replace("[PCAR]", mCarPrev);
 			hexBytes.replace("[PICC]", mIdIcc);
 
-			EstablishPaceChannelOutput channelOutput;
+			EstablishPaceChannelOutput channelOutput(PacePasswordId::PACE_PIN, CardReturnCode::COMMAND_FAILED);
 			QVERIFY(channelOutput.parseOutputData(QByteArray::fromHex(hexBytes)));
 
-			EstablishPaceChannelOutput channelOutput2;
+			EstablishPaceChannelOutput channelOutput2(PacePasswordId::PACE_PIN, CardReturnCode::COMMAND_FAILED);
 			QVERIFY(channelOutput2.parseOutputData(channelOutput.toOutputData()));
 
 			QCOMPARE(channelOutput2, channelOutput);
 
-			QCOMPARE(channelOutput2.getPaceReturnCode(), CardReturnCode::COMMAND_FAILED);
-			QCOMPARE(channelOutput2.getStatusMseSetAt(), QByteArray::fromHex("9000"));
+			QCOMPARE(channelOutput2.getReturnCode(), CardReturnCode::COMMAND_FAILED);
+			QCOMPARE(channelOutput2.getStatusCodeMseSetAt(), StatusCode::SUCCESS);
 			QCOMPARE(channelOutput2.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QCOMPARE(channelOutput2.getIdIcc(), QByteArray::fromHex(mIdIcc));
 			QCOMPARE(channelOutput2.getCarCurr(), QByteArray("DECVCAeID00103"));
@@ -381,8 +347,8 @@ class test_EstablishPaceChannelOutput
 
 			QCOMPARE(channelOutput2, channelOutput);
 
-			QCOMPARE(channelOutput2.getPaceReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
-			QCOMPARE(channelOutput2.getStatusMseSetAt(), QByteArray::fromHex("9000"));
+			QCOMPARE(channelOutput2.getReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
+			QCOMPARE(channelOutput2.getStatusCodeMseSetAt(), StatusCode::SUCCESS);
 			QCOMPARE(channelOutput2.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QCOMPARE(channelOutput2.getIdIcc(), QByteArray::fromHex(mIdIcc));
 			QCOMPARE(channelOutput2.getCarCurr(), mCarCurrAscii);
@@ -395,11 +361,11 @@ class test_EstablishPaceChannelOutput
 			QByteArray hexBytes = QByteArray("0000"
 											 "02 00 3100");
 
-			EstablishPaceChannelOutput channelOutput;
+			EstablishPaceChannelOutput channelOutput(PacePasswordId::PACE_PIN, CardReturnCode::COMMAND_FAILED);
 			QCOMPARE(channelOutput.toOutputData(), QByteArray::fromHex(hexBytes));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::COMMAND_FAILED);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("0000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::COMMAND_FAILED);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::UNKNOWN);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QVERIFY(channelOutput.getIdIcc().isEmpty());
 			QVERIFY(channelOutput.getCarCurr().isEmpty());
@@ -415,11 +381,11 @@ class test_EstablishPaceChannelOutput
 											 "A3 02 31 00"
 											 "9000");
 
-			EstablishPaceChannelOutput channelOutput;
+			EstablishPaceChannelOutput channelOutput(PacePasswordId::PACE_PIN, CardReturnCode::COMMAND_FAILED);
 			QCOMPARE(channelOutput.toCcid(), QByteArray::fromHex(hexBytes));
 
-			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::COMMAND_FAILED);
-			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("0000"));
+			QCOMPARE(channelOutput.getReturnCode(), CardReturnCode::COMMAND_FAILED);
+			QCOMPARE(channelOutput.getStatusCodeMseSetAt(), StatusCode::UNKNOWN);
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
 			QVERIFY(channelOutput.getIdIcc().isEmpty());
 			QVERIFY(channelOutput.getCarCurr().isEmpty());
@@ -431,11 +397,6 @@ class test_EstablishPaceChannelOutput
 		{
 			QTest::addColumn<CardReturnCode>("cardReturnCodeIn");
 			QTest::addColumn<CardReturnCode>("cardReturnCodeOut");
-
-			QTest::newRow("INVALID_CAN") << CardReturnCode::INVALID_CAN << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("INVALID_PIN") << CardReturnCode::INVALID_PASSWORD << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("INVALID_PIN") << CardReturnCode::INVALID_PIN << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("INVALID_PUK") << CardReturnCode::INVALID_PUK << CardReturnCode::INVALID_PASSWORD;
 
 			QTest::newRow("OK") << CardReturnCode::OK << CardReturnCode::OK;
 			QTest::newRow("CANCELLATION_BY_USER") << CardReturnCode::CANCELLATION_BY_USER << CardReturnCode::CANCELLATION_BY_USER;
@@ -451,13 +412,13 @@ class test_EstablishPaceChannelOutput
 			QFETCH(CardReturnCode, cardReturnCodeIn);
 			QFETCH(CardReturnCode, cardReturnCodeOut);
 
-			EstablishPaceChannelOutput channelOutput;
-			channelOutput.setPaceReturnCode(cardReturnCodeIn);
-			QCOMPARE(channelOutput.getPaceReturnCode(), cardReturnCodeIn);
+			EstablishPaceChannelOutput channelOutput(PacePasswordId::PACE_PIN);
+			channelOutput.setReturnCode(cardReturnCodeIn);
+			QCOMPARE(channelOutput.getReturnCode(), cardReturnCodeIn);
 
-			EstablishPaceChannelOutput channelOutput2;
+			EstablishPaceChannelOutput channelOutput2(PacePasswordId::PACE_PIN);
 			QVERIFY(channelOutput2.parseResultCode(channelOutput.toResultCode()));
-			QCOMPARE(channelOutput2.getPaceReturnCode(), cardReturnCodeOut);
+			QCOMPARE(channelOutput2.getReturnCode(), cardReturnCodeOut);
 		}
 
 
@@ -465,11 +426,6 @@ class test_EstablishPaceChannelOutput
 		{
 			QTest::addColumn<CardReturnCode>("cardReturnCodeIn");
 			QTest::addColumn<CardReturnCode>("cardReturnCodeOut");
-
-			QTest::newRow("INVALID_CAN") << CardReturnCode::INVALID_CAN << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("INVALID_PIN") << CardReturnCode::INVALID_PASSWORD << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("INVALID_PIN") << CardReturnCode::INVALID_PIN << CardReturnCode::INVALID_PASSWORD;
-			QTest::newRow("INVALID_PUK") << CardReturnCode::INVALID_PUK << CardReturnCode::INVALID_PASSWORD;
 
 			QTest::newRow("OK") << CardReturnCode::OK << CardReturnCode::OK;
 			QTest::newRow("CANCELLATION_BY_USER") << CardReturnCode::CANCELLATION_BY_USER << CardReturnCode::CANCELLATION_BY_USER;
@@ -485,13 +441,13 @@ class test_EstablishPaceChannelOutput
 			QFETCH(CardReturnCode, cardReturnCodeIn);
 			QFETCH(CardReturnCode, cardReturnCodeOut);
 
-			EstablishPaceChannelOutput channelOutput;
-			channelOutput.setPaceReturnCode(cardReturnCodeIn);
-			QCOMPARE(channelOutput.getPaceReturnCode(), cardReturnCodeIn);
+			EstablishPaceChannelOutput channelOutput(PacePasswordId::PACE_PIN);
+			channelOutput.setReturnCode(cardReturnCodeIn);
+			QCOMPARE(channelOutput.getReturnCode(), cardReturnCodeIn);
 
-			EstablishPaceChannelOutput channelOutput2;
+			EstablishPaceChannelOutput channelOutput2(PacePasswordId::PACE_PIN);
 			QVERIFY(channelOutput2.parseFromCcid(channelOutput.toCcid()));
-			QCOMPARE(channelOutput2.getPaceReturnCode(), cardReturnCodeOut);
+			QCOMPARE(channelOutput2.getReturnCode(), cardReturnCodeOut);
 		}
 
 
@@ -558,7 +514,7 @@ class test_EstablishPaceChannelOutput
 			QFETCH(QByteArray, ccar);
 			QFETCH(QByteArray, pcar);
 
-			EstablishPaceChannelOutput channelOutput1(CardReturnCode::OK);
+			EstablishPaceChannelOutput channelOutput1(PacePasswordId::PACE_PIN, CardReturnCode::OK);
 			channelOutput1.setStatusMseSetAt(QByteArray::fromHex(stat));
 			channelOutput1.setEfCardAccess(QByteArray::fromHex(card));
 			channelOutput1.setIdIcc(QByteArray::fromHex(picc));
@@ -590,6 +546,110 @@ class test_EstablishPaceChannelOutput
 			EstablishPaceChannelOutput output;
 			QTest::ignoreMessage(QtDebugMsg, "Decapsulation of command failed. Wrong size.");
 			QVERIFY(!output.parseOutputData(data));
+		}
+
+
+		void getPaceResult_data()
+		{
+			QTest::addColumn<bool>("authentication");
+			QTest::addColumn<int>("retryCounter");
+			QTest::addColumn<PacePasswordId>("pacePasswordId");
+			QTest::addColumn<PaceResult>("positivePaceResult");
+			QTest::addColumn<PaceResult>("negativePaceResult");
+
+			QTest::newRow("PIN RT 3") << false << 3 << PacePasswordId::PACE_PIN << PaceResult::OK_PIN << PaceResult::INVALID_PIN_1;
+			QTest::newRow("PIN RT 2") << false << 2 << PacePasswordId::PACE_PIN << PaceResult::OK_PIN << PaceResult::INVALID_PIN_2;
+			QTest::newRow("PIN RT 1") << false << 1 << PacePasswordId::PACE_PIN << PaceResult::OK_PIN << PaceResult::INVALID_PIN_3;
+			QTest::newRow("PIN RT 0") << false << 0 << PacePasswordId::PACE_PIN << PaceResult::OK_PIN << PaceResult::INVALID_PIN_3;
+
+			QTest::newRow("CAN RT 3") << false << 3 << PacePasswordId::PACE_CAN << PaceResult::OK_CAN << PaceResult::INVALID_CAN;
+			QTest::newRow("CAN RT 2") << false << 2 << PacePasswordId::PACE_CAN << PaceResult::OK_CAN << PaceResult::INVALID_CAN;
+			QTest::newRow("CAN RT 1") << false << 1 << PacePasswordId::PACE_CAN << PaceResult::OK_CAN << PaceResult::INVALID_CAN;
+			QTest::newRow("CAN RT 0") << false << 0 << PacePasswordId::PACE_CAN << PaceResult::OK_CAN << PaceResult::INVALID_CAN;
+
+			QTest::newRow("PUK RT 3") << false << 3 << PacePasswordId::PACE_PUK << PaceResult::OK_PUK << PaceResult::INVALID_PUK;
+			QTest::newRow("PUK RT 2") << false << 2 << PacePasswordId::PACE_PUK << PaceResult::OK_PUK << PaceResult::INVALID_PUK;
+			QTest::newRow("PUK RT 1") << false << 1 << PacePasswordId::PACE_PUK << PaceResult::OK_PUK << PaceResult::INVALID_PUK;
+			QTest::newRow("PUK RT 0") << false << 0 << PacePasswordId::PACE_PUK << PaceResult::OK_PUK << PaceResult::INVALID_PUK;
+
+			QTest::newRow("MRZ RT 3") << false << 3 << PacePasswordId::PACE_MRZ << PaceResult::UNDEFINED << PaceResult::UNDEFINED;
+			QTest::newRow("MRZ RT 2") << false << 2 << PacePasswordId::PACE_MRZ << PaceResult::UNDEFINED << PaceResult::UNDEFINED;
+			QTest::newRow("MRZ RT 1") << false << 1 << PacePasswordId::PACE_MRZ << PaceResult::UNDEFINED << PaceResult::UNDEFINED;
+			QTest::newRow("MRZ RT 0") << false << 0 << PacePasswordId::PACE_MRZ << PaceResult::UNDEFINED << PaceResult::UNDEFINED;
+
+			QTest::newRow("PIN (AUTH) RT 3") << true << 3 << PacePasswordId::PACE_PIN << PaceResult::OK_PIN_AUTH << PaceResult::INVALID_PIN_1;
+			QTest::newRow("PIN (AUTH) RT 2") << true << 2 << PacePasswordId::PACE_PIN << PaceResult::OK_PIN_AUTH << PaceResult::INVALID_PIN_2;
+			QTest::newRow("PIN (AUTH) RT 1") << true << 1 << PacePasswordId::PACE_PIN << PaceResult::OK_PIN_AUTH << PaceResult::INVALID_PIN_3;
+			QTest::newRow("PIN (AUTH) RT 0") << true << 0 << PacePasswordId::PACE_PIN << PaceResult::OK_PIN_AUTH << PaceResult::INVALID_PIN_3;
+
+			QTest::newRow("CAN (AUTH) RT 3") << true << 3 << PacePasswordId::PACE_CAN << PaceResult::OK_CAN_AUTH << PaceResult::INVALID_CAN;
+			QTest::newRow("CAN (AUTH) RT 2") << true << 2 << PacePasswordId::PACE_CAN << PaceResult::OK_CAN_AUTH << PaceResult::INVALID_CAN;
+			QTest::newRow("CAN (AUTH) RT 1") << true << 1 << PacePasswordId::PACE_CAN << PaceResult::OK_CAN_AUTH << PaceResult::INVALID_CAN;
+			QTest::newRow("CAN (AUTH) RT 0") << true << 0 << PacePasswordId::PACE_CAN << PaceResult::OK_CAN_AUTH << PaceResult::INVALID_CAN;
+
+			QTest::newRow("PUK (AUTH) RT 3") << true << 3 << PacePasswordId::PACE_PUK << PaceResult::OK_PUK << PaceResult::INVALID_PUK;
+			QTest::newRow("PUK (AUTH) RT 2") << true << 2 << PacePasswordId::PACE_PUK << PaceResult::OK_PUK << PaceResult::INVALID_PUK;
+			QTest::newRow("PUK (AUTH) RT 1") << true << 1 << PacePasswordId::PACE_PUK << PaceResult::OK_PUK << PaceResult::INVALID_PUK;
+			QTest::newRow("PUK (AUTH) RT 0") << true << 0 << PacePasswordId::PACE_PUK << PaceResult::OK_PUK << PaceResult::INVALID_PUK;
+
+			QTest::newRow("MRZ (AUTH) RT 3") << true << 3 << PacePasswordId::PACE_MRZ << PaceResult::UNDEFINED << PaceResult::UNDEFINED;
+			QTest::newRow("MRZ (AUTH) RT 2") << true << 2 << PacePasswordId::PACE_MRZ << PaceResult::UNDEFINED << PaceResult::UNDEFINED;
+			QTest::newRow("MRZ (AUTH) RT 1") << true << 1 << PacePasswordId::PACE_MRZ << PaceResult::UNDEFINED << PaceResult::UNDEFINED;
+			QTest::newRow("MRZ (AUTH) RT 0") << true << 0 << PacePasswordId::PACE_MRZ << PaceResult::UNDEFINED << PaceResult::UNDEFINED;
+		}
+
+
+		void getPaceResult()
+		{
+			QFETCH(bool, authentication);
+			QFETCH(int, retryCounter);
+			QFETCH(PacePasswordId, pacePasswordId);
+			QFETCH(PaceResult, positivePaceResult);
+			QFETCH(PaceResult, negativePaceResult);
+
+			EstablishPaceChannelOutput output(pacePasswordId);
+			QVERIFY(output.isUndefined());
+			output.setReturnCode(CardReturnCode::OK);
+			output.setErrorCode(EstablishPaceChannelErrorCode::NoError);
+			if (authentication)
+			{
+				output.setCarCurr(QByteArray("fooBar"));
+			}
+			QVERIFY(output.isOk());
+			QVERIFY(!output.isUndefined());
+			QVERIFY(!output.wrongPasswordUsed());
+			QCOMPARE(output.getPaceResult(), positivePaceResult);
+
+			if (pacePasswordId == PacePasswordId::PACE_PIN)
+			{
+				switch (retryCounter)
+				{
+					case 1:
+						output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC0);
+						break;
+
+					case 2:
+						output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC1);
+						break;
+
+					case 3:
+						output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC2);
+						break;
+
+					default:
+						output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4_RC0);
+				}
+			}
+			else
+			{
+				output.setErrorCode(EstablishPaceChannelErrorCode::GeneralAuthenticateStep4);
+			}
+			QVERIFY(!output.isOk());
+			QVERIFY(output.wrongPasswordUsed());
+			QCOMPARE(output.getPaceResult(), negativePaceResult);
+
+			output.setReturnCode(CardReturnCode::CANCELLATION_BY_USER);
+			QCOMPARE(output.getPaceResult(), PaceResult::UNDEFINED);
 		}
 
 

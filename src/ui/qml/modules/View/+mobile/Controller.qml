@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -38,13 +38,6 @@ BaseController {
 			console.log("Controller not attached to StackView");
 			return null;
 		}
-	}
-	function getLockedAndHidden() {
-		if (navigation && navigation.lockedAndHidden !== undefined) {
-			return navigation.lockedAndHidden;
-		}
-		console.log("Controller cannot find navigation");
-		return false;
 	}
 	function pop(pItem) {
 		if (stackView) {
@@ -87,16 +80,9 @@ BaseController {
 			console.log("Controller not attached to StackView");
 		}
 	}
-	function setLockedAndHidden(pLockedAndHidden = true) {
-		if (navigation && navigation.setLockedAndHidden) {
-			navigation.setLockedAndHidden(pLockedAndHidden);
-		} else {
-			console.log("Controller cannot find navigation");
-		}
-	}
-	function show(pModule, pLockedAndHidden = false) {
+	function show(pModule) {
 		if (navigation && navigation.show) {
-			navigation.show(pModule, pLockedAndHidden);
+			navigation.show(pModule);
 		} else {
 			console.log("Controller cannot find navigation");
 		}

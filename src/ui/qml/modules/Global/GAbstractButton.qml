@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -11,8 +11,9 @@ import Governikus.Global
 AbstractButton {
 	Accessible.onScrollDownAction: Utils.scrollPageDownOnGFlickable(this)
 	Accessible.onScrollUpAction: Utils.scrollPageUpOnGFlickable(this)
+	Accessible.onShowOnScreenAction: Utils.positionViewAtItem(this)
 	Keys.onEnterPressed: clicked()
 	Keys.onReturnPressed: clicked()
-	onFocusChanged: if (focus)
+	onActiveFocusChanged: if (activeFocus)
 		Utils.positionViewAtItem(this)
 }

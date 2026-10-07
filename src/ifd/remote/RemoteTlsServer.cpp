@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteTlsServer.h"
@@ -13,7 +13,9 @@
 #include <QHostAddress>
 #include <QLoggingCategory>
 
+
 Q_DECLARE_LOGGING_CATEGORY(ifd)
+
 
 using namespace governikus;
 
@@ -37,9 +39,89 @@ QSslConfiguration RemoteTlsServer::sslConfiguration() const
 }
 
 
+bool RemoteTlsServer::acceptSslErrors(const QPointer<QSslSocket>& pSocket, const QList<QSslError>& pErrors) const
+{
+	if (pErrors.size() == 1 &&
+			(pErrors.first().error() == QSslError::SelfSignedCertificate || pErrors.first().error() == QSslError::SelfSignedCertificateInChain))
+	{
+		const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
+		if (pairingCiphers.contains(pSocket->sessionCipher()))
+		{
+			qCDebug(ifd) << "Client requests pairing | cipher:" << pSocket->sessionCipher() << "| certificate:" << pSocket->peerCertificate();
+			pSocket->ignoreSslErrors(pErrors);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+bool RemoteTlsServer::checkSslConfiguration(const QSslConfiguration& pSslConfiguration) const
+{
+	QLatin1String error;
+	const auto& minimalKeySizes = [](QSsl::KeyAlgorithm pKeyAlgorithm){
+				return Env::getSingleton<SecureStorage>()->getMinimumIfdKeySize(pKeyAlgorithm);
+			};
+	if (!TlsChecker::hasValidCertificateKeyLength(pSslConfiguration.peerCertificate(), minimalKeySizes))
+	{
+		error = QLatin1String("Client denied... abort connection!");
+	}
+
+	const auto rootCert = TlsChecker::getRootCertificate(pSslConfiguration.peerCertificateChain());
+	if (rootCert.isNull())
+	{
+		error = QLatin1String("Client denied... no root certificate found!");
+	}
+
+	if (error.isEmpty())
+	{
+		return true;
+	}
+
+	qCCritical(ifd) << error;
+	return false;
+}
+
+
+void RemoteTlsServer::updateClientInfo(const QSslConfiguration& pSslConfiguration)
+{
+	const auto& rootCert = TlsChecker::getRootCertificate(pSslConfiguration.peerCertificateChain());
+	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+
+	const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
+	if (pairingCiphers.contains(pSslConfiguration.sessionCipher()))
+	{
+		qCDebug(ifd) << "Pairing completed | Add certificate:" << rootCert;
+		settings.addTrustedCertificate(rootCert);
+		setPairing(false);
+		Q_EMIT firePairingCompleted(rootCert);
+	}
+	else
+	{
+		auto info = settings.getRemoteInfo(rootCert);
+		info.setLastConnected(QDateTime::currentDateTime());
+		settings.updateRemoteInfo(info);
+	}
+}
+
+
 RemoteTlsServer::RemoteTlsServer()
 	: TlsServer()
 {
+}
+
+
+void RemoteTlsServer::setPairing(bool pEnable)
+{
+	if (pEnable)
+	{
+		setRandomPsk();
+	}
+	else
+	{
+		setPsk(QByteArray());
+	}
 }
 
 
@@ -51,7 +133,7 @@ bool RemoteTlsServer::startListening(quint16 pPort)
 		return false;
 	}
 
-	auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	if (!remoteServiceSettings.checkAndGenerateKey(Env::getSingleton<SecureStorage>()->getIfdCreateSize()))
 	{
 		qCCritical(ifd) << "Cannot get required key/certificate for tls";
@@ -74,94 +156,10 @@ bool RemoteTlsServer::startListening(quint16 pPort)
 }
 
 
-void RemoteTlsServer::onSslErrors(const QList<QSslError>& pErrors)
+void RemoteTlsServer::setRandomPsk()
 {
-	const auto& socket = getSslSocket();
-	if (pErrors.size() == 1 &&
-			(pErrors.first().error() == QSslError::SelfSignedCertificate || pErrors.first().error() == QSslError::SelfSignedCertificateInChain))
-	{
-		const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
-		if (pairingCiphers.contains(socket->sessionCipher()))
-		{
-			qCDebug(ifd) << "Client requests pairing | cipher:" << socket->sessionCipher() << "| certificate:" << socket->peerCertificate();
-			socket->ignoreSslErrors(pErrors);
-			return;
-		}
-	}
-
-	qCDebug(ifd) << "Client is not allowed | cipher:" << socket->sessionCipher() << "| certificate:" << socket->peerCertificate() << "| error:" << pErrors;
-}
-
-
-void RemoteTlsServer::onEncrypted()
-{
-	const auto& socket = getSslSocket();
-	const auto& cfg = socket->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, spawnMessageLogger(ifd));
-
-	QLatin1String error;
-	const auto& minimalKeySizes = [](QSsl::KeyAlgorithm pKeyAlgorithm){
-				return Env::getSingleton<SecureStorage>()->getMinimumIfdKeySize(pKeyAlgorithm);
-			};
-	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate(), minimalKeySizes))
-	{
-		error = QLatin1String("Client denied... abort connection!");
-	}
-
-	const auto rootCert = TlsChecker::getRootCertificate(cfg.peerCertificateChain());
-	if (rootCert.isNull())
-	{
-		error = QLatin1String("Client denied... no root certificate found!");
-	}
-
-	if (!error.isEmpty())
-	{
-		qCCritical(ifd) << error;
-		socket->abort();
-		socket->deleteLater();
-		return;
-	}
-
-	qCDebug(ifd) << "Client connected";
-	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
-	if (pairingCiphers.contains(cfg.sessionCipher()))
-	{
-		qCDebug(ifd) << "Pairing completed | Add certificate:" << rootCert;
-		settings.addTrustedCertificate(rootCert);
-		setPairing(false);
-		Q_EMIT firePairingCompleted(rootCert);
-	}
-	else
-	{
-		auto info = settings.getRemoteInfo(rootCert);
-		info.setLastConnected(QDateTime::currentDateTime());
-		settings.updateRemoteInfo(info);
-	}
-
-	socket->disconnect(this);
-	Q_EMIT fireNewConnection(socket.data());
-}
-
-
-void RemoteTlsServer::setPairing(bool pEnable)
-{
-	if (pEnable)
-	{
-		std::uniform_int_distribution uni(0, 9999);
-		QByteArray pin = QByteArray::number(uni(*Randomizer::getInstance().getGenerator()));
-		pin.prepend(4 - pin.size(), '0');
-		setPsk(pin);
-	}
-	else
-	{
-		setPsk(QByteArray());
-	}
-}
-
-
-QSslCertificate RemoteTlsServer::getCurrentCertificate() const
-{
-	const auto& socket = getSslSocket();
-	return socket ? socket->sslConfiguration().peerCertificate() : QSslCertificate();
+	std::uniform_int_distribution uni(0, 9999);
+	QByteArray pin = QByteArray::number(uni(*Randomizer::getInstance().getGenerator()));
+	pin.prepend(4 - pin.size(), '0');
+	setPsk(pin);
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -17,6 +17,8 @@ class test_RemoteServiceSettings;
 class test_IfdConnector;
 class test_RemoteTlsServer;
 class test_RemoteWebSocketServer;
+class test_RemoteDeviceModel;
+class test_RemoteDeviceFilterModel;
 
 namespace governikus
 {
@@ -36,6 +38,8 @@ class RemoteServiceSettings
 		{
 			friend class RemoteServiceSettings;
 			friend class ::test_RemoteServiceSettings;
+			friend class ::test_RemoteDeviceModel;
+			friend class ::test_RemoteDeviceFilterModel;
 
 			private:
 				QByteArray mFingerprint;
@@ -43,7 +47,8 @@ class RemoteServiceSettings
 				QDateTime mLastConnected;
 
 				RemoteInfo(const QByteArray& pFingerprint,
-						const QDateTime& pLastConnected);
+						const QDateTime& pLastConnected,
+						const QString& pName = QString());
 
 			public:
 				RemoteInfo() = default;

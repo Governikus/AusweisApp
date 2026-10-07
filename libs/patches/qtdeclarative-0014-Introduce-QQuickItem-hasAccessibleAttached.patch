@@ -1,0 +1,41 @@
+From 3bd34d9caa03ceb9445313fa97a40fddecb20607 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Fri, 27 Mar 2026 10:30:22 +0100
+Subject: Introduce QQuickItem::hasAccessibleAttached()
+
+Task-number: QTBUG-144607
+Change-Id: Ia9be9963ae5afe575d04029750ffe9e4835ea517
+---
+ src/quick/items/qquickitem.cpp | 5 +++++
+ src/quick/items/qquickitem.h   | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git x/qtdeclarative/src/quick/items/qquickitem.cpp y/qtdeclarative/src/quick/items/qquickitem.cpp
+index c2ab792139e4ddf1caaacc78dd071a4ec4938f7a..534787bce0616b23f8ea7e55c37c661c1298bb91 100644
+--- x/qtdeclarative/src/quick/items/qquickitem.cpp
++++ y/qtdeclarative/src/quick/items/qquickitem.cpp
+@@ -5184,6 +5184,11 @@ void QQuickItemPrivate::dumpItemTree(int indent) const
+     }
+ }
+ 
++bool QQuickItem::hasAccessibleAttached() const
++{
++    return qmlAttachedPropertiesObject<QQuickAccessibleAttached>(this, false);
++}
++
+ QQmlListProperty<QObject> QQuickItemPrivate::resources()
+ {
+     // Do not synthesize replace().
+diff --git x/qtdeclarative/src/quick/items/qquickitem.h y/qtdeclarative/src/quick/items/qquickitem.h
+index 73b1eb1ebf3c47e506aad0c9171a0e5c6a41268d..ae0b7330480904f1a1c012adcdb7f16064ec04a0 100644
+--- x/qtdeclarative/src/quick/items/qquickitem.h
++++ y/qtdeclarative/src/quick/items/qquickitem.h
+@@ -367,6 +367,8 @@ public:
+ 
+     Q_REVISION(6, 3) Q_INVOKABLE void dumpItemTree() const;
+ 
++    Q_INVOKABLE bool hasAccessibleAttached() const;
++
+ #if QT_CONFIG(im)
+     virtual QVariant inputMethodQuery(Qt::InputMethodQuery query) const;
+ #endif

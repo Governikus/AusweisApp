@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteTlsServer.h"
@@ -67,9 +67,9 @@ class test_RemoteTlsServer
 						pskSignalFired = true;
 					});
 
-			QTcpSocket* remoteSocket = nullptr;
+			QScopedPointer<QTcpSocket> remoteSocket;
 			connect(&server, &RemoteTlsServer::fireNewConnection, this, [&remoteSocket](QTcpSocket* pSocket){
-						remoteSocket = pSocket;
+						remoteSocket.reset(pSocket);
 					});
 
 			QSignalSpy newConnection(&server, &RemoteTlsServer::fireNewConnection);
@@ -87,7 +87,7 @@ class test_RemoteTlsServer
 
 				QVERIFY(remoteSocket);
 				const QByteArray sendData("hello world");
-				QSignalSpy spyRead(remoteSocket, &QIODevice::readyRead);
+				QSignalSpy spyRead(remoteSocket.data(), &QIODevice::readyRead);
 				client.write(sendData);
 				QTRY_COMPARE(spyRead.count(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(remoteSocket->readAll(), sendData);
@@ -157,7 +157,11 @@ class test_RemoteTlsServer
 			settings.setTrustedCertificates({});
 			RemoteTlsServer server;
 			server.startListening(0);
-			QSignalSpy newConnection(&server, &RemoteTlsServer::fireNewConnection);
+
+			QScopedPointer<QTcpSocket> remoteSocket;
+			connect(&server, &RemoteTlsServer::fireNewConnection, this, [&remoteSocket](QTcpSocket* pSocket){
+						remoteSocket.reset(pSocket);
+					});
 
 			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd().getConfiguration();
 			config.setPrivateKey(pair.getKey());
@@ -172,8 +176,10 @@ class test_RemoteTlsServer
 				QSignalSpy clientFailed(&client, &QAbstractSocket::disconnected);
 				client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
 				QTRY_COMPARE(clientFailed.count(), 1); // clazy:exclude=qstring-allocations
-				QCOMPARE(newConnection.count(), 0);
+				QVERIFY(!remoteSocket);
 			}
+
+			QTRY_VERIFY(server.mSocket.isNull());
 
 			QSslSocket clientPaired;
 			config.setCaCertificates(settings.getCertificates());
@@ -193,7 +199,7 @@ class test_RemoteTlsServer
 
 			QSignalSpy clientPairedEncrypted(&clientPaired, &QSslSocket::encrypted);
 			clientPaired.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
-			QTRY_COMPARE(newConnection.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_VERIFY(remoteSocket); // clazy:exclude=qstring-allocations
 			QTRY_COMPARE(clientPairedEncrypted.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
@@ -308,12 +314,16 @@ class test_RemoteTlsServer
 
 			QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
 			QSignalSpy clientErrorOccurred(&client, &QAbstractSocket::errorOccurred);
-			QSignalSpy newConnection(&server, &RemoteTlsServer::fireNewConnection);
+
+			QScopedPointer<QTcpSocket> remoteSocket;
+			connect(&server, &RemoteTlsServer::fireNewConnection, this, [&remoteSocket](QTcpSocket* pSocket){
+						remoteSocket.reset(pSocket);
+					});
 
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
 			if (connectLogError.isEmpty())
 			{
-				QTRY_COMPARE(newConnection.count(), 1); // clazy:exclude=qstring-allocations
+				QTRY_VERIFY(remoteSocket); // clazy:exclude=qstring-allocations
 				QTRY_COMPARE(clientEncrypted.count(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(clientErrorOccurred.count(), 0);
 			}

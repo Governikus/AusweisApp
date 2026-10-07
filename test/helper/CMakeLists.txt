@@ -21,3 +21,7 @@ add_subdirectory(pcsc)
 if(TARGET AusweisAppTestHelperUiWebsocket)
 	target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperUiWebsocket)
 endif()
+
+if(TARGET AusweisAppTestHelperUiQml)
+	target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperUiQml)
+endif()

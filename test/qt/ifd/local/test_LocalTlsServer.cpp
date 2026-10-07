@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 #include "LocalTlsServer.h"
@@ -54,10 +54,10 @@ class test_LocalTlsServer
 						pAuthenticator->setPreSharedKey(mPsk.toUtf8());
 					});
 
-			QTcpSocket* remoteSocket = nullptr;
+			QScopedPointer<QTcpSocket> remoteSocket;
 			connect(&mServer, &LocalTlsServer::fireNewConnection, this, [&remoteSocket](QTcpSocket* pSocket) // clazy:exclude=lambda-in-connect
 					{
-						remoteSocket = pSocket;
+						remoteSocket.reset(pSocket);
 					});
 			QSignalSpy newConnection(&mServer, &LocalTlsServer::fireNewConnection);
 			QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
@@ -69,7 +69,7 @@ class test_LocalTlsServer
 			QVERIFY(remoteSocket);
 
 			const QByteArray sendData("hello world");
-			QSignalSpy spyRead(remoteSocket, &QIODevice::readyRead);
+			QSignalSpy spyRead(remoteSocket.data(), &QIODevice::readyRead);
 			client.write(sendData);
 			QTRY_COMPARE(spyRead.count(), 1);
 			QCOMPARE(remoteSocket->readAll(), sendData);

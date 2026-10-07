@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "AbstractState.h"
@@ -11,6 +11,7 @@
 
 #include <QLoggingCategory>
 #include <QStateMachine>
+
 
 Q_DECLARE_LOGGING_CATEGORY(statemachine)
 Q_DECLARE_LOGGING_CATEGORY(support)
@@ -61,6 +62,12 @@ void AbstractState::onAbort(const FailureCode& pFailure) const
 
 void AbstractState::onStateApprovedChanged(bool pApproved)
 {
+	if (!isActive())
+	{
+		qCCritical(statemachine) << getStateName() << "is not active anymore, ignore state approval";
+		return;
+	}
+
 	if (pApproved)
 	{
 		qCDebug(statemachine) << "Running state" << getStateName();
@@ -106,8 +113,17 @@ void AbstractState::onExit(QEvent* pEvent)
 {
 	clearConnections();
 	mContext->setStateApproved(false);
-	qCDebug(statemachine) << "Leaving state" << getStateName()
-						  << "with status: [" << mContext->getLastPaceResult() << "+" << mContext->getStatus() << "]";
+
+	if (const auto returnCode = mContext->getPaceOutput().getReturnCode(); returnCode == CardReturnCode::OK)
+	{
+		qCDebug(statemachine) << "Leaving state" << getStateName() << "with status: ["
+							  << mContext->getPaceOutput().getPaceResult() << "+" << mContext->getStatus() << "]";
+	}
+	else
+	{
+		qCDebug(statemachine) << "Leaving state" << getStateName() << "with status: ["
+							  << returnCode << "+" << mContext->getStatus() << "]";
+	}
 
 	QState::onExit(pEvent);
 }

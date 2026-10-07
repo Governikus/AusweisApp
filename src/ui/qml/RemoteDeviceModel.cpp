@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteDeviceModel.h"
@@ -179,13 +179,11 @@ void RemoteDeviceModel::updatePairedReaders()
 			supported = true;
 		}
 		auto modelEntry = RemoteDeviceModelEntry(
-				pairedReader.getNameEscaped(),
-				pairedReader.getFingerprint(),
+				pairedReader,
 				visible,
 				connected,
 				supported,
 				isPairing,
-				pairedReader.getLastConnected(),
 				deviceListEntry);
 		addOrUpdateReader(modelEntry);
 	}
@@ -316,9 +314,10 @@ QVariant RemoteDeviceModel::data(const QModelIndex& pIndex, int pRole) const
 
 		case IS_LAST_ADDED_DEVICE:
 			return mLastPairedDevice.getFingerprint() == reader.getId();
-	}
 
-	return QVariant();
+		default:
+			return QVariant();
+	}
 }
 
 

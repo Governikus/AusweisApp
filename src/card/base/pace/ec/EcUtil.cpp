@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2021-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2026 Governikus Service GmbH, Germany
  */
 
 #include "EcUtil.h"
+#include "asn1/ASN1TemplateUtil.h"
 
 #include <QLoggingCategory>
 #include <QScopeGuard>
@@ -105,7 +106,7 @@ QSharedPointer<EC_POINT> EcUtil::oct2point(const QSharedPointer<const EC_GROUP>&
 }
 
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !defined(USE_LEGACY_OPENSSL_API)
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
 QByteArray EcUtil::getEncodedPublicKey(const QSharedPointer<EVP_PKEY>& pKey, bool pCompressed)
 {
 	if (pKey.isNull())
@@ -172,82 +173,11 @@ QSharedPointer<OSSL_PARAM> EcUtil::create(const std::function<bool(OSSL_PARAM_BL
 }
 
 
-QSharedPointer<EVP_PKEY> EcUtil::generateKey(const QSharedPointer<const EC_GROUP>& pCurve)
+QSharedPointer<EVP_PKEY> EcUtil::generateKey(int pNid)
 {
-	if (pCurve.isNull())
-	{
-		qCCritical(card) << "Curve is undefined";
-		return nullptr;
-	}
-
-	auto errorLogGuard = qScopeGuard([] {
-				qCCritical(card) << ERR_error_string(ERR_get_error(), nullptr);
-			});
-
-	auto generator = EcUtil::point2oct(pCurve, EC_GROUP_get0_generator(pCurve.data()));
-
-	auto order = EcUtil::create(BN_new());
-	if (!EC_GROUP_get_order(pCurve.data(), order.data(), nullptr))
-	{
-		qCCritical(card) << "Cannot fetch order";
-		return nullptr;
-	}
-
-	auto cofactor = EcUtil::create(BN_new());
-	if (!EC_GROUP_get_cofactor(pCurve.data(), cofactor.data(), nullptr))
-	{
-		qCCritical(card) << "Cannot fetch cofactor";
-		return nullptr;
-	}
-
-	auto p = EcUtil::create(BN_new());
-	auto a = EcUtil::create(BN_new());
-	auto b = EcUtil::create(BN_new());
-	if (!EC_GROUP_get_curve(pCurve.data(), p.data(), a.data(), b.data(), nullptr))
-	{
-		qCCritical(card) << "Cannot fetch a, b or p";
-		return nullptr;
-	}
-
-	const auto& params = EcUtil::create([&p, &a, &b, &order, &cofactor, &generator](OSSL_PARAM_BLD* pBuilder){
-				return OSSL_PARAM_BLD_push_BN(pBuilder, "p", p.data())
-					   && OSSL_PARAM_BLD_push_BN(pBuilder, "a", a.data())
-					   && OSSL_PARAM_BLD_push_BN(pBuilder, "b", b.data())
-					   && OSSL_PARAM_BLD_push_BN(pBuilder, "order", order.data())
-					   && OSSL_PARAM_BLD_push_BN(pBuilder, "cofactor", cofactor.data())
-					   && OSSL_PARAM_BLD_push_octet_string(pBuilder, "generator", generator.data(), static_cast<size_t>(generator.size()))
-					   && OSSL_PARAM_BLD_push_utf8_string(pBuilder, "field-type", "prime-field", 12);
-			});
-
-	if (params == nullptr)
-	{
-		qCCritical(card) << "Cannot set parameter";
-		return nullptr;
-	}
-
-	auto ctx = EcUtil::create(EVP_PKEY_CTX_new_from_name(nullptr, "EC", nullptr));
-	if (!ctx)
-	{
-		qCCritical(card) << "Cannot create EVP_PKEY_CTX";
-		return nullptr;
-	}
-	EVP_PKEY_keygen_init(ctx.data());
-
-	if (!EVP_PKEY_CTX_set_params(ctx.data(), params.data()))
-	{
-		qCCritical(card) << "Cannot set params to EVP_PKEY_CTX";
-		return nullptr;
-	}
-
-	EVP_PKEY* key = nullptr;
-	if (!EVP_PKEY_generate(ctx.data(), &key))
-	{
-		qCCritical(card) << "Cannot create EVP_PKEY";
-		return nullptr;
-	}
-
-	errorLogGuard.dismiss();
-	return EcUtil::create(key);
+	const char* curve_name = OBJ_nid2sn(pNid);
+	// https://github.com/openssl/openssl/issues/31608
+	return EcUtil::create(EVP_EC_gen(const_cast<char*>(curve_name)));
 }
 
 
@@ -277,22 +207,10 @@ QSharedPointer<BIGNUM> EcUtil::getPrivateKey(const QSharedPointer<const EC_KEY>&
 }
 
 
-QSharedPointer<EC_KEY> EcUtil::generateKey(const QSharedPointer<const EC_GROUP>& pCurve)
+QSharedPointer<EC_KEY> EcUtil::generateKey(int pNid)
 {
-	if (pCurve.isNull())
-	{
-		qCCritical(card) << "Curve is undefined";
-		return nullptr;
-	}
-
-	auto key = EcUtil::create(EC_KEY_new());
-	if (!EC_KEY_set_group(key.data(), pCurve.data()))
-	{
-		qCCritical(card) << "Error EC_KEY_set_group";
-		return nullptr;
-	}
-
-	if (!EC_KEY_generate_key(key.data()))
+	auto key = EcUtil::create(EC_KEY_new_by_curve_name(pNid));
+	if (!key || !EC_KEY_generate_key(key.data()))
 	{
 		qCCritical(card) << "Error EC_KEY_generate_key";
 		return nullptr;

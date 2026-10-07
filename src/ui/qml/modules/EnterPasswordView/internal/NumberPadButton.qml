@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -59,7 +59,6 @@ GAbstractButton {
 
 	HoverHandler {
 		id: hoverHandler
-
 	}
 	StatefulColors {
 		id: colors

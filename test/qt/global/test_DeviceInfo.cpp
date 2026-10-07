@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #include <QSysInfo>
@@ -22,11 +22,11 @@ class test_DeviceInfo
 #ifdef Q_OS_ANDROID
 			QVERIFY(!DeviceInfo::getPrettyInfo().isEmpty());
 			QVERIFY(!DeviceInfo::getFingerprint().isEmpty());
-			QVERIFY(!DeviceInfo::getName().isEmpty());
+			QVERIFY(!DeviceInfo::getDeviceName().isEmpty());
 #else
 			QCOMPARE(DeviceInfo::getPrettyInfo(), QSysInfo::machineHostName() + QStringLiteral(" ()"));
 			QVERIFY(DeviceInfo::getFingerprint().isNull());
-			QCOMPARE(DeviceInfo::getName(), QSysInfo::machineHostName());
+			QCOMPARE(DeviceInfo::getDeviceName(), QSysInfo::machineHostName());
 #endif
 		}
 

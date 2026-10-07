@@ -1,4 +1,4 @@
-From 4a5c19d68bec9e56df33fe52afbd5cb03acc466c Mon Sep 17 00:00:00 2001
+From 84fc42f29bd915f7b1932c605f6139be048c714b Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Tue, 5 May 2026 14:26:52 +0200
 Subject: Fix crash in QNearFieldTarget::QNearFieldTarget

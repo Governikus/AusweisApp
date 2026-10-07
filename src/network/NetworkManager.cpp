@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "NetworkManager.h"
@@ -380,14 +380,18 @@ QSharedPointer<QNetworkReply> NetworkManager::trackConnection(QNetworkReply* pRe
 {
 	Q_ASSERT(pResponse);
 
-	if (pResponse && !pResponse->isFinished())
+	if (pResponse)
 	{
-		++mOpenConnectionCount;
+		pResponse->setParent(nullptr);
+		if (!pResponse->isFinished())
+		{
+			++mOpenConnectionCount;
 
-		connect(pResponse, &QNetworkReply::finished, this, [this] {
-					--mOpenConnectionCount;
-				});
-		connect(this, &NetworkManager::fireShutdown, pResponse, &QNetworkReply::abort, Qt::QueuedConnection);
+			connect(pResponse, &QNetworkReply::finished, this, [this] {
+						--mOpenConnectionCount;
+					});
+			connect(this, &NetworkManager::fireShutdown, pResponse, &QNetworkReply::abort, Qt::QueuedConnection);
+		}
 	}
 
 	return QSharedPointer<QNetworkReply>(pResponse, &QObject::deleteLater);
@@ -403,9 +407,10 @@ QByteArray NetworkManager::getStatusMessage(int pStatus)
 
 	HTTP_STATUS_MAP(XX)
 #undef XX
-	}
 
-	return QByteArray();
+		default:
+			return QByteArray();
+	}
 }
 
 

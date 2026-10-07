@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -9,7 +9,7 @@ import QtQuick.Layouts
 
 import Governikus.Global
 import Governikus.View
-import Governikus.FeedbackView
+import Governikus.LogView
 import Governikus.InformationView
 import Governikus.Type
 import Governikus.Style
@@ -151,7 +151,6 @@ FlickableSectionPage {
 
 				LogModel {
 					id: logModel
-
 				}
 			}
 		}

@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
 
-import Governikus.FeedbackView
+import Governikus.LogView
 import Governikus.Global
 import Governikus.Style
 import Governikus.TitleBar
@@ -19,6 +19,8 @@ import QtQuick.Controls
 ApplicationWindow {
 	id: root
 
+	property alias activeModule: contentArea.activeModule
+
 	function showDetachedLogView() {
 		if (d.detachedLogView === null) {
 			d.detachedLogView = detachedLogViewWindow.createObject();
@@ -29,6 +31,7 @@ ApplicationWindow {
 	}
 
 	color: Style.color.background
+	locale: Qt.locale(SettingsModel.language)
 	minimumHeight: 360
 	minimumWidth: 480
 	title: titleBar.title
@@ -257,7 +260,7 @@ ApplicationWindow {
 			// fallthrough
 			case ApplicationModel.Workflow.CHANGE_PIN:
 			case ApplicationModel.Workflow.REMOTE_SERVICE:
-				console.log("Suppressing activation of UiModule", pModule, "since a workflow is active");
+				console.warn("Suppressing activation of UiModule", pModule, "since a workflow is active");
 				return;
 			default:
 				break;
@@ -283,7 +286,6 @@ ApplicationWindow {
 	}
 	ProxyCredentialsPopup {
 		id: proxyCredentials
-
 	}
 	Component {
 		id: updateView

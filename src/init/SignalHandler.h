@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -7,6 +7,8 @@
 #include "Env.h"
 
 #include <QObject>
+
+#include <array>
 #include <functional>
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
@@ -46,7 +48,7 @@ class SignalHandler
 
 	private:
 		QScopedPointer<QSocketNotifier> mSignalSocketNotifier;
-		static int cSignalSocketPair[2];
+		static std::array<int, 2> cSignalSocketPair;
 
 		void initUnix();
 		static void sigHandler(int pSignal);

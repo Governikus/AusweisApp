@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 
@@ -263,13 +263,11 @@ class test_SettingsModel
 			auto remindRedirectSpy = QSignalSpy(settingsModel, &SettingsModel::fireRemindUserOfAutoRedirectChanged);
 			settingsModel->setRemindUserOfAutoRedirect(false);
 			QCOMPARE(remindRedirectSpy.count(), 1);
-			settingsModel->hideFutureStoreFeedbackDialogs();
 			settingsModel->setStartupModule(UiModule::REMOTE_SERVICE);
 
 			QVERIFY(!settingsModel->isTransportPinReminder());
 			QVERIFY(!settingsModel->isRemindUserToClose());
 			QVERIFY(!settingsModel->isRemindUserOfAutoRedirect());
-			QVERIFY(!settingsModel->requestStoreFeedback());
 			QCOMPARE(settingsModel->getStartupModule(), UiModule::REMOTE_SERVICE);
 
 			settingsModel->resetHideableDialogs();
@@ -277,7 +275,6 @@ class test_SettingsModel
 			QVERIFY(settingsModel->isRemindUserToClose());
 			QVERIFY(settingsModel->isRemindUserOfAutoRedirect());
 			QVERIFY(remindRedirectSpy.count() > 1);
-			QVERIFY(settingsModel->requestStoreFeedback());
 			QCOMPARE(settingsModel->getStartupModule(), UiModule::ONBOARDING);
 		}
 

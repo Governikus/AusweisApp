@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "ChangePinModel.h"
 
 #include <QDebug>
 #include <QtTest>
+
 
 using namespace governikus;
 
@@ -54,8 +55,8 @@ class test_ChangePinModel
 			model->resetChangePinContext(context);
 			QCOMPARE(model->getResultString(), QStringLiteral("success"));
 
-			context->setStatus(GlobalStatus::Code::Card_Invalid_Pin);
-			QCOMPARE(model->getResultString(), QStringLiteral("The given PIN is not correct."));
+			context->setStatus(GlobalStatus::Code::Card_Pin_Not_Blocked);
+			QCOMPARE(model->getResultString(), QStringLiteral("The PIN is not blocked."));
 		}
 
 
@@ -65,9 +66,9 @@ class test_ChangePinModel
 			QCOMPARE(model->getStatusCodeAnimation(), GAnimation::CHANGEPIN_SUCCESS);
 
 			QSharedPointer<ChangePinContext> context(new ChangePinContext());
-			context->setStatus(GlobalStatus::Code::Card_Invalid_Pin);
+			context->setStatus(GlobalStatus::Code::Card_Puk_Blocked);
 			model->resetChangePinContext(context);
-			QCOMPARE(model->getStatusCodeAnimation(), GAnimation::PIN_ERROR);
+			QCOMPARE(model->getStatusCodeAnimation(), GAnimation::PUK_BLOCKED);
 		}
 
 

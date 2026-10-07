@@ -100,7 +100,10 @@ Info.plist
 ----------
 You need to enable the card identifier in your application's ``Info.plist`` like this,
 otherwise iOS will not recognize any identity cards. Also, it is necessary to provide
-a message why your application needs access to the NFC hardware.
+a message why your application needs access to the NFC hardware. The example message
+can be empty, if you place the actual value in ``LANGUAGE.lproj/InfoPlist.strings``
+files to enable AppStore localization (``LANGUAGE`` is a placeholder for
+ISO-639 Set 1 languages codes). If you don't need this, keep it in ``Info.plist``.
 
 .. code-block:: xml
 

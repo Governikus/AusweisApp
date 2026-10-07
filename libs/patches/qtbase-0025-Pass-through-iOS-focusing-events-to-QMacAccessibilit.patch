@@ -1,0 +1,57 @@
+From 4e8911019e75dd818cebbb9932960c3d8f00bcc4 Mon Sep 17 00:00:00 2001
+From: Jens Trillmann <jens.trillmann@governikus.de>
+Date: Wed, 3 Sep 2025 14:20:06 +0200
+Subject: Pass through iOS focusing events to QMacAccessibilityElement
+
+With this change QAccessibility can react to VoiceOver and UIFocus events.
+UIFocus is needed for a11y Full Keyboard Access to control via a
+keyboard/controller.
+
+Pick-to: 6.10
+Fixes: QTBUG-139613
+Change-Id: I2f1b6c7d792711a7b9dfa828cee7e66500ad9ce1
+---
+ src/plugins/platforms/ios/quiaccessibilityelement.mm | 12 ++++++++++++
+ src/plugins/platforms/ios/quiview_accessibility.mm   |  8 ++++++++
+ 2 files changed, 20 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+index a08b58edb4665c7878561ea2225d053b557556bb..06b60f1a08222c7796e1d72fae662cf673d0e706 100644
+--- x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+@@ -314,6 +314,18 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+     return localeVariant.toLocale().bcp47Name().toNSString();
+ }
+ 
++- (void)accessibilityElementDidBecomeFocused
++{
++    QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || !iface->isValid()) {
++        qWarning() << "invalid accessible interface for: " << self.axid;
++        return;
++    }
++
++    auto *actionInterface = iface->actionInterface();
++    actionInterface->doAction(QAccessibleActionInterface::setFocusAction());
++}
++
+ @end
+ 
+ #endif
+diff --git x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+index 2ca78936602ab8504aa52775c64156c4592a8e60..0bc70f299f3748f37235ed06317a8c35d724d9ec 100644
+--- x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
++++ y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+@@ -98,4 +98,12 @@
+     return NO;
+ }
+ 
++- (void) didUpdateFocusInContext:(UIFocusUpdateContext *) context
++        withAnimationCoordinator:(UIFocusAnimationCoordinator *) coordinator
++{
++    if ([context.nextFocusedItem isKindOfClass:[QMacAccessibilityElement class]]) {
++        [(QMacAccessibilityElement*)context.nextFocusedItem accessibilityElementDidBecomeFocused];
++    }
++}
++
+ @end

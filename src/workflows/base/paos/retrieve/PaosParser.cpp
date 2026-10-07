@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "PaosParser.h"
 
-#include "paos/invoke/PaosCreator.h"
+#include "DidAuthenticateParser.h"
+#include "InitializeFramework.h"
+#include "StartPaosResponse.h"
+#include "TransmitParser.h"
 
-#include <QDebug>
 #include <QLoggingCategory>
 
 
@@ -16,81 +18,39 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(paos)
 
 
-PaosParser::PaosParser(const QString& pMessageName)
-	: ElementParser(QSharedPointer<QXmlStreamReader>::create())
-	, mMessageName(pMessageName)
-	, mMessageID()
-	, mRelatesTo()
+std::unique_ptr<PaosMessage> PaosParser::parseMessage()
 {
+	if (mParser->getElementName() == QLatin1String("InitializeFramework"))
+	{
+		return std::make_unique<InitializeFramework>();
+	}
+	else if (mParser->getElementName() == QLatin1String("DIDAuthenticate"))
+	{
+		return DidAuthenticateParser(mParser).parse();
+	}
+	else if (mParser->getElementName() == QLatin1String("Transmit"))
+	{
+		return TransmitParser(mParser).parse();
+	}
+	else if (mParser->getElementName() == QLatin1String("StartPAOSResponse"))
+	{
+		return std::make_unique<StartPaosResponse>(mParser);
+	}
+
+	return nullptr;
 }
 
 
-PaosParser::~PaosParser() = default;
-
-
-PaosMessage* PaosParser::parse(const QByteArray& pXmlData)
+std::unique_ptr<PaosMessage> PaosParser::parseEnvelope()
 {
-	PaosMessage* message = nullptr;
+	std::unique_ptr<PaosMessage> message;
 
-	initData(pXmlData);
-
-	while (readNextStartElement())
+	while (mParser->readNextStartElement())
 	{
-		if (getElementName() == QLatin1String("Envelope"))
-		{
-			if (!assertNoDuplicateElement(message == nullptr))
-			{
-				qCWarning(paos) << "Duplicate Envelope element";
-				delete message;
-				return nullptr;
-			}
-
-			message = parseEnvelope();
-
-			if (message == nullptr)
-			{
-				return nullptr;
-			}
-		}
-		else
-		{
-			skipCurrentElement();
-		}
-	}
-
-	if (parserFailed())
-	{
-		delete message;
-		message = nullptr;
-	}
-
-	if (message != nullptr)
-	{
-		message->setMessageId(mMessageID);
-		message->setRelatesTo(mRelatesTo);
-	}
-
-	return message;
-}
-
-
-QStringView PaosParser::getElementType() const
-{
-	QString ns = PaosCreator::getNamespace(PaosCreator::Namespace::XSI);
-	return getElementTypeByNamespace(ns);
-}
-
-
-PaosMessage* PaosParser::parseEnvelope()
-{
-	PaosMessage* message = nullptr;
-
-	while (readNextStartElement())
-	{
-		const auto& name = getElementName();
+		const auto& name = mParser->getElementName();
 		if (name == QLatin1String("Body"))
 		{
-			if (assertNoDuplicateElement(message == nullptr))
+			if (mParser->assertNoDuplicateElement(message == nullptr))
 			{
 				message = parseBody();
 			}
@@ -101,11 +61,11 @@ PaosMessage* PaosParser::parseEnvelope()
 		}
 		else
 		{
-			skipCurrentElement();
+			mParser->skipCurrentElement();
 		}
 	}
 
-	if (!parserFailed() && message == nullptr)
+	if (!mParser->parserFailed() && message == nullptr)
 	{
 		qCWarning(paos) << "Element Body not found";
 	}
@@ -116,48 +76,113 @@ PaosMessage* PaosParser::parseEnvelope()
 
 void PaosParser::parseHeader()
 {
-	while (readNextStartElement())
+	while (mParser->readNextStartElement())
 	{
-		const auto& name = getElementName();
+		const auto& name = mParser->getElementName();
 		if (name == QLatin1String("MessageID"))
 		{
-			mMessageID = readElementText();
+			mMessageID = mParser->readElementText();
 		}
 		else if (name == QLatin1String("RelatesTo"))
 		{
-			mRelatesTo = readElementText();
+			mRelatesTo = mParser->readElementText();
 		}
 		else
 		{
-			skipCurrentElement();
+			mParser->skipCurrentElement();
 		}
 	}
 }
 
 
-PaosMessage* PaosParser::parseBody()
+std::unique_ptr<PaosMessage> PaosParser::parseBody()
 {
-	PaosMessage* message = nullptr;
+	const QStringList expectedElements({
+				QStringLiteral("InitializeFramework"),
+				QStringLiteral("DIDAuthenticate"),
+				QStringLiteral("Transmit"),
+				QStringLiteral("StartPAOSResponse")
+			});
 
-	while (readNextStartElement())
+	std::unique_ptr<PaosMessage> message;
+
+	while (mParser->readNextStartElement())
 	{
-		if (getElementName() == mMessageName)
+		if (expectedElements.contains(mParser->getElementName()))
 		{
-			if (assertNoDuplicateElement(message == nullptr))
+			if (mParser->assertNoDuplicateElement(message == nullptr))
 			{
 				message = parseMessage();
 			}
 		}
 		else
 		{
-			skipCurrentElement();
+			mParser->skipCurrentElement();
 		}
 	}
 
-	if (!parserFailed() && message == nullptr)
+	if (!mParser->parserFailed() && message == nullptr)
 	{
-		qCWarning(paos) << "Element" << mMessageName << "not found";
+		qCWarning(paos) << "No valid Body element found";
 	}
 
+	return message;
+}
+
+
+QSharedPointer<ElementParser> PaosParser::getParser()
+{
+	return mParser;
+}
+
+
+PaosParser::PaosParser()
+	: mParser()
+	, mMessageID()
+	, mRelatesTo()
+{
+}
+
+
+PaosParser::~PaosParser() = default;
+
+
+std::unique_ptr<PaosMessage> PaosParser::parse(const QSharedPointer<ElementParser>& pParser)
+{
+	std::unique_ptr<PaosMessage> message;
+	mParser = pParser;
+	while (mParser->readNextStartElement())
+	{
+		if (mParser->getElementName() == QLatin1String("Envelope"))
+		{
+			if (!mParser->assertNoDuplicateElement(message == nullptr))
+			{
+				qCWarning(paos) << "Duplicate Envelope element";
+				return nullptr;
+			}
+
+			message = parseEnvelope();
+			if (message == nullptr)
+			{
+				return nullptr;
+			}
+		}
+		else
+		{
+			mParser->skipCurrentElement();
+		}
+	}
+
+	if (mParser->parserFailed())
+	{
+		message = nullptr;
+	}
+
+	if (message == nullptr)
+	{
+		return nullptr;
+	}
+	message->setMessageId(mMessageID);
+	message->setRelatesTo(mRelatesTo);
 	return message;
 }

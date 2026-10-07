@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -23,7 +23,7 @@ class GAResponseApdu
 	public:
 		explicit GAResponseApdu(const ResponseApdu& pResponseApdu);
 		[[nodiscard]] bool isEmpty() const;
-		[[nodiscard]] SW1 getSW1() const;
+		[[nodiscard]] StatusCode getStatusCode() const;
 		[[nodiscard]] int getRetryCounter() const;
 };
 

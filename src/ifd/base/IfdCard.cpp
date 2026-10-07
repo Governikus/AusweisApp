@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "IfdCard.h"
@@ -252,32 +252,31 @@ EstablishPaceChannelOutput IfdCard::establishPaceChannel(PacePasswordId pPasswor
 	const QSharedPointer<const IfdEstablishPaceChannel>& message = QSharedPointer<IfdEstablishPaceChannel>::create(mSlotHandle, establishPaceChannel, pPreferredPinLength);
 	if (!sendMessage(message, IfdMessageType::IFDEstablishPACEChannelResponse, DEFAULT_PINPAD_TIMEOUT * 1000))
 	{
-		return EstablishPaceChannelOutput(CardReturnCode::INPUT_TIME_OUT);
+		return EstablishPaceChannelOutput(pPasswordId, CardReturnCode::INPUT_TIME_OUT);
 	}
 
-	const IfdEstablishPaceChannelResponse response(mResponse);
+	const IfdEstablishPaceChannelResponse response(pPasswordId, mResponse);
 	if (response.isIncomplete())
 	{
-		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
+		return EstablishPaceChannelOutput(pPasswordId, CardReturnCode::COMMAND_FAILED);
 	}
 	if (response.getResultMinor() == ECardApiResult::Minor::IFDL_Terminal_NoCard
 			|| response.getResultMinor() == ECardApiResult::Minor::IFDL_InvalidSlotHandle)
 	{
-		return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
+		return EstablishPaceChannelOutput(pPasswordId, CardReturnCode::CARD_NOT_FOUND);
 	}
 	if (response.resultHasError())
 	{
 		qCWarning(card_remote) << response.getResultMinor();
-		return EstablishPaceChannelOutput(response.getReturnCode());
+		return EstablishPaceChannelOutput(pPasswordId, response.getReturnCode());
 	}
 
-	if (mCardRemoved && response.getOutputData().getPaceReturnCode() == CardReturnCode::OK)
+	if (mCardRemoved && response.getOutputData().getReturnCode() == CardReturnCode::OK)
 	{
-		return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
+		return EstablishPaceChannelOutput(pPasswordId, CardReturnCode::CARD_NOT_FOUND);
 	}
 
 	return response.getOutputData();
-
 }
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2026 Governikus Service GmbH, Germany
  */
 
 #include "NfcReader.h"
@@ -183,7 +183,7 @@ class test_NfcReader
 			QVERIFY(reader.getCard());
 
 			QVERIFY(reader.mCard->invalidateTarget(nullptr));
-			QVERIFY(!reader.getCard());
+			QVERIFY(reader.getCard());
 		}
 
 

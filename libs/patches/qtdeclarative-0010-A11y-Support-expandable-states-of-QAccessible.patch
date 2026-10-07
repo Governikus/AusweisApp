@@ -1,0 +1,74 @@
+From 4ecf0c01992762f9d89b96772d364cc7460af1a1 Mon Sep 17 00:00:00 2001
+From: Jens Trillmann <jens.trillmann@governikus.de>
+Date: Fri, 10 Jul 2026 11:29:54 +0200
+Subject: A11y: Support expandable states of QAccessible
+
+Map "expandable" and "expanded" properties of Quick items to the QAccessible
+interface, similiar to the "checked" property of check boxes.
+
+Task-number: QTBUG-146552
+Pick-to: 6.12
+Change-Id: Ie507eadd06263378d3c05d9b1e18c5064e04c287
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+(cherry picked from commit a903b7946d5b450552ffb7f3ebd977f9927f2947)
+---
+ src/quick/accessible/qaccessiblequickitem.cpp | 24 +++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+index 6fcf32883a411dc41b12a87bf931e33d37de7ebf..69cd6b71a2ab3a70c84b3c4ac062faf4fa8e24d3 100644
+--- x/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickitem.cpp
+@@ -459,6 +459,10 @@ QAccessible::State QAccessibleQuickItem::state() const
+          || role() == QAccessible::Switch)
+         && object()->property("checked").toBool())
+         state.checked = true;
++    if (role() == QAccessible::Button && object()->property("expandable").toBool()) {
++        state.expandable = true;
++        state.expanded = object()->property("expanded").toBool();
++    }
+     if (item()->activeFocusOnTab() || isTextRole(role()))
+         state.focusable = true;
+     if (item()->hasActiveFocus())
+@@ -528,8 +532,11 @@ QStringList QAccessibleQuickItem::actionNames() const
+ {
+     QStringList actions;
+     switch (role()) {
++    case QAccessible::Button:
++        if (state().expandable)
++            actions << QAccessibleActionInterface::toggleAction();
++        Q_FALLTHROUGH();
+     case QAccessible::Link:
+-    case QAccessible::PushButton:
+     case QAccessible::MenuItem:
+         actions << QAccessibleActionInterface::pressAction();
+         break;
+@@ -588,9 +595,8 @@ void QAccessibleQuickItem::doAction(const QString &actionName)
+     case QAccessible::Switch: {
+         QVariant checked = object()->property("checked");
+         if (checked.isValid()) {
+-            if (actionName == QAccessibleActionInterface::toggleAction() ||
+-                    actionName == QAccessibleActionInterface::pressAction()) {
+-
++            if (actionName == QAccessibleActionInterface::toggleAction()
++                || actionName == QAccessibleActionInterface::pressAction()) {
+                 object()->setProperty("checked",  QVariant(!checked.toBool()));
+             }
+         }
+@@ -632,6 +638,16 @@ void QAccessibleQuickItem::doAction(const QString &actionName)
+         }
+         break;
+     }
++    case QAccessible::Button: {
++        QVariant expanded = object()->property("expanded");
++        if (expanded.isValid()) {
++            if (actionName == QAccessibleActionInterface::toggleAction()
++                || actionName == QAccessibleActionInterface::pressAction()) {
++                object()->setProperty("expanded", QVariant(!expanded.toBool()));
++            }
++        }
++        break;
++    }
+     default:
+         break;
+     }

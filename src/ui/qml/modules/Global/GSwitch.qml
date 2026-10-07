@@ -1,26 +1,25 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import Governikus.Style
 import Governikus.Type
 import Governikus.View
 
-AbstractButton {
+GAbstractButton {
 	id: root
 
 	property alias description: descriptionText.text
 	property bool drawBottomCorners: false
 	property bool drawTopCorners: false
 
-	Accessible.description: description
-	Accessible.name: text
+	Accessible.description: Utils.resolveA11yDescription(text, description)
+	Accessible.name: Utils.resolveA11yName(text, description)
 	Accessible.role: {
 		if ("Switch" in Accessible) {
 			return Accessible.Switch; // qmllint disable missing-property
@@ -67,16 +66,8 @@ AbstractButton {
 		}
 	}
 
-	Accessible.onPressAction: if (enabled)
-		toggle()
-	Accessible.onScrollDownAction: Utils.scrollPageDownOnGFlickable(this)
-	Accessible.onScrollUpAction: Utils.scrollPageUpOnGFlickable(this)
-	onFocusChanged: if (focus)
-		Utils.positionViewAtItem(this)
-
 	HoverHandler {
 		id: hoverHandler
-
 	}
 	StatefulColors {
 		id: colors

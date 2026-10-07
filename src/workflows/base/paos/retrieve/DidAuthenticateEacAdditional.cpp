@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "DidAuthenticateEacAdditional.h"
@@ -7,8 +7,14 @@
 using namespace governikus;
 
 
+void DIDAuthenticateEACAdditional::setSignature(const QString& signature)
+{
+	mSignature = signature;
+}
+
+
 DIDAuthenticateEACAdditional::DIDAuthenticateEACAdditional()
-	: PaosMessage(PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE)
+	: DidAuthenticateMessage(PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE)
 {
 }
 
@@ -16,31 +22,7 @@ DIDAuthenticateEACAdditional::DIDAuthenticateEACAdditional()
 DIDAuthenticateEACAdditional::~DIDAuthenticateEACAdditional() = default;
 
 
-void DIDAuthenticateEACAdditional::setConnectionHandle(const ConnectionHandle& pConnectionHandle)
-{
-	mConnectionHandle = pConnectionHandle;
-}
-
-
-const QString& DIDAuthenticateEACAdditional::getDidName() const
-{
-	return mDidName;
-}
-
-
-void DIDAuthenticateEACAdditional::setDidName(const QString& didName)
-{
-	mDidName = didName;
-}
-
-
 const QString& DIDAuthenticateEACAdditional::getSignature() const
 {
 	return mSignature;
-}
-
-
-void DIDAuthenticateEACAdditional::setSignature(const QString& signature)
-{
-	mSignature = signature;
 }

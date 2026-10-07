@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2026 Governikus Service GmbH, Germany
  */
 
 #include "states/StateResetRetryCounter.h"
@@ -51,8 +51,10 @@ class test_StateResetRetryCounter
 
 			QTest::addRow("OK") << CardReturnCode::OK << StatusCode::SUCCESS << QByteArray()
 								<< std::optional<FailureCode>();
-			QTest::addRow("PUK inoperative") << CardReturnCode::OK << StatusCode::ACCESS_DENIED << QByteArray()
-											 << std::optional<FailureCode>(FailureCode::Reason::Reset_Retry_Counter_Puk_Inoperative);
+			QTest::addRow("PUK inoperative 1") << CardReturnCode::OK << StatusCode::ACCESS_DENIED << QByteArray()
+											   << std::optional<FailureCode>(FailureCode::Reason::Reset_Retry_Counter_Puk_Inoperative);
+			QTest::addRow("PUK inoperative 2") << CardReturnCode::OK << StatusCode::DIRECTORY_OR_PASSWORD_LOCKED_OR_NOT_ALLOWED << QByteArray()
+											   << std::optional<FailureCode>(FailureCode::Reason::Reset_Retry_Counter_Puk_Inoperative);
 			QTest::addRow("Unexpected statusCode") << CardReturnCode::OK << StatusCode::COMMAND_NOT_ALLOWED
 												   << QByteArray("Received an unexpected StatusCode (COMMAND_NOT_ALLOWED), cannot reset retry counter")
 												   << std::optional<FailureCode>(FailureCode::Reason::Reset_Retry_Counter_Unexpected_StatusCode);
@@ -93,6 +95,7 @@ class test_StateResetRetryCounter
 						(
 							statusCode == StatusCode::SUCCESS ||
 							statusCode == StatusCode::ACCESS_DENIED ||
+							statusCode == StatusCode::DIRECTORY_OR_PASSWORD_LOCKED_OR_NOT_ALLOWED ||
 							statusCode == StatusCode::COMMAND_NOT_ALLOWED)
 						)
 				{

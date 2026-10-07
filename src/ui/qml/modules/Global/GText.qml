@@ -1,9 +1,8 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import Governikus.Global
 import Governikus.Style
@@ -13,6 +12,7 @@ import Governikus.View
 Text {
 	id: root
 
+	readonly property string a11yName: ApplicationModel.stripHtmlTags(text)
 	readonly property real effectiveFirstLineHeight: topPadding + Math.ceil(lineHeight) + bottomPadding
 	readonly property real effectiveMaxLinesHeight: topPadding + maximumLineCount * Math.ceil(lineHeight) + bottomPadding
 	property alias focusFrameVisible: focusFrame.visible
@@ -26,15 +26,15 @@ Text {
 		}
 	}
 
-	Accessible.description: hasLink ? Utils.platformAgnosticLinkOpenText(link, Accessible.name) : ""
 	Accessible.focusable: true
 	Accessible.ignored: text === ""
-	Accessible.name: ApplicationModel.stripHtmlTags(text)
+	Accessible.name: hasLink ? Utils.platformAgnosticLinkOpenText(link, a11yName) : a11yName
 	Accessible.role: hasLink ? Accessible.Link : Accessible.StaticText
 	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
 	activeFocusOnTab: hasLink
 	color: textStyle.textColor
+	font.family: UiPluginModel.fontFamily
 	font.pixelSize: textStyle.textSize
 	font.weight: textStyle.fontWeight
 	lineHeight: textStyle.lineHeight
@@ -46,11 +46,12 @@ Text {
 	Accessible.onPressAction: tryActivateLink()
 	Accessible.onScrollDownAction: Utils.scrollPageDownOnGFlickable(this)
 	Accessible.onScrollUpAction: Utils.scrollPageUpOnGFlickable(this)
+	Accessible.onShowOnScreenAction: Utils.positionViewAtItem(this)
 	Component.onCompleted: d.checkForLinks()
 	Keys.onEnterPressed: tryActivateLink()
 	Keys.onReturnPressed: tryActivateLink()
 	Keys.onSpacePressed: tryActivateLink()
-	onFocusChanged: if (focus)
+	onActiveFocusChanged: if (activeFocus)
 		Utils.positionViewAtItem(this)
 	onLinkActivated: pLink => {
 		Qt.openUrlExternally(pLink);
@@ -59,7 +60,6 @@ Text {
 
 	FocusFrame {
 		id: focusFrame
-
 	}
 	QtObject {
 		id: d
@@ -92,8 +92,7 @@ Text {
 		hoverEnabled: true
 	}
 	Item {
-		ToolTip {
-			delay: Style.toolTipDelay
+		GToolTip {
 			text: root.hoveredLink
 			visible: Style.is_layout_desktop && root.hoveredLink !== ""
 

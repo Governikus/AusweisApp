@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -33,7 +33,7 @@ FlickableSectionPage {
 		//: MOBILE
 		title: qsTr("Change device name")
 
-		PlatformTextField {
+		GTextField {
 			id: textField
 
 			enterKeyType: Qt.EnterKeyDone

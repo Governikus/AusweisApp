@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 #include "VersionInformationModel.h"
@@ -37,7 +37,7 @@ void VersionInformationModel::init()
 	mData.clear();
 
 	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
-				mData += std::make_pair(pKey, pValue);
+				mData += std::make_pair(pKey, pValue.contains(QStringLiteral("Governikus GmbH & Co. KG")) ? QStringLiteral("Governikus Service GmbH") : pValue);
 			});
 }
 

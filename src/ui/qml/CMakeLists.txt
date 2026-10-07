@@ -29,7 +29,7 @@ if(TARGET ${Qt}::WebSockets)
 	target_link_libraries(AusweisAppUiQml PUBLIC AusweisAppWorkflowsIfd)
 endif()
 
-if(MAC)
+if(MACOS)
 	target_link_libraries(AusweisAppUiQml PUBLIC ${OSX_USERNOTIFICATIONS})
 endif()
 
@@ -69,6 +69,14 @@ function(STRIP_FROM_QML_FILES _string _reason)
 		endif()
 	endforeach()
 endfunction()
+
+if(QT_VERSION VERSION_LESS "6.8.3")
+	STRIP_FROM_QML_FILES("\t*Accessible\.id: [^\n]*\n" "Qt version >= 6.8.3 required for Accessible.id")
+endif()
+
+if(NOT LIBS_GOVERNIKUS OR QT_VERSION VERSION_LESS "6.11")
+	STRIP_FROM_QML_FILES("\t*Accessible\.onShowOnScreenAction: [^\n]*\n" "Presumably Qt version >= 6.12 releases Accessible.onShowOnScreenAction")
+endif()
 
 if(NOT LIBS_GOVERNIKUS AND QT_VERSION VERSION_LESS "6.12")
 	STRIP_FROM_QML_FILES("\t*Accessible\.expandable: [^\n]*\n" "Presumably Qt version >= 6.12 releases Accessible.expandable")

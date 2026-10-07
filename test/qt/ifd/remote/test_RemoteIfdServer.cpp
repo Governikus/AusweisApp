@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "RemoteIfdServer.h"
@@ -116,6 +116,12 @@ class RemoteWebSocketServerMock
 		[[nodiscard]] const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override
 		{
 			return mEmptyHandler;
+		}
+
+
+		void rotatePsk() override
+		{
+
 		}
 
 

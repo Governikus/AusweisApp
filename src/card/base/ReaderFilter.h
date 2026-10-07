@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
@@ -16,27 +16,15 @@ namespace governikus
 
 class ReaderFilter
 {
-	public:
-		enum FilterType
-		{
-			NoFilter = 0,
-			PluginTypeFilter = 1,
-			UniqueReaderTypes = 2
-		};
-		Q_DECLARE_FLAGS(FilterTypes, FilterType)
-
 	private:
-		const ReaderFilter::FilterTypes mFilterType;
+		const bool mfilter;
 		const QList<ReaderManagerPluginType> mPluginTypes;
 
 	public:
 		ReaderFilter();
-		ReaderFilter(const ReaderFilter::FilterType pFilterType);
 		explicit ReaderFilter(const QList<ReaderManagerPluginType>& pPluginTypes);
 
 		[[nodiscard]] QList<ReaderInfo> apply(const QList<ReaderInfo>& pInputList) const;
 };
 
 } // namespace governikus
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(governikus::ReaderFilter::FilterTypes)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -21,16 +21,9 @@ SectionPage {
 	//: MOBILE
 	title: qsTr("Identify")
 
-	QtObject {
-		id: d
-
-		property bool oldLockedAndHiddenStatus
-	}
 	Connections {
 		function onFireWorkflowStarted() {
 			authController.createObject(root);
-			d.oldLockedAndHiddenStatus = root.getLockedAndHidden();
-			root.setLockedAndHidden(true);
 		}
 
 		enabled: root.visible
@@ -53,7 +46,6 @@ SectionPage {
 			onRequestBack: root.requestBack()
 			onWorkflowFinished: pSuccess => {
 				root.pop(root);
-				setLockedAndHidden(d.oldLockedAndHiddenStatus);
 				root.workflowFinished(pSuccess);
 				this.destroy();
 			}

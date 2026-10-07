@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 #include "UiPluginQml.h"
@@ -15,11 +15,6 @@
 Q_DECLARE_LOGGING_CATEGORY(qml)
 
 using namespace governikus;
-
-bool UiPluginQml::isHighContrastEnabled() const
-{
-	return NSWorkspace.sharedWorkspace.accessibilityDisplayShouldIncreaseContrast;
-}
 
 
 qreal UiPluginQml::getSystemFontScaleFactor() const

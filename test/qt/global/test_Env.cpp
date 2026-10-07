@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2026 Governikus Service GmbH, Germany
  */
 
 #include "Env.h"
@@ -52,6 +52,21 @@ class AbstractTestInstanceImpl
 		QString dummy() override
 		{
 			return QStringLiteral("impl");
+		}
+
+
+};
+
+class TestUsedInDifferentThreads
+	: public QObject
+{
+	Q_OBJECT
+
+	public:
+		static TestUsedInDifferentThreads& getInstance()
+		{
+			static TestUsedInDifferentThreads instance;
+			return instance;
 		}
 
 
@@ -785,17 +800,17 @@ class test_Env
 			QThread::currentThread()->setObjectName("Main");
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			Env::getSingleton<NetworkManager>();
-			QTRY_COMPARE(logSpy.count(), 2); // Create singleton NetworkManager / AppSettings
+			Env::getSingleton<TestUsedInDifferentThreads>();
+			QTRY_COMPARE(logSpy.count(), 1); // Create singleton: TestUsedInDifferentThreads
 			logSpy.clear();
 
 			QThreadPool pool; // do not use global one, otherwise the main thead is allowed, too
 			QtConcurrent::run(&pool, [] {
-						Env::getSingleton<NetworkManager>();
+						Env::getSingleton<TestUsedInDifferentThreads>();
 					}).waitForFinished();
 
 			QTRY_COMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeLast().at(0).toString().contains(QLatin1String("governikus::NetworkManager was created in \"Main\" but is requested by \"Thread (pooled)\"")));
+			QVERIFY(logSpy.takeLast().at(0).toString().contains(QLatin1String("TestUsedInDifferentThreads was created in \"Main\" but is requested by \"Thread (pooled)\"")));
 		}
 
 

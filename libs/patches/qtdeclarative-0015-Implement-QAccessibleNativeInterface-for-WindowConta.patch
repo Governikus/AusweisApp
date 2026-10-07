@@ -1,0 +1,150 @@
+From 4317916f049c129d9f96e7f7bcae5da8e430d14a Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Wed, 3 Jun 2026 00:11:25 +0200
+Subject: Implement QAccessibleNativeInterface for WindowContainer
+
+Providing the native handle through the QAccessibleNativeInterface
+allows the application to insert it to the accessibility tree at the
+correct place.
+
+Task-number: QTBUG-147411
+Change-Id: I277a6bedbf36bc2f87e01e39c414f595efc746ef
+---
+ src/quick/CMakeLists.txt                      |  1 +
+ .../qaccessiblequickwindowcontainer.cpp       | 35 +++++++++++++
+ .../qaccessiblequickwindowcontainer_p.h       | 50 +++++++++++++++++++
+ .../accessible/qquickaccessiblefactory.cpp    |  3 ++
+ 4 files changed, 89 insertions(+)
+ create mode 100644 src/quick/accessible/qaccessiblequickwindowcontainer.cpp
+ create mode 100644 src/quick/accessible/qaccessiblequickwindowcontainer_p.h
+
+diff --git x/qtdeclarative/src/quick/CMakeLists.txt y/qtdeclarative/src/quick/CMakeLists.txt
+index 74ab651d8ef5ae94e8549aeab4d608a2373b9f52..6833d34a8fc462c438a511ff58ff16ef395cd739 100644
+--- x/qtdeclarative/src/quick/CMakeLists.txt
++++ y/qtdeclarative/src/quick/CMakeLists.txt
+@@ -588,6 +588,7 @@ qt_internal_extend_target(Quick CONDITION QT_FEATURE_accessibility
+         accessible/qaccessiblequickview.cpp accessible/qaccessiblequickview_p.h
+         accessible/qaccessiblequickflickable.cpp accessible/qaccessiblequickflickable_p.h
+         accessible/qaccessiblequicklistview.cpp accessible/qaccessiblequicklistview_p.h
++        accessible/qaccessiblequickwindowcontainer.cpp accessible/qaccessiblequickwindowcontainer_p.h
+         accessible/qquickaccessiblefactory.cpp accessible/qquickaccessiblefactory_p.h
+     LIBRARIES
+         Qt::CorePrivate
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickwindowcontainer.cpp y/qtdeclarative/src/quick/accessible/qaccessiblequickwindowcontainer.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..99c00224250386292fd8dfd4f25856dba75bce56
+--- /dev/null
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickwindowcontainer.cpp
+@@ -0,0 +1,35 @@
++// Copyright (C) 2026 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++// Qt-Security score:significant reason:default
++
++#include "qaccessiblequickwindowcontainer_p.h"
++
++QT_BEGIN_NAMESPACE
++
++#if QT_CONFIG(accessibility)
++
++QAccessibleQuickWindowContainer::QAccessibleQuickWindowContainer(
++        QQuickWindowContainer *windowContainer)
++    : QAccessibleQuickItem(windowContainer)
++{
++}
++
++WId QAccessibleQuickWindowContainer::getNativeHandle() const
++{
++    if (auto *container = windowContainer())
++        return container->containedWindow()->winId();
++
++    return WId(0);
++}
++
++void *QAccessibleQuickWindowContainer::interface_cast(QAccessible::InterfaceType t)
++{
++    if (t == QAccessible::NativeInterface)
++        return static_cast<QAccessibleNativeInterface *>(this);
++
++    return nullptr;
++}
++
++#endif // accessibility
++
++QT_END_NAMESPACE
+diff --git x/qtdeclarative/src/quick/accessible/qaccessiblequickwindowcontainer_p.h y/qtdeclarative/src/quick/accessible/qaccessiblequickwindowcontainer_p.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..50ebff0ade760af1e6f8273a012b5b9c91d06ccb
+--- /dev/null
++++ y/qtdeclarative/src/quick/accessible/qaccessiblequickwindowcontainer_p.h
+@@ -0,0 +1,50 @@
++// Copyright (C) 2026 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++// Qt-Security score:significant reason:default
++
++#ifndef QACCESSIBLEQUICKWINDOWCONTAINER_H
++#define QACCESSIBLEQUICKWINDOWCONTAINER_H
++
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++#include "qaccessiblequickitem_p.h"
++
++#include <QtQuick/private/qquickwindowcontainer_p.h>
++
++QT_BEGIN_NAMESPACE
++
++#if QT_CONFIG(accessibility)
++
++class Q_QUICK_EXPORT QAccessibleQuickWindowContainer : public QAccessibleQuickItem,
++                                                       public QAccessibleNativeInterface
++{
++public:
++    QAccessibleQuickWindowContainer(QQuickWindowContainer *windowContainer);
++
++    // QAccessibleNativeInterface
++    virtual WId getNativeHandle() const override;
++
++protected:
++    void *interface_cast(QAccessible::InterfaceType t) override;
++
++private:
++    QQuickWindowContainer *windowContainer() const
++    {
++        return static_cast<QQuickWindowContainer *>(item());
++    }
++};
++
++#endif // accessibility
++
++QT_END_NAMESPACE
++
++#endif // QACCESSIBLEQUICKWINDOWCONTAINER_H
+diff --git x/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp y/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
+index a6932bdf634fb1fc6fe969d06a136ba3736c3a19..a1354aa2ae999374419a0a1d4b9680f012835b7d 100644
+--- x/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
++++ y/qtdeclarative/src/quick/accessible/qquickaccessiblefactory.cpp
+@@ -10,6 +10,7 @@
+ #include "qaccessiblequicktextinput_p.h"
+ #include "qaccessiblequickflickable_p.h"
+ #include "qaccessiblequicklistview_p.h"
++#include "qaccessiblequickwindowcontainer_p.h"
+ #include <QtQuick/private/qquickflickable_p.h>
+ #include <QtQuick/private/qquickitem_p.h>
+ #include <QtQuick/private/qquicklistview_p.h>
+@@ -23,6 +24,8 @@ QAccessibleInterface *qQuickAccessibleFactory(const QString &classname, QObject
+ {
+     if (classname == QLatin1String("QQuickWindow"))
+         return new QAccessibleQuickWindow(qobject_cast<QQuickWindow *>(object));
++    if (classname == QLatin1String("QQuickWindowContainer"))
++        return new QAccessibleQuickWindowContainer(qobject_cast<QQuickWindowContainer *>(object));
+     if (classname == QLatin1String("QQuickTextEdit"))
+         return new QAccessibleQuickTextEdit(qobject_cast<QQuickTextEdit *>(object));
+     if (classname == QLatin1String("QQuickTextInput"))

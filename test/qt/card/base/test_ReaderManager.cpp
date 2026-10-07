@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "ReaderManager.h"
@@ -224,26 +224,6 @@ class test_ReaderManager
 			QTRY_COMPARE(spy.count(), 2); // clazy:exclude=qstring-allocations
 			readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), 2);
-		}
-
-
-		void checkUniqueReaderFilter()
-		{
-			QSignalSpy spy(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderAdded);
-			const ReaderFilter filter(ReaderFilter::UniqueReaderTypes);
-
-			auto readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
-			QCOMPARE(readerInfos.count(), 0);
-
-			MockReaderManagerPlugin::getInstance().addReader("MockReader same"_L1);
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
-			QCOMPARE(readerInfos.count(), 1);
-
-			MockReaderManagerPlugin::getInstance().addReader("MockReader same"_L1);
-			QTRY_COMPARE(spy.count(), 2); // clazy:exclude=qstring-allocations
-			readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
-			QCOMPARE(readerInfos.count(), 1);
 		}
 
 

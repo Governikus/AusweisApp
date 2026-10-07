@@ -1,11 +1,14 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "PortFile.h"
 
 #include <QDir>
+#include <QLoggingCategory>
 #include <QStringBuilder>
+
+Q_DECLARE_LOGGING_CATEGORY(network)
 
 using namespace governikus;
 
@@ -63,4 +66,39 @@ QFileInfoList PortFile::getAllPortFiles()
 	tmpPath.setFilter(QDir::Files);
 	tmpPath.setNameFilters(QStringList({QCoreApplication::applicationName() + QStringLiteral(".*.port")}));
 	return tmpPath.entryInfoList();
+}
+
+
+QList<quint16> PortFile::readAllPortFiles()
+{
+	QList<quint16> ports;
+
+	const auto& portFiles = getAllPortFiles();
+	for (const auto& portFile : portFiles)
+	{
+		const auto& filename = portFile.absoluteFilePath();
+		const auto port = readPortFile(filename);
+
+		if (port < 1)
+		{
+			qCWarning(network) << "Ignore invalid port file:" << filename;
+			continue;
+		}
+
+		ports << port;
+	}
+
+	return ports;
+}
+
+
+quint16 PortFile::readPortFile(const QString& pFile)
+{
+	QFile portfile(pFile);
+	if (portfile.exists() && portfile.open(QIODevice::ReadOnly | QIODevice::Unbuffered))
+	{
+		return static_cast<quint16>(portfile.readAll().toInt());
+	}
+
+	return 0;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
 pragma Singleton
@@ -64,6 +64,16 @@ QtObject {
 		}
 		positionViewAtItem(pItem, pParent.parent, pPositionItemAtMiddle);
 	}
+	function resolveA11yDescription(pName, pDescription) {
+		return Qt.platform.os === "osx" ? "" : pDescription;
+	}
+	function resolveA11yName(pName, pDescription) {
+		if (Qt.platform.os !== "osx" || pDescription === "") {
+			return pName;
+		}
+
+		return pName + (pName.endsWith(".") ? " " : ", ") + pDescription;
+	}
 	function scrollPageDownOnGFlickable(pItem) {
 		let gflickable = findGFlickable(pItem);
 		if (gflickable) {
@@ -84,6 +94,9 @@ QtObject {
 			pArray[j] = x;
 		}
 		return pArray;
+	}
+	function splitCharacters(pString) {
+		return pString.split("").join(" ");
 	}
 	function useSpecialAppleTabRole(pRole) {
 		if ((Qt.platform.os === "osx" || Qt.platform.os === "ios") && !ApplicationModel.screenReaderRunning)

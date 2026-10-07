@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "BuildHelper.h"
@@ -85,12 +85,6 @@ QString BuildHelper::getPackageName()
 }
 
 
-QByteArrayList BuildHelper::getAppCertificates()
-{
-	return getAppCertificates(getPackageName());
-}
-
-
 QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 {
 	const int flags = 0x00000040; // GET_SIGNATURES
@@ -169,44 +163,14 @@ QList<std::pair<QLatin1String, QString>> BuildHelper::getInformationHeader()
 #ifdef Q_OS_ANDROID
 	add(QT_TR_NOOP("Device"), DeviceInfo::getPrettyInfo());
 	add(QT_TR_NOOP("VersionCode"), QString::number(getVersionCode()));
-	add(QT_TR_NOOP("Certificate"), getEnumName(getCertificateType()));
 #else
-	add(QT_TR_NOOP("Device"), DeviceInfo::getName());
+	add(QT_TR_NOOP("Device"), DeviceInfo::getDeviceName());
 #endif
 
 	add(QT_TR_NOOP("Qt Version"), QString::fromLatin1(qVersion()));
 	add(QT_TR_NOOP("OpenSSL Version"), QString::fromLatin1(OpenSSL_version(OPENSSL_VERSION)));
 
 	return data;
-}
-
-
-CertificateType BuildHelper::fetchCertificateType()
-{
-#ifdef Q_OS_ANDROID
-	const QByteArrayList certificates = getAppCertificates();
-	for (const auto& cert : certificates)
-	{
-		const auto& hash = QCryptographicHash::hash(cert, QCryptographicHash::Sha256).toHex();
-		if (hash == QByteArrayLiteral("b02ac76b50a497ae810aeac22598187b3d4290277d0851a7fa8e1aea5a979870"))
-		{
-			return CertificateType::PRODUCTION;
-		}
-		else if (hash == QByteArrayLiteral("f4a4d85a22103ebb5f4d35aede5117f40e591ab5ddf43df39c953d08e3895138"))
-		{
-			return CertificateType::DEVELOPER;
-		}
-	}
-#endif
-
-	return CertificateType::UNKNOWN;
-}
-
-
-CertificateType BuildHelper::getCertificateType()
-{
-	static const CertificateType cert = fetchCertificateType();
-	return cert;
 }
 
 

@@ -1,27 +1,22 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #pragma once
 
+#include "paos/element/Eac1InputType.h"
+#include "paos/element/ElementParser.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
-#include "paos/retrieve/PaosParser.h"
 
-#include <memory>
 
 namespace governikus
 {
 
 class DidAuthenticateEac1Parser
-	: public PaosParser
 {
-	public:
-		DidAuthenticateEac1Parser();
-
-	protected:
-		PaosMessage* parseMessage() override;
-
 	private:
+		const QSharedPointer<ElementParser> mParser;
+
 		Eac1InputType parseEac1InputType();
 		void parseCertificateDescription(Eac1InputType& pEac1, QString& pCertificateDescription);
 		void parseRequiredCHAT(Eac1InputType& pEac1, QString& pRequiredCHAT);
@@ -31,8 +26,10 @@ class DidAuthenticateEac1Parser
 		void parseCertificate(Eac1InputType& pEac1);
 		void parseAcceptedEidType(Eac1InputType& pEac1);
 
-	private:
-		std::unique_ptr<DIDAuthenticateEAC1> mDidAuthenticateEac1;
+	public:
+		explicit DidAuthenticateEac1Parser(const QSharedPointer<ElementParser>& pParser);
+
+		[[nodiscard]] std::unique_ptr<DIDAuthenticateEAC1> parse();
 };
 
 } // namespace governikus

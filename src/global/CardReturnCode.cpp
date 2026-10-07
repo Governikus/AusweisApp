@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2014-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2026 Governikus Service GmbH, Germany
  */
 
 #include "CardReturnCode.h"
 
 #include "moc_CardReturnCode.cpp"
+
 
 using namespace governikus;
 
@@ -14,8 +15,6 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 	switch (pCode)
 	{
 		case CardReturnCode::OK:
-		case CardReturnCode::OK_PUK:
-		case CardReturnCode::OK_CAN:
 			return GlobalStatus::Code::No_Error;
 
 		case CardReturnCode::UNDEFINED:
@@ -44,53 +43,8 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 		case CardReturnCode::INPUT_TIME_OUT:
 			return GlobalStatus::Code::Card_Input_TimeOut;
 
-		case CardReturnCode::INVALID_PASSWORD:
-		case CardReturnCode::INVALID_PIN:
-		case CardReturnCode::INVALID_PIN_2:
-		case CardReturnCode::INVALID_PIN_3:
-			return GlobalStatus::Code::Card_Invalid_Pin;
-
-		case CardReturnCode::INVALID_CAN:
-			return GlobalStatus::Code::Card_Invalid_Can;
-
-		case CardReturnCode::INVALID_PUK:
-			return GlobalStatus::Code::Card_Invalid_Puk;
-
 		case CardReturnCode::PIN_NOT_BLOCKED:
 			return GlobalStatus::Code::Card_Pin_Not_Blocked;
-	}
-
-	Q_UNREACHABLE();
-}
-
-
-bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
-{
-	switch (pCode)
-	{
-		case CardReturnCode::INVALID_CAN:
-		case CardReturnCode::INVALID_PASSWORD:
-		case CardReturnCode::INVALID_PIN:
-		case CardReturnCode::INVALID_PIN_2:
-		case CardReturnCode::INVALID_PIN_3:
-		case CardReturnCode::INVALID_PUK:
-		case CardReturnCode::PIN_NOT_BLOCKED:
-			return true;
-
-		case CardReturnCode::UNDEFINED:
-		case CardReturnCode::RESPONSE_EMPTY:
-		case CardReturnCode::CARD_NOT_FOUND:
-		case CardReturnCode::UNKNOWN:
-		case CardReturnCode::COMMAND_FAILED:
-		case CardReturnCode::PROTOCOL_ERROR:
-		case CardReturnCode::WRONG_LENGTH:
-		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
-		case CardReturnCode::OK:
-		case CardReturnCode::OK_PUK:
-		case CardReturnCode::OK_CAN:
-		case CardReturnCode::CANCELLATION_BY_USER:
-		case CardReturnCode::INPUT_TIME_OUT:
-			return false;
 	}
 
 	Q_UNREACHABLE();

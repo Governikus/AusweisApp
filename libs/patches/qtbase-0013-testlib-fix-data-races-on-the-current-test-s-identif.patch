@@ -1,0 +1,261 @@
+From 86476208265f2556623e069e1ad909b6f6ae9c29 Mon Sep 17 00:00:00 2001
+From: David Faure <david.faure@kdab.com>
+Date: Fri, 17 Jul 2026 15:53:23 +0200
+Subject: testlib: fix data races on the current test's identifiers
+
+qDebug() and friends reach the loggers from whatever thread called them,
+so generateTestIdentifier() and QXmlTestLogger::addMessage() read the
+current test function and data tags while the main thread moves on to
+the next row. Those strings don't outlive the test function either:
+currentTestFunc points into a QByteArray local to invokeTest(), and the
+QTestData rows belong to a QTestTable local to it. So a logging thread
+could read freed memory, or a pointer that turned null between the check
+and the dereference.
+
+Locking the accessors doesn't help: they hand out a raw const char* that
+the caller still uses after unlocking. Keep our own copies of the four
+strings instead, refreshed by the main thread whenever the identifiers
+change, and hand them out only under a mutex, via
+QTestResult::IdentifierLocker.
+
+Fixes the races TSan reports in tst_http2::goaway().
+
+Task-number: QTBUG-141988
+Pick-to: 6.12 6.11 6.8
+Change-Id: I3a1d97b5b7169daac8191063f29c407ddda03eac
+Reviewed-by: Marc Mutz <marc.mutz@qt.io>
+(cherry picked from commit 685c04f14e88b0659e4a65682bb58f2be34b3a27)
+---
+ src/testlib/qabstracttestlogger.cpp | 14 ++++--
+ src/testlib/qtestresult.cpp         | 71 +++++++++++++++++++++++++++++
+ src/testlib/qtestresult_p.h         | 18 ++++++++
+ src/testlib/qxmltestlogger.cpp      | 25 ++++++----
+ 4 files changed, 115 insertions(+), 13 deletions(-)
+
+diff --git x/qtbase/src/testlib/qabstracttestlogger.cpp y/qtbase/src/testlib/qabstracttestlogger.cpp
+index d18786c5a999f4d2399eba8ba32eaf8f6cb5aebd..68966e97b35c307c1f3adc957c8f6378e6c35b91 100644
+--- x/qtbase/src/testlib/qabstracttestlogger.cpp
++++ y/qtbase/src/testlib/qabstracttestlogger.cpp
+@@ -449,14 +449,20 @@ namespace QTestPrivate
+ 
+ void generateTestIdentifier(QTestCharBuffer *identifier, int parts)
+ {
+-    const char *testObject = parts & TestObject ? QTestResult::currentTestObjectName() : "";
+-    const char *testFunction = parts & TestFunction ? (QTestResult::currentTestFunction() ? QTestResult::currentTestFunction() : "UnknownTestFunc") : "";
++    // We may run on any thread, while the main thread moves on to the next data row or test
++    // function. Hold the lock until we're done copying the strings.
++    const QTestResult::IdentifierLocker locker;
++
++    const char *function = locker.testFunction() ? locker.testFunction() : "UnknownTestFunc";
++    const char *testObject = parts & TestObject ? locker.objectName() : "";
++    const char *testFunction = parts & TestFunction ? function : "";
+     const char *objectFunctionFiller = parts & TestObject && parts & (TestFunction | TestDataTag) ? "::" : "";
+     const char *testFuctionStart = parts & TestFunction ? "(" : "";
+     const char *testFuctionEnd = parts & TestFunction ? ")" : "";
+ 
+-    const char *dataTag = (parts & TestDataTag) && QTestResult::currentDataTag() ? QTestResult::currentDataTag() : "";
+-    const char *globalDataTag = (parts & TestDataTag) && QTestResult::currentGlobalDataTag() ? QTestResult::currentGlobalDataTag() : "";
++    const char *dataTag = (parts & TestDataTag) && locker.dataTag() ? locker.dataTag() : "";
++    const char *globalDataTag =
++            (parts & TestDataTag) && locker.globalDataTag() ? locker.globalDataTag() : "";
+     const char *tagFiller = (dataTag[0] && globalDataTag[0]) ? ":" : "";
+ 
+     QTest::qt_asprintf(identifier, "%s%s%s%s%s%s%s%s",
+diff --git x/qtbase/src/testlib/qtestresult.cpp y/qtbase/src/testlib/qtestresult.cpp
+index c88aeacce7fe9a7736a33fed60699000ebd96864..07eaf428b9443eee4b129a40b1c8ccb8127e90d3 100644
+--- x/qtbase/src/testlib/qtestresult.cpp
++++ y/qtbase/src/testlib/qtestresult.cpp
+@@ -3,6 +3,7 @@
+ 
+ #include <QtTest/private/qtestresult_p.h>
+ #include <QtCore/qglobal.h>
++#include <QtCore/qmutex.h>
+ #include <QtCore/qstringview.h>
+ 
+ #include <QtTest/private/qtestlog_p.h>
+@@ -66,6 +67,41 @@ namespace QTest
+ 
+     static const char *expectFailComment = nullptr;
+     static int expectFailMode = 0;
++
++    // The pointers above belong to the main thread, and the strings they point at don't
++    // outlive the test function: currentTestFunc points into a QByteArray local to
++    // invokeTest(), and the QTestData rows are owned by a QTestTable local to it. Loggers,
++    // however, run on whatever thread called qDebug(), so they must not read them. They get
++    // these copies instead, which testlib owns and only hands out under identifierMutex.
++    // See QTestResult::IdentifierLocker.
++    Q_CONSTINIT static QBasicMutex identifierMutex;
++    static char *identifierObjectName = nullptr;
++    static char *identifierTestFunc = nullptr;
++    static char *identifierDataTag = nullptr;
++    static char *identifierGlobalDataTag = nullptr;
++
++    static void storeIdentifierString(char *&dest, const char *src)
++    {
++        delete[] std::exchange(dest, src ? qstrdup(src) : nullptr);
++    }
++
++    // Call from the main thread after changing any of the above. Must not be called with
++    // identifierMutex held.
++    static void updateIdentifier()
++    {
++        // Read before locking, through the accessors: the data belongs to this thread, and
++        // they are where absent names are turned into whatever the loggers expect.
++        const char *objectName = QTestResult::currentTestObjectName();
++        const char *testFunc = QTestResult::currentTestFunction();
++        const char *dataTag = QTestResult::currentDataTag();
++        const char *globalDataTag = QTestResult::currentGlobalDataTag();
++
++        const QMutexLocker locker(&identifierMutex);
++        storeIdentifierString(identifierObjectName, objectName);
++        storeIdentifierString(identifierTestFunc, testFunc);
++        storeIdentifierString(identifierDataTag, dataTag);
++        storeIdentifierString(identifierGlobalDataTag, globalDataTag);
++    }
+ }
+ 
+ /*!
+@@ -74,12 +110,43 @@ namespace QTest
+     \internal
+ */
+ 
++QTestResult::IdentifierLocker::IdentifierLocker()
++{
++    QTest::identifierMutex.lock();
++}
++
++QTestResult::IdentifierLocker::~IdentifierLocker()
++{
++    QTest::identifierMutex.unlock();
++}
++
++const char *QTestResult::IdentifierLocker::objectName() const
++{
++    return QTest::identifierObjectName;
++}
++
++const char *QTestResult::IdentifierLocker::testFunction() const
++{
++    return QTest::identifierTestFunc;
++}
++
++const char *QTestResult::IdentifierLocker::dataTag() const
++{
++    return QTest::identifierDataTag;
++}
++
++const char *QTestResult::IdentifierLocker::globalDataTag() const
++{
++    return QTest::identifierGlobalDataTag;
++}
++
+ void QTestResult::reset()
+ {
+     QTest::currentTestData = nullptr;
+     QTest::currentGlobalTestData = nullptr;
+     QTest::currentTestFunc = nullptr;
+     QTest::currentTestObjectName = nullptr;
++    QTest::updateIdentifier();
+     QTest::resetFailed();
+ 
+     QTest::expectFailComment = nullptr;
+@@ -112,11 +179,13 @@ QTestData *QTestResult::currentTestData()
+ void QTestResult::setCurrentGlobalTestData(QTestData *data)
+ {
+     QTest::currentGlobalTestData = data;
++    QTest::updateIdentifier();
+ }
+ 
+ void QTestResult::setCurrentTestData(QTestData *data)
+ {
+     QTest::currentTestData = data;
++    QTest::updateIdentifier();
+     QTest::resetFailed();
+     if (data)
+         QTestLog::enterTestData(data);
+@@ -125,6 +194,7 @@ void QTestResult::setCurrentTestData(QTestData *data)
+ void QTestResult::setCurrentTestFunction(const char *func)
+ {
+     QTest::currentTestFunc = func;
++    QTest::updateIdentifier();
+     QTest::resetFailed();
+     if (func)
+         QTestLog::enterTestFunction(func);
+@@ -619,6 +689,7 @@ void QTestResult::addSkip(const char *message, const char *file, int line)
+ void QTestResult::setCurrentTestObject(const char *name)
+ {
+     QTest::currentTestObjectName = name;
++    QTest::updateIdentifier();
+ }
+ 
+ const char *QTestResult::currentTestObjectName()
+diff --git x/qtbase/src/testlib/qtestresult_p.h y/qtbase/src/testlib/qtestresult_p.h
+index 96c52bb268f01e3f8c4320e681d69c411b96aacb..db33368aaad47d86e964a0dfa51b3ad3fb32c385 100644
+--- x/qtbase/src/testlib/qtestresult_p.h
++++ y/qtbase/src/testlib/qtestresult_p.h
+@@ -26,6 +26,24 @@ class QTestData;
+ class Q_TESTLIB_EXPORT QTestResult
+ {
+ public:
++    // Locks the parts of the current test's identifier for reading, from any thread. The
++    // strings below are only valid while the locker lives, so keep the scope short. Never
++    // log while holding one: the loggers take this lock too.
++    class IdentifierLocker
++    {
++    public:
++        Q_NODISCARD_CTOR IdentifierLocker();
++        ~IdentifierLocker();
++
++        const char *objectName() const;
++        const char *testFunction() const;
++        const char *dataTag() const;
++        const char *globalDataTag() const;
++
++    private:
++        Q_DISABLE_COPY_MOVE(IdentifierLocker)
++    };
++
+     static const char *currentTestObjectName();
+     static bool currentTestFailed();
+     static QTestData *currentTestData();
+diff --git x/qtbase/src/testlib/qxmltestlogger.cpp y/qtbase/src/testlib/qxmltestlogger.cpp
+index 27da73ba52da41a43dda8baff77ecef0c38c7550..2c96f54765c53444d8b06cdfee81c32ed0021a84 100644
+--- x/qtbase/src/testlib/qxmltestlogger.cpp
++++ y/qtbase/src/testlib/qxmltestlogger.cpp
+@@ -272,20 +272,27 @@ void QXmlTestLogger::addMessage(MessageTypes type, const QString &message,
+                                 const char *file, int line)
+ {
+     QTestCharBuffer buf;
+-    const char *tag = QTestResult::currentDataTag();
+-    const char *gtag = QTestResult::currentGlobalDataTag();
+-    const char *filler = (tag && gtag) ? ":" : "";
+-    const bool notag = QTest::isEmpty(tag) && QTest::isEmpty(gtag);
+-
+     QTestCharBuffer quotedFile;
+     QTestCharBuffer cdataGtag;
+     QTestCharBuffer cdataTag;
+     QTestCharBuffer cdataDescription;
+ 
+-    if (xmlQuote(&quotedFile, file)
+-        && xmlCdata(&cdataGtag, gtag)
+-        && xmlCdata(&cdataTag, tag)
+-        && xmlCdata(&cdataDescription, message.toUtf8().constData())) {
++    const char *filler;
++    bool notag;
++    bool quoted;
++    {
++        // We may run on any thread, so copy the tags out while holding the lock.
++        const QTestResult::IdentifierLocker locker;
++        const char *tag = locker.dataTag();
++        const char *gtag = locker.globalDataTag();
++        filler = (tag && gtag) ? ":" : "";
++        notag = QTest::isEmpty(tag) && QTest::isEmpty(gtag);
++        quoted = xmlQuote(&quotedFile, file) && xmlCdata(&cdataGtag, gtag)
++                && xmlCdata(&cdataTag, tag);
++    }
++    quoted = quoted && xmlCdata(&cdataDescription, message.toUtf8().constData());
++
++    if (quoted) {
+         QTest::qt_asprintf(&buf,
+                            QTest::messageFormatString(message.isEmpty(), notag),
+                            QTest::xmlMessageType2String(type),

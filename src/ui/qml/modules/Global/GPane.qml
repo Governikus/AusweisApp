@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 import QtQuick
@@ -27,7 +27,8 @@ GPaneBackground {
 	implicitHeight: containerCol.implicitHeight
 	implicitWidth: containerCol.implicitWidth
 
-	onFocusChanged: if (focus)
+	Accessible.onShowOnScreenAction: Utils.positionViewAtItem(this)
+	onActiveFocusChanged: if (activeFocus)
 		Utils.positionViewAtItem(this)
 
 	ColumnLayout {

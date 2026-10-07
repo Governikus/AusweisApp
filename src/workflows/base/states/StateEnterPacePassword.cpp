@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2026 Governikus Service GmbH, Germany
  */
 
 #include "StateEnterPacePassword.h"
@@ -26,18 +26,16 @@ void StateEnterPacePassword::run()
 
 void StateEnterPacePassword::onEntry(QEvent* pEvent)
 {
-	switch (getContext()->getLastPaceResult())
+	const auto& paceOutput = getContext()->getPaceOutput();
+	if (paceOutput.isOk() || paceOutput.isUndefined())
 	{
-		case CardReturnCode::OK:
-		case CardReturnCode::OK_PUK:
-		case CardReturnCode::OK_CAN:
-			stopNfcScanIfNecessary();
-			break;
-
-		default:
-			const auto* volatileSettings = Env::getSingleton<VolatileSettings>();
-			//: IOS The current session was interrupted because of a wrong password.
-			stopNfcScanIfNecessary(volatileSettings->isUsedAsSDK() ? volatileSettings->getMessages().getSessionFailed() : tr("Access denied."));
+		stopNfcScanIfNecessary();
+	}
+	else
+	{
+		const auto* volatileSettings = Env::getSingleton<VolatileSettings>();
+		//: IOS The current session was interrupted because of a wrong password.
+		stopNfcScanIfNecessary(volatileSettings->isUsedAsSDK() ? volatileSettings->getMessages().getSessionFailed() : tr("Access denied."));
 	}
 
 	AbstractState::onEntry(pEvent);

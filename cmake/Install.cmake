@@ -3,7 +3,7 @@
 # It will be included by ./src/CMakeLists.txt
 ################################################
 
-if(MAC)
+if(MACOS)
 	set(DEFAULT_FILE_DESTINATION ${PROJECT_NAME}.app/Contents/Resources)
 else()
 	set(DEFAULT_FILE_DESTINATION .)
@@ -16,105 +16,56 @@ if(CMAKE_PREFIX_PATH)
 	set(TOOLCHAIN_LIB_PATH ${TOOLCHAIN_PATH}/lib)
 endif()
 
-
-set(SEARCH_ADDITIONAL_DIRS "
-			set(CMAKE_MODULE_PATH \"${CMAKE_MODULE_PATH}\")
-			include(Helper)
-			DIRLIST_OF_FILES(ADDITIONAL_DIRS ${CMAKE_BINARY_DIR}/src/*${CMAKE_SHARED_LIBRARY_SUFFIX})
-")
-
-set(DEPENDENCY_CHECK "
-	function(gp_resolved_file_type_override file type)
-		message(STATUS \"Collect dependency: \${file}\")
-
-		if(file MATCHES \"libstdc.+\.dll\"
-			OR file MATCHES \"libwinpthread-.+\.dll\"
-			OR file MATCHES \"libgcc_s_.+\.dll\"
-			OR file MATCHES \"libssp-.+\.dll\")
-
-			get_filename_component(path \"${CMAKE_CXX_COMPILER}\" DIRECTORY)
-			get_filename_component(pathDest \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}\" DIRECTORY)
-			if(NOT file MATCHES \"\${path}\" AND NOT file MATCHES \"\${pathDest}\")
-				message(FATAL_ERROR \"Wrong source path detected: \${file} | Should be: \${path} or \${pathDest}\")
+function(deploy_shared_app_libraries _destination)
+	# This is for internal use only! It is not recommended to split the AusweisApp into multiple libs!
+	if(BUILD_SHARED_LIBS)
+		target_get_linked_libraries(AusweisAppBinary libraries)
+		foreach(libTarget ${libraries})
+			get_target_property(target_type "${libTarget}" TYPE)
+			if(${target_type} STREQUAL "SHARED_LIBRARY")
+				install(FILES $<TARGET_FILE:${libTarget}> DESTINATION ${_destination} COMPONENT Application)
 			endif()
-
-		endif()
-	endfunction()
-")
-
-
-# qt qml plugins (fixup_bundle needs to know this to fetch their dependencies)
-if((WIN32 OR MAC) AND TARGET ${Qt}::Qml)
-	set(modules QtQuick QtQml Qt QtCore)
-
-	foreach(entry ${modules})
-		set(_lib_dir ${QT_INSTALL_ARCHDATA}/qml/${entry})
-		file(GLOB_RECURSE _libs "${_lib_dir}/*.dll" "${_lib_dir}/*.dylib")
-		list(APPEND LIBS ${_libs})
-		install(DIRECTORY ${_lib_dir} DESTINATION ${DEFAULT_FILE_DESTINATION}/qml COMPONENT Runtime PATTERN "*.dylib" EXCLUDE PATTERN "*test*" EXCLUDE PATTERN "*.dSYM" EXCLUDE)
-	endforeach()
-endif()
+		endforeach()
+	endif()
+endfunction()
 
 
 if(WIN32)
 	if(MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
 		set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
-		set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
 		if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+			set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
 			set(CMAKE_INSTALL_DEBUG_LIBRARIES TRUE)
+			set(CMAKE_INSTALL_DEBUG_LIBRARIES_ONLY TRUE)
 		endif()
 		include(InstallRequiredSystemLibraries)
+
+		set(COMPILER_RUNTIME --no-compiler-runtime)
+	else()
+		set(COMPILER_RUNTIME --compiler-runtime)
 	endif()
-
-	if(TARGET ${Qt}::Qml)
-		FETCH_TARGET_LOCATION(libQuickControls2 "${Qt}::QuickControls2")
-		install(FILES ${libQuickControls2} DESTINATION . COMPONENT Runtime)
-		list(APPEND LIBS ${libQuickControls2})
-
-		FETCH_TARGET_LOCATION(libQmlCore "${Qt}::QmlCore")
-		install(FILES ${libQmlCore} DESTINATION . COMPONENT Runtime)
-		list(APPEND LIBS ${libQmlCore})
-
-		if(TARGET ${Qt}::QmlWorkerScript)
-			FETCH_TARGET_LOCATION(libQmlWorkerScript "${Qt}::QmlWorkerScript")
-			install(FILES ${libQmlWorkerScript} DESTINATION . COMPONENT Runtime)
-		endif()
-
-		if(TARGET ${Qt}::Gui_EGL AND TARGET ${Qt}::Gui_GLESv2)
-			FETCH_TARGET_LOCATION(libEgl "${Qt}::Gui_EGL")
-			FETCH_TARGET_LOCATION(libGLES "${Qt}::Gui_GLESv2")
-			install(FILES ${libEgl} DESTINATION . COMPONENT Runtime)
-			install(FILES ${libGLES} DESTINATION . COMPONENT Runtime)
-		endif()
-	endif()
-
-	FETCH_TARGET_LOCATION(openSslBackend "${Qt}::QTlsBackendOpenSSLPlugin")
-	install(FILES ${openSslBackend} DESTINATION tls COMPONENT Runtime)
-	list(APPEND LIBS ${openSslBackend})
-
-	FETCH_TARGET_LOCATION(pluginSvg "${Qt}::QSvgPlugin")
-	FETCH_TARGET_LOCATION(pluginJpeg "${Qt}::QJpegPlugin")
-	FETCH_TARGET_LOCATION(platformWin "${Qt}::QWindowsIntegrationPlugin")
-	FETCH_TARGET_LOCATION(styleWin "${Qt}::QModernWindowsStylePlugin")
 
 	install(TARGETS AusweisAppBinary DESTINATION . COMPONENT Application)
-	install(FILES ${pluginSvg} DESTINATION imageformats COMPONENT Runtime)
-	install(FILES ${pluginJpeg} DESTINATION imageformats COMPONENT Runtime)
-	install(FILES ${platformWin} DESTINATION platforms COMPONENT Runtime)
-	install(FILES ${styleWin} DESTINATION styles COMPONENT Runtime)
-	list(APPEND LIBS ${pluginSvg} ${pluginJpeg} ${platformWin} ${styleWin})
 
+	if(TARGET ${Qt}::Qml)
+		qt_generate_deploy_qml_app_script(
+			TARGET AusweisAppBinary
+			EXCLUDE_PLUGINS qcertonlybackend
+			OUTPUT_SCRIPT deploy_script
+			DEPLOY_TOOL_OPTIONS --openssl-root "${TOOLCHAIN_PATH}" --no-system-d3d-compiler --no-system-dxc-compiler --no-translations ${COMPILER_RUNTIME}
+		)
+		install(CODE "set(QT_DEPLOY_BIN_DIR .)")
+		install(SCRIPT ${deploy_script})
+	endif()
+
+	configure_file(${CMAKE_DIR}/SignFiles.cmake.in ${CMAKE_BINARY_DIR}/SignFiles.cmake @ONLY)
 	install(CODE
 		"
-		${DEPENDENCY_CHECK}
-		${SEARCH_ADDITIONAL_DIRS}
-		include(BundleUtilities)
-		FIXUP_BUNDLE(\"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}\" \"${LIBS}\" \"${TOOLCHAIN_BIN_PATH};\${ADDITIONAL_DIRS}\")
-		" COMPONENT Runtime)
+		execute_process(COMMAND \"${CMAKE_COMMAND}\" -DSIGN_EXT=*.exe -P \"${CMAKE_BINARY_DIR}/SignFiles.cmake\" WORKING_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${DEFAULT_FILE_DESTINATION}\")
+		" COMPONENT Application)
 
 
-
-elseif(MAC)
+elseif(MACOS)
 	set(MACOS_BUNDLE_MACOS_DIR ${DEFAULT_FILE_DESTINATION}/../MacOS)
 	set(MACOS_BUNDLE_PLUGINS_DIR ${DEFAULT_FILE_DESTINATION}/../PlugIns)
 	set(MACOS_BUNDLE_FRAMEWORKS_DIR ${DEFAULT_FILE_DESTINATION}/../Frameworks)
@@ -123,51 +74,38 @@ elseif(MAC)
 
 	install(TARGETS AusweisAppBinary BUNDLE DESTINATION . COMPONENT Application)
 	install(TARGETS AusweisAppAutostartHelper BUNDLE DESTINATION ${MACOS_BUNDLE_LOGIN_ITEMS_DIR} COMPONENT Application)
-
-	function(install_mac_plugins plugins)
-		foreach(plugin ${plugins})
-			get_target_property(pluginPath ${plugin} LOCATION)
-			get_filename_component(pluginDir ${pluginPath} DIRECTORY)
-			get_filename_component(pluginName ${pluginPath} NAME)
-			get_filename_component(pluginDirName ${pluginDir} NAME)
-
-			if(pluginDirName STREQUAL "platforms" AND NOT plugin STREQUAL "${Qt}::QCocoaIntegrationPlugin")
-				continue()
-			endif()
-
-			install(FILES ${pluginPath} DESTINATION ${MACOS_BUNDLE_PLUGINS_DIR}/${pluginDirName} COMPONENT Runtime)
-		endforeach()
-	endfunction(install_mac_plugins)
-
-	set(plugins ${Qt}::QCocoaIntegrationPlugin ${Qt}::QTlsBackendOpenSSLPlugin)
-	if(NOT INTEGRATED_SDK)
-		list(APPEND plugins ${Qt}::QTuioTouchPlugin ${Qt}::QSvgIconPlugin ${Qt}::QJpegPlugin ${Qt}::QSvgPlugin ${Qt}::QMacStylePlugin)
-	endif()
-	install_mac_plugins("${plugins}")
+	deploy_shared_app_libraries(${MACOS_BUNDLE_FRAMEWORKS_DIR})
 
 	if(TARGET ${Qt}::Qml)
-		foreach(entry QtQuick QtQuick.2 QtQml Qt QtCore)
-			set(_dir "${QT_INSTALL_ARCHDATA}/qml")
-			file(GLOB_RECURSE DYLIB "${_dir}/${entry}/*.dylib")
-			foreach(_lib ${DYLIB})
-				file(RELATIVE_PATH _lib_dest "${_dir}" "${_lib}")
-				if(NOT _lib_dest MATCHES "XmlListModel|LocalStorage|Shapes|test|dSYM") # not needed stuff
-					get_filename_component(_lib_dest_dir ${_lib_dest} DIRECTORY)
-					install(FILES ${_lib} DESTINATION ${MACOS_BUNDLE_RESOURCES_DIR}/qml/${_lib_dest_dir} COMPONENT Runtime)
-				endif()
-			endforeach()
-		endforeach()
+		set(DEPLOY_TOOL_OPTIONS "-hardened-runtime -timestamp \"-codesign=${CODE_SIGN_IDENTITY}\"")
+
+		qt_generate_deploy_script(
+			TARGET AusweisAppAutostartHelper
+			OUTPUT_SCRIPT deploy_script_helper
+			CONTENT "
+				qt_deploy_runtime_dependencies(
+					EXECUTABLE \"${MACOS_BUNDLE_LOGIN_ITEMS_DIR}/$<TARGET_FILE_NAME:AusweisAppAutostartHelper>.app\"
+					DEPLOY_TOOL_OPTIONS ${DEPLOY_TOOL_OPTIONS}
+					NO_PLUGINS
+				)
+			"
+		)
+		install(SCRIPT ${deploy_script_helper})
+
+		if(QT_VERSION VERSION_LESS "6.12.0")
+			set(MACOS_BUNDLE_POST_BUILD MACOS_BUNDLE_POST_BUILD)
+		else()
+			separate_arguments(DEPLOY_TOOL_OPTIONS NATIVE_COMMAND "${DEPLOY_TOOL_OPTIONS}")
+		endif()
+		qt_generate_deploy_qml_app_script(
+			TARGET AusweisAppBinary
+			${MACOS_BUNDLE_POST_BUILD}
+			DEPLOY_TOOL_OPTIONS ${DEPLOY_TOOL_OPTIONS}
+			OUTPUT_SCRIPT deploy_script
+		)
+		install(SCRIPT ${deploy_script})
 	endif()
 
-	install(CODE
-		"
-		${DEPENDENCY_CHECK}
-		${SEARCH_ADDITIONAL_DIRS}
-		file(GLOB_RECURSE QTPLUGINS \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${MACOS_BUNDLE_PLUGINS_DIR}/*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
-		file(GLOB_RECURSE QtQuickPLUGINS \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${MACOS_BUNDLE_RESOURCES_DIR}/*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
-		include(BundleUtilities)
-		FIXUP_BUNDLE(\"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${MACOS_BUNDLE_MACOS_DIR}/${PROJECT_NAME}\" \"\${QTPLUGINS};\${QtQuickPLUGINS}\" \"${TOOLCHAIN_LIB_PATH};\${ADDITIONAL_DIRS}\")
-		" COMPONENT Runtime)
 
 elseif(IOS)
 
@@ -202,64 +140,11 @@ elseif(UNIX)
 		install(FILES ${DOCS_DIR}/AusweisApp.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT Application)
 	endif()
 
-	# This is for internal use only! It is not recommended to split the AusweisApp into multiple libs!
-	if(BUILD_SHARED_LIBS)
-		target_get_linked_libraries(AusweisAppBinary libraries)
-		foreach(libTarget ${libraries})
-			get_target_property(target_type "${libTarget}" TYPE)
-			if(${target_type} STREQUAL "SHARED_LIBRARY" OR ${target_type} STREQUAL "EXECUTABLE")
-				install(FILES $<TARGET_FILE:${libTarget}> DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Application)
-			endif()
-		endforeach()
-	endif()
-endif()
-
-
-
-
-if(LINUX OR WIN32 OR MAC)
-	option(SELFPACKER "Compress executable with self packer like UPX")
-	if(SELFPACKER)
-		find_package(SelfPackers)
-		if(SELF_PACKER_FOR_EXECUTABLE)
-			message(STATUS "Using SelfPacker: ${SELF_PACKER_FOR_EXECUTABLE} ${SELF_PACKER_FOR_EXECUTABLE_FLAGS}")
-		else()
-			message(FATAL_ERROR "Cannot find self packer")
-		endif()
-
-		install(CODE
-			"
-			execute_process(COMMAND
-				${SELF_PACKER_FOR_EXECUTABLE} ${SELF_PACKER_FOR_EXECUTABLE_FLAGS} \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${DEFAULT_FILE_DESTINATION}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}\")
-			" COMPONENT Application)
-	endif()
+	deploy_shared_app_libraries(${CMAKE_INSTALL_LIBDIR})
 endif()
 
 
 if((NOT INTEGRATED_SDK OR CONTAINER_SDK) AND NOT ANDROID)
 	# resources file
 	install(FILES ${RCC} DESTINATION ${DEFAULT_FILE_DESTINATION} COMPONENT Runtime)
-endif()
-
-
-if(SIGNTOOL_CMD)
-	if(IOS)
-		set(SIGNTOOL_PARAMS "-s \"${XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY}\"")
-	endif()
-
-	configure_file(${CMAKE_DIR}/SignFiles.cmake.in ${CMAKE_BINARY_DIR}/SignFiles.cmake @ONLY)
-
-	if(MAC)
-		option(OSX_TIMESTAMP "Timestamp the application bundle" ON)
-
-		install(CODE
-			"
-			execute_process(COMMAND \"${CMAKE_COMMAND}\" -DOSX_TIMESTAMP=${OSX_TIMESTAMP} -P \"${CMAKE_BINARY_DIR}/SignFiles.cmake\" WORKING_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}\")
-			" COMPONENT Application)
-	elseif(WIN32)
-		install(CODE
-			"
-			execute_process(COMMAND \"${CMAKE_COMMAND}\" -DSIGN_EXT=*.exe -P \"${CMAKE_BINARY_DIR}/SignFiles.cmake\" WORKING_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${DEFAULT_FILE_DESTINATION}\")
-			" COMPONENT Application)
-	endif()
 endif()

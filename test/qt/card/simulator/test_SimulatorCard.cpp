@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2026 Governikus Service GmbH, Germany
  */
 
 
@@ -219,9 +219,8 @@ class test_SimulatorCard
 			const QByteArray certificateDescription(isAuthentication ? "CertificateDescription" : "");
 			const auto& output = card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, chat, certificateDescription);
 
-			QCOMPARE(output.getPaceReturnCode(), CardReturnCode::OK);
+			QCOMPARE(output.getReturnCode(), CardReturnCode::OK);
 			QCOMPARE(output.getStatusCodeMseSetAt(), StatusCode::SUCCESS);
-			QCOMPARE(output.getStatusMseSetAt(), QByteArray::fromHex("9000"));
 			QCOMPARE(output.getEfCardAccess(), fileSystem.getEfCardAccess());
 			QCOMPARE(output.getCarCurr(), QByteArray(isAuthentication ? "DETESTeID00005" : ""));
 			QCOMPARE(output.getCarPrev(), QByteArray());

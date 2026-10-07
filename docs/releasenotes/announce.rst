@@ -10,10 +10,11 @@ folgender Systeme und Funktionen eingestellt.
 - iOS 17
 
 
-Mit der Version 2.6.0 der AusweisApp werden die Unterstützung
+Mit der Version 2.6.0 der AusweisApp wurde die Unterstützung
 folgender Systeme und Funktionen eingestellt.
 
-- RSA als signature_algorithm
+- RSA-Signaturen mit PKCS#1 v1.5 in TLS (signature_algorithm)
+- DSA-Signaturen in TLS (signature_algorithm)
 
 
 Mit der Version 2.5.0 der AusweisApp wurde die Unterstützung

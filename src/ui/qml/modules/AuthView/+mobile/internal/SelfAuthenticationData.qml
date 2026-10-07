@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2026 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2026 Governikus Service GmbH, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -56,6 +56,7 @@ FlickableSectionPage {
 	GButton {
 		id: okButton
 
+		Accessible.id: "SelfAuthenticationData_okButton"
 		Layout.alignment: Qt.AlignHCenter
 		//: MOBILE
 		text: qsTr("Back to start page")
