@@ -847,9 +847,8 @@ endif()
 
 string(TIMESTAMP stamp "%Y-%m-%d")
 set(IDENTIFIER ${stamp})
-FIND_DVCS(${PROJECT_SOURCE_DIR}/..)
+GET_DVCS_INFO(${PROJECT_SOURCE_DIR}/..)
 if(DVCS_FOUND)
-	GET_DVCS_INFO()
 	list(APPEND LIBS_ID_SALT ${dvcs_branch})
 
 	if(DEFINED dvcs_phase)

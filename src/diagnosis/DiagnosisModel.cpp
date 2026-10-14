@@ -95,7 +95,13 @@ void DiagnosisModel::initGeneralSections()
 {
 	mAusweisAppSection.clear();
 	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
-				mAusweisAppSection << ContentItem(pKey, pValue);
+				if (pValue == QStringLiteral("governikus.com"))
+				{
+					return;
+				}
+				mAusweisAppSection << ContentItem(pKey,
+				pValue == QStringLiteral("Governikus GmbH & Co. KG")
+													? QStringLiteral("Governikus Service GmbH") : pValue);
 			});
 
 	//: DESKTOP

@@ -443,7 +443,7 @@ MOBILE</extracomment>
     </message>
     <message>
         <source>Organization Domain</source>
-        <translation>Organisation Homepage</translation>
+        <translation>Domäne der Organisation</translation>
     </message>
     <message>
         <source>System</source>
