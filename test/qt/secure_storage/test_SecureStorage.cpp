@@ -299,9 +299,9 @@ class test_SecureStorage
 
 			const auto& tlsSettings = secureStorage->getTlsConfig();
 #if OPENSSL_VERSION_NUMBER >= 0x30500000L
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 12);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 15);
 #else
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 9);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 12);
 #endif
 			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst(), QByteArray("rsa_pss_rsae_sha512"));
 			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("ecdsa_secp256r1_sha256"));
@@ -313,9 +313,9 @@ class test_SecureStorage
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 
 			const auto& tlsSettings = secureStorage->getTlsConfig(SecureStorage::TlsSuite::PSK);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 3);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst(), QByteArray("RSA+SHA512"));
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("RSA+SHA256"));
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 9);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst(), QByteArray("rsa_pss_rsae_sha512"));
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("rsa_pkcs1_sha256"));
 		}
 
 

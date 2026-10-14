@@ -2,6 +2,7 @@
  * Copyright (c) 2025-2026 Governikus Service GmbH, Germany
  */
 
+import QtQml
 import QtQuick.Controls
 
 import Governikus.Global
@@ -26,6 +27,6 @@ GCollapsible {
 
 		buttons: root.content.filter(child => child instanceof GRadioButton)
 
-		onButtonsChanged: buttons.forEach(button => button.ButtonGroup.group = this)
+		onButtonsChanged: Qt.callLater(() => buttons.forEach(button => button.ButtonGroup.group = this))
 	}
 }

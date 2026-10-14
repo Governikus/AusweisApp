@@ -138,6 +138,7 @@ endif()
 
 include(Tools)
 include(DVCS)
+GET_DVCS_INFO(${CMAKE_SOURCE_DIR})
 add_subdirectory(docs)
 
 include(Messages)

@@ -1,0 +1,36 @@
+From 2c140d45c766070cc8123ff89b3578801dae0807 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Mon, 12 Oct 2026 08:39:20 +0200
+Subject: a11y Android: Check for empty contentDescription to prevent crash
+
+getContentDescription() may return a null pointer object which then
+leads to a crash when calling toString on it:
+
+Exception java.lang.NullPointerException: Attempt to invoke virtual
+method 'java.lang.String java.lang.Object.toString()' on a null object reference
+  at org.qtproject.qt.android.QtAccessibilityDelegate.getNodeForVirtualViewId (QtAccessibilityDelegate.java:504)
+
+Fixes: QTBUG-151350
+Change-Id: I53fdb8cbeef0ce414862b6674dfd51fe7c3b2251
+---
+ .../org/qtproject/qt/android/QtAccessibilityDelegate.java   | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+index bd3fc79d4bbb653f75b08a26a27f04deaa481b4e..6aca89ad1bde7c12215342e9ad33afec5f260a30 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+@@ -501,9 +501,11 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+ 
+         // set only if valid, otherwise we return a node that is invalid and will crash when accessed
+         node.setSource(m_view, virtualViewId);
+-        node.setContentDescription(addLocaleSpan(virtualViewId, node.getContentDescription().toString()));
+ 
+-        if (TextUtils.isEmpty(node.getText()) && TextUtils.isEmpty(node.getContentDescription()))
++        CharSequence contentDescription = node.getContentDescription();
++        if (!TextUtils.isEmpty(contentDescription))
++            node.setContentDescription(addLocaleSpan(virtualViewId, contentDescription.toString()));
++        else if (TextUtils.isEmpty(node.getText()))
+             Log.w(TAG, "AccessibilityNodeInfo with empty contentDescription: " + virtualViewId);
+ 
+         int parentId = QtNativeAccessibility.parentId(virtualViewId);

@@ -37,7 +37,13 @@ void VersionInformationModel::init()
 	mData.clear();
 
 	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
-				mData += std::make_pair(pKey, pValue.contains(QStringLiteral("Governikus GmbH & Co. KG")) ? QStringLiteral("Governikus Service GmbH") : pValue);
+				if (pValue == QStringLiteral("governikus.com"))
+				{
+					return;
+				}
+				mData << std::make_pair(pKey,
+				pValue == QStringLiteral("Governikus GmbH & Co. KG")
+											? QStringLiteral("Governikus Service GmbH") : pValue);
 			});
 }
 

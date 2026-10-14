@@ -294,7 +294,7 @@ class test_ProviderConfiguration
 
 		void testInternalIds()
 		{
-			const QStringList internalIds = {};
+			const QStringList internalIds = {"pinResetService"_L1};
 			const auto& providerConfiguration = Env::getSingleton<ProviderConfiguration>();
 
 			const ProviderConfigurationInfo empty;

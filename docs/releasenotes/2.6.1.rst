@@ -1,0 +1,16 @@
+AusweisApp 2.6.1
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 14. Oktober 2026
+
+
+Anwender
+""""""""
+- Verhinderung eines möglichen Absturzes bei der Nutzung von TalkBack unter Android.
+
+
+Entwickler
+""""""""""
+- Temporäre Reaktivierung von RSA-Signaturen mit PKCS#1 v1.5 in TLS.
+
+- Behebung eines Fehlers bei der Erkennung von Beta-Releases bei Builds aus Source-Tarballs.
