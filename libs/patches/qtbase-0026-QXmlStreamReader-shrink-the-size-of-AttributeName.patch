@@ -1,0 +1,76 @@
+From 215cadc7761780b9ce22bdcd9e8913465e1efbd6 Mon Sep 17 00:00:00 2001
+From: Marc Mutz <marc.mutz@qt.io>
+Date: Wed, 27 May 2026 16:30:01 +0200
+Subject: QXmlStreamReader: shrink the size of AttributeName
+
+When we introduced this class, we stored all the fields that the code
+from which this was derived compared, too. But we can do better...
+
+Observe that in the nsProcessing case, the qualifiedName member was
+always set to {}. So we can remove it.
+
+Likewise, in the !nsProcessing case, we were storing name() and
+qualifiedName(), but 'name' is just the suffix of 'qualifiedName', so
+we only need to store 'qualifiedName', not 'name'.
+
+So reduce the number of fields in AttributeName by one, by storing
+qualifiedName() in 'name', which reduces the memory requirements of
+the QDuplicateTracker by ~30%, and therefore increases the effective
+dcache size.
+
+Observe that nsProcessing is constant for the document, certainly for
+the attributes of a single element, which this code is concerned about.
+In particular, we never mix name() and qualifiedName() when comparing
+AttributeName objects.
+
+Picking to all active branches, as this author considers this a
+salient part of the fix for QTBUG-147009: we don't want to waste more
+resources than necessary in the common case of just a handful of
+attributes. The only reason why this is a separate commit is to have
+more space to explain the change in the commit message.
+
+Task-number: QTBUG-147009
+Pick-to: 6.12 6.11 6.8 6.5 5.15
+Change-Id: Id4169bf645208d2ef0a1a14c028d2e338413fb68
+Reviewed-by: Edward Welbourne <edward.welbourne@qt.io>
+Reviewed-by: Magdalena Stojek <magdalena.stojek@qt.io>
+(cherry picked from commit 1bbc829c8cffb3adeeaabf31f24e8d00037287e5)
+---
+ src/corelib/serialization/qxmlstream.cpp | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git x/qtbase/src/corelib/serialization/qxmlstream.cpp y/qtbase/src/corelib/serialization/qxmlstream.cpp
+index 40b082bf322d170fcb4e75aaa98ec8ceeca72313..f772d705540d72a0e08e5d344c327ac5166dad29 100644
+--- x/qtbase/src/corelib/serialization/qxmlstream.cpp
++++ y/qtbase/src/corelib/serialization/qxmlstream.cpp
+@@ -1784,28 +1784,25 @@ XmlStringRef QXmlStreamReaderPrivate::namespaceForPrefix(QStringView prefix)
+ struct AttributeName
+ {
+     QStringView name;
+-    QStringView qualifiedName;
+     QStringView namespaceUri;
+ 
+     static AttributeName fromXmlAttribute(const QXmlStreamAttribute &a, bool nsProcessing)
+     {
+         if (nsProcessing)
+-            return {a.name(), {}, a.namespaceUri()};
++            return {a.name(), a.namespaceUri()};
+         else
+-            return {a.name(), a.qualifiedName(), a.namespaceUri()};
++            return {a.qualifiedName(), a.namespaceUri()};
+     }
+ 
+     friend bool operator==(const AttributeName &lhs, const AttributeName &rhs) noexcept
+     {
+         return lhs.name == rhs.name
+-            && lhs.qualifiedName == rhs.qualifiedName
+             && lhs.namespaceUri == rhs.namespaceUri;
+     }
+     friend size_t qHash(const AttributeName &key, size_t seed = 0) noexcept
+     {
+         return qHashMulti(seed,
+                           key.name,
+-                          key.qualifiedName,
+                           key.namespaceUri);
+     }
+ };

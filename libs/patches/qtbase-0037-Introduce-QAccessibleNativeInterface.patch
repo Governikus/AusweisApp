@@ -1,4 +1,4 @@
-From 35b2e3e8bd8c82830195516853fb23816d05697e Mon Sep 17 00:00:00 2001
+From 9695359ddc0158b05c9517856b3570b5d64ce5eb Mon Sep 17 00:00:00 2001
 From: Julian Greilich <j.greilich@gmx.de>
 Date: Wed, 3 Jun 2026 00:10:50 +0200
 Subject: Introduce QAccessibleNativeInterface

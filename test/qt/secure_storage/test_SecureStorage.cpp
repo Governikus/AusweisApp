@@ -71,7 +71,7 @@ class test_SecureStorage
 		void testGetCVRootCertificatesUnique()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			static const int EXPECTED_CERTIFICATE_COUNT = 21;
+			static const int EXPECTED_CERTIFICATE_COUNT = 22;
 
 			QList<QSharedPointer<const CVCertificate>> cvcs = CVCertificate::fromRaw(secureStorage->getCVRootCertificates(true))
 					+ CVCertificate::fromRaw(secureStorage->getCVRootCertificates(false));
@@ -112,7 +112,7 @@ class test_SecureStorage
 			QTest::addColumn<QString>("commentName");
 
 			QTest::newRow("production") << 7 << true << "_comment_2";
-			QTest::newRow("test") << 14 << false << "_comment_4";
+			QTest::newRow("test") << 15 << false << "_comment_4";
 		}
 
 

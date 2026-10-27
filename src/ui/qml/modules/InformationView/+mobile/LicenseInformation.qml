@@ -71,7 +71,7 @@ SectionPage {
 		}
 	}
 	layer {
-		enabled: true
+		enabled: GraphicsInfo.api !== GraphicsInfo.Software
 
 		effect: GDropShadow {
 		}

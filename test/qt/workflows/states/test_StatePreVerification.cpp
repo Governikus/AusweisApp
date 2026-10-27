@@ -170,7 +170,7 @@ class test_StatePreVerification
 				settings.removeLinkCertificate(cvc);
 			}
 
-			const int expectedCvcaSize = 21;
+			const int expectedCvcaSize = 22;
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize);
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 05, 25));
 			auto& trustedCvcas = const_cast<QList<QSharedPointer<const CVCertificate>>&>(mState->mTrustedCvcas);

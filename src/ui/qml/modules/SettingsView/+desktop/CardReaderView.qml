@@ -24,7 +24,7 @@ GPane {
 	Accessible.ignored: true
 	color: root.enablePaneOptic ? Style.color.pane.background.basic_unchecked : Style.color.transparent
 	contentPadding: root.enablePaneOptic ? Style.dimens.pane_padding : 0
-	layer.enabled: root.enablePaneOptic
+	drawShadow: root.enablePaneOptic
 	//: DESKTOP
 	title: qsTr("Connected USB card readers")
 	titleMargins: root.enablePaneOptic ? Style.dimens.pane_padding : 0

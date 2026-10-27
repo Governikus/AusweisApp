@@ -1,4 +1,4 @@
-From 0e28ff76c1cd8bd3064d871475507acf61f7f6b6 Mon Sep 17 00:00:00 2001
+From a28f0cd555ea8c0a15fd6253234d0a901cea126e Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Thu, 21 Aug 2025 14:42:14 +0200
 Subject: iOS: Handle Z gesture to request closing

@@ -1,4 +1,4 @@
-From 74e3cd6996fd2fd41b82b7caf6ce5f16697cba6e Mon Sep 17 00:00:00 2001
+From 6662915ce4149b433df070b9eb9081a654a74f77 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
 Date: Tue, 23 Jun 2026 15:46:29 +0200
 Subject: QTest::CrashHandler: Use accessor to read the program counter on
