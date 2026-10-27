@@ -1,4 +1,4 @@
-From 479d66b5a7213de8c08767ced087de8576a09640 Mon Sep 17 00:00:00 2001
+From 11cf2a1494e8f5c063bacfc16bb53dce8e1b613f Mon Sep 17 00:00:00 2001
 From: Klitzing <andre.klitzing@governikus.de>
 Date: Thu, 31 Aug 2023 13:19:55 +0200
 Subject: Do not override OPENSSL_API_COMPAT

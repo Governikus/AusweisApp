@@ -1,4 +1,4 @@
-From 2c140d45c766070cc8123ff89b3578801dae0807 Mon Sep 17 00:00:00 2001
+From b4d365a0b6afe3e320fb4878ce8e6735cc74fd7c Mon Sep 17 00:00:00 2001
 From: Julian Greilich <j.greilich@gmx.de>
 Date: Mon, 12 Oct 2026 08:39:20 +0200
 Subject: a11y Android: Check for empty contentDescription to prevent crash
@@ -10,17 +10,20 @@ Exception java.lang.NullPointerException: Attempt to invoke virtual
 method 'java.lang.String java.lang.Object.toString()' on a null object reference
   at org.qtproject.qt.android.QtAccessibilityDelegate.getNodeForVirtualViewId (QtAccessibilityDelegate.java:504)
 
+Pick-to: 6.12 6.8
 Fixes: QTBUG-151350
 Change-Id: I53fdb8cbeef0ce414862b6674dfd51fe7c3b2251
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit dd9c307c79039be95da85a701e290ebce98f1185)
 ---
  .../org/qtproject/qt/android/QtAccessibilityDelegate.java   | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
-index bd3fc79d4bbb653f75b08a26a27f04deaa481b4e..6aca89ad1bde7c12215342e9ad33afec5f260a30 100644
+index 79626a38ef06cd3a5046140b5b6cb8aad0c2ebb5..5c924027cb5136cf0217be719a0f8d7d76b7da3c 100644
 --- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
 +++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
-@@ -501,9 +501,11 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+@@ -477,9 +477,11 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
  
          // set only if valid, otherwise we return a node that is invalid and will crash when accessed
          node.setSource(m_view, virtualViewId);

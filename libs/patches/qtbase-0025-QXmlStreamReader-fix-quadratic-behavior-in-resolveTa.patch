@@ -1,0 +1,226 @@
+From da1bebbbac5dbc5aec08b3996816df663ab6e16e Mon Sep 17 00:00:00 2001
+From: Marc Mutz <marc.mutz@qt.io>
+Date: Wed, 27 May 2026 10:06:21 +0200
+Subject: QXmlStreamReader: fix quadratic behavior in resolveTag()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Issue identified by Claude Opus 4.7. Fix by yours truly.
+
+In resolveTag(), as part of the well-formed check, we search for
+potential duplicate attributes, by doing the equivalent of
+
+  for (i = 0; i < c.size(); ++i)
+      for (j = 0; j < i; ++j)
+        if (c[i] == c[j]) return error;
+
+This is quadratic. Since the number of attributes is
+externally-controlled, this is an easy CPU-hogging that can be used to
+DoS the application.
+
+QXmlStream should have a user-configurable limit for the number of
+attributes on a single element, but as a hot-fix, remove the O(N²)
+behavior by using QDuplicateTracker.
+
+This requires writing a small class, AttributeName, for use as
+QDuplicateTracker's value_type. QXmlStreamAttribute cannot be used, as
+it takes value() into account for equality, we need just the name.
+
+Note that for a given QDuplicateTracker instance, namespaceProcessing
+is a constant. So we never compare AttributeNames that come from
+different branches of the if in fromXmlAttribute().
+
+Observe that the way AttributeName::fromXmlAttribute() populates the
+members makes AttributeName::operator==() do exactly what the old
+three-line `if` did: always compare both name() and namespaceUri(),
+and then qualifiedName() only when !namespaceProcessing. This can be
+simplified (comparing qualifiedName() also compares name(), as the
+latter is a suffix, and namespaceUri() doesn't carry additional
+information if !namespaceProcessing), but that is left for a
+follow-up patch.
+
+Instead of the default QDuplicateTracker Prealloc of 32, use 13, which
+keeps stack usage below 1KiB and is prime.
+
+There are more quadratic (or rather O(NM)) loops in that function, in
+DTD default processing, but they will be assessed and, if needed,
+treated separately.
+
+Add a test that times out without the fix, and finishes in ~600ms with
+the fix. That time contains the time for copyDir in initTestCase(),
+which always runs.
+
+Amends the start of the (public) git history in this module.
+
+Fixes: QTBUG-147009
+Pick-to: 6.12 6.11 6.8 6.5 5.15
+Change-Id: I2b7e62a63ae0499add7124406fb7192c51ceae51
+Reviewed-by: Ivan Solovev <ivan.solovev@qt.io>
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+(cherry picked from commit b3eb2e508c88c553968848b5a3b953509ad59e4a)
+---
+ src/corelib/serialization/qxmlstream.cpp      | 45 ++++++++++---
+ .../qxmlstream/tst_qxmlstream.cpp             | 65 +++++++++++++++++++
+ 2 files changed, 101 insertions(+), 9 deletions(-)
+
+diff --git x/qtbase/src/corelib/serialization/qxmlstream.cpp y/qtbase/src/corelib/serialization/qxmlstream.cpp
+index 47db7a94503585685984abe17f744f7f11f947bf..40b082bf322d170fcb4e75aaa98ec8ceeca72313 100644
+--- x/qtbase/src/corelib/serialization/qxmlstream.cpp
++++ y/qtbase/src/corelib/serialization/qxmlstream.cpp
+@@ -15,7 +15,7 @@
+ #include <qbuffer.h>
+ #include <qscopeguard.h>
+ #include <qcoreapplication.h>
+-
++#include <QtCore/private/qduplicatetracker_p.h>
+ #include <private/qoffsetstringarray_p.h>
+ #include <private/qtools_p.h>
+ 
+@@ -1781,6 +1781,35 @@ XmlStringRef QXmlStreamReaderPrivate::namespaceForPrefix(QStringView prefix)
+      return XmlStringRef();
+ }
+ 
++struct AttributeName
++{
++    QStringView name;
++    QStringView qualifiedName;
++    QStringView namespaceUri;
++
++    static AttributeName fromXmlAttribute(const QXmlStreamAttribute &a, bool nsProcessing)
++    {
++        if (nsProcessing)
++            return {a.name(), {}, a.namespaceUri()};
++        else
++            return {a.name(), a.qualifiedName(), a.namespaceUri()};
++    }
++
++    friend bool operator==(const AttributeName &lhs, const AttributeName &rhs) noexcept
++    {
++        return lhs.name == rhs.name
++            && lhs.qualifiedName == rhs.qualifiedName
++            && lhs.namespaceUri == rhs.namespaceUri;
++    }
++    friend size_t qHash(const AttributeName &key, size_t seed = 0) noexcept
++    {
++        return qHashMulti(seed,
++                          key.name,
++                          key.qualifiedName,
++                          key.namespaceUri);
++    }
++};
++
+ /*
+   uses namespaceForPrefix and builds the attribute vector
+  */
+@@ -1832,6 +1861,9 @@ void QXmlStreamReaderPrivate::resolveTag()
+ 
+     attributes.resize(n);
+ 
++    Q_DECL_UNINITIALIZED
++    QDuplicateTracker<AttributeName, 13> names(n);
++
+     for (qsizetype i = 0; i < n; ++i) {
+         QXmlStreamAttribute &attribute = attributes[i];
+         Attribute &attrib = attributeStack[i];
+@@ -1849,14 +1881,9 @@ void QXmlStreamReaderPrivate::resolveTag()
+             attribute.m_namespaceUri = XmlStringRef(attributeNamespaceUri);
+         }
+ 
+-        for (qsizetype j = 0; j < i; ++j) {
+-            if (attributes[j].name() == attribute.name()
+-                && attributes[j].namespaceUri() == attribute.namespaceUri()
+-                && (namespaceProcessing || attributes[j].qualifiedName() == attribute.qualifiedName()))
+-            {
+-                raiseWellFormedError(QXmlStream::tr("Attribute '%1' redefined.").arg(attribute.qualifiedName()));
+-                return;
+-            }
++        if (names.hasSeen(AttributeName::fromXmlAttribute(attribute, namespaceProcessing))) {
++            raiseWellFormedError(QXmlStream::tr("Attribute '%1' redefined.").arg(attribute.qualifiedName()));
++            return;
+         }
+     }
+ 
+diff --git x/qtbase/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp y/qtbase/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp
+index b4fea7d1a315a8a76022df8738ca17e44ed0cbed..82571f247cf6fc47359f3635c2f95817e8fb375c 100644
+--- x/qtbase/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp
++++ y/qtbase/tests/auto/corelib/serialization/qxmlstream/tst_qxmlstream.cpp
+@@ -646,6 +646,7 @@ private slots:
+     void test_fastScanName() const;
+ 
+     void entityExpansionLimit() const;
++    void manyAttributes() const;
+ 
+     void tokenErrorHandling_data() const;
+     void tokenErrorHandling() const;
+@@ -2830,6 +2831,70 @@ void tst_QXmlStream::entityExpansionLimit() const
+     }
+ }
+ 
++constexpr const char L1NameStartCharsExCOLON[] = {
++    // https://www.w3.org/TR/REC-xml/#NT-NameStartChar - COLON - [#x100-#xEFFFF]:
++    // [A-Z]
++    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
++    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
++    // "_"
++    '_',
++    // [a-z]
++    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
++    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
++    // [#xC0-#xD6]
++    '\xC0', '\xC1', '\xC2', '\xC3', '\xC4', '\xC5', '\xC6', '\xC7',
++    '\xC8', '\xC9', '\xCA', '\xCB', '\xCC', '\xCD', '\xCE', '\xCF',
++    '\xD0', '\xD1', '\xD2', '\xD3', '\xD4', '\xD5', '\xD6',
++    // [#xD8-#xF6]
++    '\xD8', '\xD9', '\xDA', '\xDB', '\xDC', '\xDD', '\xDE', '\xDF',
++    '\xE0', '\xE1', '\xE2', '\xE3', '\xE4', '\xE5', '\xE6', '\xE7',
++    '\xE8', '\xE9', '\xEA', '\xEB', '\xEC', '\xED', '\xEE', '\xEF',
++    '\xF0', '\xF1', '\xF2', '\xF3', '\xF4', '\xF5', '\xF6',
++    // [#xF8-#x2FF] (truncated to L1 range)
++    '\xF8', '\xF9', '\xFA', '\xFB', '\xFC', '\xFD', '\xFE', '\xFF',
++};
++
++void tst_QXmlStream::manyAttributes() const
++{
++
++    constexpr qsizetype numDigits = sizeof L1NameStartCharsExCOLON;
++    static_assert(numDigits == 115); // FYI
++    constexpr auto numAttributes = numDigits * numDigits * numDigits;
++
++    constexpr auto opening = "<?xml version='1.0'?>\n"
++                             "<e"_L1;
++    constexpr auto closing = "></e>"_L1;
++    char attr[] = { ' ', 'a', 'b', 'c', '=', '"', '"' };
++
++    QString xml;
++    xml.reserve(opening.size() + closing.size() + numAttributes * sizeof attr);
++
++    xml += opening;
++    for (char i : L1NameStartCharsExCOLON) {
++        attr[1] = i;
++        for (char j : L1NameStartCharsExCOLON) {
++            attr[2] = j;
++            for (char k : L1NameStartCharsExCOLON) {
++                attr[3] = k;
++                xml += QLatin1StringView(attr, sizeof attr);
++            }
++        }
++    }
++    xml += closing;
++
++    QXmlStreamReader r(xml);
++    while (!r.atEnd()) {
++        r.readNext();
++        if (!r.isStartElement())
++            continue;
++        QCOMPARE(r.name(), "e"_L1);
++        const auto attrs = r.attributes();
++        QCOMPARE(attrs.size(), numAttributes);
++        return; // success
++    }
++    QFAIL("Did not find expected StartElement");
++}
++
+ void tst_QXmlStream::roundTrip() const
+ {
+     QFETCH(QString, in);

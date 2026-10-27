@@ -504,12 +504,18 @@ public class MainActivity extends QtActivity
 						flow.addOnCompleteListener(flowTask -> {
 							LogHandler.getLogger().log(Level.INFO, () -> "In-app review flow finished");
 						});
+						return;
 					}
-					else
+
+					Exception exception = task.getException();
+					if (exception instanceof ReviewException)
 					{
-						@ReviewErrorCode int reviewErrorCode = ((ReviewException) task.getException()).getErrorCode();
+						@ReviewErrorCode int reviewErrorCode = ((ReviewException) exception).getErrorCode();
 						LogHandler.getLogger().log(Level.WARNING, () -> "Couldn't launch in-app review flow " + reviewErrorCode);
+						return;
 					}
+
+					LogHandler.getLogger().log(Level.WARNING, () -> "Couldn't launch in-app review flow " + exception);
 				});
 
 	}

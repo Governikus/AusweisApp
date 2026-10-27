@@ -1,0 +1,45 @@
+From 31deafa9c0698f184537755ac594b56362dd4445 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Tue, 20 Oct 2026 11:09:27 +0200
+Subject: A11y android: Fix crash with API level < 30
+
+The public constructor for AccessibilityNodeInfo.RangeInfo was added
+in API level 30. For lower API levels this leads to the following crash:
+
+java.lang.NoSuchMethodError: no non-static method "Landroid/view/accessibility/AccessibilityNodeInfo$RangeInfo;.<init>(IFFF)V"
+	at org.qtproject.qt.android.QtNativeAccessibility.populateNode(Native Method)
+
+To prevent this, use the (deprecated) factory method "obtain" for lower
+API levels.
+
+Pick-to: 6.12
+Change-Id: Ia468a1799fa8ef3c408e4b006f83a1a227ec87a3
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit 1e1d86a009423fa834c361d34be250b0c4c5a49e)
+---
+ .../platforms/android/androidjniaccessibility.cpp    | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+index d2c89e3da59000834194629e1b0fe6cc00f6ad04..44ae8e36edff7956cc3201b17eb1996d7837bc51 100644
+--- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+@@ -844,8 +844,16 @@ namespace QtAndroidAccessibility
+                 max = 100.0f;
+             }
+ 
+-            QJniObject rangeInfo("android/view/accessibility/AccessibilityNodeInfo$RangeInfo",
+-                                 "(IFFF)V", rangeType, min, max, current);
++            QJniObject rangeInfo;
++            if (QtAndroidPrivate::androidSdkVersion() < 30) {
++                rangeInfo = QJniObject::callStaticObjectMethod(
++                        "android/view/accessibility/AccessibilityNodeInfo$RangeInfo", "obtain",
++                        "(IFFF)Landroid/view/accessibility/AccessibilityNodeInfo$RangeInfo;",
++                        rangeType, min, max, current);
++            } else {
++                rangeInfo = QJniObject("android/view/accessibility/AccessibilityNodeInfo$RangeInfo",
++                                       "(IFFF)V", rangeType, min, max, current);
++            }
+ 
+             if (rangeInfo.isValid()) {
+                 env->CallVoidMethod(node, m_setRangeInfoMethodID, rangeInfo.object());

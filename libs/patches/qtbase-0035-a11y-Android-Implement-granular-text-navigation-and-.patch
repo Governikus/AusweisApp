@@ -1,4 +1,4 @@
-From e19759cb809c9cd7ef50a41e3e1b8afbf142b619 Mon Sep 17 00:00:00 2001
+From cf652a5b7c97620df9ca7e52d4eb5d42557fbfca Mon Sep 17 00:00:00 2001
 From: Timon Sassor <timon.sassor@governikus.de>
 Date: Thu, 12 Feb 2026 09:40:23 +0100
 Subject: a11y Android: Implement granular text navigation and selection
@@ -23,7 +23,7 @@ Change-Id: I118222bc23c192d3bc9198f639166f39801691e8
  3 files changed, 404 insertions(+), 6 deletions(-)
 
 diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
-index 79626a38ef06cd3a5046140b5b6cb8aad0c2ebb5..bd3fc79d4bbb653f75b08a26a27f04deaa481b4e 100644
+index 5c924027cb5136cf0217be719a0f8d7d76b7da3c..6aca89ad1bde7c12215342e9ad33afec5f260a30 100644
 --- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
 +++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
 @@ -4,6 +4,9 @@
@@ -71,7 +71,7 @@ index 79626a38ef06cd3a5046140b5b6cb8aad0c2ebb5..bd3fc79d4bbb653f75b08a26a27f04de
          return event;
      }
  
-@@ -497,6 +521,22 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+@@ -499,6 +523,22 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
  
          node.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SHOW_ON_SCREEN);
  
@@ -94,7 +94,7 @@ index 79626a38ef06cd3a5046140b5b6cb8aad0c2ebb5..bd3fc79d4bbb653f75b08a26a27f04de
          // Manage internal accessibility focus state.
          if (m_focusedVirtualViewId == virtualViewId) {
              node.setAccessibilityFocused(true);
-@@ -561,13 +601,13 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+@@ -563,13 +603,13 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
                          return m_view.performAccessibilityAction(action, arguments);
                      }
              }
@@ -110,7 +110,7 @@ index 79626a38ef06cd3a5046140b5b6cb8aad0c2ebb5..bd3fc79d4bbb653f75b08a26a27f04de
      {
          //noinspection CommentedOutCode
          {
-@@ -602,6 +642,65 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+@@ -604,6 +644,65 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
          case AccessibilityNodeInfo.ACTION_COLLAPSE:
              success = QtNativeAccessibility.collapse(virtualViewId);
              break;
@@ -203,7 +203,7 @@ index c0d180ffe5f565dfd801132054d1d6a1491ae0e6..56e1c1645b7a5d2f179d16886a18c6a2
 +    static native boolean replaceSelectedText(int objectId, String newText);
  }
 diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
-index d2c89e3da59000834194629e1b0fe6cc00f6ad04..bbcbdecad4d18ea8d9181e8ddd891d272c1ffba7 100644
+index 44ae8e36edff7956cc3201b17eb1996d7837bc51..550f6d0cffa42124940cf7d1483a24a750999a8a 100644
 --- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
 +++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
 @@ -20,6 +20,7 @@
@@ -499,7 +499,7 @@ index d2c89e3da59000834194629e1b0fe6cc00f6ad04..bbcbdecad4d18ea8d9181e8ddd891d27
          if (info.hasTextSelection && m_setTextSelectionMethodID) {
              env->CallVoidMethod(node, m_setTextSelectionMethodID, info.selectionStart,
                                  info.selectionEnd);
-@@ -963,12 +1194,64 @@ namespace QtAndroidAccessibility
+@@ -971,12 +1202,64 @@ namespace QtAndroidAccessibility
          return true;
      }
  
@@ -564,7 +564,7 @@ index d2c89e3da59000834194629e1b0fe6cc00f6ad04..bbcbdecad4d18ea8d9181e8ddd891d27
          {"screenRect", "(I)Landroid/graphics/Rect;", (jobject)screenRect},
          {"hitTest", "(FF)I", (void*)hitTest},
          {"populateNode", "(ILandroid/view/accessibility/AccessibilityNodeInfo;)Z", (void*)populateNode},
-@@ -979,7 +1262,12 @@ namespace QtAndroidAccessibility
+@@ -987,7 +1270,12 @@ namespace QtAndroidAccessibility
          {"scrollBackward", "(I)Z", (void*)scrollBackward},
          {"showOnScreen", "(I)Z", (void *)showOnScreen},
          {"expand", "(I)Z", (void *)expand},
@@ -578,7 +578,7 @@ index d2c89e3da59000834194629e1b0fe6cc00f6ad04..bbcbdecad4d18ea8d9181e8ddd891d27
      };
  
  #define GET_AND_CHECK_STATIC_METHOD(VAR, CLASS, METHOD_NAME, METHOD_SIGNATURE) \
-@@ -1029,6 +1317,7 @@ namespace QtAndroidAccessibility
+@@ -1037,6 +1325,7 @@ namespace QtAndroidAccessibility
          GET_AND_CHECK_STATIC_METHOD(
                  m_setRangeInfoMethodID, nodeInfoClass, "setRangeInfo",
                  "(Landroid/view/accessibility/AccessibilityNodeInfo$RangeInfo;)V");

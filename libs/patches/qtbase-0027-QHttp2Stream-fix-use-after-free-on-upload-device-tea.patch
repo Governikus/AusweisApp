@@ -1,0 +1,143 @@
+From 92f7008cd1eb9545a4b6099971616fac5af18548 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?M=C3=A5rten=20Nordheim?= <marten.nordheim@qt.io>
+Date: Mon, 3 Aug 2026 16:56:46 +0200
+Subject: QHttp2Stream: fix use-after-free on upload device teardown mid-upload
+
+uploadDeviceDestroyed() only cleared m_uploadDevice, leaving
+m_uploadByteDevice dangling. If the peer later grows the stream's
+receive window (SETTINGS INITIAL_WINDOW_SIZE), maybeResumeUpload()
+resumes the upload through the now-freed QNonContiguousByteDevice,
+causing a heap-use-after-free with virtual dispatch on attacker-
+controlled timing.
+
+Also clear m_owningByteDevice so the dangling pointer is never
+revisited or deleted again.
+
+Pick-to: 6.12 6.11
+Change-Id: Ia6a7810c071f46a891d460247bdde187613e152e
+Reviewed-by: Edward Welbourne <edward.welbourne@qt.io>
+(cherry picked from commit deedcc1b9b711ec7f32e9caf68defed4aead379f)
+---
+ src/network/access/qhttp2connection.cpp       |  2 +
+ .../access/qhttp2connection/CMakeLists.txt    |  1 +
+ .../qhttp2connection/tst_qhttp2connection.cpp | 66 +++++++++++++++++++
+ 3 files changed, 69 insertions(+)
+
+diff --git x/qtbase/src/network/access/qhttp2connection.cpp y/qtbase/src/network/access/qhttp2connection.cpp
+index f632455a15f2b0f479b9525f51f7b1362a380ee0..f600b167b0c33bb2ff25b72bc65d605296c79884 100644
+--- x/qtbase/src/network/access/qhttp2connection.cpp
++++ y/qtbase/src/network/access/qhttp2connection.cpp
+@@ -640,6 +640,8 @@ void QHttp2Stream::uploadDeviceDestroyed()
+         emit uploadDeviceError("Upload device destroyed while uploading"_L1);
+     }
+     m_uploadDevice = nullptr;
++    m_owningByteDevice = false;
++    m_uploadByteDevice = nullptr;
+ }
+ 
+ void QHttp2Stream::setState(State newState)
+diff --git x/qtbase/tests/auto/network/access/qhttp2connection/CMakeLists.txt y/qtbase/tests/auto/network/access/qhttp2connection/CMakeLists.txt
+index 9a6e7a064e0bdcf0cce216c0e3c3849b223aac64..4be58073e96db88a295adaa91fabd029e0d51648 100644
+--- x/qtbase/tests/auto/network/access/qhttp2connection/CMakeLists.txt
++++ y/qtbase/tests/auto/network/access/qhttp2connection/CMakeLists.txt
+@@ -11,6 +11,7 @@ qt_internal_add_test(tst_qhttp2connection
+     SOURCES
+         tst_qhttp2connection.cpp
+     LIBRARIES
++        Qt::CorePrivate
+         Qt::NetworkPrivate
+         Qt::Test
+ )
+diff --git x/qtbase/tests/auto/network/access/qhttp2connection/tst_qhttp2connection.cpp y/qtbase/tests/auto/network/access/qhttp2connection/tst_qhttp2connection.cpp
+index 99c6aa7a6a76e6fa99325636ec8006e6e3789f72..daeebcfb6b5c585d2297a177aab0f6a8d602c508 100644
+--- x/qtbase/tests/auto/network/access/qhttp2connection/tst_qhttp2connection.cpp
++++ y/qtbase/tests/auto/network/access/qhttp2connection/tst_qhttp2connection.cpp
+@@ -8,8 +8,10 @@
+ #include <QtNetwork/private/hpack_p.h>
+ #include <QtNetwork/private/bitstreams_p.h>
+ 
++#include <QtCore/qbuffer.h>
+ #include <QtCore/qregularexpression.h>
+ #include <QtCore/qthread.h>
++#include <QtCore/private/qnoncontiguousbytedevice_p.h> // for uploadByteDeviceDestroyedWhileBlocked
+ 
+ #include <limits>
+ 
+@@ -47,6 +49,7 @@ private slots:
+     void clientInitiatedGoaway();
+     void pushPromiseOnStreamRemovedAfterRST_data();
+     void pushPromiseOnStreamRemovedAfterRST();
++    void uploadByteDeviceDestroyedWhileBlocked();
+ 
+ private:
+     enum PeerType { Client, Server };
+@@ -1557,6 +1560,69 @@ void tst_QHttp2Connection::pushPromiseOnStreamRemovedAfterRST()
+     QVERIFY(clientConn->m_connectionAborted);
+ }
+ 
++void tst_QHttp2Connection::uploadByteDeviceDestroyedWhileBlocked()
++{
++    // uploadDeviceDestroyed() used to clear m_uploadDevice only, leaving
++    // m_uploadByteDevice dangling. A later SETTINGS INITIAL_WINDOW_SIZE
++    // increase from the peer would then queue maybeResumeUpload(), which
++    // dereferences the freed device (heap-use-after-free).
++    auto [client, server] = makeFakeConnectedSockets();
++    auto clientConn = makeHttp2Connection(client.get(), {}, Client);
++
++    // Creating the stream flushes the client preface; handleReadyRead()
++    // ignores incoming frames until that has happened.
++    QHttp2Stream *clientStream = clientConn->createStream().unwrap();
++    QVERIFY(clientStream);
++
++    // Shrink the per-stream send window so a 4096-byte upload stalls almost
++    // immediately, well before the device is exhausted. There's no public
++    // API for this, so inject the SETTINGS frame directly.
++    {
++        Http2::FrameWriter s(Http2::FrameType::SETTINGS, Http2::FrameFlag::EMPTY,
++                             Http2::connectionStreamID);
++        s.append(Http2::Settings::INITIAL_WINDOW_SIZE_ID);
++        s.append(quint32(64));
++        QVERIFY(s.write(*server));
++    }
++    QVERIFY(QTest::qWaitFor([&]() { return clientStream->m_sendWindow == 64; }));
++
++    QVERIFY(clientStream->sendHEADERS(getRequiredHeaders(), false));
++
++    auto *buffer = new QBuffer;
++    buffer->setData(QByteArray(4096, 'A'));
++    buffer->open(QIODevice::ReadOnly);
++    auto *uploadDevice = QNonContiguousByteDeviceFactory::create(buffer);
++    buffer->setParent(uploadDevice);
++
++    QSignalSpy uploadBlockedSpy{ clientStream, &QHttp2Stream::uploadBlocked };
++    // This is the overload of sendDATA() QNetworkAccessManager's HTTP/2 handler uses: the
++    // caller (not QHttp2Stream) owns the device's lifetime. Because we can't send everything in one
++    // go it will return early and try to send more later.
++    QVERIFY(clientStream->sendDATA(uploadDevice, true));
++    QCOMPARE(uploadBlockedSpy.count(), 1);
++    QVERIFY(clientStream->isUploadingDATA());
++
++    // The upload source is destroyed while the upload is window-stalled and
++    // the stream object survives.
++    delete uploadDevice;
++    QVERIFY(!clientStream->isUploadingDATA());
++
++    // Grow the window again, as if resuming a live upload.
++    {
++        Http2::FrameWriter s(Http2::FrameType::SETTINGS, Http2::FrameFlag::EMPTY,
++                             Http2::connectionStreamID);
++        s.append(Http2::Settings::INITIAL_WINDOW_SIZE_ID);
++        s.append(quint32(1024 * 1024));
++        QVERIFY(s.write(*server));
++    }
++    // Processing the frame above queues a maybeResumeUpload() call that runs
++    // during this wait. This would crash, reading through the already-freed
++    // device's vtable, before this patch.
++    QVERIFY(QTest::qWaitFor(
++            [&]() { return clientConn->streamInitialSendWindowSize == 1024 * 1024; }));
++    QVERIFY(!clientConn->m_connectionAborted);
++}
++
+ QTEST_MAIN(tst_QHttp2Connection)
+ 
+ #include "tst_qhttp2connection.moc"

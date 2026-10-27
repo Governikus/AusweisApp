@@ -1,4 +1,4 @@
-From f97d1a86391b6c2fb2691a19b7ba18532b987daa Mon Sep 17 00:00:00 2001
+From 825e166fde86669a2bc630199416186b91b8cc17 Mon Sep 17 00:00:00 2001
 From: Julian Greilich <j.greilich@gmx.de>
 Date: Tue, 28 Oct 2025 11:30:35 +0100
 Subject: a11y iOS: Implement accessibilityHitTest for QUIView

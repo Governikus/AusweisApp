@@ -1,0 +1,20 @@
+AusweisApp 2.6.2
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 28. Oktober 2026
+
+
+Anwender
+""""""""
+- Verhinderung möglicher Abstürze bei älteren Android-Versionen.
+
+- Behebung einer Sicherheitslücke, durch die Server die Anwendung
+  zum Absturz bringen könnten (CVE-2026-96432, CVE-2026-95620).
+
+- Behebung einer Sicherheitslücke, durch die Server die Anwendung
+  dazu bringen können, nicht mehr zu reagieren (CVE-2026-16762).
+
+
+Entwickler
+""""""""""
+- RSA-Signaturen mit PKCS#1 v1.5 in TLS werden weiterhin unterstützt.

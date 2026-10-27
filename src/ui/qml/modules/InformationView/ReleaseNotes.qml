@@ -65,7 +65,7 @@ GListView {
 	Component.onCompleted: releaseInformationModel.update()
 
 	layer {
-		enabled: Style.is_layout_desktop
+		enabled: Style.is_layout_desktop && GraphicsInfo.api !== GraphicsInfo.Software
 
 		effect: GDropShadow {
 		}

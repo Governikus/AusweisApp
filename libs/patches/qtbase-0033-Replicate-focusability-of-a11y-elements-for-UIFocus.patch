@@ -1,4 +1,4 @@
-From 40f292bdb5290700f2bd1d9e3323399337545e30 Mon Sep 17 00:00:00 2001
+From f263e44900c69e7488fea50c2038ac143ab115cb Mon Sep 17 00:00:00 2001
 From: Jens Trillmann <jens.trillmann@governikus.de>
 Date: Fri, 22 Aug 2025 09:09:57 +0200
 Subject: Replicate focusability of a11y elements for UIFocus
