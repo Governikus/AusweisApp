@@ -20,11 +20,11 @@ class DatagramHandler
 	Q_OBJECT
 
 	private:
-		[[nodiscard]] static bool isValidBroadcastInterface(const QNetworkInterface& pInterface);
 		[[nodiscard]] static bool isValidAddressEntry(const QNetworkAddressEntry& pEntry);
 
 	protected:
 		static constexpr QLatin1StringView ipv6MulticastAddress {"ff02::178"};
+		[[nodiscard]] static bool isValidBroadcastInterface(const QNetworkInterface& pInterface);
 
 	public:
 		[[nodiscard]] static QList<QNetworkAddressEntry> getAllBroadcastEntries();
