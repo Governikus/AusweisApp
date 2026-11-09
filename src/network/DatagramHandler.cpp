@@ -28,7 +28,10 @@ bool DatagramHandler::isValidBroadcastInterface(const QNetworkInterface& pInterf
 	}
 
 	const auto& flags = pInterface.flags();
-	if (!flags.testFlag(QNetworkInterface::IsUp) || !flags.testFlag(QNetworkInterface::IsRunning))
+	if (!flags.testFlag(QNetworkInterface::IsUp)
+			|| !flags.testFlag(QNetworkInterface::IsRunning)
+			|| flags.testFlag(QNetworkInterface::IsLoopBack)
+			|| flags.testFlag(QNetworkInterface::IsPointToPoint))
 	{
 		return false;
 	}
