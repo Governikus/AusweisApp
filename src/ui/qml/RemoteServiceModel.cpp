@@ -386,6 +386,7 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServi
 		connect(mContext.data(), &IfdServiceContext::fireDisplayTextChanged, this, &RemoteServiceModel::fireDisplayTextChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::firePairingCompleted, this, &RemoteServiceModel::onPairingCompleted);
+		connect(mContext->getIfdServer().data(), &IfdServer::firePairingAborted, this, &RemoteServiceModel::firePairingAborted);
 		connect(mContext.data(), &IfdServiceContext::fireCardConnected, this, &RemoteServiceModel::onCardConnected);
 		connect(mContext.data(), &IfdServiceContext::fireCardDisconnected, this, &RemoteServiceModel::onCardDisconnected);
 		connect(mContext.data(), &IfdServiceContext::fireEstablishPaceChannelUpdated, this, &RemoteServiceModel::fireEstablishPaceChannelUpdated);

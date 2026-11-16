@@ -123,6 +123,7 @@ void RemoteTlsServer::onPskHandshakeFailed()
 	{
 		qCWarning(ifd) << "Too many failed pairing attempts, pairing disabled";
 		setPairing(false);
+		Q_EMIT firePairingAborted();
 	}
 }
 

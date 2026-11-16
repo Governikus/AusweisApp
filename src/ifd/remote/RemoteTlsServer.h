@@ -31,6 +31,7 @@ class RemoteTlsServer
 
 	Q_SIGNALS:
 		void firePairingCompleted(const QSslCertificate& pCertificate);
+		void firePairingAborted();
 };
 
 } // namespace governikus

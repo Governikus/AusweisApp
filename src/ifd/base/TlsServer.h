@@ -43,7 +43,7 @@ class TlsServer
 		virtual void updateClientInfo(const QSslConfiguration& pSslConfiguration) = 0;
 		virtual void onPskHandshakeFailed();
 
-		void onPreSharedKeyAuthenticationRequired(QSslSocket* pSocket, QSslPreSharedKeyAuthenticator* pAuthenticator) const;
+		void onPreSharedKeyAuthenticationRequired(QSslSocket* pSocket, QSslPreSharedKeyAuthenticator* pAuthenticator, const QByteArray& pPsk) const;
 		void onError(QSslSocket* pSocket, QAbstractSocket::SocketError pSocketError);
 		void onSslErrors(QSslSocket* pSocket, const QList<QSslError>& pErrors) const;
 		void onEncrypted(QSslSocket* pSocket);

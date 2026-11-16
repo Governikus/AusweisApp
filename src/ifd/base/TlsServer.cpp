@@ -78,8 +78,8 @@ void TlsServer::incomingConnection(qintptr pSocketDescriptor)
 				onSslErrors(socket, pErrors);
 			});
 	connect(socket.get(), &QSslSocket::preSharedKeyAuthenticationRequired, this,
-			[this, socket = socket.get()](QSslPreSharedKeyAuthenticator* pAuthenticator){
-				onPreSharedKeyAuthenticationRequired(socket, pAuthenticator);
+			[this, socket = socket.get(), psk = mPsk](QSslPreSharedKeyAuthenticator* pAuthenticator){
+				onPreSharedKeyAuthenticationRequired(socket, pAuthenticator, psk);
 			});
 	connect(socket.get(), &QSslSocket::encrypted, this,
 			[this, socket = socket.get()](){
@@ -92,14 +92,21 @@ void TlsServer::incomingConnection(qintptr pSocketDescriptor)
 }
 
 
-void TlsServer::onPreSharedKeyAuthenticationRequired(QSslSocket* pSocket, QSslPreSharedKeyAuthenticator* pAuthenticator) const
+void TlsServer::onPreSharedKeyAuthenticationRequired(QSslSocket* pSocket, QSslPreSharedKeyAuthenticator* pAuthenticator, const QByteArray& pPsk) const
 {
 	qCDebug(ifd) << "Client requests PSK authentication | identity:" << pAuthenticator->identity() << "| hint:" << pAuthenticator->identityHint();
 
-	// Use the current PSK instead of the one valid at connection time. Otherwise
-	// handshakes started before the PSK was cleared or rotated still use the old one.
+	// The PSK valid at connection time is used, so a code shown to the user still works if it
+	// was rotated in the meantime. Once pairing has ended, no PSK is accepted anymore, otherwise
+	// connections opened before could still be used to guess the code.
+	if (mPsk.isEmpty())
+	{
+		qCDebug(ifd) << "Pairing has ended, PSK authentication refused";
+		return;
+	}
+
 	pSocket->setProperty(cPskRequestedProperty, true);
-	pAuthenticator->setPreSharedKey(mPsk);
+	pAuthenticator->setPreSharedKey(pPsk);
 }
 
 
