@@ -17,6 +17,9 @@ Q_DECLARE_LOGGING_CATEGORY(ifd)
 using namespace governikus;
 
 
+static const char* const cPskRequestedProperty = "pskRequested";
+
+
 bool TlsServer::releaseSocket(QSslSocket* pSocket)
 {
 	const auto socket = mPendingSockets.extract(pSocket);
@@ -75,8 +78,8 @@ void TlsServer::incomingConnection(qintptr pSocketDescriptor)
 				onSslErrors(socket, pErrors);
 			});
 	connect(socket.get(), &QSslSocket::preSharedKeyAuthenticationRequired, this,
-			[this, psk = mPsk](QSslPreSharedKeyAuthenticator* pAuthenticator){
-				onPreSharedKeyAuthenticationRequired(pAuthenticator, psk);
+			[this, socket = socket.get()](QSslPreSharedKeyAuthenticator* pAuthenticator){
+				onPreSharedKeyAuthenticationRequired(socket, pAuthenticator);
 			});
 	connect(socket.get(), &QSslSocket::encrypted, this,
 			[this, socket = socket.get()](){
@@ -89,10 +92,19 @@ void TlsServer::incomingConnection(qintptr pSocketDescriptor)
 }
 
 
-void TlsServer::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator, const QByteArray& pPsk) const
+void TlsServer::onPreSharedKeyAuthenticationRequired(QSslSocket* pSocket, QSslPreSharedKeyAuthenticator* pAuthenticator) const
 {
 	qCDebug(ifd) << "Client requests PSK authentication | identity:" << pAuthenticator->identity() << "| hint:" << pAuthenticator->identityHint();
-	pAuthenticator->setPreSharedKey(pPsk);
+
+	// Use the current PSK instead of the one valid at connection time. Otherwise
+	// handshakes started before the PSK was cleared or rotated still use the old one.
+	pSocket->setProperty(cPskRequestedProperty, true);
+	pAuthenticator->setPreSharedKey(mPsk);
+}
+
+
+void TlsServer::onPskHandshakeFailed()
+{
 }
 
 
@@ -106,6 +118,11 @@ void TlsServer::onError(QSslSocket* pSocket, QAbstractSocket::SocketError pSocke
 	qCDebug(ifd).noquote() << "Client (" << pSocket->peerAddress().toString() << ") socket error:" << pSocketError << "|" << pSocket->errorString();
 	pSocket->disconnect(this);
 	pSocket->deleteLater();
+
+	if (pSocketError == QAbstractSocket::SslHandshakeFailedError && pSocket->property(cPskRequestedProperty).toBool())
+	{
+		onPskHandshakeFailed();
+	}
 
 	Q_EMIT fireSocketError(pSocketError);
 }

@@ -153,6 +153,14 @@ void RemoteServiceModel::onPskChanged(const QByteArray& pPsk)
 	const bool initialPsk = mPsk.isEmpty();
 	mPsk = pPsk;
 
+	if (pPsk.isEmpty())
+	{
+		// Pairing may be stopped by the server, e.g. after too many failed attempts.
+		// Do not let the validity timer silently restart it with a new code.
+		mPskValidityTimer.stop();
+		mRemainingPskValiditySignalTimer.stop();
+	}
+
 	Q_EMIT firePskChanged(pPsk, initialPsk);
 }
 

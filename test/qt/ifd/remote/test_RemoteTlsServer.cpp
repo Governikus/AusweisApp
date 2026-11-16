@@ -151,6 +151,61 @@ class test_RemoteTlsServer
 		}
 
 
+		void pairingDisabledAfterFailedAttempts()
+		{
+			RemoteTlsServer server;
+			QByteArray serverPsk;
+			connect(&server, &RemoteTlsServer::firePskChanged, this, [&serverPsk](const QByteArray& pPsk){
+						serverPsk = pPsk;
+					});
+			server.setPairing();
+			QVERIFY(server.startListening(0));
+			QVERIFY(server.hasPsk());
+			const QByteArray validPsk = serverPsk;
+			const QByteArray wrongPsk = validPsk == "0000" ? QByteArray("0001") : QByteArray("0000");
+
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getConfiguration();
+			config.setPrivateKey(pair.getKey());
+			config.setLocalCertificate(pair.getCertificate());
+			config.setPeerVerifyMode(QSslSocket::VerifyNone);
+
+			const auto& connectWithPsk = [&config, &server](const QByteArray& pPsk){
+						QSslSocket client;
+						client.setSslConfiguration(config);
+						connect(&client, &QSslSocket::preSharedKeyAuthenticationRequired, &client, [pPsk](QSslPreSharedKeyAuthenticator* pAuthenticator){
+									pAuthenticator->setPreSharedKey(pPsk);
+								});
+						QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
+						QSignalSpy clientErrors(&client, &QAbstractSocket::errorOccurred);
+						client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
+						const bool finished = QTest::qWaitFor([&clientEncrypted, &clientErrors]{
+									return clientEncrypted.count() + clientErrors.count() > 0;
+								});
+						return finished && clientEncrypted.count() == 1;
+					};
+
+			QVERIFY(!connectWithPsk(wrongPsk));
+			QTRY_VERIFY(server.hasPsk());
+			QVERIFY(!connectWithPsk(wrongPsk));
+			QTRY_VERIFY(server.hasPsk());
+
+			QTest::ignoreMessage(QtWarningMsg, "Too many failed pairing attempts, pairing disabled");
+			QVERIFY(!connectWithPsk(wrongPsk));
+			QTRY_VERIFY(!server.hasPsk());
+			QCOMPARE(serverPsk, QByteArray());
+
+			// the correct code must not work anymore
+			QVERIFY(!connectWithPsk(validPsk));
+			QVERIFY(!server.hasPsk());
+
+			// a new pairing starts with a fresh limit
+			server.setPairing();
+			QVERIFY(server.hasPsk());
+			QVERIFY(!connectWithPsk(wrongPsk));
+			QTRY_VERIFY(server.hasPsk());
+		}
+
+
 		void tryReconnectWithoutPairedDeviceAndReconnectedPaired()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();

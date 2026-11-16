@@ -20,6 +20,10 @@ Q_DECLARE_LOGGING_CATEGORY(ifd)
 using namespace governikus;
 
 
+// The pairing code has only four digits. Without a limit every code could be tried within seconds.
+static constexpr int cMaxFailedPairingAttempts = 3;
+
+
 QSslConfiguration RemoteTlsServer::sslConfiguration() const
 {
 	const auto& psk = getPsk();
@@ -106,14 +110,33 @@ void RemoteTlsServer::updateClientInfo(const QSslConfiguration& pSslConfiguratio
 }
 
 
+void RemoteTlsServer::onPskHandshakeFailed()
+{
+	if (!hasPsk())
+	{
+		return;
+	}
+
+	++mFailedPairingAttempts;
+	qCWarning(ifd) << "Pairing attempt failed | count:" << mFailedPairingAttempts << "of" << cMaxFailedPairingAttempts;
+	if (mFailedPairingAttempts >= cMaxFailedPairingAttempts)
+	{
+		qCWarning(ifd) << "Too many failed pairing attempts, pairing disabled";
+		setPairing(false);
+	}
+}
+
+
 RemoteTlsServer::RemoteTlsServer()
 	: TlsServer()
+	, mFailedPairingAttempts(0)
 {
 }
 
 
 void RemoteTlsServer::setPairing(bool pEnable)
 {
+	mFailedPairingAttempts = 0;
 	if (pEnable)
 	{
 		setRandomPsk();
