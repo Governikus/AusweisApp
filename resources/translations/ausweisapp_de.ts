@@ -4345,6 +4345,11 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
         <extracomment>MOBILE Name of an progress indicator during the pairing process read by screen readers</extracomment>
         <translation>Kopplungsfortschritt</translation>
     </message>
+    <message>
+        <source>Pairing was cancelled because a wrong pairing code was entered several times. If you did not enter it yourself, another device in your network may have tried to pair.</source>
+        <extracomment>MOBILE Shown when pairing was stopped because a wrong pairing code was entered several times</extracomment>
+        <translation>Die Kopplung wurde abgebrochen, weil mehrfach ein falscher Kopplungscode eingegeben wurde. Falls Sie den Code nicht selbst eingegeben haben, hat möglicherweise ein anderes Gerät in Ihrem Netzwerk versucht, sich zu koppeln.</translation>
+    </message>
 </context>
 <context>
     <name>RemoteWorkflow</name>

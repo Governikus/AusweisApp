@@ -14,6 +14,8 @@
 #include <QSslSocket>
 #include <QtTest>
 
+#include <memory>
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
@@ -28,6 +30,48 @@ class test_RemoteTlsServer
 	private:
 		QByteArray psk;
 		const KeyPair pair = KeyPair::generate();
+
+		std::unique_ptr<QSslSocket> createPskClient(const QByteArray& pPsk) const
+		{
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getConfiguration();
+			config.setPrivateKey(pair.getKey());
+			config.setLocalCertificate(pair.getCertificate());
+			config.setPeerVerifyMode(QSslSocket::VerifyNone);
+
+			auto client = std::make_unique<QSslSocket>();
+			client->setSslConfiguration(config);
+			connect(client.get(), &QSslSocket::preSharedKeyAuthenticationRequired, client.get(), [pPsk](QSslPreSharedKeyAuthenticator* pAuthenticator){
+						pAuthenticator->setPreSharedKey(pPsk);
+					});
+			return client;
+		}
+
+
+		static bool finishHandshake(QSslSocket& pClient)
+		{
+			QSignalSpy clientEncrypted(&pClient, &QSslSocket::encrypted);
+			QSignalSpy clientErrors(&pClient, &QAbstractSocket::errorOccurred);
+			if (pClient.state() == QAbstractSocket::ConnectedState)
+			{
+				pClient.startClientEncryption();
+			}
+			const bool finished = QTest::qWaitFor([&clientEncrypted, &clientErrors]{
+						return clientEncrypted.count() + clientErrors.count() > 0;
+					});
+			return finished && clientEncrypted.count() == 1;
+		}
+
+
+		bool connectWithPsk(const RemoteTlsServer& pServer, const QByteArray& pPsk) const
+		{
+			const auto client = createPskClient(pPsk);
+			client->connectToHost(QHostAddress(QHostAddress::LocalHost), pServer.serverPort());
+			if (!client->waitForConnected())
+			{
+				return false;
+			}
+			return finishHandshake(*client);
+		}
 
 
 		void pairDevices(const KeyPair& pClientPair, const QList<QSslCertificate>& pCertChain, QtMsgType pLogMsgType, const QString& pLogError)
@@ -148,6 +192,82 @@ class test_RemoteTlsServer
 			QCOMPARE(clientErrors.takeFirst().at(0).value<QAbstractSocket::SocketError>(), QAbstractSocket::SocketError::SslHandshakeFailedError);
 			QCOMPARE(clientEncrypted.count(), 0);
 			QCOMPARE(clientPsk.count(), 0);
+		}
+
+
+		void pairingDisabledAfterFailedAttempts()
+		{
+			RemoteTlsServer server;
+			QByteArray serverPsk;
+			connect(&server, &RemoteTlsServer::firePskChanged, this, [&serverPsk](const QByteArray& pPsk){
+						serverPsk = pPsk;
+					});
+			QSignalSpy pairingAborted(&server, &RemoteTlsServer::firePairingAborted);
+			server.setPairing();
+			QVERIFY(server.startListening(0));
+			QVERIFY(server.hasPsk());
+			const QByteArray validPsk = serverPsk;
+			const QByteArray wrongPsk = validPsk == "0000" ? QByteArray("0001") : QByteArray("0000");
+
+			// connection accepted while pairing is still active, handshake follows later
+			std::unique_ptr<QSslSocket> pendingClient = createPskClient(validPsk);
+			pendingClient->connectToHost(QHostAddress(QHostAddress::LocalHost), server.serverPort());
+			QVERIFY(pendingClient->waitForConnected());
+			QTRY_COMPARE(server.mPendingSockets.size(), 1); // clazy:exclude=qstring-allocations
+
+			QVERIFY(!connectWithPsk(server, wrongPsk));
+			QTRY_VERIFY(server.hasPsk());
+			QVERIFY(!connectWithPsk(server, wrongPsk));
+			QTRY_VERIFY(server.hasPsk());
+			QCOMPARE(pairingAborted.count(), 0);
+
+			QTest::ignoreMessage(QtWarningMsg, "Too many failed pairing attempts, pairing disabled");
+			QVERIFY(!connectWithPsk(server, wrongPsk));
+			QTRY_VERIFY(!server.hasPsk());
+			QCOMPARE(serverPsk, QByteArray());
+			QCOMPARE(pairingAborted.count(), 1);
+
+			// the correct code must not work anymore, not even on a connection accepted before
+			QVERIFY(!connectWithPsk(server, validPsk));
+			QVERIFY(!finishHandshake(*pendingClient));
+			QVERIFY(!server.hasPsk());
+
+			// a new pairing starts with a fresh limit
+			server.setPairing();
+			QVERIFY(server.hasPsk());
+			QVERIFY(!connectWithPsk(server, wrongPsk));
+			QTRY_VERIFY(server.hasPsk());
+			QCOMPARE(pairingAborted.count(), 1);
+		}
+
+
+		void pskOfConnectionTimeIsUsed()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+			settings.setTrustedCertificates({});
+
+			RemoteTlsServer server;
+			QByteArray serverPsk;
+			connect(&server, &RemoteTlsServer::firePskChanged, this, [&serverPsk](const QByteArray& pPsk){
+						serverPsk = pPsk;
+					});
+			server.setPairing();
+			QVERIFY(server.startListening(0));
+			const QByteArray shownPsk = serverPsk;
+
+			std::unique_ptr<QSslSocket> client = createPskClient(shownPsk);
+			client->connectToHost(QHostAddress(QHostAddress::LocalHost), server.serverPort());
+			QVERIFY(client->waitForConnected());
+			QTRY_COMPARE(server.mPendingSockets.size(), 1); // clazy:exclude=qstring-allocations
+
+			// the code is rotated while the handshake is still on its way
+			do
+			{
+				server.setRandomPsk();
+			}
+			while (serverPsk == shownPsk);
+
+			QVERIFY(finishHandshake(*client));
 		}
 
 

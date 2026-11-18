@@ -153,6 +153,14 @@ void RemoteServiceModel::onPskChanged(const QByteArray& pPsk)
 	const bool initialPsk = mPsk.isEmpty();
 	mPsk = pPsk;
 
+	if (pPsk.isEmpty())
+	{
+		// Pairing may be stopped by the server, e.g. after too many failed attempts.
+		// Do not let the validity timer silently restart it with a new code.
+		mPskValidityTimer.stop();
+		mRemainingPskValiditySignalTimer.stop();
+	}
+
 	Q_EMIT firePskChanged(pPsk, initialPsk);
 }
 
@@ -378,6 +386,7 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServi
 		connect(mContext.data(), &IfdServiceContext::fireDisplayTextChanged, this, &RemoteServiceModel::fireDisplayTextChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::firePairingCompleted, this, &RemoteServiceModel::onPairingCompleted);
+		connect(mContext->getIfdServer().data(), &IfdServer::firePairingAborted, this, &RemoteServiceModel::firePairingAborted);
 		connect(mContext.data(), &IfdServiceContext::fireCardConnected, this, &RemoteServiceModel::onCardConnected);
 		connect(mContext.data(), &IfdServiceContext::fireCardDisconnected, this, &RemoteServiceModel::onCardDisconnected);
 		connect(mContext.data(), &IfdServiceContext::fireEstablishPaceChannelUpdated, this, &RemoteServiceModel::fireEstablishPaceChannelUpdated);

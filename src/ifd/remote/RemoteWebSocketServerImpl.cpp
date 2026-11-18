@@ -42,6 +42,7 @@ RemoteWebSocketServerImpl::RemoteWebSocketServerImpl()
 	, mPairingConnection(false)
 {
 	connect(mRemoteTlsServer.data(), &RemoteTlsServer::firePairingCompleted, this, &RemoteWebSocketServer::firePairingCompleted);
+	connect(mRemoteTlsServer.data(), &RemoteTlsServer::firePairingAborted, this, &RemoteWebSocketServer::firePairingAborted);
 	connect(&mWebSocketServer, &WebSocketServer::fireNewConnection, this, &RemoteWebSocketServerImpl::onNewConnection);
 	connect(&mWebSocketServer, &WebSocketServer::fireConnectedChanged, this, &RemoteWebSocketServerImpl::fireConnectedChanged);
 	connect(&mWebSocketServer, &WebSocketServer::fireMessageHandlerAdded, this, &RemoteWebSocketServerImpl::fireMessageHandlerAdded);

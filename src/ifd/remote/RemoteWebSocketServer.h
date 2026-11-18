@@ -25,6 +25,7 @@ class RemoteWebSocketServer
 
 	Q_SIGNALS:
 		void firePairingCompleted(const QSslCertificate& pCertificate);
+		void firePairingAborted();
 
 };
 

@@ -162,6 +162,7 @@ class RemoteServiceModel
 		void firePairingFailed(const QString& pDeviceName, const QString& pErrorMessage);
 		void firePairingSuccess(const QString& pDeviceName);
 		void firePairingCompleted();
+		void firePairingAborted();
 		void fireConnectionInfoChanged();
 		void fireConnectedServerDeviceNamesChanged();
 		void fireRemoteReaderVisibleChanged();

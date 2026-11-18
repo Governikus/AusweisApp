@@ -50,6 +50,7 @@ RemoteIfdServer::RemoteIfdServer()
 	connect(mWebSocketServer.data(), &RemoteWebSocketServer::fireConnectedChanged, this, &RemoteIfdServer::onConnectedChanged);
 	connect(mWebSocketServer.data(), &RemoteWebSocketServer::fireMessageHandlerAdded, this, &IfdServer::fireMessageHandlerAdded);
 	connect(mWebSocketServer.data(), &RemoteWebSocketServer::firePairingCompleted, this, &IfdServer::firePairingCompleted);
+	connect(mWebSocketServer.data(), &RemoteWebSocketServer::firePairingAborted, this, &IfdServer::firePairingAborted);
 	connect(mWebSocketServer.data(), &RemoteWebSocketServer::fireSocketError, this, &IfdServer::fireSocketError);
 	connect(mWebSocketServer.data(), &WebSocketServer::fireNameChanged, this, &IfdServer::fireNameChanged);
 }

@@ -17,6 +17,9 @@ Q_DECLARE_LOGGING_CATEGORY(ifd)
 using namespace governikus;
 
 
+static const char* const cPskRequestedProperty = "pskRequested";
+
+
 bool TlsServer::releaseSocket(QSslSocket* pSocket)
 {
 	const auto socket = mPendingSockets.extract(pSocket);
@@ -75,8 +78,8 @@ void TlsServer::incomingConnection(qintptr pSocketDescriptor)
 				onSslErrors(socket, pErrors);
 			});
 	connect(socket.get(), &QSslSocket::preSharedKeyAuthenticationRequired, this,
-			[this, psk = mPsk](QSslPreSharedKeyAuthenticator* pAuthenticator){
-				onPreSharedKeyAuthenticationRequired(pAuthenticator, psk);
+			[this, socket = socket.get(), psk = mPsk](QSslPreSharedKeyAuthenticator* pAuthenticator){
+				onPreSharedKeyAuthenticationRequired(socket, pAuthenticator, psk);
 			});
 	connect(socket.get(), &QSslSocket::encrypted, this,
 			[this, socket = socket.get()](){
@@ -89,10 +92,26 @@ void TlsServer::incomingConnection(qintptr pSocketDescriptor)
 }
 
 
-void TlsServer::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator, const QByteArray& pPsk) const
+void TlsServer::onPreSharedKeyAuthenticationRequired(QSslSocket* pSocket, QSslPreSharedKeyAuthenticator* pAuthenticator, const QByteArray& pPsk) const
 {
 	qCDebug(ifd) << "Client requests PSK authentication | identity:" << pAuthenticator->identity() << "| hint:" << pAuthenticator->identityHint();
+
+	// The PSK valid at connection time is used, so a code shown to the user still works if it
+	// was rotated in the meantime. Once pairing has ended, no PSK is accepted anymore, otherwise
+	// connections opened before could still be used to guess the code.
+	if (mPsk.isEmpty())
+	{
+		qCDebug(ifd) << "Pairing has ended, PSK authentication refused";
+		return;
+	}
+
+	pSocket->setProperty(cPskRequestedProperty, true);
 	pAuthenticator->setPreSharedKey(pPsk);
+}
+
+
+void TlsServer::onPskHandshakeFailed()
+{
 }
 
 
@@ -106,6 +125,11 @@ void TlsServer::onError(QSslSocket* pSocket, QAbstractSocket::SocketError pSocke
 	qCDebug(ifd).noquote() << "Client (" << pSocket->peerAddress().toString() << ") socket error:" << pSocketError << "|" << pSocket->errorString();
 	pSocket->disconnect(this);
 	pSocket->deleteLater();
+
+	if (pSocketError == QAbstractSocket::SslHandshakeFailedError && pSocket->property(cPskRequestedProperty).toBool())
+	{
+		onPskHandshakeFailed();
+	}
 
 	Q_EMIT fireSocketError(pSocketError);
 }

@@ -374,6 +374,14 @@ FlickableSectionPage {
 
 		visible: Qt.platform.os === "ios"
 	}
+	Connections {
+		function onFirePairingAborted() {
+			//: MOBILE Shown when pairing was stopped because a wrong pairing code was entered several times
+			ApplicationModel.showFeedback(qsTr("Pairing was cancelled because a wrong pairing code was entered several times. If you did not enter it yourself, another device in your network may have tried to pair."));
+		}
+
+		target: RemoteServiceModel
+	}
 	GProgressBar {
 		//: MOBILE Name of an progress indicator during the pairing process read by screen readers
 		Accessible.name: qsTr("Pairing progress")

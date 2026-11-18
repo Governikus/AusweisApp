@@ -43,6 +43,7 @@ class IfdServer
 		void fireConnectedChanged(bool pConnected);
 		void fireIsRunningChanged();
 		void firePairingCompleted(const QSslCertificate& pCertificate);
+		void firePairingAborted();
 		void fireSocketError(QAbstractSocket::SocketError pSocketError);
 		void fireNameChanged();
 };

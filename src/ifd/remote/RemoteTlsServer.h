@@ -15,10 +15,13 @@ class RemoteTlsServer
 	Q_OBJECT
 
 	private:
+		int mFailedPairingAttempts;
+
 		QSslConfiguration sslConfiguration() const override;
 		bool acceptSslErrors(const QPointer<QSslSocket>& pSocket, const QList<QSslError>& pErrors) const override;
 		bool checkSslConfiguration(const QSslConfiguration& pSslConfiguration) const override;
 		void updateClientInfo(const QSslConfiguration& pSslConfiguration) override;
+		void onPskHandshakeFailed() override;
 
 	public:
 		RemoteTlsServer();
@@ -28,6 +31,7 @@ class RemoteTlsServer
 
 	Q_SIGNALS:
 		void firePairingCompleted(const QSslCertificate& pCertificate);
+		void firePairingAborted();
 };
 
 } // namespace governikus
