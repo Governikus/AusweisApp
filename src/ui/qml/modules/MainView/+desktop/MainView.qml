@@ -48,6 +48,7 @@ SectionPage {
 			onClicked: root.requestUiModule(UiModule.SELF_AUTHENTICATION)
 		}
 		Tile {
+			Accessible.id: "MainView_SettingsTile"
 			icon.source: "qrc:/images/desktop/settings.svg"
 
 			//: DESKTOP
@@ -56,6 +57,7 @@ SectionPage {
 			onClicked: root.requestUiModule(UiModule.SETTINGS)
 		}
 		Tile {
+			Accessible.id: "MainView_HelpTile"
 			icon.source: "qrc:/images/desktop/help.svg"
 
 			//: DESKTOP

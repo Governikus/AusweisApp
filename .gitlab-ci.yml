@@ -1,7 +1,7 @@
 spec:
   inputs:
     revision:
-      description: "Use revision of repository."
+      description: "Use revision of hg repository."
       type: string
       default: "default"
     release:
@@ -13,8 +13,8 @@ spec:
 image: ${DOCKER_REGISTRY_MIRROR}/alpine
 
 variables:
+  GIT_STRATEGY: empty
   PIPELINE_NAME: '$CI_COMMIT_TITLE'
-  REPOSITORY: https://hg.governikus.de/AusweisApp/AusweisApp2
 
 workflow:
   name: '$PIPELINE_NAME'
@@ -48,11 +48,22 @@ Bootstrap:
       if [ -n "$MIRROR_ALPINE" ]; then
         sed -i "s|https://[^/]*/alpine/|$MIRROR_ALPINE/|g" /etc/apk/repositories
       fi
-    - apk add mercurial cmake uv
+      if [ -n "$REPOSITORY" ]; then
+        apk add mercurial
+      else
+        apk add git
+      fi
+    - apk add cmake uv python3
     - uv venv $VIRTUAL_ENV
     - source $VIRTUAL_ENV/bin/activate
   script:
-    - hg clone --stream ${REPOSITORY} -u $[[ inputs.revision ]] source
+    - |
+      if [ -n "$REPOSITORY" ]; then
+        hg clone --stream ${REPOSITORY} -u $[[ inputs.revision ]] source
+      else
+        git clone "$CI_REPOSITORY_URL" source
+        git -c advice.detachedHead=false -C source checkout $CI_COMMIT_SHA
+      fi
     - cmake -DSPLIT=OFF -DRELEASE="$[[ inputs.release ]]" -P source/ci.cmake
   artifacts:
     paths:

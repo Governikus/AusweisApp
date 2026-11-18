@@ -9,6 +9,7 @@
 ADD_PLATFORM_LIBRARY(AusweisAppSettings)
 
 target_link_libraries(AusweisAppSettings ${Qt}::Core ${Qt}::Network ${Qt}::Concurrent OpenSSL::Crypto AusweisAppGlobal AusweisAppCrypto)
+target_compile_definitions(AusweisAppSettings PRIVATE VENDOR_PATH="${VENDOR_PATH}")
 
 if(MACOS)
 	target_link_libraries(AusweisAppSettings ${OSX_APPKIT} ${OSX_SERVICEMANAGEMENT})

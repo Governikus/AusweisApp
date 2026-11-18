@@ -4,7 +4,9 @@
 
 import QtQuick
 import QtQuick.Controls
+
 import Governikus.Style
+import Governikus.View
 
 ScrollBar {
 	id: root
@@ -12,6 +14,7 @@ ScrollBar {
 	property bool autohide: !Style.is_layout_desktop
 	property alias borderWidth: customContent.border.width
 	property alias color: customContent.color
+	property Item focusFrameScope: null
 	property bool highlighted: false
 
 	function highlight() {
@@ -43,6 +46,13 @@ ScrollBar {
 				duration: Style.animation_duration
 				easing.type: Easing.InOutCubic
 			}
+		}
+
+		FocusFrame {
+			id: focusFrame
+
+			scope: root.focusFrameScope
+			visible: root.focusFrameScope !== null
 		}
 	}
 

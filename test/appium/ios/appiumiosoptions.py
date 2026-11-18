@@ -15,14 +15,9 @@ class AppiumIosOptions(XCUITestOptions):
 
     def detect_udid(self):
         try:
-            output = (
-                subprocess.check_output(['idevice_id', '-l']).decode().strip()
-            )
+            output = subprocess.check_output(['idevice_id', '-l']).decode().strip()
         except FileNotFoundError:
-            print(
-                '"idevice_id" not found. Make sure libimobiledevice is '
-                'installed.'
-            )
+            print('"idevice_id" not found. Make sure libimobiledevice is installed.')
         else:
             udids = output.splitlines()
 

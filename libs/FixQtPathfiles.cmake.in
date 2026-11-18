@@ -1,0 +1,25 @@
+function(REPLACE_ABSOLUTE_QT_HOST_PATH _qtpath_file)
+    file(READ ${_qtpath_file} file_content)
+    get_filename_component(qtpath_extension ${_qtpath_file} LAST_EXT)
+
+    if(${qtpath_extension} MATCHES .bat)
+        string(REGEX REPLACE "([^ \t\n]+)\\\\dist" "%~dp0\\\\.." file_content "${file_content}")
+    else()
+        string(REGEX REPLACE "[^ \t\n]+/dist" "$script_dir_path/.." file_content "${file_content}")
+    endif()
+
+    file(WRITE "${_qtpath_file}" "${file_content}")
+endfunction()
+
+set(LIBS_BIN_PATH "@DESTINATION_DIR@/bin")
+file(GLOB QTPATH_FILES "${LIBS_BIN_PATH}/qtpaths*")
+
+list(LENGTH QTPATH_FILES FILE_COUNT)
+if(NOT FILE_COUNT EQUAL 2)
+    message(FATAL_ERROR "No qtpaths and qtpaths6 found in ${LIBS_BIN_PATH}")
+endif()
+
+foreach(qtpath_file ${QTPATH_FILES})
+    message(STATUS "Replacing absolute QT_HOST path in ${qtpath_file}")
+    REPLACE_ABSOLUTE_QT_HOST_PATH(${qtpath_file})
+endforeach()

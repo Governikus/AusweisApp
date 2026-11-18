@@ -18,6 +18,5 @@ class PanstarHtmlParser(HTMLParser):
             return False
 
         return (
-            self.non_empty_lines[i + 1] == permission
-            and self.non_empty_lines[i + 2] == field_value
+            self.non_empty_lines[i + 1] == permission and self.non_empty_lines[i + 2] == field_value
         )

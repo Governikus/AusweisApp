@@ -23,7 +23,7 @@ PlatformStyle {
 	QtObject {
 		id: darkTheme
 
-		readonly property var color: PlatformColorsDark {
+		readonly property var color: ColorsDark {
 			software_renderer: root.software_renderer
 		}
 		readonly property alias dimens: dimensions
@@ -43,7 +43,7 @@ PlatformStyle {
 	QtObject {
 		id: defaultTheme
 
-		readonly property var color: PlatformColorsLight {
+		readonly property var color: ColorsLight {
 			software_renderer: root.software_renderer
 		}
 		readonly property alias dimens: dimensions

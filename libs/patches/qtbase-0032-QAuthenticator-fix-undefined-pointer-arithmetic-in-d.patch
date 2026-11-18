@@ -1,0 +1,51 @@
+From d44dfcb0bc702b28bb3335eaab6fbc3e7361bd01 Mon Sep 17 00:00:00 2001
+From: Mate Barany <mate.barany@qt.io>
+Date: Tue, 16 Jun 2026 19:02:45 +0200
+Subject: QAuthenticator: fix undefined pointer arithmetic in digest parser
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+parseDigestAuthenticationChallenge advances a pointer past the '='
+separator and past the ',' delimiter without checking whether it
+has already reached the end of the buffer. When either character is
+absent, the pointer is incremented two past the end of the
+underlying allocation, which is undefined behaviour even without a
+dereference.
+
+Add guards so the pointer is only advanced when it still points
+within the buffer.
+
+Task-number: QTBUG-147529
+Pick-to: 6.12 6.11
+Change-Id: I348798913a2d4694de6e7603c3a519cf19dfdee0
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+(cherry picked from commit 45eb1c2b8549a72ebe982a06ec3629c5cd341c10)
+---
+ src/network/kernel/qauthenticator.cpp | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/network/kernel/qauthenticator.cpp y/qtbase/src/network/kernel/qauthenticator.cpp
+index 1881c4a08bea2a1c308bc81902aac53ae921747e..cefcd77c0025c7dff9cda9c5ca239c3952c91457 100644
+--- x/qtbase/src/network/kernel/qauthenticator.cpp
++++ y/qtbase/src/network/kernel/qauthenticator.cpp
+@@ -684,6 +684,8 @@ QAuthenticatorPrivate::parseDigestAuthenticationChallenge(QByteArrayView challen
+         const char *start = d;
+         while (d < end && *d != '=')
+             ++d;
++        if (d >= end)
++            break;
+         QByteArrayView key = QByteArrayView(start, d - start);
+         ++d;
+         if (d >= end)
+@@ -714,7 +716,8 @@ QAuthenticatorPrivate::parseDigestAuthenticationChallenge(QByteArrayView challen
+         }
+         while (d < end && *d != ',')
+             ++d;
+-        ++d;
++        if (d < end)
++            ++d;
+         options[key.toByteArray()] = std::move(value);
+     }
+ 

@@ -22,7 +22,7 @@ Rectangle {
 	border.width: {
 		if (Qt.platform.os !== "windows" && ApplicationModel.screenReaderRunning)
 			return 0;
-		if (scope.activeFocus && UiPluginModel.showFocusIndicator)
+		if (scope?.activeFocus && UiPluginModel.showFocusIndicator)
 			return size;
 		return 0;
 	}

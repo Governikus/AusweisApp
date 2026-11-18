@@ -69,7 +69,7 @@ GFlickableColumnLayout {
 				//: MOBILE The device does not support Extended Length and can not be used as card reader.
 				return qsTr("The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).");
 			} else {
-				//: MOBILE The connection to the smartphone was established, the ID card may be inserted.
+				//: MOBILE The connection to the smartphone was established. %1 will be replaced with the name of the connected smartphone.
 				return qsTr("Connected to %1. Please follow the instructions on the connected smartphone.").arg(RemoteServiceModel.connectedServerDeviceNames);
 			}
 		}

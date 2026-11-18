@@ -85,6 +85,7 @@ class UiPluginQml
 #ifndef QT_NO_DEBUG
 		static QString adjustQmlImportPath(QQmlEngine* pEngine);
 		Q_INVOKABLE void emitFireShowRequest(UiModule pModule);
+		void adjustHoverEnabled() const;
 #endif
 		[[nodiscard]] static QString getOverridePlatform();
 

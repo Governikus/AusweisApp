@@ -17,36 +17,61 @@
       }
     },
     {
-      "name": "ci-msvc-release",
+      "name": "ci-win",
       "inherits": "ci",
-      "generator": "NMake Makefiles",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RELEASE",
         "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
         "WIN_SIGN_KEYSTORE_PSW": "$env{WIN_SIGN_KEYSTORE_PSW}",
         "WIN_SIGN_SUBJECT_NAME": "$env{WIN_SIGN_SUBJECT_NAME}"
+      }
+    },
+    {
+      "name": "ci-msvc",
+      "inherits": "ci-win",
+      "generator": "NMake Makefiles"
+    },
+    {
+      "name": "ci-msvc-release",
+      "inherits": "ci-msvc",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RELEASE"
       }
     },
     {
       "name": "ci-msvc-debug",
-      "inherits": "ci",
-      "generator": "NMake Makefiles",
+      "inherits": "ci-msvc",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "DEBUG",
-        "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
-        "WIN_SIGN_KEYSTORE_PSW": "$env{WIN_SIGN_KEYSTORE_PSW}",
-        "WIN_SIGN_SUBJECT_NAME": "$env{WIN_SIGN_SUBJECT_NAME}"
+        "CMAKE_BUILD_TYPE": "DEBUG"
+      }
+    },
+    {
+      "name": "ci-msvc-arm64",
+      "inherits": "ci-msvc",
+      "cacheVariables": {
+        "CMAKE_SYSTEM_NAME": "Windows",
+        "CMAKE_SYSTEM_PROCESSOR": "ARM64"
+      }
+    },
+    {
+      "name": "ci-msvc-arm64-release",
+      "inherits": "ci-msvc-arm64",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RELEASE"
+      }
+    },
+    {
+      "name": "ci-msvc-arm64-debug",
+      "inherits": "ci-msvc-arm64",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "DEBUG"
       }
     },
     {
       "name": "ci-gnu-release",
-      "inherits": "ci",
+      "inherits": "ci-win",
       "generator": "MinGW Makefiles",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RELEASE",
-        "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
-        "WIN_SIGN_KEYSTORE_PSW": "$env{WIN_SIGN_KEYSTORE_PSW}",
-        "WIN_SIGN_SUBJECT_NAME": "$env{WIN_SIGN_SUBJECT_NAME}"
+        "CMAKE_BUILD_TYPE": "RELEASE"
       }
     },
     {

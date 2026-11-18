@@ -20,6 +20,7 @@ Flickable {
 		// fall through
 		case Qt.Key_PageDown:
 			root.scrollPageDown();
+			highlightScrollbar();
 			break;
 		case Qt.Key_Up:
 			if (ApplicationModel.screenReaderRunning)
@@ -27,12 +28,15 @@ Flickable {
 		// fall through
 		case Qt.Key_PageUp:
 			root.scrollPageUp();
+			highlightScrollbar();
 			break;
 		case Qt.Key_End:
 			root.contentY = root.contentHeight - root.height;
+			highlightScrollbar();
 			break;
 		case Qt.Key_Home:
 			root.contentY = root.originY;
+			highlightScrollbar();
 			break;
 		default:
 			return;

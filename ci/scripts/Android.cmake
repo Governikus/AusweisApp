@@ -46,7 +46,7 @@ else()
 		step(${CMAKE_COMMAND} -E copy_if_different ${file} ${BUNDLE_DIR})
 	endforeach()
 
-	step(${CMAKE_COMMAND} -E tar cf dist/${artifactId}-${version}.zip --format=zip ${groupId_RootDir} CHDIR ${T_BUILD_DIR})
+	step(${CMAKE_COMMAND} -E tar cf dist/${artifactId}-${version}.aar.zip --format=zip ${groupId_RootDir} CHDIR ${T_BUILD_DIR})
 	return()
 endif()
 

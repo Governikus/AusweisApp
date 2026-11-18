@@ -74,18 +74,19 @@ Colors {
 		content.basic_unchecked: "#0077b6"
 	}
 	controlSwitch: DefaultControlColors {
-		background.hovered_checked: background.pressed_checked
-		background.hovered_unchecked: background.pressed_unchecked
-		background.pressed_checked: "#008ad3"
-		background.pressed_unchecked: "#ffffff"
-		border.hovered_checked: border.pressed_checked
-		border.hovered_unchecked: border.pressed_unchecked
-		border.pressed_checked: "#008ad3"
-		border.pressed_unchecked: "#008ad3"
-		content.hovered_checked: content.pressed_checked
-		content.hovered_unchecked: content.pressed_unchecked
+		background.basic_unchecked: root.transparent
+		background.disabled_checked: "#bcc0c1"
+		background.disabled_unchecked: root.transparent
+		background.hovered_checked: "#006196"
+		background.hovered_unchecked: root.transparent
+		background.pressed_checked: "#004b76"
+		background.pressed_unchecked: root.transparent
+		border.hovered_checked: "#006196"
+		border.hovered_unchecked: "#303030"
+		border.pressed_checked: "#004b76"
+		content.disabled_unchecked: "#bcc0c1"
+		content.hovered_unchecked: "#303030"
 		content.pressed_checked: "#ffffff"
-		content.pressed_unchecked: "#008ad3"
 	}
 	linkBasic: DefaultLinkColors {
 		hovered_checked: "#379ec8"

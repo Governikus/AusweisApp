@@ -7,7 +7,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 
 import Governikus.Global
-import Governikus.View
 import Governikus.Style
 import Governikus.Type
 
@@ -17,6 +16,8 @@ GListView {
 	anchors.fill: parent
 	displayMarginBeginning: Style.dimens.pane_padding
 	displayMarginEnd: Style.dimens.pane_padding
+	enableLineShineThroughFix: true
+	keyNavigationChangesCurrentIndex: false
 	model: ApplicationModel.getLicenseText()
 
 	delegate: ListEntryDelegate {
@@ -25,15 +26,6 @@ GListView {
 
 		onActiveFocusChanged: if (activeFocus) {
 			root.centerViewAtIndex(index);
-		}
-	}
-	highlight: Item {
-		z: 2
-
-		FocusFrame {
-			anchors.leftMargin: 0
-			anchors.rightMargin: 0
-			scope: root
 		}
 	}
 

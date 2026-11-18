@@ -232,7 +232,11 @@ bool AppUpdateData::checkPlatformObject(const QJsonObject& pJson)
 bool AppUpdateData::isPlatform(const QString& pPlatform)
 {
 #ifdef Q_OS_WIN
+	#ifdef Q_PROCESSOR_ARM_64
+	if (pPlatform == QLatin1String("win-arm64"))
+	#else
 	if (pPlatform == QLatin1String("win"))
+	#endif
 	{
 		return true;
 	}

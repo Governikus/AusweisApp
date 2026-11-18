@@ -214,7 +214,6 @@ FlickableSectionPage {
 			checked: SettingsModel.visualPrivacy
 			//: MOBILE
 			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
-			drawBottomCorners: true
 
 			//: MOBILE
 			text: qsTr("Hide key animations")
@@ -234,7 +233,6 @@ FlickableSectionPage {
 				return qsTr("In the event of a screenshot or video recording of the screen, you will be notified about the possible collection of sensitive data.");
 			}
 			drawBottomCorners: true
-			drawTopCorners: true
 			text: {
 				if (Qt.platform.os === "android") {
 					//: ANDROID

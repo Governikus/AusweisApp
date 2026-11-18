@@ -22,9 +22,7 @@ class CommandLineParser(argparse.ArgumentParser):
             default='com.governikus.ausweisapp2',
         )
         self.add_argument('--track', help='Release track', default='internal')
-        self.add_argument(
-            '--upload', nargs='+', help='List of files (APK, AAB) to upload'
-        )
+        self.add_argument('--upload', nargs='+', help='List of files (APK, AAB) to upload')
         self.add_argument(
             '--symbols',
             nargs='*',
@@ -34,9 +32,7 @@ class CommandLineParser(argparse.ArgumentParser):
                 'like "<apk-name>.apk.native-debug-symbols.zip"'
             ),
         )
-        self.add_argument(
-            '-v', '--verbose', help='Verbose output', action='store_true'
-        )
+        self.add_argument('-v', '--verbose', help='Verbose output', action='store_true')
 
         self.args = self.parse_args()
         for key, value in vars(self.args).items():
@@ -69,14 +65,10 @@ def UploadFiles(parser, service, edit_id):
     for uploadFile in parser.upload:
         if uploadFile.endswith('.apk'):
             target = service.edits().apks()
-            media = MediaFileUpload(
-                uploadFile, mimetype='application/vnd.android.package-archive'
-            )
+            media = MediaFileUpload(uploadFile, mimetype='application/vnd.android.package-archive')
         elif uploadFile.endswith('.aab'):
             target = service.edits().bundles()
-            media = MediaFileUpload(
-                uploadFile, mimetype='application/octet-stream'
-            )
+            media = MediaFileUpload(uploadFile, mimetype='application/octet-stream')
         else:
             print(f'Unknown file: {uploadFile}')
             sys.exit(-1)
@@ -93,9 +85,7 @@ def UploadFiles(parser, service, edit_id):
         for debugFile in parser.symbols:
             if debugFile == (f'{uploadFile}.native-debug-symbols.zip'):
                 debugTarget = service.edits().deobfuscationfiles()
-                debugMedia = MediaFileUpload(
-                    debugFile, mimetype='application/octet-stream'
-                )
+                debugMedia = MediaFileUpload(debugFile, mimetype='application/octet-stream')
                 debugTarget.upload(
                     editId=edit_id,
                     packageName=parser.package,
@@ -103,10 +93,7 @@ def UploadFiles(parser, service, edit_id):
                     deobfuscationFileType='nativeCode',
                     apkVersionCode=response['versionCode'],
                 ).execute()
-                print(
-                    f'Debug symbols for {response["versionCode"]}'
-                    ' have been uploaded'
-                )
+                print(f'Debug symbols for {response["versionCode"]} have been uploaded')
 
     response = (
         service.edits()
@@ -120,9 +107,7 @@ def UploadFiles(parser, service, edit_id):
                     {
                         'versionCodes': versionCodes,
                         'status': 'draft',
-                        'inAppUpdatePriority': int(
-                            os.getenv('ANDROID_PRIORITY', 0)
-                        ),
+                        'inAppUpdatePriority': int(os.getenv('ANDROID_PRIORITY', 0)),
                     }
                 ]
             },
@@ -131,11 +116,7 @@ def UploadFiles(parser, service, edit_id):
     )
     print(f'Track {response["track"]} is ready')
 
-    commit_request = (
-        service.edits()
-        .commit(editId=edit_id, packageName=parser.package)
-        .execute()
-    )
+    commit_request = service.edits().commit(editId=edit_id, packageName=parser.package).execute()
     print(f'Edit {commit_request["id"]} has been committed')
 
 
@@ -145,14 +126,10 @@ def main():
         logging.root.setLevel(logging.DEBUG)
 
     SCOPES = ['https://www.googleapis.com/auth/androidpublisher']
-    credentials = service_account.Credentials.from_service_account_file(
-        parser.json, scopes=SCOPES
-    )
+    credentials = service_account.Credentials.from_service_account_file(parser.json, scopes=SCOPES)
 
     service = build('androidpublisher', 'v3', credentials=credentials)
-    result = (
-        service.edits().insert(body={}, packageName=parser.package).execute()
-    )
+    result = service.edits().insert(body={}, packageName=parser.package).execute()
     edit_id = result['id']
 
     if parser.upload:

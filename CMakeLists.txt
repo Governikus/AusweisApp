@@ -45,6 +45,7 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES ${LANGUAGES})
 if(NOT PROJECT_VERSION_TWEAK)
 	set(PROJECT_VERSION_TWEAK 0)
 endif()
+message(STATUS "VERSION: ${PROJECT_VERSION}")
 
 if(ANDROID AND NOT GOVERNIKUS_TOOLCHAIN_FILE)
 	message(FATAL_ERROR "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_DIR}/android.toolchain.cmake is required")
@@ -64,22 +65,26 @@ if(CONTAINER_SDK)
 	set(INTEGRATED_SDK ON)
 endif()
 
-if(NOT VENDOR)
-	if(EXISTS "${CMAKE_DIR}/Vendor.internal.cmake")
-		include(Vendor.internal)
-	else()
-		set(VENDOR "") # Qt uses Organization for paths
-	endif()
+if(EXISTS "${CMAKE_DIR}/Vendor.internal.cmake")
+	include(Vendor.internal)
 endif()
+
+if(NOT VENDOR)
+	set(VENDOR "")
+endif()
+message(STATUS "VENDOR: ${VENDOR}")
+
+if(NOT VENDOR_PATH)
+	set(VENDOR_PATH "${PROJECT_NAME}")
+endif()
+message(STATUS "VENDOR_PATH: ${VENDOR_PATH}")
+
 if(VENDOR MATCHES "Governikus")
 	set(VENDOR_GOVERNIKUS TRUE)
 	set(LICENSE_FILE "${PROJECT_SOURCE_DIR}/LICENSE.officially.txt")
 else()
 	set(LICENSE_FILE "${PROJECT_SOURCE_DIR}/LICENSE.txt")
 endif()
-
-message(STATUS "VENDOR: ${VENDOR}")
-message(STATUS "VERSION: ${PROJECT_VERSION}")
 
 if(ANDROID)
 	if(ANDROID_VERSION_CODE_BASE)

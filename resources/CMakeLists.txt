@@ -34,7 +34,7 @@ function(filter_json _file _section _value)
 endfunction()
 
 set(CONFIG_JSON ${CMAKE_CURRENT_BINARY_DIR}/config.json)
-configure_file(${RESOURCES_DIR}/config.json.in ${CONFIG_JSON} @ONLY)
+configure_file(${RESOURCES_DIR}/config.json ${CONFIG_JSON} COPYONLY)
 
 if(OS_RELEASE)
 	if(OS_RELEASE_ID_LIKE MATCHES "suse")

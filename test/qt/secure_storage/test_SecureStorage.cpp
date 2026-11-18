@@ -78,7 +78,7 @@ class test_SecureStorage
 			const auto count = cvcs.count();
 			QCOMPARE(count, EXPECTED_CERTIFICATE_COUNT);
 
-			const QStringList comments = loadCommentList("_comment_2"_L1) + loadCommentList("_comment_4"_L1);
+			const QStringList comments = loadCommentList("_comment_1"_L1) + loadCommentList("_comment_3"_L1);
 			QCOMPARE(comments.size(), count);
 
 			// Check that each certificate has a unique car/chr.
@@ -111,8 +111,8 @@ class test_SecureStorage
 			QTest::addColumn<bool>("isProductive");
 			QTest::addColumn<QString>("commentName");
 
-			QTest::newRow("production") << 7 << true << "_comment_2";
-			QTest::newRow("test") << 15 << false << "_comment_4";
+			QTest::newRow("production") << 7 << true << "_comment_1";
+			QTest::newRow("test") << 15 << false << "_comment_3";
 		}
 
 

@@ -14,7 +14,6 @@ import Governikus.Style
 Rectangle {
 	id: root
 
-	property bool boldFont: false
 	required property int index
 	required property string message
 	required property string modelData
@@ -81,6 +80,5 @@ Rectangle {
 	component LogText: GText {
 		Accessible.ignored: true
 		font.family: UiPluginModel.fixedFontFamily
-		font.weight: root.boldFont ? Style.font.bold : Style.font.normal
 	}
 }

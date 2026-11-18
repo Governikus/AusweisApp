@@ -47,6 +47,7 @@ ColumnLayout {
 			onCheckedChanged: SettingsModel.enableSimulator = checked
 		}
 		GSwitch {
+			Accessible.id: "DeveloperSettings_DeveloperModeSwitch"
 			checked: SettingsModel.developerMode
 
 			//: DESKTOP
@@ -60,6 +61,7 @@ ColumnLayout {
 			onCheckedChanged: SettingsModel.developerMode = checked
 		}
 		GSwitch {
+			Accessible.id: "DeveloperSettings_ShowInAppNotificationsSwitch"
 			checked: SettingsModel.showInAppNotifications
 
 			//: DESKTOP Only visible when the user activates the developer mode in the settings.

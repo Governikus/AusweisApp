@@ -1,4 +1,4 @@
-From 967382194ef0674e7bfaa278fb3d3edb40a587e5 Mon Sep 17 00:00:00 2001
+From 988076ad241745766a51d7f4297faf6d882b7469 Mon Sep 17 00:00:00 2001
 From: Fabian Kosmale <fabian.kosmale@qt.io>
 Date: Tue, 21 Jul 2026 16:18:48 +0200
 Subject: QXmlStreamReader: Avoid stack-exhaustion in readElementText
@@ -18,7 +18,7 @@ Reviewed-by: Ivan Solovev <ivan.solovev@qt.io>
 Reviewed-by: Marc Mutz <marc.mutz@qt.io>
 (cherry-picked from commit 50cc08f278c6961d00b5b8bae408d4ccc2fbca4d)
 
-Change-Id: I492fdd23d2c3b38059b7e5eaef29ebad2b82ced9
+Change-Id: Id9ceaf734a06376a2bcceb571b7f4045c4b52d6e
 ---
  src/corelib/serialization/qxmlstream.cpp      | 11 +++++---
  .../qxmlstream/tst_qxmlstream.cpp             | 25 +++++++++++++++++++

@@ -284,15 +284,6 @@
 					"Platforms": [
 						{
 							"os": "mac",
-							"max": "13"
-						}
-					],
-					"URL": "https://www.reiner-sct.com/treiber-mac"
-				},
-				{
-					"Platforms": [
-						{
-							"os": "mac",
 							"min": "14"
 						}
 					],
@@ -329,12 +320,6 @@
 							"min": "10.0.20000"
 						},
 						{
-							"DE": "bis macOS 13",
-							"EN": "up to macOS 13",
-							"os": "mac",
-							"max": "13"
-						},
-						{
 							"DE": "ab macOS 26",
 							"EN": "from macOS 26",
 							"os": "mac",
@@ -347,10 +332,9 @@
 				{
 					"Platforms": [
 						{
-							"DE": "ab macOS 14 bis macOS 15",
-							"EN": "from macOS 14 up to macOS 15",
+							"DE": "bis macOS 15",
+							"EN": "up to macOS 15",
 							"os": "mac",
-							"min": "14",
 							"max": "15"
 						}
 					],
@@ -436,7 +420,7 @@
 						},
 						{
 							"os": "mac",
-							"max": "13"
+							"min": "27"
 						},
 						{
 							"os": "unknown"
@@ -460,26 +444,26 @@
 				{
 					"Platforms": [
 						{
-							"DE": "bis macOS 13",
-							"EN": "up to macOS 13",
+							"DE": "bis macOS 26",
+							"EN": "up to macOS 26",
 							"os": "mac",
-							"max": "13"
-						}
-					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
-					"EN": "The card reader is compatible with the installed system driver."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "ab macOS 14",
-							"EN": "from macOS 14",
-							"os": "mac",
-							"min": "14"
+							"max": "26"
 						}
 					],
 					"DE": "Der Kartenleser wird nicht mehr unterstützt, leider bietet der Hersteller keine aktuellen Treiber an.",
 					"EN": "The card reader is no longer supported, unfortunately the manufacturer does not offer up-to-date drivers."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab macOS 27",
+							"EN": "from macOS 27",
+							"os": "mac",
+							"min": "27"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
+					"EN": "The card reader operates with the driver automatically installed by the system."
 				}
 			],
 			"Internal information": "Der Hersteller stellt keinen Treiber mehr zur Verfügung."
@@ -1417,15 +1401,21 @@
 							"DE": "Windows",
 							"EN": "Windows",
 							"os": "win"
-						},
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website."
+				},
+				{
+					"Platforms": [
 						{
 							"DE": "macOS",
 							"EN": "macOS",
 							"os": "mac"
 						}
 					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
-					"EN": "The card reader is compatible with the installed system driver."
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -1436,13 +1426,17 @@
 				"0x9567"
 			],
 			"Name": "Generic Contactless Card Reader",
-			"Pattern": "^Generic Contactless Card Reader [0-9]$",
+			"Pattern": "^Generic (Contactless Card Reader [0-9]|EMV Smartcard Reader( 0[2468])?)$",
 			"Icon": "img_generic_reader.png",
 			"Drivers": [
 				{
 					"Platforms": [
 						{
 							"os": "win"
+						},
+						{
+							"os": "mac",
+							"min": "27"
 						}
 					],
 					"URL": "https://ausweisapp.bund.de/aa2/cardreader"
@@ -1455,6 +1449,12 @@
 							"DE": "Windows",
 							"EN": "Windows",
 							"os": "win"
+						},
+						{
+							"DE": "ab macOS 27",
+							"EN": "from macOS 27",
+							"os": "mac",
+							"min": "27"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
@@ -1463,16 +1463,17 @@
 				{
 					"Platforms": [
 						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
+							"DE": "bis macOS 26",
+							"EN": "up to macOS 26",
+							"os": "mac",
+							"max": "26"
 						}
 					],
-					"DE": "Der Kartenleser wird nicht unterstützt.",
-					"EN": "The card reader is not supported."
+					"DE": "Der Kartenleser wird nicht mehr unterstützt, leider bietet der Hersteller keine aktuellen Treiber an.",
+					"EN": "The card reader is no longer supported, unfortunately the manufacturer does not offer up-to-date drivers."
 				}
 			],
-			"Internal information": "Der Eintrag umfasst einen Kartenleser von Rocketec und einen von CSL. Beide funktionieren auf Win10 und Win11 out of the Box, unter MacOS besteht ein extended length Problem."
+			"Internal information": "Der Eintrag umfasst einen Kartenleser von Rocketec und einen von CSL. Beide funktionieren auf Windows 10, Windows 11 und macOS 27 out of the Box, unter macOS 14 und 15 besteht ein extended length Problem."
 		}
 	]
 }

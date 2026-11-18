@@ -2641,7 +2641,7 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <translation>Мой временный PIN-код не работает</translation>
     </message>
     <message>
-        <source>If your Transport PIN from the PIN letter does work, this might be caused by the following reasons:</source>
+        <source>If your Transport PIN from the PIN letter does not work, this might be caused by the following reasons:</source>
         <extracomment>ALL_PLATFORMS ALL_PLATFORMS Introduction why the Transport PIN might not work.</extracomment>
         <translation>Если ваш временный PIN-код, указанный к письме с PIN-кодом, это может иметь слежующие причины:</translation>
     </message>
@@ -3177,8 +3177,8 @@ MOBILE</extracomment>
         <translation>Поиск идентификационной карты</translation>
     </message>
     <message>
-        <source>Connected to %1. Please follow the instructions on your smartphone.</source>
-        <extracomment>MOBILE</extracomment>
+        <source>Connected to %1. Please follow the instructions on the connected smartphone.</source>
+        <extracomment>MOBILE The connection to the smartphone was established. %1 will be replaced with the name of the connected smartphone.</extracomment>
         <translation>Подключено к %1. Следуйте инструкциям в подключенном смартфоне.</translation>
     </message>
     <message>
@@ -4375,7 +4375,7 @@ To do this you first have to pair that device with this smartphone.</source>
     </message>
     <message>
         <source>Connected to %1. Please follow the instructions on the connected smartphone.</source>
-        <extracomment>MOBILE The connection to the smartphone was established, the ID card may be inserted.</extracomment>
+        <extracomment>MOBILE The connection to the smartphone was established. %1 will be replaced with the name of the connected smartphone.</extracomment>
         <translation>Подключено к %1. Следуйте инструкциям в подключенном смартфоне.</translation>
     </message>
     <message>

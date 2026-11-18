@@ -29,10 +29,7 @@ def is_header(line):
     characters from the main list and checking if it is the only character
     (to not confuse them with tables).
     """
-    return (
-        any(line.startswith(c * 3) for c in main_hierarchy)
-        and len(set(line.rstrip())) == 1
-    )
+    return any(line.startswith(c * 3) for c in main_hierarchy) and len(set(line.rstrip())) == 1
 
 
 def get_file_heading_hierarchy(input_lines):
@@ -48,9 +45,7 @@ def get_file_heading_hierarchy(input_lines):
     return hierarchy
 
 
-def convert_file_heading_hierarchy_to_main(
-    input_lines, local_hierarchy, starting_level
-):
+def convert_file_heading_hierarchy_to_main(input_lines, local_hierarchy, starting_level):
     """
     Rewrites the headings in a file to conform to a main heading hierarchy.
     """
@@ -60,9 +55,7 @@ def convert_file_heading_hierarchy_to_main(
             character = line.strip()[0]
             level = local_hierarchy.index(character)
             new_character = main_hierarchy[starting_level + level]
-            output_lines.append(
-                line.rstrip().replace(character, new_character)
-            )
+            output_lines.append(line.rstrip().replace(character, new_character))
         else:
             output_lines.append(line.rstrip())
     return output_lines
@@ -112,12 +105,8 @@ def parse_po_file(translation_data):
                     elif current_key == 'msgstr':
                         msgstr_lines.append(content)
         if msgid_lines:
-            final_msgid = (
-                ''.join(msgid_lines).replace('\\"', '"').replace('\\\\', '\\')
-            )
-            final_msgstr = (
-                ''.join(msgstr_lines).replace('\\"', '"').replace('\\\\', '\\')
-            )
+            final_msgid = ''.join(msgid_lines).replace('\\"', '"').replace('\\\\', '\\')
+            final_msgstr = ''.join(msgstr_lines).replace('\\"', '"').replace('\\\\', '\\')
 
             if final_msgid and final_msgstr:
                 translations[final_msgid] = final_msgstr
@@ -136,10 +125,7 @@ def translate_lines(input_lines, translation_file_path):
         print(f'Error: Input file "{translation_file_path}" not found.')
         sys.exit(1)
     except Exception as e:
-        print(
-            f'Error: Input file "{translation_file_path}" could not accessed: '
-            + f'{e}'
-        )
+        print(f'Error: Input file "{translation_file_path}" could not accessed: ' + f'{e}')
         sys.exit(1)
 
     translation_map = parse_po_file(translation_data)
@@ -182,9 +168,7 @@ def translate_lines(input_lines, translation_file_path):
             if key in original_line:
                 translated_lines.append(
                     (
-                        original_line.rstrip().replace(
-                            key, translation_map[key]
-                        ),
+                        original_line.rstrip().replace(key, translation_map[key]),
                         len(key),
                     )
                 )
@@ -222,9 +206,7 @@ def include_file(filepath, parent_filepath, current_level, translate):
     return flatten_files(file_path, current_level, translate)
 
 
-def flatten_include(
-    input_lines, start_idx, current_level, parent_filepath, translate
-):
+def flatten_include(input_lines, start_idx, current_level, parent_filepath, translate):
     """
     Helper function parsing the include directive. Includes recursively the
     referenced files.
@@ -234,22 +216,15 @@ def flatten_include(
 
     match = re.match(r'.. include:: (.*)', input_lines[line_idx].strip())
     if not match:
-        print(
-            'Error: could not parse include directive,'
-            + f'{parent_filepath} line {line_idx}'
-        )
+        print('Error: could not parse include directive,' + f'{parent_filepath} line {line_idx}')
         sys.exit(1)
-    output_lines.extend(
-        include_file(match.group(1), parent_filepath, current_level, translate)
-    )
+    output_lines.extend(include_file(match.group(1), parent_filepath, current_level, translate))
     output_lines.append('')
     line_idx += 1
     return output_lines, line_idx
 
 
-def flatten_toctree(
-    input_lines, start_idx, current_level, parent_filepath, translate
-):
+def flatten_toctree(input_lines, start_idx, current_level, parent_filepath, translate):
     """
     Helper function parsing the toctree directive. Adds the table of contents
     at the position of the first toctree, parses the options and includes
@@ -290,9 +265,7 @@ def flatten_toctree(
     while line_idx < len(input_lines) and input_lines[line_idx].strip() != '':
         file_name = input_lines[line_idx].strip()
         output_lines.extend(
-            include_file(
-                f'{file_name}.rst', parent_filepath, current_level, translate
-            )
+            include_file(f'{file_name}.rst', parent_filepath, current_level, translate)
         )
         output_lines.append('')
         line_idx += 1
@@ -315,9 +288,7 @@ def flatten_files(input_filepath, starting_level, translate):
         print(f'Error: Input file "{input_filepath}" not found.')
         sys.exit(1)
     except Exception as e:
-        print(
-            f'Error: Input file "{input_filepath}" could not be accessed: {e}'
-        )
+        print(f'Error: Input file "{input_filepath}" could not be accessed: {e}')
         sys.exit(1)
 
     if translate:
@@ -351,9 +322,7 @@ def flatten_files(input_filepath, starting_level, translate):
     while line_idx < len(input_lines):
         # If the line is a heading, update the current heading level.
         if is_header(input_lines[line_idx]):
-            current_level = main_hierarchy.index(
-                input_lines[line_idx].strip()[0]
-            )
+            current_level = main_hierarchy.index(input_lines[line_idx].strip()[0])
             output_lines.append(input_lines[line_idx].rstrip())
             line_idx += 1
         # If the line is a toctree directive, process the included files.
@@ -387,11 +356,7 @@ def replace_placeholder(input_lines, old, new):
         old_guarded = f'|{old}|'
         new_line = line.replace(old_guarded, new)
         output_lines.append(new_line)
-        if (
-            old_guarded in line
-            and idx + 1 < len(input_lines)
-            and is_header(input_lines[idx + 1])
-        ):
+        if old_guarded in line and idx + 1 < len(input_lines) and is_header(input_lines[idx + 1]):
             # Correct header underline length
             header_line = input_lines[idx + 1]
             header_character = header_line[0]
@@ -421,12 +386,10 @@ def inline_toc_header(input_lines):
             'Release Notes',
         ]
 
-        if any(
-            input_lines[line_idx].strip() == title for title in possible_header
-        ) and is_header(input_lines[line_idx + 1]):
-            output_lines.extend(
-                wrap_latex([f'\\section*{{{input_lines[line_idx].strip()}}}'])
-            )
+        if any(input_lines[line_idx].strip() == title for title in possible_header) and is_header(
+            input_lines[line_idx + 1]
+        ):
+            output_lines.extend(wrap_latex([f'\\section*{{{input_lines[line_idx].strip()}}}']))
             line_idx += 2
         else:
             output_lines.append(input_lines[line_idx].rstrip())
@@ -476,16 +439,12 @@ class CSVTable(BaseElement):
 
     def _parse_table_lines(self, table_lines):
         line_idx = 0
-        self.table_title_match = re.match(
-            r'.. csv-table:: (.*)', table_lines[line_idx]
-        )
+        self.table_title_match = re.match(r'.. csv-table:: (.*)', table_lines[line_idx])
 
         line_idx += 1
         self.csv_options = {}
         # Parse options
-        while (
-            line_idx < len(table_lines) and table_lines[line_idx].strip() != ''
-        ):
+        while line_idx < len(table_lines) and table_lines[line_idx].strip() != '':
             option_match = re.match(
                 ':([a-zA-Z0-9]+): (.*)',
                 table_lines[line_idx].strip(),
@@ -499,24 +458,15 @@ class CSVTable(BaseElement):
         line_idx += 1
         self.csv_rows = []
         # Split csv strings
-        while (
-            line_idx < len(table_lines)
-            and not table_lines[line_idx].strip() == ''
-        ):
-            self.csv_rows.append(
-                self.split_csv_string(table_lines[line_idx].strip())
-            )
+        while line_idx < len(table_lines) and not table_lines[line_idx].strip() == '':
+            self.csv_rows.append(self.split_csv_string(table_lines[line_idx].strip()))
             line_idx += 1
 
         line_idx += 1
         self.footnotes = {}
         # Parse footnote definitions
-        if line_idx < len(table_lines) and table_lines[
-            line_idx
-        ].strip().startswith('.. ['):
-            while line_idx < len(table_lines) and table_lines[
-                line_idx
-            ].strip().startswith('.. ['):
+        if line_idx < len(table_lines) and table_lines[line_idx].strip().startswith('.. ['):
+            while line_idx < len(table_lines) and table_lines[line_idx].strip().startswith('.. ['):
                 match = re.match(
                     r'.. \[(#.+?)\] (.*)',
                     table_lines[line_idx].strip(),
@@ -530,9 +480,7 @@ class CSVTable(BaseElement):
                         line_idx
                     ].strip().startswith('.. ['):
                         self.footnotes[footnote_label] = (
-                            self.footnotes[footnote_label]
-                            + ' '
-                            + table_lines[line_idx].strip()
+                            self.footnotes[footnote_label] + ' ' + table_lines[line_idx].strip()
                         )
                         line_idx += 1
 
@@ -547,9 +495,7 @@ class CSVTable(BaseElement):
             '\\rowcolors{1}{table_even_row_color}{table_odd_row_color}',
         ]
         if self.table_title_match:
-            latex_table.append(
-                f'\\caption{{{self.table_title_match.group(1)}}}'
-            )
+            latex_table.append(f'\\caption{{{self.table_title_match.group(1)}}}')
         if self.label:
             latex_table.extend(self.label.to_latex())
 
@@ -560,12 +506,8 @@ class CSVTable(BaseElement):
             # Define column widths
             if 'widths' in self.csv_options:
                 widths = self.csv_options['widths'].split(', ')
-                columns = [
-                    f'p{{{int(width) / 120.0}\\linewidth}}' for width in widths
-                ]
-                latex_table.append(
-                    '\\begin{tabular}{' + ' '.join(columns) + '}'
-                )
+                columns = [f'p{{{int(width) / 120.0}\\linewidth}}' for width in widths]
+                latex_table.append('\\begin{tabular}{' + ' '.join(columns) + '}')
             else:
                 latex_table.append('\\begin{tabular}{' + 'l' * num_cols + '}')
             latex_table.append('\\toprule')
@@ -575,8 +517,7 @@ class CSVTable(BaseElement):
                 latex_table.append('\\rowcolor{table_header_color}')
                 header_list = self.csv_options['header'].split(', ')
                 latex_table.append(
-                    ' & '.join([header.strip('"') for header in header_list])
-                    + ' \\\\'
+                    ' & '.join([header.strip('"') for header in header_list]) + ' \\\\'
                 )
                 latex_table.append('\\midrule')
 
@@ -590,10 +531,7 @@ class CSVTable(BaseElement):
                         if footnote_ref in self.footnotes:
                             key_list = list(self.footnotes.keys())
                             idx = key_list.index(footnote_ref) + 1
-                            number = (
-                                '\\numexpr\\value{originalfootnotevalue}'
-                                + f'{idx}'
-                            )
+                            number = '\\numexpr\\value{originalfootnotevalue}' + f'{idx}'
                             return f'\\footnotemark[{number}]'
                         return match.group(0)
 
@@ -619,9 +557,7 @@ class CSVTable(BaseElement):
                     latex_table.append(f'\\footnotetext[{number}]{{{text}}}')
                     footnote_counter += 1
                 new_counter = number_string + f'{footnote_counter}'
-                latex_table.append(
-                    f'\\setcounter{{footnote}}{{{new_counter}}}'
-                )
+                latex_table.append(f'\\setcounter{{footnote}}{{{new_counter}}}')
             latex_table.append('')
 
         return latex_table
@@ -674,9 +610,7 @@ class Figure(BaseElement):
 
     def _parse_figure_lines(self, figure_lines):
         line_idx = 0
-        self.figure_path_match = re.match(
-            r'.. figure:: (.*)', figure_lines[line_idx]
-        )
+        self.figure_path_match = re.match(r'.. figure:: (.*)', figure_lines[line_idx])
 
         line_idx += 2
         caption = []
@@ -731,10 +665,7 @@ def extract_element_with_linebreaks(input_lines, start_idx, prefixes):
     line_idx = start_idx + 1
     while line_idx < len(input_lines) and (
         input_lines[line_idx] == ''
-        or any(
-            re.match(f'^[\t ]*{prefix}', input_lines[line_idx])
-            for prefix in prefixes
-        )
+        or any(re.match(f'^[\t ]*{prefix}', input_lines[line_idx]) for prefix in prefixes)
     ):
         element_lines.append(input_lines[line_idx])
         line_idx += 1
@@ -760,9 +691,7 @@ def parse_document(input_lines):
             current_label = Label(line)
             elem_before_label = output_doc[-1]
             line_idx += 1
-        elif line_idx < len(input_lines) - 1 and is_header(
-            input_lines[line_idx + 1]
-        ):
+        elif line_idx < len(input_lines) - 1 and is_header(input_lines[line_idx + 1]):
             header_line = input_lines[line_idx + 1].rstrip()
             output_doc.append(Header(line, header_line))
             if current_label:
@@ -776,9 +705,7 @@ def parse_document(input_lines):
             output_doc.append(CSVTable(current_label, table_lines))
             current_label = None
         elif line.startswith('.. figure::'):
-            figure_lines, line_idx = extract_element_with_linebreaks(
-                input_lines, line_idx, ['   ']
-            )
+            figure_lines, line_idx = extract_element_with_linebreaks(input_lines, line_idx, ['   '])
             output_doc.append(Figure(current_label, figure_lines))
             current_label = None
         elif current_label and line.startswith('- '):
@@ -790,9 +717,7 @@ def parse_document(input_lines):
                 output_doc.append(current_label)
                 current_label = None
         elif current_label and line.startswith('.. versionadded::'):
-            block_lines, line_idx = extract_element_with_linebreaks(
-                input_lines, line_idx, ['   ']
-            )
+            block_lines, line_idx = extract_element_with_linebreaks(input_lines, line_idx, ['   '])
             output_doc.append(Paragraph(block_lines))
             if current_label:
                 output_doc.append(current_label)
@@ -812,9 +737,7 @@ def parse_document(input_lines):
     if current_paragraph:
         output_doc.append(Paragraph(current_paragraph))
 
-    if current_label and (
-        not output_doc or elem_before_label != output_doc[-1]
-    ):
+    if current_label and (not output_doc or elem_before_label != output_doc[-1]):
         output_doc.append(current_label)
 
     return output_doc
@@ -833,25 +756,16 @@ def serialize_to_rst(elements):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Preprocess rst files to assist pandoc in creating a11y '
-        + 'PDFs'
+        description='Preprocess rst files to assist pandoc in creating a11y ' + 'PDFs'
     )
 
-    parser.add_argument(
-        'input_filepath', help='Path to the input file for processing.'
-    )
+    parser.add_argument('input_filepath', help='Path to the input file for processing.')
 
-    parser.add_argument(
-        'output_filepath', help='Path to the output file for saving results.'
-    )
+    parser.add_argument('output_filepath', help='Path to the output file for saving results.')
 
-    parser.add_argument(
-        'app_name', help='Replace |AppName| with the provided value.'
-    )
+    parser.add_argument('app_name', help='Replace |AppName| with the provided value.')
 
-    parser.add_argument(
-        'version', help='Replace |version| with the provided value.'
-    )
+    parser.add_argument('version', help='Replace |version| with the provided value.')
 
     parser.add_argument(
         '-t',

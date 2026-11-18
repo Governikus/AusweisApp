@@ -26,14 +26,12 @@ AbstractSettings::AbstractSettings()
 QString AbstractSettings::getOrganization()
 {
 #if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
-	const auto& organization = QCoreApplication::organizationDomain();
+	return QCoreApplication::organizationDomain();
 
 #else
-	const auto& organization = QCoreApplication::organizationName();
+	return QStringLiteral(VENDOR_PATH);
 
 #endif
-
-	return organization.isEmpty() ? QCoreApplication::applicationName() : organization;
 }
 
 

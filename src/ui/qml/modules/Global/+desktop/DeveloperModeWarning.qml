@@ -35,6 +35,7 @@ Item {
 				text: qsTr("Developer Mode: Enabled!")
 			}
 			GButton {
+				Accessible.id: "DeveloperModeWarning_Button"
 				//: DESKTOP Global button to disable developer mode.
 				text: qsTr("Disable")
 

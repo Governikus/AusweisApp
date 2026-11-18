@@ -99,9 +99,8 @@ void DiagnosisModel::initGeneralSections()
 				{
 					return;
 				}
-				mAusweisAppSection << ContentItem(pKey,
-				pValue == QStringLiteral("Governikus GmbH & Co. KG")
-													? QStringLiteral("Governikus Service GmbH") : pValue);
+
+				mAusweisAppSection << ContentItem(pKey, pValue);
 			});
 
 	//: DESKTOP

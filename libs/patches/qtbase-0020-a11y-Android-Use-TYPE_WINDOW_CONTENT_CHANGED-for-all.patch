@@ -1,0 +1,237 @@
+From d6bba6f10ad2b66518f4682dd6c277731535f8e7 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Tue, 11 Nov 2025 09:55:28 +0100
+Subject: a11y Android: Use TYPE_WINDOW_CONTENT_CHANGED for all value changes
+
+* The correct way to announce changes of accessible name, description
+  and value is to use the EventType TYPE_WINDOW_CONTENT_CHANGED (with
+  the corresponding CONTENT_CHANGE_TYPE) instead of TYPE_ANNOUNCEMENT.
+* When TYPE_ANNOUNCEMENT was used, multiple changes were all announced
+  after another, even when the element was not visible anymore,
+  while now only the last change is announced.
+* This is also a more general solution to the problem solved with
+  a067a4f6dade4c53303459469917c94ef6268941, which only solved this
+  for the ProgressBar.
+* We don't need to pass the (new) value to the
+  notifyValueChanged and notifyNameOrDescriptionChanged method anymore.
+
+Fixes: QTBUG-150377
+Task-number: QTBUG-139712
+Pick-to: 6.12 6.8
+Change-Id: I3917ae5d2a17c6e470d499b364d6a0456c9d3601
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit e1b83898a7920db9c25dfa11e6aafb6bd0206d85)
+---
+ .../qt/android/QtAccessibilityDelegate.java   | 42 +++++++++----------
+ .../qt/android/QtAccessibilityInterface.java  |  4 +-
+ .../qt/android/QtActivityDelegate.java        |  9 ++--
+ .../android/androidjniaccessibility.cpp       | 25 +----------
+ .../platforms/android/androidjnimain.cpp      |  8 ++--
+ .../platforms/android/androidjnimain.h        |  4 +-
+ 6 files changed, 34 insertions(+), 58 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+index 79626a38ef06cd3a5046140b5b6cb8aad0c2ebb5..0961705d378a5b00def71020a4140a4e19657837 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
+@@ -232,7 +232,12 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+         });
+     }
+ 
+-    void notifyValueChanged(int viewId, String value)
++    void notifyValueChanged(int viewId)
++    {
++        notifyContentChanged(viewId, AccessibilityEvent.CONTENT_CHANGE_TYPE_UNDEFINED);
++    }
++
++    private void notifyContentChanged(int viewId, int contentChangeType)
+     {
+         if (m_manager == null)
+             return;
+@@ -241,29 +246,19 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+             if (m_view == null)
+                 return;
+ 
+-            // Send a TYPE_ANNOUNCEMENT event with the new value
+-
+             if ((viewId == INVALID_ID) || !m_manager.isEnabled()) {
+-                Log.w(TAG, "notifyValueChanged() for invalid view");
+-                return;
+-            }
+-
+-            final ViewGroup group = (ViewGroup) m_view.getParent();
+-            if (group == null) {
+-                Log.w(TAG, "Could not announce value because ViewGroup was null.");
++                Log.w(TAG, "notifyContentChanged() for invalid view");
+                 return;
+             }
+ 
+-            final CharSequence className = getNodeForVirtualViewId(viewId).getClassName();
+-            final int eventType =
+-                    className != null && className.equals("android.widget.ProgressBar")
+-                    ? AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
+-                    : AccessibilityEvent.TYPE_ANNOUNCEMENT;
+-            final AccessibilityEvent event = obtainAccessibilityEvent(eventType);
++            final AccessibilityNodeInfo node = getNodeForVirtualViewId(viewId);
++            final AccessibilityEvent event =
++                    obtainAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED);
+ 
+             event.setEnabled(true);
+-            event.setClassName(className);
+-            event.setContentDescription(addLocaleSpan(viewId, value));
++            event.setClassName(node.getClassName());
++            event.setContentDescription(node.getContentDescription());
++            event.setContentChangeTypes(contentChangeType);
+ 
+             if (event.getText().isEmpty() && TextUtils.isEmpty(event.getContentDescription())) {
+                 Log.w(TAG, "No value to announce for " + event.getClassName());
+@@ -273,15 +268,16 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+             event.setPackageName(m_view.getContext().getPackageName());
+             event.setSource(m_view, viewId);
+ 
+-            if (!group.requestSendAccessibilityEvent(m_view, event))
+-                Log.w(TAG, "Failed to send value change announcement for " + event.getClassName());
++            sendAccessibilityEvent(event);
+         });
+     }
+ 
+-    void notifyDescriptionOrNameChanged(int viewId, String value)
++    void notifyDescriptionOrNameChanged(int viewId)
+     {
+-        if (viewId == m_focusedVirtualViewId)
+-            notifyValueChanged(viewId, value);
++        if (viewId == m_focusedVirtualViewId) {
++            notifyContentChanged(viewId,
++                                 AccessibilityEvent.CONTENT_CHANGE_TYPE_CONTENT_DESCRIPTION);
++        }
+     }
+ 
+     void notifyAnnouncementEvent(int viewId, String message)
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityInterface.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityInterface.java
+index bf3a19bd4245ea247b014d15e038075e00351243..30c3e8287399c9b4ab49fab5646359dd117df7a0 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityInterface.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityInterface.java
+@@ -8,8 +8,8 @@ interface QtAccessibilityInterface {
+     default void notifyObjectHide(int viewId, int parentId) { }
+     default void notifyObjectFocus(int viewId) { }
+     default void notifyScrolledEvent(int viewId) { }
+-    default void notifyValueChanged(int viewId, String value) { }
+-    default void notifyDescriptionOrNameChanged(int viewId, String value) { }
++    default void notifyValueChanged(int viewId) { }
++    default void notifyDescriptionOrNameChanged(int viewId) { }
+     default void notifyObjectShow(int parentId) { }
+     default void notifyAnnouncementEvent(int viewId, String message) { }
+ }
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
+index aa2964c3ae90492c2357b1dcf0f4ff4aa557a633..7d5acdfc8c8476bd2458a6721918f0fb6c961e24 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
+@@ -251,14 +251,15 @@ class QtActivityDelegate extends QtActivityDelegateBase
+     }
+ 
+     @Override
+-    public void notifyValueChanged(int viewId, String value)
++    public void notifyValueChanged(int viewId)
+     {
+-        m_accessibilityDelegate.notifyValueChanged(viewId, value);
++        m_accessibilityDelegate.notifyValueChanged(viewId);
+     }
+ 
+-    @Override public void notifyDescriptionOrNameChanged(int viewId, String value)
++    @Override
++    public void notifyDescriptionOrNameChanged(int viewId)
+     {
+-        m_accessibilityDelegate.notifyDescriptionOrNameChanged(viewId, value);
++        m_accessibilityDelegate.notifyDescriptionOrNameChanged(viewId);
+     }
+ 
+     @Override
+diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+index d2c89e3da59000834194629e1b0fe6cc00f6ad04..706438fdaea0ff3e298d2ce67633283762556e18 100644
+--- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+@@ -165,24 +165,14 @@ namespace QtAndroidAccessibility
+         QtAndroid::notifyObjectFocus(accessibilityObjectId);
+     }
+ 
+-    static jstring jvalueForAccessibleObject(int objectId); // forward declaration
+-
+     void notifyValueChanged(uint accessibilityObjectId)
+     {
+-        jstring value = jvalueForAccessibleObject(accessibilityObjectId);
+-        QtAndroid::notifyValueChanged(accessibilityObjectId, value);
++        QtAndroid::notifyValueChanged(accessibilityObjectId);
+     }
+ 
+-    // Forward declaration
+-    static QString descriptionForInterface(QAccessibleInterface *iface);
+-
+     void notifyDescriptionOrNameChanged(uint accessibilityObjectId)
+     {
+-        QAccessibleInterface *iface = interfaceFromId(accessibilityObjectId);
+-        if (iface && iface->isValid()) {
+-            const QString value = descriptionForInterface(iface);
+-            QtAndroid::notifyDescriptionOrNameChanged(accessibilityObjectId, value);
+-        }
++        QtAndroid::notifyDescriptionOrNameChanged(accessibilityObjectId);
+     }
+ 
+     void notifyScrolledEvent(uint accessiblityObjectId)
+@@ -529,17 +519,6 @@ namespace QtAndroidAccessibility
+         return valueStr;
+     }
+ 
+-    static jstring jvalueForAccessibleObject(int objectId)
+-    {
+-        QAccessibleInterface *iface = interfaceFromId(objectId);
+-        const QString value = textFromValue(iface);
+-        QJniEnvironment env;
+-        jstring jstr = env->NewString((jchar*)value.constData(), (jsize)value.size());
+-        if (env.checkAndClearExceptions())
+-            __android_log_print(ANDROID_LOG_WARN, m_qtTag, "Failed to create jstring");
+-        return jstr;
+-    }
+-
+     static QString classNameForRole(QAccessible::Role role, QAccessible::State state) {
+         switch (role) {
+         case QAccessible::Role::Button:
+diff --git x/qtbase/src/plugins/platforms/android/androidjnimain.cpp y/qtbase/src/plugins/platforms/android/androidjnimain.cpp
+index 4802a10418958bf58267cf873d42e6d778eb7782..fd6c5dea63e6ba7c0f95c2c032251696286b873b 100644
+--- x/qtbase/src/plugins/platforms/android/androidjnimain.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjnimain.cpp
+@@ -205,16 +205,16 @@ namespace QtAndroid
+                 "notifyObjectFocus", accessibilityObjectId);
+     }
+ 
+-    void notifyValueChanged(uint accessibilityObjectId, jstring value)
++    void notifyValueChanged(uint accessibilityObjectId)
+     {
+         m_backendRegister->callInterface<QtJniTypes::QtAccessibilityInterface, void>(
+-                "notifyValueChanged", accessibilityObjectId, value);
++                "notifyValueChanged", accessibilityObjectId);
+     }
+ 
+-    void notifyDescriptionOrNameChanged(uint accessibilityObjectId, const QString &value)
++    void notifyDescriptionOrNameChanged(uint accessibilityObjectId)
+     {
+         m_backendRegister->callInterface<QtJniTypes::QtAccessibilityInterface, void>(
+-                "notifyDescriptionOrNameChanged", accessibilityObjectId, value);
++                "notifyDescriptionOrNameChanged", accessibilityObjectId);
+     }
+ 
+     void notifyScrolledEvent(uint accessibilityObjectId)
+diff --git x/qtbase/src/plugins/platforms/android/androidjnimain.h y/qtbase/src/plugins/platforms/android/androidjnimain.h
+index d5871fa473492b57c911ed77f7626a991ad44993..fdc7718b07874a296911d5b8ee20d9f49db4e9d1 100644
+--- x/qtbase/src/plugins/platforms/android/androidjnimain.h
++++ y/qtbase/src/plugins/platforms/android/androidjnimain.h
+@@ -58,8 +58,8 @@ namespace QtAndroid
+     void notifyObjectHide(uint accessibilityObjectId, uint parentObjectId);
+     void notifyObjectShow(uint parentObjectId);
+     void notifyObjectFocus(uint accessibilityObjectId);
+-    void notifyValueChanged(uint accessibilityObjectId, jstring value);
+-    void notifyDescriptionOrNameChanged(uint accessibilityObjectId, const QString &value);
++    void notifyValueChanged(uint accessibilityObjectId);
++    void notifyDescriptionOrNameChanged(uint accessibilityObjectId);
+     void notifyScrolledEvent(uint accessibilityObjectId);
+     void notifyAnnouncementEvent(uint accessibilityObjectId, const QString &message);
+ #endif

@@ -87,6 +87,15 @@ class test_AppUpdatData
 									  R"(		})"
 									  R"(,		{)"
 									  R"(			"date": "2017-10-25T15:20:25",)"
+									  R"(			"platform": "win-arm64",)"
+									  R"(			"minimum_platform": "0.0",)"
+									  R"(			"version": "1.24.0",)"
+									  R"(			"url": "https://www.example.com/aa.zip",)"
+									  R"(			"size": 1337,)"
+									  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"
+									  R"(		})"
+									  R"(,		{)"
+									  R"(			"date": "2017-10-25T15:20:25",)"
 									  R"(			"platform": "src",)"
 									  R"(			"minimum_platform": "0.0",)"
 									  R"(			"version": "1.22.0",)"
@@ -102,7 +111,11 @@ class test_AppUpdatData
 
 			QCOMPARE(data.isCompatible(), true);
 			QCOMPARE(data.getDate(), QDateTime(QDate(2017, 10, 25), QTime(15, 20, 25)));
+#if defined(Q_OS_WIN) && defined(Q_PROCESSOR_ARM_64)
+			QCOMPARE(data.getVersion(), QStringLiteral("1.24.0"));
+#else
 			QCOMPARE(data.getVersion(), QStringLiteral("1.22.0"));
+#endif
 			QCOMPARE(data.getUrl(), QUrl(QStringLiteral("https://www.example.com/aa.zip")));
 			QCOMPARE(data.getSize(), 1337);
 			QCOMPARE(data.getChecksumUrl(), QUrl(QStringLiteral("https://www.example.com/aa.zip.sha256")));
@@ -128,6 +141,15 @@ class test_AppUpdatData
 									  R"(			"platform": "win",)"
 									  R"(			"minimum_platform": "999.0",)"
 									  R"(			"version": "1.22.0",)"
+									  R"(			"url": "https://www.example.com/aa.zip",)"
+									  R"(			"size": 1337,)"
+									  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"
+									  R"(		})"
+									  R"(,		{)"
+									  R"(			"date": "2017-10-25T15:20:25",)"
+									  R"(			"platform": "win-arm64",)"
+									  R"(			"minimum_platform": "999.0",)"
+									  R"(			"version": "1.24.0",)"
 									  R"(			"url": "https://www.example.com/aa.zip",)"
 									  R"(			"size": 1337,)"
 									  R"(			"checksum": "https://www.example.com/aa.zip.sha256")"

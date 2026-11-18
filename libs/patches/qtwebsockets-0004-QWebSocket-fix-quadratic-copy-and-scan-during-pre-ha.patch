@@ -1,0 +1,407 @@
+From 5ebe11a9dd484965c32cdcd38cb5728c5fe15c8a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?M=C3=A5rten=20Nordheim?= <marten.nordheim@qt.io>
+Date: Fri, 18 Sep 2026 07:35:09 +0200
+Subject: QWebSocket: fix quadratic copy and scan during pre-handshake
+
+Just like the parent patch, but for the client-side.
+
+Different from the patch addressing the server-side, we don't need
+to store a QHash<socket, bytes> since there is only one peer.
+And the client side was not affected by this until 6.3.
+
+Amends bbd9f2f4f5e0fda85029fa320f793973ea607c2b.
+
+[ChangeLog][QWebSocket] An over-sized handshake response now closes the
+connection, and QWebSocket::closeCode() reports
+QWebSocketProtocol::CloseCodeTooMuchData. The size limit is also now
+applied as the response arrives, rather than only while the end of the
+headers has not been seen.
+
+Pick-to: 6.12 6.12.0 6.11 6.11.3 6.8 6.5
+Fixes: QTBUG-150324
+Change-Id: If1a12a6d87fe1a9af55282482da27aabca676d43
+Reviewed-by: Edward Welbourne <edward.welbourne@qt.io>
+(cherry picked from commit fe08f10ffc359f4bf4e6e0a6db2f02ea26cf1f12)
+---
+ src/websockets/qwebsocket_p.cpp               |  58 +++--
+ src/websockets/qwebsocket_p.h                 |   1 +
+ .../websockets/qwebsocket/tst_qwebsocket.cpp  | 228 ++++++++++++++++++
+ 3 files changed, 266 insertions(+), 21 deletions(-)
+
+diff --git x/qtwebsockets/src/websockets/qwebsocket_p.cpp y/qtwebsockets/src/websockets/qwebsocket_p.cpp
+index 1e8ae31c981a877885f34fea2888c3518db9ad49..eaf3ad929abe405b735bfedb6622bbae0acff6d1 100644
+--- x/qtwebsockets/src/websockets/qwebsocket_p.cpp
++++ y/qtwebsockets/src/websockets/qwebsocket_p.cpp
+@@ -9,6 +9,7 @@
+ #include "qwebsockethandshakeresponse_p.h"
+ #include "qdefaultmaskgenerator_p.h"
+ 
++#include <QtCore/QCoreApplication>
+ #include <QtCore/QUrl>
+ #include <QtNetwork/QAuthenticator>
+ #include <QtNetwork/QTcpSocket>
+@@ -1015,34 +1016,46 @@ static QString msgUnsupportedAuthenticateChallenges(qsizetype count)
+ void QWebSocketPrivate::processHandshake(QTcpSocket *pSocket)
+ {
+     Q_Q(QWebSocket);
+-    if (Q_UNLIKELY(!pSocket))
++    if (Q_UNLIKELY(!pSocket || pSocket->state() != QAbstractSocket::ConnectedState))
+         return;
+ 
+-    static const QByteArray endOfHeaderMarker = QByteArrayLiteral("\r\n\r\n");
+-    const qint64 byteAvailable = pSocket->bytesAvailable();
+-    QByteArray available = pSocket->peek(byteAvailable);
+-    const int endOfHeaderIndex = available.indexOf(endOfHeaderMarker);
+-    if (endOfHeaderIndex < 0) {
+-        //then we don't have our header complete yet
++    // According to RFC822 the body is separated from the headers by a null line (CRLF)
++    constexpr QByteArrayView endOfHeaderMarker = "\r\n\r\n";
++
++    const qint64 maxHeaderLength = QWebSocketPrivate::MAX_HEADERLINE_LENGTH
++        * QWebSocketPrivate::MAX_HEADERLINES + endOfHeaderMarker.size();
++
++    // Reused by every iteration below, so a request arriving as many lines at once does
++    // not need a fresh buffer for each of them.
++    QByteArray chunk;
++
++    while (!m_preHandshakeHeaders.endsWith(endOfHeaderMarker) && pSocket->bytesAvailable() > 0) {
++        // readLine() writes up to maxSize - 1 bytes plus a '\0'
++        const qint64 maxSize = qMin(pSocket->bytesAvailable() + 1,
++                                    qint64(QWebSocketPrivate::MAX_HEADERLINE_LENGTH) + 1);
++        chunk.resize(maxSize);
++        const qint64 lineLength = pSocket->readLine(chunk.data(), maxSize);
++        if (Q_UNLIKELY(lineLength <= 0))
++            break;
++
+         //check that no one is trying to exhaust our virtual memory
+-        const qint64 maxHeaderLength = MAX_HEADERLINE_LENGTH * MAX_HEADERLINES + endOfHeaderMarker.size();
+-        if (Q_UNLIKELY(byteAvailable >= maxHeaderLength)) {
+-            setErrorString(QWebSocket::tr("Header is too large"));
++        if (Q_UNLIKELY(m_preHandshakeHeaders.size() + lineLength >= maxHeaderLength)) {
++            m_preHandshakeHeaders = {};
++            m_closeCode = QWebSocketProtocol::CloseCodeTooMuchData;
++            pSocket->close();
++            setErrorString(QCoreApplication::translate("QWebSocketServer", "Header is too large."));
+             emitErrorOccurred(QAbstractSocket::ConnectionRefusedError);
++            return;
+         }
+-        return;
++        m_preHandshakeHeaders.append(chunk.constData(), lineLength);
+     }
+-    const int headerSize = endOfHeaderIndex + endOfHeaderMarker.size();
+-    //don't read past the header
+-    QByteArrayView headers = QByteArrayView(available).first(headerSize);
+-    //remove our header from the tcpSocket
+-    qint64 skippedSize = pSocket->skip(headerSize);
+-
+-    if (Q_UNLIKELY(skippedSize != headerSize)) {
+-        setErrorString(QWebSocket::tr("Read handshake request header failed"));
+-        emitErrorOccurred(QAbstractSocket::ConnectionRefusedError);
++
++    if (!m_preHandshakeHeaders.endsWith(endOfHeaderMarker)) {
++        // The header isn't complete yet
+         return;
+     }
++    const QByteArray headerBuffer = std::exchange(m_preHandshakeHeaders, {});
++    const QByteArrayView headers = headerBuffer;
+ 
+     QHttpHeaderParser parser;
+     static const QByteArray endOfStatusMarker = QByteArrayLiteral("\r\n");
+@@ -1240,6 +1253,8 @@ void QWebSocketPrivate::processStateChanged(QAbstractSocket::SocketState socketS
+             m_configuration.m_sslConfiguration = sslSock->sslConfiguration();
+ #endif
+         if (webSocketState == QAbstractSocket::ConnectingState) {
++            // Nothing from an earlier connection may be left to prepend to this one
++            m_preHandshakeHeaders = {};
+             m_key = generateKey();
+ 
+             QList<QPair<QString, QString> > headers;
+@@ -1311,6 +1326,7 @@ void QWebSocketPrivate::processStateChanged(QAbstractSocket::SocketState socketS
+         break;
+ 
+     case QAbstractSocket::UnconnectedState:
++        m_preHandshakeHeaders = {};
+         if (m_needsReconnect) {
+             // Need to reinvoke the lambda queued because the underlying socket
+             // isn't done cleaning up yet...
+@@ -1365,7 +1381,7 @@ void QWebSocketPrivate::processData()
+     if (state() == QAbstractSocket::ConnectingState) {
+         if (m_bytesToSkipBeforeNewResponse > 0)
+             m_bytesToSkipBeforeNewResponse -= m_pSocket->skip(m_bytesToSkipBeforeNewResponse);
+-        if (m_bytesToSkipBeforeNewResponse > 0 || !m_pSocket->canReadLine())
++        if (m_bytesToSkipBeforeNewResponse > 0)
+             return;
+         processHandshake(m_pSocket);
+        // That may have changed state(), recheck in the next 'if' below.
+diff --git x/qtwebsockets/src/websockets/qwebsocket_p.h y/qtwebsockets/src/websockets/qwebsocket_p.h
+index 77bfb5cbc073c65d9b3c33ce9ac4a06c39207048..2fb1e4ed35b5a2258c1abfde0435a94ea641ef81 100644
+--- x/qtwebsockets/src/websockets/qwebsocket_p.h
++++ y/qtwebsockets/src/websockets/qwebsocket_p.h
+@@ -199,6 +199,7 @@ private:
+     void emitErrorOccurred(QAbstractSocket::SocketError error);
+ 
+     QTcpSocket *m_pSocket;
++    QByteArray m_preHandshakeHeaders;
+     QString m_errorString;
+     QWebSocketProtocol::Version m_version;
+     QUrl m_resource;
+diff --git x/qtwebsockets/tests/auto/websockets/qwebsocket/tst_qwebsocket.cpp y/qtwebsockets/tests/auto/websockets/qwebsocket/tst_qwebsocket.cpp
+index a2bdca57f6068473bfe2c3d19d5559312817a478..da52d24d776995e2dbe9c4332f9808522521a504 100644
+--- x/qtwebsockets/tests/auto/websockets/qwebsocket/tst_qwebsocket.cpp
++++ y/qtwebsockets/tests/auto/websockets/qwebsocket/tst_qwebsocket.cpp
+@@ -3,6 +3,7 @@
+ #include <QRegularExpression>
+ #include <QString>
+ #include <QtTest>
++
+ #include <QtWebSockets/QWebSocket>
+ #include <QtWebSockets/QWebSocketHandshakeOptions>
+ #include <QtWebSockets/QWebSocketCorsAuthenticator>
+@@ -22,6 +23,7 @@
+ 
+ #include <QtTest/private/qtesthelpers_p.h>
+ 
++#include <memory>
+ #include <utility>
+ 
+ QT_USE_NAMESPACE
+@@ -166,6 +168,13 @@ private Q_SLOTS:
+     void hostHeaderFromNetworkRequest();
+     void customHeader();
+     void splitUtf8Sequence();
++    void fragmentedServerHandshake_data();
++    void fragmentedServerHandshake();
++    void oversizedServerHandshake_data();
++    void oversizedServerHandshake();
++    void handshakeAbortedThenReopened_data();
++    void handshakeAbortedThenReopened();
++    void handshakeFollowedByFrame();
+ };
+ 
+ tst_QWebSocket::tst_QWebSocket()
+@@ -1569,6 +1578,225 @@ void tst_QWebSocket::splitUtf8Sequence()
+     QCOMPARE(messageReceivedSpy.at(0).at(0).toString(), payload);
+ }
+ 
++// Reads the client's request off the socket and returns the matching 101 response.
++static QByteArray upgradeResponseFor(QTcpSocket *serverSocket)
++{
++    // Spin the event loop rather than blocking on the socket: the client lives in this
++    // same thread, and would never get to send its request.
++    QSignalSpy readyReadSpy(serverSocket, &QTcpSocket::readyRead);
++    QByteArray data;
++    while (!data.contains("\r\n\r\n")) {
++        if (serverSocket->bytesAvailable() == 0 && !readyReadSpy.wait(5000))
++            return {};
++        data.append(serverSocket->readAll());
++    }
++
++    const auto view = QLatin1String(data);
++    const auto keyHeader = QLatin1String("Sec-WebSocket-Key:");
++    const qsizetype keyStart = view.indexOf(keyHeader, 0, Qt::CaseInsensitive);
++    if (keyStart == -1)
++        return {};
++    const qsizetype valueStart = keyStart + keyHeader.size();
++    const qsizetype valueEnd = view.indexOf(QLatin1String("\r\n"), valueStart);
++    if (valueEnd == -1)
++        return {};
++
++    const QLatin1String keyView = view.sliced(valueStart, valueEnd - valueStart).trimmed();
++    const QByteArray accept =
++            QByteArrayView(keyView) % "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"_ba;
++    return "HTTP/1.1 101 Switching Protocols\r\n"
++           "Upgrade: websocket\r\n"
++           "Connection: Upgrade\r\n"
++           "Sec-WebSocket-Accept: "_ba
++         % QCryptographicHash::hash(accept, QCryptographicHash::Sha1).toBase64()
++         % "\r\n\r\n"_ba;
++}
++
++void tst_QWebSocket::fragmentedServerHandshake_data()
++{
++    // Bytes withheld from the bulk write, so the terminator is split at each offset.
++    QTest::addColumn<int>("withheldTail");
++
++    QTest::newRow("one byte at a time") << 0;
++    for (int i = 1; i < 4; ++i)
++        QTest::addRow("terminator split %d", i) << i;
++}
++
++void tst_QWebSocket::fragmentedServerHandshake()
++{
++    QFETCH(const int, withheldTail);
++
++    QTcpServer tcpServer;
++    QVERIFY(tcpServer.listen(QHostAddress::LocalHost));
++
++    QWebSocket socket;
++    QSignalSpy connectedSpy(&socket, &QWebSocket::connected);
++    QSignalSpy errorSpy(&socket, &QWebSocket::errorOccurred);
++    socket.open(QUrl("ws://127.0.0.1:%1"_L1.arg(QString::number(tcpServer.serverPort()))));
++
++    QTRY_VERIFY(tcpServer.hasPendingConnections());
++    QTcpSocket *serverSocket = tcpServer.nextPendingConnection();
++    QVERIFY(serverSocket);
++
++    const QByteArray response = upgradeResponseFor(serverSocket);
++    QVERIFY(!response.isEmpty());
++
++    // The client must not consider itself connected until the terminator arrives,
++    // wherever the write boundaries fall.
++    qsizetype sent = 0;
++    while (sent < response.size()) {
++        qsizetype size = 1; // one byte at a time
++        if (withheldTail != 0)
++            size = sent ? withheldTail : response.size() - withheldTail;
++        if (sent + size == response.size()) {
++            // Everything but the tail has been delivered. Running the event loop
++            // must not produce a connection, neither now nor earlier.
++            QVERIFY(!connectedSpy.wait(100));
++            QCOMPARE(connectedSpy.size(), 0);
++        }
++        QCOMPARE(serverSocket->write(response.constData() + sent, size), size);
++        while (serverSocket->bytesToWrite())
++            QVERIFY(serverSocket->waitForBytesWritten());
++        sent += size;
++    }
++
++    QTRY_COMPARE(connectedSpy.size(), 1);
++    QCOMPARE(errorSpy.size(), 0);
++}
++
++void tst_QWebSocket::oversizedServerHandshake_data()
++{
++    QTest::addColumn<bool>("complete");
++
++    QTest::newRow("no terminator") << false;
++    // A response whose headers are complete has to be rejected on size too, not
++    // parsed just because the terminator was already there to be found.
++    QTest::newRow("complete headers") << true;
++}
++
++void tst_QWebSocket::oversizedServerHandshake()
++{
++    QFETCH(const bool, complete);
++
++    QTcpServer tcpServer;
++    QVERIFY(tcpServer.listen(QHostAddress::LocalHost));
++
++    QWebSocket socket;
++    QSignalSpy connectedSpy(&socket, &QWebSocket::connected);
++    QSignalSpy errorSpy(&socket, &QWebSocket::errorOccurred);
++    socket.open(QUrl("ws://127.0.0.1:%1"_L1.arg(QString::number(tcpServer.serverPort()))));
++
++    QTRY_VERIFY(tcpServer.hasPendingConnections());
++    QTcpSocket *serverSocket = tcpServer.nextPendingConnection();
++    QVERIFY(serverSocket);
++    QVERIFY(!upgradeResponseFor(serverSocket).isEmpty()); // consume the request
++
++    // Answer with a response padded to exactly the header ceiling of 100 lines of
++    // 8 KiB plus the terminator. The limit itself has to be refused.
++    constexpr qsizetype limit = 100 * 8 * 1024 + 4;
++    constexpr qsizetype terminatorSize = 4;
++
++    QByteArray response = "HTTP/1.1 101 Switching Protocols\r\nX-Padding: ";
++    const qsizetype paddingSize = limit - response.size() - (complete ? terminatorSize : 0);
++    response += QByteArray(paddingSize, 'x');
++    if (complete)
++        response += "\r\n\r\n";
++    QCOMPARE(response.size(), limit);
++    QCOMPARE(serverSocket->write(response), response.size());
++
++    QTRY_COMPARE(errorSpy.size(), 1);
++    QCOMPARE(errorSpy.first().first().value<QAbstractSocket::SocketError>(),
++             QAbstractSocket::ConnectionRefusedError);
++    QCOMPARE(socket.errorString(), "Header is too large."_L1);
++    QCOMPARE(socket.closeCode(), QWebSocketProtocol::CloseCodeTooMuchData);
++    QCOMPARE(connectedSpy.size(), 0);
++    // The client has to hang up rather than keep buffering the response.
++    QTRY_COMPARE(serverSocket->state(), QAbstractSocket::UnconnectedState);
++}
++
++void tst_QWebSocket::handshakeAbortedThenReopened_data()
++{
++    QTest::addColumn<QByteArray>("partialResponse");
++
++    // Without a newline the client cannot start parsing, so nothing is retained.
++    QTest::newRow("no complete line") << QByteArray("HTTP/1.1 101");
++    // With one complete line the client starts accumulating, and whatever it kept
++    // must not leak into the next connection.
++    QTest::newRow("one complete line")
++            << QByteArray("HTTP/1.1 101 Switching Protocols\r\nUpgrade: web");
++}
++
++void tst_QWebSocket::handshakeAbortedThenReopened()
++{
++    QFETCH(const QByteArray, partialResponse);
++
++    QTcpServer tcpServer;
++    QVERIFY(tcpServer.listen(QHostAddress::LocalHost));
++    const QUrl url("ws://127.0.0.1:%1"_L1.arg(QString::number(tcpServer.serverPort())));
++
++    QWebSocket socket;
++    QSignalSpy connectedSpy(&socket, &QWebSocket::connected);
++
++    // First attempt: the server answers with only part of the response, then hangs up.
++    socket.open(url);
++    QTRY_VERIFY(tcpServer.hasPendingConnections());
++    {
++        const std::unique_ptr<QTcpSocket> serverSocket(tcpServer.nextPendingConnection());
++        QVERIFY(serverSocket);
++        QVERIFY(!upgradeResponseFor(serverSocket.get()).isEmpty());
++        QCOMPARE(serverSocket->write(partialResponse), partialResponse.size());
++        while (serverSocket->bytesToWrite())
++            QVERIFY(serverSocket->waitForBytesWritten());
++        serverSocket->disconnectFromHost();
++    }
++    QTRY_COMPARE(socket.state(), QAbstractSocket::UnconnectedState);
++    QCOMPARE(connectedSpy.size(), 0);
++
++    // Second attempt on the same QWebSocket: the abandoned partial response must not
++    // be carried over and prepended to this one.
++    socket.open(url);
++    QTRY_VERIFY(tcpServer.hasPendingConnections());
++    const std::unique_ptr<QTcpSocket> serverSocket(tcpServer.nextPendingConnection());
++    QVERIFY(serverSocket);
++    const QByteArray response = upgradeResponseFor(serverSocket.get());
++    QVERIFY(!response.isEmpty());
++    QCOMPARE(serverSocket->write(response), response.size());
++
++    QTRY_COMPARE(connectedSpy.size(), 1);
++}
++
++void tst_QWebSocket::handshakeFollowedByFrame()
++{
++    QTcpServer tcpServer;
++    QVERIFY(tcpServer.listen(QHostAddress::LocalHost));
++
++    QWebSocket socket;
++    QSignalSpy connectedSpy(&socket, &QWebSocket::connected);
++    QSignalSpy errorSpy(&socket, &QWebSocket::errorOccurred);
++    socket.open(QUrl("ws://127.0.0.1:%1"_L1.arg(QString::number(tcpServer.serverPort()))));
++
++    QTRY_VERIFY(tcpServer.hasPendingConnections());
++    const std::unique_ptr<QTcpSocket> serverSocket(tcpServer.nextPendingConnection());
++    QVERIFY(serverSocket);
++
++    const QByteArray response = upgradeResponseFor(serverSocket.get());
++    QVERIFY(!response.isEmpty());
++
++    // Start an unmasked text frame in the same write as the response, so reading the
++    // response must not consume the frame bytes that follow the terminator. The frame
++    // is left one byte short until the message spy exists, so it cannot be missed.
++    const QByteArray partialFrame = QByteArray::fromHex("810268");
++    QCOMPARE(serverSocket->write(response + partialFrame), response.size() + partialFrame.size());
++
++    QTRY_COMPARE(connectedSpy.size(), 1);
++    QSignalSpy messageSpy(&socket, &QWebSocket::textMessageReceived);
++    QCOMPARE(serverSocket->write(QByteArray::fromHex("69")), 1);
++
++    QTRY_COMPARE(messageSpy.size(), 1);
++    QCOMPARE(messageSpy.first().first().toString(), "hi"_L1);
++    QCOMPARE(errorSpy.size(), 0);
++}
++
+ QTEST_MAIN(tst_QWebSocket)
+ 
+ #include "tst_qwebsocket.moc"

@@ -60,9 +60,11 @@ ColumnLayout {
 				model: VersionInformationModel
 
 				delegate: LabeledText {
+					required property int index
 					required property string key
 					required property string value
 
+					Accessible.id: "VersionInformation_LabeledText_" + index
 					label: key
 					text: value
 					width: baseItem.width

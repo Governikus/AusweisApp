@@ -4,11 +4,14 @@ function(append_env_file _line)
 	file(APPEND "${ENV_FILE}" ${_line}\n)
 endfunction()
 
-step(hg log -r . -T {node} -R ${CMAKE_SOURCE_DIR} OUTPUT REVISION)
+find_program(HG hg)
+if(HG)
+	step(hg log -r . -T {node} -R ${CMAKE_SOURCE_DIR} OUTPUT REVISION)
+	append_env_file("REVISION=${REVISION}")
+endif()
 
 append_env_file("RELEASE_FINAL=${IS_FINAL_VERSION}")
 append_env_file("RELEASE=${RELEASE}")
-append_env_file("REVISION=${REVISION}")
 
 
 function(PREPARE_FOR_YAML _in_out _indent)

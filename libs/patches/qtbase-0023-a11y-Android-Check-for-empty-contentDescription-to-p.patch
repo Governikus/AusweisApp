@@ -1,4 +1,4 @@
-From b4d365a0b6afe3e320fb4878ce8e6735cc74fd7c Mon Sep 17 00:00:00 2001
+From 595a1e72c4426bb4ba5ad8ad176bda713f21bb82 Mon Sep 17 00:00:00 2001
 From: Julian Greilich <j.greilich@gmx.de>
 Date: Mon, 12 Oct 2026 08:39:20 +0200
 Subject: a11y Android: Check for empty contentDescription to prevent crash
@@ -20,10 +20,10 @@ Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
-index 79626a38ef06cd3a5046140b5b6cb8aad0c2ebb5..5c924027cb5136cf0217be719a0f8d7d76b7da3c 100644
+index 0961705d378a5b00def71020a4140a4e19657837..23fe29f2de304911683f0fe417bc0305d11b7bd7 100644
 --- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
 +++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtAccessibilityDelegate.java
-@@ -477,9 +477,11 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
+@@ -473,9 +473,11 @@ class QtAccessibilityDelegate extends View.AccessibilityDelegate
  
          // set only if valid, otherwise we return a node that is invalid and will crash when accessed
          node.setSource(m_view, virtualViewId);
