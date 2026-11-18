@@ -19,14 +19,13 @@ class IniPreconditions(Preconditions):
         config['General'] = {
             'selfauthTestUri': self.bool_to_string(self.selfauth_test_uri),
             'showOnboarding': self.bool_to_string(self.show_onboarding),
-            'transportPinReminder': self.bool_to_string(
-                self.show_transportpinreminder
-            ),
+            'transportPinReminder': self.bool_to_string(self.show_transportpinreminder),
             'remindToClose': self.bool_to_string(self.remind_to_close),
+            'developerOptions': self.bool_to_string(self.developer_options),
+            'developerMode': self.bool_to_string(self.developer_mode),
+            'showInAppNotifications': self.bool_to_string(self.show_in_app_notifications),
         }
-        config['simulator'] = {
-            'enabled': self.bool_to_string(self.use_simulator)
-        }
+        config['simulator'] = {'enabled': self.bool_to_string(self.use_simulator)}
 
         with open(self.ini_file, 'w') as f:
             config.write(f)

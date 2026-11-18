@@ -85,11 +85,13 @@ SectionPage {
 			Component {
 				LicenseInformation {
 					Layout.preferredHeight: tabbedPane.availableHeight
+					scrollBarFocusFrame: true
 				}
 			}
 			Component {
 				ReleaseNotes {
 					Layout.preferredHeight: tabbedPane.availableHeight
+					scrollBarFocusFrame: true
 
 					layer {
 						enabled: GraphicsInfo.api !== GraphicsInfo.Software

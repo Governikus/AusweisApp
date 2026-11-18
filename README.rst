@@ -59,22 +59,26 @@ Beispiel über die CLI:
 
    C:>cd C:/build
    C:\build>cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=C:/qt/dist C:/AusweisApp -DCMAKE_BUILD_TYPE=release
-   -- The CXX compiler identification is GNU 11.2.0
+   -- The CXX compiler identification is GNU 15.2.0
    -- Detecting CXX compiler ABI info
    -- Detecting CXX compiler ABI info - done
-   -- Check for working CXX compiler: C:/mingw64/bin/g++.exe - skipped
+   -- Check for working CXX compiler: C:/mingw64/bin/c++.exe - skipped
    -- Detecting CXX compile features
    -- Detecting CXX compile features - done
-   -- VENDOR: Governikus GmbH & Co. KG
-   -- VERSION: 1.24.0
-   -- Found Java: C:/Program Files/Java/jre1.8.0_241/bin/java.exe (found version "1.8.0.241") found components: Runtime
-   -- Found Hg: C:/Program Files/TortoiseHg/hg.exe (found version "5.6.1")
+   -- VERSION: 2.6.2
+   -- VENDOR: Governikus Service GmbH
+   -- Using valgrind suppressions: C:/qt/dist/test/valgrind.supp
+   -- Found uncrustify 0.80.0_f
+   -- Found Python: D:/Python310/python.exe (found version "3.10.5") found components: Interpreter
+   -- Found Hg: C:/Program Files/TortoiseHg/hg.exe (found version "7.0.1")
    -- DVCS tag: tip
-   -- DVCS distance: 23
-   -- DVCS branch: default
+   -- DVCS distance: 22
+   -- DVCS branch: 2.6
+   -- DVCS revision: 1001131ae22f
    -- DVCS phase: public
-   -- DVCS revision: 283adbf18b4e+
-   -- No documentation will be generated
+   -- DVCS final: OFF
+   -- No sphinx documentation will be generated
+   -- No PDF documentation will be generated
    -- CMAKE_INSTALL_PREFIX: C:/Program Files (x86)/AusweisApp
    -- CMAKE_BUILD_TYPE: RELEASE
    -- CMAKE_PREFIX_PATH: C:/qt/dist
@@ -82,8 +86,9 @@ Beispiel über die CLI:
    -- CMAKE_LIBRARY_PATH:
    -- CMAKE_SYSTEM_PREFIX_PATH: C:/Program Files;C:/Program Files (x86);C:/Program Files/CMake;C:/Program Files (x86)/AusweisApp
    -- CMAKE_SYSTEM_INCLUDE_PATH:
-   -- CMAKE_VERSION: 3.23.2
+   -- CMAKE_VERSION: 4.4.5
    -- CMAKE_SYSTEM_PROCESSOR: AMD64
+   -- CMAKE_SYSTEM_NAME: Windows
    -- CMAKE_CXX_SIMULATE_ID:
    -- BUILD_SHARED_LIBS: OFF
    [...]

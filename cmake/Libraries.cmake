@@ -20,7 +20,7 @@ else()
 	endif()
 endif()
 
-if(IOS OR ANDROID)
+if(CMAKE_CROSSCOMPILING)
 	if(NOT QT_HOST_PATH)
 		# If no QT_HOST_PATH is set, see if it was build as part of the toolchain
 		foreach(path ${CMAKE_PREFIX_PATH})

@@ -14,6 +14,9 @@ SectionPage {
 	default property alias pageData: flickable.layoutData
 	property alias spacing: flickable.spacing
 
+	function highlightScrollbar() {
+		flickable.highlightScrollbar();
+	}
 	function positionViewAtItem(pItem) {
 		Utils.positionFlickableAtItem(flickable, pItem);
 	}

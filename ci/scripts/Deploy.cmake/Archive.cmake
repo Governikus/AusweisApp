@@ -12,6 +12,10 @@ elseif(output MATCHES "NT_STATUS_ACCESS_DENIED")
 	message(FATAL_ERROR "Permission denied")
 endif()
 
+find_program(JQ jq REQUIRED)
+file(GLOB appcast_files "${WORKSPACE}/AppcastInfo_*.json")
+step(${JQ} -s "{items: [.[].items[]]}" ${appcast_files} OUTPUT_FILE ${WORKSPACE}/AppcastInfo.json)
+
 set(smbscript "${WORKSPACE}/.smbscript")
 file(REMOVE "${smbscript}")
 file(GLOB files

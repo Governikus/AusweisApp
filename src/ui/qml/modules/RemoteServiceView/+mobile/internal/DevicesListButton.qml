@@ -13,7 +13,7 @@ import Governikus.View
 GAbstractButton {
 	id: root
 
-	property alias description: listItem.description
+	property alias description: devicesListItem.description
 	required property var deviceId
 	required property int index
 	required property bool isLastAddedDevice
@@ -26,6 +26,8 @@ GAbstractButton {
 
 	signal activate(var pIsSupported, var pDeviceId)
 
+	Accessible.description: devicesListItem.description
+	Accessible.name: devicesListItem.Accessible.name + ", " + linkQualityAnimation.Accessible.name
 	Accessible.role: Accessible.Button
 
 	contentItem: ColumnLayout {
@@ -35,33 +37,45 @@ GAbstractButton {
 			Layout.fillWidth: true
 			visible: root.index > 0
 		}
-		RowLayout {
-			DevicesListItem {
-				id: listItem
+		Item {
+			Layout.fillWidth: true
+			implicitHeight: rowLayout.implicitHeight
 
-				isLastAddedDevice: root.isLastAddedDevice
-				isSupported: root.isSupported
-				remoteDeviceName: root.remoteDeviceName
-				remoteDeviceStatus: root.remoteDeviceStatus
-			}
-			GSpacer {
-				Layout.fillWidth: true
-			}
-			LinkQualityAnimation {
-				inactive: !root.isNetworkVisible && root.isPaired
-				percent: root.linkQualityInPercent
+			RowLayout {
+				id: rowLayout
 
-				MouseArea {
-					anchors.fill: parent
+				anchors.fill: parent
+
+				DevicesListItem {
+					id: devicesListItem
+
+					Accessible.ignored: true
+					isLastAddedDevice: root.isLastAddedDevice
+					isSupported: root.isSupported
+					remoteDeviceName: root.remoteDeviceName
+					remoteDeviceStatus: root.remoteDeviceStatus
 				}
+				GSpacer {
+					Layout.fillWidth: true
+				}
+				LinkQualityAnimation {
+					id: linkQualityAnimation
+
+					Accessible.ignored: true
+					inactive: !root.isNetworkVisible && root.isPaired
+					percent: root.linkQualityInPercent
+
+					MouseArea {
+						anchors.fill: parent
+					}
+				}
+			}
+			FocusFrame {
+				scope: root
 			}
 		}
 	}
 
 	Keys.onSpacePressed: clicked()
 	onClicked: activate(isSupported, deviceId)
-
-	FocusFrame {
-		marginFactor: 3
-	}
 }

@@ -10,6 +10,9 @@ class MacosPreconditions(Preconditions):
         s += f'"simulator.enabled" = {self.use_simulator}; '
         s += f'"transportPinReminder" = {self.show_transportpinreminder}; '
         s += f'"remindToClose" = {self.remind_to_close};'
+        s += f'"developerOptions" = {self.developer_options};'
+        s += f'"developerMode" = {self.developer_mode};'
+        s += f'"showInAppNotifications" = {self.show_in_app_notifications};'
         s = f"'{{ {s} }}'"
 
         ausweisapp_domain = '~/Library/Containers/com.governikus.ausweisapp2/Data/Library/Preferences/com.governikus.AusweisApp2.plist'

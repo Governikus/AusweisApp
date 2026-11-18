@@ -33,9 +33,17 @@ GAbstractButton {
 	background: RoundedRectangle {
 		bottomLeftCorner: root.drawBottomCorners
 		bottomRightCorner: root.drawBottomCorners
-		color: colors.controlPreferredPaneBackground
+		color: backgroundColors.controlPreferredPaneBackground
 		topLeftCorner: root.drawTopCorners
 		topRightCorner: root.drawTopCorners
+
+		StatefulColors {
+			id: backgroundColors
+
+			hoveredCondition: hoverHandler.hovered && !toggleBox.hovered
+			pressedCondition: root.pressed && !toggleBox.pressed
+			statefulControl: root
+		}
 	}
 	contentItem: RowLayout {
 		spacing: Style.dimens.pane_spacing
@@ -62,19 +70,16 @@ GAbstractButton {
 			}
 		}
 		ToggleBox {
+			id: toggleBox
+
 			Layout.alignment: Qt.AlignTop
 		}
 	}
 
 	HoverHandler {
 		id: hoverHandler
-	}
-	StatefulColors {
-		id: colors
 
-		controlStyle: Style.color.controlSwitch
-		hoveredCondition: hoverHandler.hovered
-		statefulControl: root
+		enabled: Style.is_layout_desktop || UiPluginModel.isChromeOS
 	}
 	FocusFrame {
 		anchors {
@@ -86,12 +91,33 @@ GAbstractButton {
 	}
 
 	component ToggleBox: Rectangle {
-		border.color: colors.controlBorder
-		color: colors.controlBackground
+		id: toggleBoxComponent
+
+		readonly property bool hovered: toggleBoxHoverHandler.hovered
+		readonly property bool pressed: root.pressed && toggleBoxPointHandler.active
+
+		border.color: toggleBoxColors.controlBorder
+		color: toggleBoxColors.controlBackground
 		implicitHeight: implicitWidth / 2
 		implicitWidth: Style.dimens.switch_width
 		radius: height / 2
 
+		HoverHandler {
+			id: toggleBoxHoverHandler
+
+			enabled: Style.is_layout_desktop || UiPluginModel.isChromeOS
+		}
+		PointHandler {
+			id: toggleBoxPointHandler
+		}
+		StatefulColors {
+			id: toggleBoxColors
+
+			controlStyle: Style.color.controlSwitch
+			hoveredCondition: toggleBoxComponent.hovered
+			pressedCondition: toggleBoxComponent.pressed
+			statefulControl: root
+		}
 		TintableIcon {
 			source: "qrc:///images/material_check.svg"
 			sourceSize.height: parent.height * 0.65
@@ -122,7 +148,7 @@ GAbstractButton {
 			readonly property int distanceBallBorder: 3
 
 			anchors.verticalCenter: parent.verticalCenter
-			color: colors.controlContent
+			color: toggleBoxColors.controlContent
 			height: parent.height - 2 * distanceBallBorder
 			radius: height / 2
 			width: height

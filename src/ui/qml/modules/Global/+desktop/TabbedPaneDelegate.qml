@@ -45,6 +45,7 @@ Item {
 
 	Accessible.description: Utils.resolveA11yDescription(a11yName, a11yDescription)
 	Accessible.focusable: true
+	Accessible.id: "TabbedPaneDelegate_" + index
 	Accessible.name: Utils.resolveA11yName(a11yName, a11yDescription)
 	Accessible.role: Accessible.PageTab
 	height: sectionName.height + 2 * Style.dimens.pane_padding

@@ -123,8 +123,11 @@ SectionPage {
 		GListView {
 			id: logView
 
+			readonly property int lineSpacing: Style.dimens.text_spacing
+
 			displayMarginBeginning: Style.dimens.pane_padding
 			displayMarginEnd: Style.dimens.pane_padding
+			enableLineShineThroughFix: true
 			implicitHeight: tabbedPane.availableHeight
 			model: logModel
 
@@ -166,7 +169,21 @@ SectionPage {
 						fill: parent
 						leftMargin: Style.dimens.pane_padding
 						rightMargin: Style.dimens.pane_padding
-						topMargin: logEntry.isFirstItem ? Style.dimens.pane_padding : Style.dimens.text_spacing
+						topMargin: logEntry.isFirstItem ? Style.dimens.pane_padding : logView.lineSpacing
+					}
+				}
+			}
+			highlight: Item {
+				z: 2
+
+				FocusFrame {
+					scope: logView
+
+					anchors {
+						bottomMargin: (logView.currentIndex === logView.count ? Style.dimens.pane_padding : 0) - logView.lineSpacing / 2
+						leftMargin: Style.dimens.pane_spacing / 2
+						rightMargin: Style.dimens.pane_spacing / 2
+						topMargin: (logView.currentIndex === 0 ? Style.dimens.pane_padding : Style.dimens.text_spacing) - logView.lineSpacing / 2
 					}
 				}
 			}

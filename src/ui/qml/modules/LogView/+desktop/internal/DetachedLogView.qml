@@ -210,6 +210,7 @@ Rectangle {
 			Layout.leftMargin: root.spacing
 			Layout.topMargin: root.spacing
 			clip: true
+			enableLineShineThroughFix: true
 			model: filterModel
 
 			delegate: LogViewDelegate {

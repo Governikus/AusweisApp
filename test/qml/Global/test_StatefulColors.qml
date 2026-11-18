@@ -11,7 +11,6 @@ import Governikus.Style
 Item {
 	id: control
 
-	property bool checkable: true
 	property bool checked: false
 	property bool enabled: true
 	property bool hovered: false
@@ -25,6 +24,13 @@ Item {
 	TestCase {
 		id: testCase
 
+		function init() {
+			control.checked = false;
+			control.enabled = true;
+			control.hovered = false;
+			control.pressed = false;
+			colors.groupMember = false;
+		}
 		function test_checked() {
 			control.enabled = true;
 			control.pressed = false;
@@ -68,40 +74,33 @@ Item {
 			];
 		}
 		function test_hovered(data) {
-			let desktopOrChromeOS = Style.is_layout_desktop || UiPluginModel.isChromeOS;
-			control.enabled = true;
-			control.pressed = false;
-			control.hovered = desktopOrChromeOS;
+			control.hovered = true;
 			control.checked = data.checked;
 			colors.groupMember = data.groupMember;
-			if (desktopOrChromeOS) {
-				compare(colors.state, data.state);
-			} else {
-				verify(colors.state !== "hovered");
-			}
+			compare(colors.state, data.state);
 		}
 		function test_hovered_data() {
 			return [
 				{
-					"tag": "1",
+					"tag": "unchecked",
 					"checked": false,
 					"groupMember": false,
 					"state": "hovered_unchecked"
 				},
 				{
-					"tag": "2",
+					"tag": "checked",
 					"checked": true,
 					"groupMember": false,
 					"state": "hovered_checked"
 				},
 				{
-					"tag": "3",
+					"tag": "unchecked_groupMember",
 					"checked": false,
 					"groupMember": true,
 					"state": "hovered_unchecked"
 				},
 				{
-					"tag": "4",
+					"tag": "checked_groupMember",
 					"checked": true,
 					"groupMember": true,
 					"state": "checked"

@@ -1,0 +1,54 @@
+From f827801f34a55ddc588f1c9aad3749e4f92428a8 Mon Sep 17 00:00:00 2001
+From: Mate Barany <mate.barany@qt.io>
+Date: Tue, 16 Jun 2026 18:31:49 +0200
+Subject: QAuthenticator: fix overflow in qNtlmDecodePhase2 bounds checks
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The bounds checks for targetName and targetInfo added len and offset
+in quint32 arithmetic before comparing against data.size(), which
+could wrap on crafted values. Use qAddOverflow to detect the overflow
+explicitly before comparing, which is correct on both 32-bit and
+64-bit platforms.
+
+Also replace the (unsigned) cast on data.size() in the targetInfo
+check with the same pattern used for targetName.
+
+Task-number: QTBUG-147529
+Pick-to: 6.12 6.11
+Change-Id: Idf8e19d9e394b23addefaa67068111d29dc6e7c6
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+(cherry picked from commit 3843303b9229f269963e44eb949a9c7dba18db39)
+---
+ src/network/kernel/qauthenticator.cpp | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/network/kernel/qauthenticator.cpp y/qtbase/src/network/kernel/qauthenticator.cpp
+index 5c476f898023224a463df825723840f09bd09d14..1881c4a08bea2a1c308bc81902aac53ae921747e 100644
+--- x/qtbase/src/network/kernel/qauthenticator.cpp
++++ y/qtbase/src/network/kernel/qauthenticator.cpp
+@@ -1466,14 +1466,20 @@ static bool qNtlmDecodePhase2(const QByteArray& data, QNtlmPhase2Block& ch)
+     ds >> ch.targetInfo;
+ 
+     if (ch.targetName.len > 0) {
+-        if (qsizetype(ch.targetName.len + ch.targetName.offset) > data.size())
++        qsizetype total;
++        if (qAddOverflow(qsizetype(ch.targetName.offset), qsizetype(ch.targetName.len), &total))
++            return false;
++        if (total > data.size())
+             return false;
+ 
+         ch.targetNameStr = qStringFromUcs2Le(data.mid(ch.targetName.offset, ch.targetName.len));
+     }
+ 
+     if (ch.targetInfo.len > 0) {
+-        if (ch.targetInfo.len + ch.targetInfo.offset > (unsigned)data.size())
++        qsizetype total;
++        if (qAddOverflow(qsizetype(ch.targetInfo.offset), qsizetype(ch.targetInfo.len), &total))
++            return false;
++        if (total > data.size())
+             return false;
+ 
+         ch.targetInfoBuff = data.mid(ch.targetInfo.offset, ch.targetInfo.len);

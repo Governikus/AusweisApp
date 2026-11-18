@@ -9,20 +9,15 @@ import sys
 class CommandLineParser(argparse.ArgumentParser):
     def __init__(self):
         super().__init__()
-        self.add_argument(
-            '--module-dir', help='Directory of QML modules', required=True
-        )
-        self.add_argument(
-            '--resources-dir', help='Directory of QML resources', required=True
-        )
+        self.add_argument('--module-dir', help='Directory of QML modules', required=True)
+        self.add_argument('--resources-dir', help='Directory of QML resources', required=True)
         self.add_argument(
             '--exclude-filenames',
             help='Filenames to exclude from QML module check',
         )
         self.add_argument(
             '--exclude-resources',
-            help='Path to textfile that defines excludes for QML'
-            'resource usage check',
+            help='Path to textfile that defines excludes for QMLresource usage check',
         )
         self.args = self.parse_args()
 
@@ -50,9 +45,7 @@ class QmlFileCache:
 
         for path in self.collect_qml_files(qml_dir):
             with open(path, encoding='utf8') as fp:
-                self.cache[path] = [
-                    line.strip() for line in fp.read().splitlines()
-                ]
+                self.cache[path] = [line.strip() for line in fp.read().splitlines()]
 
     def collect_qml_files(self, qml_dir):
         for root, _, files in os.walk(qml_dir):
@@ -159,9 +152,7 @@ class QmlFileCache:
                         files_with_id_errors.append(file)
 
                 id_found = any(
-                    id_string in other_line
-                    for other_line in lines
-                    if other_line is not line
+                    id_string in other_line for other_line in lines if other_line is not line
                 )
 
                 if not id_found:
@@ -184,15 +175,11 @@ class QmlFileCache:
             expecting_name = False
 
             for line in lines:
-                if not expecting_name and line.startswith(
-                    'Accessible.description'
-                ):
+                if not expecting_name and line.startswith('Accessible.description'):
                     expecting_name = True
 
                     if a11y_resolve_description not in line:
-                        print(
-                            f'Use {a11y_resolve_description} in line "{line}" {file}'
-                        )
+                        print(f'Use {a11y_resolve_description} in line "{line}" {file}')
                         files_with_errors.add(file)
 
                     continue
@@ -200,9 +187,7 @@ class QmlFileCache:
                 if expecting_name:
                     if line.startswith('Accessible.name'):
                         if a11y_resolve_name not in line:
-                            print(
-                                f'Use {a11y_resolve_name} in "{line}" {file}'
-                            )
+                            print(f'Use {a11y_resolve_name} in "{line}" {file}')
                             files_with_errors.add(file)
 
                         expecting_name = False
@@ -298,19 +283,12 @@ class ExcludedResources:
     def __init__(self, excludes_filename):
         if excludes_filename:
             with open(excludes_filename, encoding='utf8') as fp:
-                self.excluded_resources = [
-                    re.compile(line.strip()) for line in fp.readlines()
-                ]
+                self.excluded_resources = [re.compile(line.strip()) for line in fp.readlines()]
         else:
             self.excluded_resources = []
 
     def is_excluded(self, filename):
-        return any(
-            [
-                expression.fullmatch(filename)
-                for expression in self.excluded_resources
-            ]
-        )
+        return any([expression.fullmatch(filename) for expression in self.excluded_resources])
 
 
 if __name__ == '__main__':
@@ -336,13 +314,9 @@ if __name__ == '__main__':
     excluded_resources = ExcludedResources(parser.exclude_resources())
 
     unused_qml_files = qml_cache.unused_qml_files(parser.exclude_filenames())
-    missing_resource_files = resource_cache.resource_file_missing(
-        parser.resources_dir()
-    )
+    missing_resource_files = resource_cache.resource_file_missing(parser.resources_dir())
     duplicate_files = resource_cache.duplicate_files
-    unused_resources = resource_cache.resource_unused(
-        qml_cache, excluded_resources
-    )
+    unused_resources = resource_cache.resource_unused(qml_cache, excluded_resources)
 
     platform_conflicts = qml_cache.platform_selector_conflict()
     files_with_id_errors = qml_cache.id_error_in_component()

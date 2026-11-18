@@ -1,0 +1,22 @@
+AusweisApp 2.6.3
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 18. November 2026
+
+
+Anwender
+""""""""
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- Optimierung einzelner Barrierefreiheitsfunktionen.
+
+- Unterstützung der arm64-Architektur auf Windows.
+
+- Behebung folgender Sicherheitslücken, die die Stabilität der
+  Anwendung gefährden könnten: CVE-2026-89157, CVE-2026-89158,
+  CVE-2026-89160, CVE-2026-89156, CVE-2026-89161, CVE-2026-89162,
+  CVE-2026-105946, CVE-2026-114366, CVE-2026-114369, CVE-2026-116337.
+
+Entwickler
+""""""""""
+- RSA-Signaturen mit PKCS#1 v1.5 in TLS werden weiterhin unterstützt.

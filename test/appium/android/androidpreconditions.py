@@ -8,9 +8,7 @@ from ppadb.client import Client as AdbClient
 
 class AndroidPreconditions(Preconditions):
     DEVICE_TMP_PATH = r'/data/local/tmp/AusweisApp2.conf'
-    SETTINGS_PATH = (
-        r'files/settings/Governikus\ GmbH\ \&\ Co.\ KG/AusweisApp2.conf'
-    )
+    SETTINGS_PATH = r'files/settings/Governikus\ GmbH\ \&\ Co.\ KG/AusweisApp2.conf'
 
     def apply(self):
         client = AdbClient()
@@ -31,24 +29,22 @@ class AndroidPreconditions(Preconditions):
             print('Writing', filename, 'to adb device', device.serial)
             device.push(filename, self.DEVICE_TMP_PATH)
             device.shell(
-                f'run-as com.governikus.ausweisapp2 cp '
-                f'{self.DEVICE_TMP_PATH} {self.SETTINGS_PATH}'
+                f'run-as com.governikus.ausweisapp2 cp {self.DEVICE_TMP_PATH} {self.SETTINGS_PATH}'
             )
 
         not_windows = sys.platform != 'win32'
 
-        with NamedTemporaryFile(
-            mode='w', delete=not_windows, delete_on_close=not_windows
-        ) as fp:
+        with NamedTemporaryFile(mode='w', delete=not_windows, delete_on_close=not_windows) as fp:
             fp.write('[General]\n')
-            fp.write(
-                f'selfauthTestUri = {self.bool_to_string(self.selfauth_test_uri)}\n'
-            )
-            fp.write(
-                f'showOnboarding = {self.bool_to_string(self.show_onboarding)}\n'
-            )
+            fp.write(f'selfauthTestUri = {self.bool_to_string(self.selfauth_test_uri)}\n')
+            fp.write(f'showOnboarding = {self.bool_to_string(self.show_onboarding)}\n')
             fp.write(
                 f'transportPinReminder = {self.bool_to_string(self.show_transportpinreminder)}\n'
+            )
+            fp.write(f'developerMode = {self.bool_to_string(self.developer_mode)}\n')
+            fp.write(f'developerOptions = {self.bool_to_string(self.developer_options)}\n')
+            fp.write(
+                f'showInAppNotifications = {self.bool_to_string(self.show_in_app_notifications)}\n'
             )
             if self.use_simulator:
                 fp.write('preferredTechnology = SIMULATOR\n')

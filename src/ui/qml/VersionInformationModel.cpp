@@ -41,9 +41,8 @@ void VersionInformationModel::init()
 				{
 					return;
 				}
-				mData << std::make_pair(pKey,
-				pValue == QStringLiteral("Governikus GmbH & Co. KG")
-											? QStringLiteral("Governikus Service GmbH") : pValue);
+
+				mData << std::make_pair(pKey, pValue);
 			});
 }
 

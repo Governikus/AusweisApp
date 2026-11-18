@@ -49,6 +49,7 @@ ResultView {
 			animationType: root.animationType
 			buttonText: ""
 			header: root.header
+			lockAndHideNavigation: root.lockAndHideNavigation
 			progress: root.progress
 			subheader: root.hasCodeSubHeaderText
 			title: root.title
@@ -67,6 +68,7 @@ ResultView {
 			animationType: root.animationType
 			buttonText: ""
 			header: root.header
+			lockAndHideNavigation: root.lockAndHideNavigation
 			progress: root.progress
 			subheader: root.hasNoCodeSubHeaderText
 			title: root.title

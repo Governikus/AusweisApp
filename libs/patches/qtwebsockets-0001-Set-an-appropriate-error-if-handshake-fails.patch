@@ -1,15 +1,20 @@
-From ce2e6a58f7db54f214a00fb478a65cfc00730797 Mon Sep 17 00:00:00 2001
+From afda59c0dd0f065c97ccfdbb7d4fd50d4f0daa13 Mon Sep 17 00:00:00 2001
 From: Timon Sassor <timon.sassor@governikus.de>
 Date: Mon, 27 Apr 2026 17:14:34 +0200
 Subject: Set an appropriate error if handshake fails
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 In the event of a failed handshake we set an error to notify the user.
 To be able to signal consecutively failing connections, we need to reset
 the error state after a disconnect, so if the new connection fails with
 the same error, the error signal is emitted again.
 
-Pick-to: 6.10 6.11
+Pick-to: 6.11
 Change-Id: I0e6cca13c4dc7147ad9949bf0059273750c0d3de
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+(cherry picked from commit a83cc52927dd41c82f73870af548a580cb48eb03)
 ---
  src/websockets/qwebsocketserver_p.cpp | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)

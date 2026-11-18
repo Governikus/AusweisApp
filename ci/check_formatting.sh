@@ -58,7 +58,7 @@ if [ "$STATUS_PATCH" = "0" ]; then
   fi
   echo 'FORMATTING SUCCEEDED'
   exit 0
-elif [ ! "0" = "$STATUS_CURRENT" ]; then
+elif [ "0" = "$STATUS_CURRENT" ]; then
   echo 'FORMATTING FAILED: Patch is not formatted'
   hg diff
   hg revert -a -C

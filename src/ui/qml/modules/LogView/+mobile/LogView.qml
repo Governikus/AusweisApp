@@ -38,6 +38,12 @@ SectionPage {
 		}
 	}
 
+	onActiveFocusChanged: if (activeFocus) {
+		logView.highlightScrollbar();
+		if (!ApplicationModel.screenReaderRunning)
+			logView.forceActiveFocus(Qt.MouseFocusReason);
+	}
+
 	Component {
 		id: logFilterView
 
@@ -61,7 +67,6 @@ SectionPage {
 		model: logFilterModel
 
 		delegate: LogViewDelegate {
-			boldFont: ListView.isCurrentItem && logView.activeFocus
 			width: logView.width
 
 			Accessible.onScrollDownAction: logView.scrollPageDown()
@@ -70,6 +75,23 @@ SectionPage {
 				logView.centerViewAtIndex(index);
 			}
 		}
+		highlight: Item {
+			z: 2
+
+			FocusFrame {
+				scope: logView
+
+				anchors {
+					bottomMargin: 0
+					leftMargin: Style.dimens.pane_spacing / 2
+					rightMargin: Style.dimens.pane_spacing / 2
+					topMargin: 0
+				}
+			}
+		}
+
+		onActiveFocusChanged: if (activeFocus)
+			highlightScrollbar()
 
 		Connections {
 			function onFireNewLogMsg() {

@@ -82,6 +82,9 @@ BaseController {
 	}
 	function show(pModule) {
 		if (navigation && navigation.show) {
+			if (ApplicationModel.screenReaderRunning) {
+				lastA11yFocusedItem = Window.activeFocusItem;
+			}
 			navigation.show(pModule);
 		} else {
 			console.log("Controller cannot find navigation");

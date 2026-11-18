@@ -25,43 +25,41 @@ SectionPage {
 		onClicked: root.pop()
 	}
 
-	Connections {
-		function onActivate() {
-			listView.highlightScrollbar();
-		}
+	onActiveFocusChanged: if (activeFocus) {
+		listView.highlightScrollbar();
+		if (!ApplicationModel.screenReaderRunning)
+			listView.forceActiveFocus(Qt.MouseFocusReason);
 	}
+
 	GListView {
 		id: listView
 
 		displayMarginBeginning: Style.dimens.pane_padding
 		displayMarginEnd: Style.dimens.pane_padding
+		keyNavigationChangesCurrentIndex: false
 		model: ApplicationModel.getLicenseText()
 
-		delegate: Item {
-			id: delegateItem
-
+		delegate: GText {
 			required property int index
 			required property string modelData
 
-			implicitHeight: delegateText.implicitHeight
-			implicitWidth: root.width
+			Accessible.role: Utils.useSpecialAppleTabRole(Accessible.StaticText)
+			anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
+			anchors.horizontalCenterOffset: -Style.dimens.pane_padding / 2
+			enabled: modelData !== ""
+			focusFrameVisible: false
+			text: modelData
+			width: Math.min(listView.width - Style.dimens.pane_padding, Style.dimens.max_text_width)
 
-			GText {
-				id: delegateText
-
-				Accessible.role: Utils.useSpecialAppleTabRole(Accessible.StaticText)
-				anchors.centerIn: parent
-				anchors.horizontalCenterOffset: -Style.dimens.pane_padding
-				text: delegateItem.modelData
-				width: Math.min(listView.width - Style.dimens.pane_padding, Style.dimens.max_text_width)
-
-				Accessible.onScrollDownAction: listView.scrollPageDown()
-				Accessible.onScrollUpAction: listView.scrollPageUp()
-				onActiveFocusChanged: if (activeFocus) {
-					listView.centerViewAtIndex(delegateItem.index);
-				}
+			Accessible.onScrollDownAction: listView.scrollPageDown()
+			Accessible.onScrollUpAction: listView.scrollPageUp()
+			onActiveFocusChanged: if (activeFocus) {
+				listView.centerViewAtIndex(index);
 			}
 		}
+
+		onActiveFocusChanged: if (activeFocus)
+			highlightScrollbar()
 
 		anchors {
 			bottomMargin: Style.dimens.pane_padding

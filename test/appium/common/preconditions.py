@@ -2,30 +2,51 @@ import os
 from abc import ABC, abstractmethod
 
 
-def create_platform_preconditions(platform):
+def with_preconditions(**required):
+    """Decorator that attaches required preconditions to a test method.
+    Usage:
+        @with_preconditions(show_onboarding=True, use_simulator=False)
+        def test_onboarding(self):
+        ...
+    """
+
+    def decorator(test_method):
+        test_method.required_preconditions = required
+        return test_method
+
+    return decorator
+
+
+def create_platform_preconditions(platform, required_preconditions):
     if os.getenv('AUSWEISAPP_INI_FILE'):
         from common.inipreconditions import IniPreconditions
 
-        return IniPreconditions(os.getenv('AUSWEISAPP_INI_FILE'))
-
-    if platform == 'win32':
+        preconditions = IniPreconditions(os.getenv('AUSWEISAPP_INI_FILE'))
+    elif platform == 'win32':
         from windows.windowspreconditions import WindowsPreconditions
 
-        return WindowsPreconditions()
+        preconditions = WindowsPreconditions()
     elif platform == 'android':
         from android.androidpreconditions import AndroidPreconditions
 
-        return AndroidPreconditions()
+        preconditions = AndroidPreconditions()
     elif platform == 'darwin':
         from macos.macospreconditions import MacosPreconditions
 
-        return MacosPreconditions()
+        preconditions = MacosPreconditions()
     elif platform == 'ios':
         from ios.iospreconditions import IosPreconditions
 
-        return IosPreconditions()
+        preconditions = IosPreconditions()
     else:
-        return None
+        raise NotImplementedError(f'No Preconditions available for platform "{platform}"')
+
+    for name, value in required_preconditions.items():
+        if not hasattr(preconditions, name):
+            raise AttributeError(f'Unknown precondition: {name}')
+        setattr(preconditions, name, value)
+
+    return preconditions
 
 
 class Preconditions(ABC):
@@ -35,6 +56,9 @@ class Preconditions(ABC):
         self.show_transportpinreminder = False
         self.use_simulator = True
         self.remind_to_close = False
+        self.developer_options = False
+        self.developer_mode = False
+        self.show_in_app_notifications = False
 
     @abstractmethod
     def apply(self):

@@ -1,0 +1,87 @@
+From a5894dc6231c25663877858165c85253a2560992 Mon Sep 17 00:00:00 2001
+From: Mate Barany <mate.barany@qt.io>
+Date: Thu, 24 Sep 2026 18:57:05 +0200
+Subject: QHttpNetworkReply: limit status line length while reading
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Once the first five bytes are "HTTP/", the status line is accumulated
+into 'fragment' one byte at a time until a newline arrives, with no
+size check. A server that never terminates the status line can make the
+client grow 'fragment' without bound.
+
+parseStatus() already rejects reason phrases longer than
+MAX_REASON_PHRASE_SIZE, so a line longer than that plus a generous
+allowance for the protocol version and status code can never be valid.
+Reject it as soon as that length is exceeded.
+
+Task-number: QTBUG-150779
+Pick-to: 6.12 6.8 6.5 5.15
+Change-Id: I222ab530887d663ded2a512a57552040f6410715
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+(cherry picked from commit e4b130879d7d13aa8b6939f1af1cfae77c39fefa)
+---
+ src/network/access/qhttpnetworkreply.cpp      |  8 +++++++
+ .../tst_qhttpnetworkreply.cpp                 | 23 +++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+
+diff --git x/qtbase/src/network/access/qhttpnetworkreply.cpp y/qtbase/src/network/access/qhttpnetworkreply.cpp
+index 159fb50a6c2ba6cf8da4bccc1aa9a23efa93ecb4..7979378ba6d53eee3d9915327a51f334aabb2aa6 100644
+--- x/qtbase/src/network/access/qhttpnetworkreply.cpp
++++ y/qtbase/src/network/access/qhttpnetworkreply.cpp
+@@ -423,6 +423,14 @@ qint64 QHttpNetworkReplyPrivate::readStatus(QIODevice *socket)
+             fragment.clear();
+             return -1;
+         }
++
++        // parseStatus() rejects reason phrases longer than MAX_REASON_PHRASE_SIZE anyway,
++        // so anything beyond that plus a generous allowance for the rest of the line
++        // can never be valid.
++        if (fragment.size() > HeaderConstants::MAX_REASON_PHRASE_SIZE + 64) {
++            fragment.clear();
++            return -1;
++        }
+     } while (haveRead == 1);
+ 
+     return bytes;
+diff --git x/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp y/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp
+index 1abef30ee6c614b729788321835d84a021b52040..6eac1530cdb79dfa5994183bf61b9af5aa320d34 100644
+--- x/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp
++++ y/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp
+@@ -24,6 +24,8 @@ private Q_SLOTS:
+ 
+     void headerSizeLimit_data();
+     void headerSizeLimit();
++
++    void statusLineSizeLimit();
+ };
+ 
+ void tst_QHttpNetworkReply::parseHeader_data()
+@@ -280,5 +282,26 @@ void tst_QHttpNetworkReply::headerSizeLimit()
+     }
+ }
+ 
++void tst_QHttpNetworkReply::statusLineSizeLimit()
++{
++    // A status line that is never terminated must be rejected once it can
++    // no longer be valid, instead of being buffered indefinitely.
++    const QByteArray status = "HTTP/1.1 200 " + QByteArray(1024 * 1024, 'a');
++    TestHeaderSocket socket(status);
++    TestHeaderReply reply;
++    QHttpNetworkReplyPrivate *replyPrivate = reply.replyPrivate();
++
++    QCOMPARE(replyPrivate->readStatus(&socket), qint64(-1));
++    QVERIFY(replyPrivate->fragment.isEmpty());
++    QCOMPARE_LT(socket.inputBuffer.pos(), 4096);
++
++    // The longest acceptable reason phrase still parses.
++    const QByteArray okStatus = "HTTP/1.1 200 " + QByteArray(1024, 'a') + "\r\n";
++    TestHeaderSocket okSocket(okStatus);
++    TestHeaderReply okReply;
++    QCOMPARE(okReply.replyPrivate()->readStatus(&okSocket), qint64(okStatus.size()));
++    QCOMPARE(okReply.statusCode(), 200);
++}
++
+ QTEST_MAIN(tst_QHttpNetworkReply)
+ #include "tst_qhttpnetworkreply.moc"

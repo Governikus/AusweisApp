@@ -73,9 +73,7 @@ notes:
             epilog=epilog,
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
-        self.add_argument(
-            '--release', help='Create release pipeline', action='store_true'
-        )
+        self.add_argument('--release', help='Create release pipeline', action='store_true')
         self.add_argument('-r', '--rev', help='Use revision for the pipeline')
         self.add_argument(
             '-p',
@@ -140,18 +138,10 @@ notes:
             '--token',
             help='Use token or provide CI_PIPELINE_TOKEN environment variable',
         )
-        self.add_argument(
-            '--gitlab', help='URL of gitlab', default='https://gitlab.govkg.de'
-        )
-        self.add_argument(
-            '--project', help='ID of gitlab project', default='786'
-        )
-        self.add_argument(
-            '--ref', help='Git ref of gitlab project', default='main'
-        )
-        self.add_argument(
-            '-v', '--verbose', help='Verbose output', action='store_true'
-        )
+        self.add_argument('--gitlab', help='URL of gitlab', default='https://gitlab.govkg.de')
+        self.add_argument('--project', help='ID of gitlab project', default='786')
+        self.add_argument('--ref', help='Git ref of gitlab project', default='main')
+        self.add_argument('-v', '--verbose', help='Verbose output', action='store_true')
         self.args = self.parse_args()
 
         if self.args.files and (self.args.rev or self.args.patch):
@@ -232,9 +222,9 @@ def export():
 
 def patch():
     if not parser.repository:
-        parser.repository = load_hgrc().get(
-            'bundle.mainreporoot'
-        ) or os.path.dirname(os.path.realpath(__file__))
+        parser.repository = load_hgrc().get('bundle.mainreporoot') or os.path.dirname(
+            os.path.realpath(__file__)
+        )
     log.debug('Use working directory: %s', parser.repository)
     result, nodes = export()
 
@@ -254,9 +244,7 @@ def patch():
 
 def upload(content, nodes):
     crc = zlib.crc32(content.encode('utf-8'))
-    url = (
-        f'{get_url()}/packages/generic/patch/{crc:08x}/{"_".join(nodes)}.patch'
-    )
+    url = f'{get_url()}/packages/generic/patch/{crc:08x}/{"_".join(nodes)}.patch'
     if parser.dry_run:
         log.info(content)
         log.info(f'Upload patch: {url}')
@@ -265,14 +253,9 @@ def upload(content, nodes):
             response = requests.head(url, headers=parser.headers())
 
             if response.status_code == 404:
-                response = requests.put(
-                    url, headers=parser.headers(), data=content
-                )
+                response = requests.put(url, headers=parser.headers(), data=content)
                 if response.status_code != 201:
-                    log.error(
-                        'Upload patch file failed: '
-                        f'{response.status_code} {response.text}'
-                    )
+                    log.error(f'Upload patch file failed: {response.status_code} {response.text}')
                     return None
         except Exception as e:
             log.error(f'Cannot upload patch file: {e}')
@@ -361,16 +344,12 @@ def packages():
                 diff = now - tsp
                 if diff > timedelta(days=7):
                     log.info(
-                        f'Package obsolete: {entry["id"]} '
-                        f'| {entry["version"]} '
-                        f'| {entry["name"]}'
+                        f'Package obsolete: {entry["id"]} | {entry["version"]} | {entry["name"]}'
                     )
                     to_delete.append(entry)
                 else:
                     log.info(
-                        f'Package relevant: {entry["id"]} '
-                        f'| {entry["version"]} '
-                        f'| {entry["name"]}'
+                        f'Package relevant: {entry["id"]} | {entry["version"]} | {entry["name"]}'
                     )
 
     if parser.packages == 'delete':
@@ -382,10 +361,7 @@ def packages():
             )
 
             if response.status_code != 204:
-                log.error(
-                    'Deletion of package failed: '
-                    f'{response.status_code} {response.text}'
-                )
+                log.error(f'Deletion of package failed: {response.status_code} {response.text}')
                 return 1
 
         return 0
@@ -408,18 +384,13 @@ def download_logs():
     per_page = 100  # Max allowed by GitLab API
 
     while True:
-        url = (
-            get_url()
-            + f'/pipelines/{pipeline_id}/jobs?page={page}&per_page={per_page}'
-        )
+        url = get_url() + f'/pipelines/{pipeline_id}/jobs?page={page}&per_page={per_page}'
         log.debug(f'Fetching page {page}...')
 
         try:
             response = requests.get(url, headers=parser.headers())
             if response.status_code != 200:
-                log.error(
-                    f'Failed to fetch pipeline jobs: {response.status_code} {response.text}'
-                )
+                log.error(f'Failed to fetch pipeline jobs: {response.status_code} {response.text}')
                 return 1
 
             jobs = response.json()
@@ -447,14 +418,10 @@ def download_logs():
         job_status = job['status']
 
         # Sanitize job name for filename
-        safe_name = ''.join(
-            c if c.isalnum() or c in ('-', '_') else '_' for c in job_name
-        )
+        safe_name = ''.join(c if c.isalnum() or c in ('-', '_') else '_' for c in job_name)
         log_file = os.path.join(log_dir, f'{safe_name}_{job_id}.log')
 
-        log.info(
-            f'Downloading log: {job_name} (ID: {job_id}, Status: {job_status})'
-        )
+        log.info(f'Downloading log: {job_name} (ID: {job_id}, Status: {job_status})')
 
         log_url = get_url() + f'/jobs/{job_id}/trace'
         try:
@@ -464,9 +431,7 @@ def download_logs():
                     f.write(log_response.text)
                 log.info(f'   Saved to: {log_file}')
             else:
-                log.warning(
-                    f'   Could not download log: {log_response.status_code}'
-                )
+                log.warning(f'   Could not download log: {log_response.status_code}')
         except Exception as e:
             log.error(f'   Error downloading log for {job_name}: {e}')
 
@@ -507,9 +472,7 @@ def main():
         inputs['release'] = True
 
     if parser.apply:
-        variables += [
-            {'key': 'SELECT_JOB_REGEX', 'value': f'/{parser.apply}/i'}
-        ]
+        variables += [{'key': 'SELECT_JOB_REGEX', 'value': f'/{parser.apply}/i'}]
     if parser.squash:
         variables += [{'key': 'SPLIT', 'value': 'OFF'}]
 

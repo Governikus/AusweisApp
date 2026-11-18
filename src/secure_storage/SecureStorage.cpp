@@ -32,8 +32,6 @@ namespace
 			return QLatin1String(_key);\
 		}
 
-CONFIG_NAME(CONFIGURATION_VENDOR, "vendor")
-
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE, "cvRootCertificates")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE_TEST, "cvRootCertificatesTest")
 
@@ -176,8 +174,6 @@ void SecureStorage::load()
 		return;
 	}
 
-	mVendor = config.value(CONFIGURATION_VENDOR()).toString();
-
 	mCvcas.clear();
 	mCvcas = readByteArrayList(config, CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE());
 
@@ -251,7 +247,6 @@ void SecureStorage::load()
 	}
 
 	qCDebug(securestorage) << "SecureStorage loaded:" << isValid();
-	qCInfo(securestorage) << "Vendor" << mVendor;
 }
 
 
@@ -269,12 +264,6 @@ bool SecureStorage::isValid() const
 		   && mTlsConfigLocalIfd.isValid()
 		   && !mMinKeySizes.isEmpty()
 		   && mLocalIfdMinPskSize > 0;
-}
-
-
-[[nodiscard]] const QString& SecureStorage::getVendor() const
-{
-	return mVendor;
 }
 
 

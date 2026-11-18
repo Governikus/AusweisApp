@@ -5,8 +5,9 @@
 import QtQuick
 import QtQuick.Controls
 
-import Governikus.TitleBar
 import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
 import Governikus.Type
 
 Item {
@@ -14,6 +15,7 @@ Item {
 
 	property bool contentIsScrolled: false
 	property Item lastA11yFocusedItem: null
+	property bool lockAndHideNavigation: false
 	property bool preventScreenshots: false
 	property ProgressTracker progress: null
 	property bool skipInitialFocusUpdate: false
@@ -34,11 +36,15 @@ Item {
 		if (d.forceFocusFirstA11yItem(root)) {
 			return;
 		}
-		let menuBar = (ApplicationWindow.menuBar as TitleBar);
-		if (menuBar && menuBar.setActiveFocus) {
-			menuBar.setActiveFocus();
+		if (Style.is_layout_desktop) {
+			let menuBar = (ApplicationWindow.menuBar as TitleBar);
+			if (menuBar && menuBar.setActiveFocus) {
+				menuBar.setActiveFocus();
+			} else {
+				console.warn("No focus item or TitleBar found");
+			}
 		} else {
-			console.warn("No focus item or TitleBar found");
+			forceActiveFocus(Qt.MouseFocusReason);
 		}
 	}
 

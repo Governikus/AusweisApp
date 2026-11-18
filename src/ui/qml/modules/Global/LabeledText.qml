@@ -12,6 +12,7 @@ Item {
 	property int alignment: Text.AlignLeft
 	property alias bodyElide: bodyText.elide
 	readonly property double focusFrameMargins: focusFrame.anchors.margins
+	property alias focusFrameVisible: focusFrame.visible
 	required property string label
 	property alias labelColor: labelText.color
 	property alias labelStyle: labelText.textStyle

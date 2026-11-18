@@ -6,6 +6,7 @@ import QtQuick
 
 import Governikus.Style
 import Governikus.TitleBar
+import Governikus.Type
 import Governikus.View
 
 SectionPage {
@@ -22,15 +23,19 @@ SectionPage {
 		onClicked: root.pop()
 	}
 
-	Connections {
-		function onActivate() {
-			releaseNotes.highlightScrollbar();
-		}
+	onActiveFocusChanged: if (activeFocus) {
+		releaseNotes.highlightScrollbar();
+		if (!ApplicationModel.screenReaderRunning)
+			releaseNotes.forceActiveFocus(Qt.MouseFocusReason);
 	}
+
 	ReleaseNotes {
 		id: releaseNotes
 
 		maximumContentWidth: Style.dimens.max_text_width
+
+		onActiveFocusChanged: if (activeFocus)
+			highlightScrollbar()
 
 		// when making changes, make sure that GButton in GListView footer is still
 		// centered in the application window

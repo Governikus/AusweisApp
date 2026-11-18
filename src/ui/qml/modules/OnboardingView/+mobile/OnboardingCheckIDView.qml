@@ -164,8 +164,8 @@ BaseOnboardingView {
 	}
 	GText {
 		Layout.alignment: Text.AlignHCenter
-		//: MOBILE
-		text: root.connectedDeviceNamesEmpty ? "" : qsTr("Connected to %1. Please follow the instructions on your smartphone.").arg(RemoteServiceModel.connectedServerDeviceNames)
+		//: MOBILE The connection to the smartphone was established. %1 will be replaced with the name of the connected smartphone.
+		text: root.connectedDeviceNamesEmpty ? "" : qsTr("Connected to %1. Please follow the instructions on the connected smartphone.").arg(RemoteServiceModel.connectedServerDeviceNames)
 	}
 	GSpacer {
 		Layout.fillHeight: true

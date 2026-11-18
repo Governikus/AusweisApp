@@ -1,0 +1,171 @@
+From 36264ab48d25adf5fca41acbbc0a87681919d9d0 Mon Sep 17 00:00:00 2001
+From: Mate Barany <mate.barany@qt.io>
+Date: Thu, 4 Jun 2026 18:25:27 +0200
+Subject: QHttpHeaderParser: add validation for HTTP reason phrase
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Validate the reason phrase parsed from server responses in parseStatus().
+Reject responses where the reason phrase contains control characters
+(anything below 0x20 except HTAB, or DEL 0x7f), in line with the
+character set defined by RFC 7230. Also enforce a length limit of 1024
+bytes to prevent unbounded input from untrusted servers.
+
+Unsanitized reason phrases could surface verbatim in application logs,
+error messages, or UI elements, enabling log injection or misleading
+output via a malicious or compromised server.
+
+Add test coverage for parseStatus() in tst_QHttpHeaderParser, covering
+valid phrases, control character injection attempts, and the length cap.
+
+Task-number: QTBUG-146664
+Pick-to: 6.12 6.11
+Change-Id: I58482652f0d8d043a65004f61756b278c2bd5704
+Reviewed-by: Juha Vuolle <juha.vuolle@qt.io>
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+(cherry picked from commit fb134eb25cb8a16600f03e40d923e4e033dea87f)
+---
+ src/network/access/qhttpheaderparser.cpp      | 18 ++++-
+ src/network/access/qhttpheaderparser_p.h      |  4 +-
+ .../tst_qhttpheaderparser.cpp                 | 77 +++++++++++++++++++
+ 3 files changed, 96 insertions(+), 3 deletions(-)
+
+diff --git x/qtbase/src/network/access/qhttpheaderparser.cpp y/qtbase/src/network/access/qhttpheaderparser.cpp
+index 8b1dcfb0e68d85195da2d5c18d53413a012dce0d..46f3fc44e3aa34e2f5809f8d47b6e75965b8dab5 100644
+--- x/qtbase/src/network/access/qhttpheaderparser.cpp
++++ y/qtbase/src/network/access/qhttpheaderparser.cpp
+@@ -123,8 +123,22 @@ bool QHttpHeaderParser::parseStatus(QByteArrayView status)
+     bool ok = false;
+     statusCode = code.toInt(&ok);
+ 
+-    reasonPhrase = j > i ? QString::fromLatin1(status.sliced(j + 1))
+-                         : QString();
++    if (j > i) {
++        const auto phrase = status.sliced(j + 1);
++
++        if (phrase.size() > HeaderConstants::MAX_REASON_PHRASE_SIZE)
++            return false;
++        for (char c : phrase) {
++            // most of the classic control characters are below 0x20
++            // except DEL, which is 0x7f
++            // tab is 0x09, but it is permitted in the reason phrase
++            if (c != '\t' && (uchar(c) < 0x20 || c == 0x7f))
++                return false;
++        }
++        reasonPhrase = QString::fromLatin1(phrase);
++    } else {
++        reasonPhrase = QString();
++    }
+ 
+     return ok && uint(majorVersion) <= 9 && uint(minorVersion) <= 9;
+ }
+diff --git x/qtbase/src/network/access/qhttpheaderparser_p.h y/qtbase/src/network/access/qhttpheaderparser_p.h
+index 4fc9d7c9eb0f0a7b511283f100ed4aacb195e549..9d8c8aebe40933c3772b544526a105b03f54303c 100644
+--- x/qtbase/src/network/access/qhttpheaderparser_p.h
++++ y/qtbase/src/network/access/qhttpheaderparser_p.h
+@@ -41,7 +41,9 @@ static constexpr int MAX_HEADER_FIELDS = 100;
+ // which is a reasonable default for QNetworkAccessManager.
+ // https://stackoverflow.com/a/3436155
+ static constexpr int MAX_TOTAL_HEADER_SIZE = 256 * 1024;
+-
++// There is no strict upper limit on the phrase, but in practice it is
++// rarely longer than 28. 1024 is quite generous, allows custom messages
++static constexpr qsizetype MAX_REASON_PHRASE_SIZE = 1024;
+ }
+ 
+ class Q_NETWORK_EXPORT QHttpHeaderParser
+diff --git x/qtbase/tests/auto/network/access/qhttpheaderparser/tst_qhttpheaderparser.cpp y/qtbase/tests/auto/network/access/qhttpheaderparser/tst_qhttpheaderparser.cpp
+index 9ba889fdb3778cf2f2b97f607b2bc8c79f404b4f..e5c74968add006f2763a4d1d77ed07ca3f293328 100644
+--- x/qtbase/tests/auto/network/access/qhttpheaderparser/tst_qhttpheaderparser.cpp
++++ y/qtbase/tests/auto/network/access/qhttpheaderparser/tst_qhttpheaderparser.cpp
+@@ -15,6 +15,9 @@ private Q_SLOTS:
+     void adjustableLimits_data();
+     void adjustableLimits();
+ 
++    void parseStatus_data();
++    void parseStatus();
++
+     // general parsing tests can be found in tst_QHttpNetworkReply
+ };
+ 
+@@ -90,5 +93,79 @@ void tst_QHttpHeaderParser::adjustableLimits()
+     QCOMPARE(parser.parseHeaders(headers), success);
+ }
+ 
++void tst_QHttpHeaderParser::parseStatus_data()
++{
++    QTest::addColumn<QByteArray>("status");
++    QTest::addColumn<bool>("success");
++    QTest::addColumn<int>("statusCode");
++    QTest::addColumn<QString>("reasonPhrase");
++
++    // --- Valid cases ---
++    QTest::newRow("standard-200")
++        << QByteArray("HTTP/1.1 200 OK")
++        << true << 200 << QString("OK");
++
++    QTest::newRow("standard-404")
++        << QByteArray("HTTP/1.1 404 Not Found")
++        << true << 404 << QString("Not Found");
++
++    QTest::newRow("http-1.0")
++        << QByteArray("HTTP/1.0 200 OK")
++        << true << 200 << QString("OK");
++
++    QTest::newRow("empty-reason-phrase")
++        << QByteArray("HTTP/1.1 200")
++        << true << 200 << QString("");
++
++    QTest::newRow("reason-phrase-with-tab")
++        << QByteArray("HTTP/1.1 200 OK\there")
++        << true << 200 << QString("OK\there");
++
++    QTest::newRow("reason-phrase-with-obsolete-text")
++        << QByteArray("HTTP/1.1 200 OK\x80")
++        << true << 200 << QString::fromLatin1("OK\x80");
++
++    QTest::newRow("reason-phrase-at-length-limit")
++        << (QByteArray("HTTP/1.1 200 ") + QByteArray(1024, 'a'))
++        << true << 200 << QString(1024, 'a');
++
++    // --- Control character injection ---
++    QTest::newRow("reason-phrase-with-crlf-injection")
++        << QByteArray("HTTP/1.1 200 OK\r\nX-Injected: evil")
++        << false << 0 << QString();
++
++    QTest::newRow("reason-phrase-with-lf")
++        << QByteArray("HTTP/1.1 200 OK\nevil")
++        << false << 0 << QString();
++
++    QTest::newRow("reason-phrase-with-nul")
++        << QByteArray("HTTP/1.1 200 OK\x00" "evil", 20)
++        << false << 0 << QString();
++
++    QTest::newRow("reason-phrase-with-del")
++        << QByteArray("HTTP/1.1 200 OK\x7f")
++        << false << 0 << QString();
++
++    // --- Length limit ---
++    QTest::newRow("reason-phrase-exceeds-limit")
++        << (QByteArray("HTTP/1.1 200 ") + QByteArray(1025, 'a'))
++        << false << 0 << QString();
++}
++
++void tst_QHttpHeaderParser::parseStatus()
++{
++    QFETCH(QByteArray, status);
++    QFETCH(bool, success);
++    QFETCH(int, statusCode);
++    QFETCH(QString, reasonPhrase);
++
++    QHttpHeaderParser parser;
++    QCOMPARE(parser.parseStatus(status), success);
++    if (success) {
++        QCOMPARE(parser.getStatusCode(), statusCode);
++        QCOMPARE(parser.getReasonPhrase(), reasonPhrase);
++    }
++}
++
+ QTEST_MAIN(tst_QHttpHeaderParser)
+ #include "tst_qhttpheaderparser.moc"

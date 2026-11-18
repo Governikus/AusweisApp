@@ -9,10 +9,10 @@ string(REGEX MATCH "[0-9]+\\.[0-9]+" MAJOR_MINOR "${version}")
 message(STATUS "Use version as branch: ${MAJOR_MINOR}")
 
 if(NOT DEFINED ENV{GITHUB_REPOSITORY_SOURCE})
-	set(ENV{GITHUB_REPOSITORY_SOURCE} "https://$ENV{GH_TOKEN}@github.com/Governikus/AusweisApp.git")
+	set(ENV{GITHUB_REPOSITORY_SOURCE} "https://$ENV{GH_TOKEN_USERNAME}:$ENV{GH_TOKEN}@github.com/Governikus/AusweisApp.git")
 endif()
 if(NOT DEFINED ENV{OPENCODE_REPOSITORY_SOURCE})
-	set(ENV{OPENCODE_REPOSITORY_SOURCE} "https://$ENV{OPENCODE_TOKEN}@gitlab.opencode.de/governikus/ausweisapp.git")
+	set(ENV{OPENCODE_REPOSITORY_SOURCE} "https://$ENV{OPENCODE_TOKEN_USERNAME}:$ENV{OPENCODE_TOKEN}@gitlab.opencode.de/governikus/ausweisapp.git")
 endif()
 
 set(MAIN master)

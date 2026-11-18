@@ -12,11 +12,10 @@
 		"mac_versions": {
 			"type": "string",
 			"enum": [
-				"12",
-				"13",
 				"14",
 				"15",
-				"26"
+				"26",
+				"27"
 			]
 		},
 		"operating_system_drivers": {

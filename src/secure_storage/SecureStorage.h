@@ -33,7 +33,6 @@ class SecureStorage
 	friend class ::test_SecureStorage;
 
 	private:
-		QString mVendor;
 		QByteArrayList mCvcas;
 		QByteArrayList mCvcasTest;
 		QList<QSslCertificate> mUpdateCertificates;
@@ -76,7 +75,6 @@ class SecureStorage
 			DEFAULT, PSK,
 		};
 
-		[[nodiscard]] const QString& getVendor() const;
 		[[nodiscard]] const QByteArrayList& getCVRootCertificates(bool pProductive) const;
 		[[nodiscard]] const QList<QSslCertificate>& getUpdateCertificates() const;
 		[[nodiscard]] const QUrl& getSelfAuthenticationUrl(bool pTest = false) const;

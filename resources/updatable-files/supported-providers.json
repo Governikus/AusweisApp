@@ -807,6 +807,23 @@
 		},
 		{
 			"shortName": {
+				"": "KVB eID-Service"
+			},
+			"longName": {
+				"": "KVB eID-Service für den Identitätsnachweis bei digitalen Prozessen"
+			},
+			"longDescription": {
+				"": "Die Kassenärztliche Vereinigung Bayerns (KVB) stellt sicher, dass Bürgerinnen und Bürger in Bayern überall und zu jeder Zeit ambulante medizinische Hilfe erhalten. Die KVB gewährleistet, dass die in der ambulanten Versorgung tätigen Ärzt/innen und Psychotherapeut/innen gut aus- und fortgebildet sind, moderne Medizintechnik einsetzen und wirtschaftlich mit den Beiträgen der Gesetzlichen Krankenversicherung umgehen.<br/><br/>Mit der Online-Ausweisfunktion können sich die Mitglieder der KVB - Ärzt/innen und Psychotherapeut/innen in Bayern - sicher und komfortabel online identifizieren. Die Identifizierung erfolgt direkt im Bestellprozess des 'KV-Ident Plus Softtokens' der als zweiter Faktor für den Zugang zum Mitgliederportal 'Meine KVB' dient. Für die Bestellung des 'KV-Ident Plus Softtokens' sind neben dem Ausweis mit aktivierter Online-Ausweisfunktion die dazugehörige PIN, ein NFC-fähiges Smartphone und die AusweisApp erforderlich. Nach erfolgreicher Identifizierung kann der Softtoken sofort in der Authentifizierungs-App eingerichtet und nach der Aktivierung direkt für die sichere und flexible Anmeldung verwendet werden.<br/><br/>Weitere Anwendungen, bei denen der digitale Identitätsnachweis zum Einsatz kommt, sind bereits in Planung.<br/><br/>Weitere Informationen und Anleitungen zur Token-Nutzung finden Sie unter www.kvb.de/mitglieder/praxisfuehrung/it-online-services-ti/zugangswege."
+			},
+			"address": "https://www.kvb.de",
+			"homepage": "https://www.kvb.de",
+			"email": "info@kvb.de",
+			"postalAddress": "Kassenärztliche Vereinigung Bayerns (KVB) mit Bezirksstelle München<br/>Elsenheimerstr. 39<br/>80867 München",
+			"category": "other",
+			"icon": "kvb_icon.png"
+		},
+		{
+			"shortName": {
 				"": "Landesportal Brandenburg"
 			},
 			"longName": {

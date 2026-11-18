@@ -1,0 +1,49 @@
+From 21c28f55500f71d7ccf791398d6ea4a55f1f45f8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?M=C3=A5rten=20Nordheim?= <marten.nordheim@qt.io>
+Date: Tue, 15 Sep 2026 17:18:25 +0200
+Subject: QWebSocket: fix off-by-one header size limit
+
+The usual test would be something like `size < limit: OK`.
+So the inverse is of course `size >= limit: NOK`.
+
+[ChangeLog][QWebSocketServer/QWebSocket] A handshake header whose size is
+exactly the limit (100 lines of 8 KiB plus the terminator) is now refused
+rather than accepted.
+
+Pick-to: 6.12 6.11 6.8 6.5
+Task-number: QTBUG-150324
+Change-Id: I3a99e2dec0bfac13227f4086915144feb84c6adc
+Reviewed-by: Edward Welbourne <edward.welbourne@qt.io>
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+(cherry picked from commit 2a8c0e127be29c4942728438c0ac090116fb0b13)
+---
+ src/websockets/qwebsocket_p.cpp       | 2 +-
+ src/websockets/qwebsocketserver_p.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git x/qtwebsockets/src/websockets/qwebsocket_p.cpp y/qtwebsockets/src/websockets/qwebsocket_p.cpp
+index 56d32db3653800e9ba6ba12132dfe1b11a277616..1e8ae31c981a877885f34fea2888c3518db9ad49 100644
+--- x/qtwebsockets/src/websockets/qwebsocket_p.cpp
++++ y/qtwebsockets/src/websockets/qwebsocket_p.cpp
+@@ -1026,7 +1026,7 @@ void QWebSocketPrivate::processHandshake(QTcpSocket *pSocket)
+         //then we don't have our header complete yet
+         //check that no one is trying to exhaust our virtual memory
+         const qint64 maxHeaderLength = MAX_HEADERLINE_LENGTH * MAX_HEADERLINES + endOfHeaderMarker.size();
+-        if (Q_UNLIKELY(byteAvailable > maxHeaderLength)) {
++        if (Q_UNLIKELY(byteAvailable >= maxHeaderLength)) {
+             setErrorString(QWebSocket::tr("Header is too large"));
+             emitErrorOccurred(QAbstractSocket::ConnectionRefusedError);
+         }
+diff --git x/qtwebsockets/src/websockets/qwebsocketserver_p.cpp y/qtwebsockets/src/websockets/qwebsocketserver_p.cpp
+index 6bdd04aad14e9b910c1cf62fc23b2eba1460d17b..18b5b41735312d4911ac87945ef7b9063a287433 100644
+--- x/qtwebsockets/src/websockets/qwebsocketserver_p.cpp
++++ y/qtwebsockets/src/websockets/qwebsocketserver_p.cpp
+@@ -459,7 +459,7 @@ void QWebSocketServerPrivate::handshakeReceived()
+         //check that no one is trying to exhaust our virtual memory
+         const qint64 maxHeaderLength = QWebSocketPrivate::MAX_HEADERLINE_LENGTH
+             * QWebSocketPrivate::MAX_HEADERLINES + endOfHeaderMarker.size();
+-        if (Q_UNLIKELY(byteAvailable > maxHeaderLength)) {
++        if (Q_UNLIKELY(byteAvailable >= maxHeaderLength)) {
+             pTcpSocket->close();
+             setError(QWebSocketProtocol::CloseCodeTooMuchData,
+                  QWebSocketServer::tr("Header is too large."));

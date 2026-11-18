@@ -1,0 +1,129 @@
+From 3de8fa48c1bef448f89fa1d48b09c64b3aee0a5d Mon Sep 17 00:00:00 2001
+From: Mate Barany <mate.barany@qt.io>
+Date: Thu, 24 Sep 2026 17:05:25 +0200
+Subject: QHttpNetworkReply: limit header block size while reading
+
+readHeader() accumulated the response header block into 'fragment' one
+byte at a time without any size check. The total header size limit was
+only enforced by QHttpHeaderParser::parseHeaders(), which runs after the
+end of the header block has been seen. A server that never terminates
+the header block could therefore make the client grow 'fragment'
+without bound and exhaust memory.
+
+Enforce the parser's configured total header size limit while
+accumulating, allowing for the terminating line endings which the
+parser does not count, so that no block the parser would accept is
+rejected early.
+
+Fixes: QTBUG-150779
+Pick-to: 6.12 6.8 6.5 5.15
+Change-Id: I5a26c02ef3b944e40b5d68fdfcb42ed4756140fc
+Reviewed-by: Lena Biliaieva <lena.biliaieva@qt.io>
+(cherry picked from commit 89bceafa2016e7e72fc90e0aab74fbc3a5872df2)
+---
+ src/network/access/qhttpheaderparser_p.h      |  8 ++++
+ src/network/access/qhttpnetworkreply.cpp      |  6 +++
+ .../tst_qhttpnetworkreply.cpp                 | 48 +++++++++++++++++++
+ 3 files changed, 62 insertions(+)
+
+diff --git x/qtbase/src/network/access/qhttpheaderparser_p.h y/qtbase/src/network/access/qhttpheaderparser_p.h
+index 9d8c8aebe40933c3772b544526a105b03f54303c..b1127b2fe6e47217b2141ee97a7b69b29815c3e1 100644
+--- x/qtbase/src/network/access/qhttpheaderparser_p.h
++++ y/qtbase/src/network/access/qhttpheaderparser_p.h
+@@ -83,6 +83,14 @@ public:
+     void setMaxTotalHeaderSize(qsizetype size) { maxTotalSize = size; }
+     qsizetype maxTotalHeaderSize() const { return maxTotalSize; }
+ 
++    qsizetype maxRawHeaderSize() const {
++        constexpr qsizetype TrailingLineEndings = 4;
++        qsizetype result;
++        if (qAddOverflow(maxTotalSize, TrailingLineEndings, &result))
++            return (std::numeric_limits<qsizetype>::max)();
++        return result;
++    }
++
+     void setMaxHeaderFields(qsizetype count) { maxFieldCount = count; }
+     qsizetype maxHeaderFields() const { return maxFieldCount; }
+ 
+diff --git x/qtbase/src/network/access/qhttpnetworkreply.cpp y/qtbase/src/network/access/qhttpnetworkreply.cpp
+index 762b500cc41c818ecb5991745feca0594c98eec9..159fb50a6c2ba6cf8da4bccc1aa9a23efa93ecb4 100644
+--- x/qtbase/src/network/access/qhttpnetworkreply.cpp
++++ y/qtbase/src/network/access/qhttpnetworkreply.cpp
+@@ -458,6 +458,12 @@ qint64 QHttpNetworkReplyPrivate::readHeader(QIODevice *socket)
+             fragment.append(c);
+             bytes++;
+ 
++            // Enforce the total header size limit while accumulating.
++            if (fragment.size() > parser.maxRawHeaderSize()) {
++                fragment.clear();
++                return -1;
++            }
++
+             if (c == '\n') {
+                 // check for possible header endings. As per HTTP rfc,
+                 // the header endings will be marked by CRLFCRLF. But
+diff --git x/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp y/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp
+index e83d15fdc37c82cf942e3212505f5ee69442b084..1abef30ee6c614b729788321835d84a021b52040 100644
+--- x/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp
++++ y/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp
+@@ -21,6 +21,9 @@ private Q_SLOTS:
+ 
+     void parseEndOfHeader_data();
+     void parseEndOfHeader();
++
++    void headerSizeLimit_data();
++    void headerSizeLimit();
+ };
+ 
+ void tst_QHttpNetworkReply::parseHeader_data()
+@@ -232,5 +235,50 @@ void tst_QHttpNetworkReply::parseEndOfHeader()
+     QCOMPARE(headerBytes, lengths);
+ }
+ 
++void tst_QHttpNetworkReply::headerSizeLimit_data()
++{
++    QTest::addColumn<QByteArray>("headers");
++    QTest::addColumn<bool>("accepted");
++
++    // Limit used below is 64 bytes of header content.
++    const QByteArray field = "X-Field: " + QByteArray(40, 'a'); // 49 bytes
++
++    QTest::newRow("empty") << QByteArray("\r\n") << true;
++    QTest::newRow("within-limit") << QByteArray(field + "\r\n\r\n") << true;
++    QTest::newRow("within-limit-LFLF") << QByteArray(field + "\n\n") << true;
++    QTest::newRow("at-limit") << QByteArray("X-Field: " + QByteArray(55, 'a') + "\r\n\r\n")
++                              << true;
++    QTest::newRow("over-limit-terminated")
++            << QByteArray(field + "\r\n" + field + "\r\n\r\n") << false;
++    QTest::newRow("over-limit-unterminated") << QByteArray("X-Field: " + QByteArray(4096, 'a'))
++                                             << false;
++    QTest::newRow("over-limit-unterminated-lines")
++            << QByteArray(field + "\r\n").repeated(100) << false;
++}
++
++void tst_QHttpNetworkReply::headerSizeLimit()
++{
++    QFETCH(QByteArray, headers);
++    QFETCH(bool, accepted);
++
++    TestHeaderSocket socket(headers);
++    TestHeaderReply reply;
++    QHttpNetworkReplyPrivate *replyPrivate = reply.replyPrivate();
++    replyPrivate->parser.setMaxTotalHeaderSize(64);
++
++    const qint64 headerBytes = replyPrivate->readHeader(&socket);
++    if (accepted) {
++        QCOMPARE(headerBytes, qint64(headers.size()));
++        QCOMPARE(replyPrivate->state, QHttpNetworkReplyPrivate::ReadingDataState);
++    } else {
++        QCOMPARE(headerBytes, qint64(-1));
++        QCOMPARE_NE(replyPrivate->state, QHttpNetworkReplyPrivate::ReadingDataState);
++        // Nothing may be retained from the rejected block.
++        QVERIFY(replyPrivate->fragment.isEmpty());
++        // Must stop reading as soon as the limit is exceeded, not consume everything.
++        QCOMPARE_LE(socket.inputBuffer.pos(), replyPrivate->parser.maxRawHeaderSize() + 1);
++    }
++}
++
+ QTEST_MAIN(tst_QHttpNetworkReply)
+ #include "tst_qhttpnetworkreply.moc"

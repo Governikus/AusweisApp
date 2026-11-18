@@ -7,7 +7,7 @@ check_beta_version(${zipfile} VERSION version)
 message(STATUS "Use zipfile version: ${version}")
 
 if(NOT DEFINED ENV{GITHUB_REPOSITORY_FRAMEWORK})
-	set(ENV{GITHUB_REPOSITORY_FRAMEWORK} "https://$ENV{GH_TOKEN}@github.com/Governikus/AusweisApp2-SDK-iOS.git")
+	set(ENV{GITHUB_REPOSITORY_FRAMEWORK} "https://$ENV{GH_TOKEN_USERNAME}:$ENV{GH_TOKEN}@github.com/Governikus/AusweisApp2-SDK-iOS.git")
 endif()
 
 set(MAIN master)

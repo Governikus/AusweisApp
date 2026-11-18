@@ -111,6 +111,7 @@ Rectangle {
 					qsTr("Show in-app notifications of %1").arg(Qt.application.name)
 
 					Accessible.description: Utils.resolveA11yDescription(text, a11yDescription)
+					Accessible.id: "TitleBar_notifyButton"
 					Accessible.name: Utils.resolveA11yName(text, a11yDescription)
 					Accessible.role: {
 						if ("Switch" in Accessible) {

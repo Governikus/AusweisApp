@@ -6,7 +6,7 @@ exclude = [
     "patch.py",
 ]
 
-line-length = 79
+line-length = 100
 indent-width = 4
 
 [lint]

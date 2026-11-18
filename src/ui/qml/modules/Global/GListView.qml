@@ -2,17 +2,21 @@
  * Copyright (c) 2019-2026 Governikus Service GmbH, Germany
  */
 
-import QtQuick
-import QtQuick.Controls
 import Governikus.Global
 import Governikus.Style
+import Governikus.Type
+import QtQuick
+import QtQuick.Controls
 
 ListView {
 	id: root
 
+	property bool enableLineShineThroughFix: false
+	property bool keyNavigationChangesCurrentIndex: true
 	property bool scrollBarAutohide: !Style.is_layout_desktop
 	property real scrollBarBottomPadding: 0
 	property alias scrollBarColor: scrollBar.color
+	property bool scrollBarFocusFrame: false
 	property real scrollBarTopPadding: 0
 
 	function centerViewAtIndex(pIndex) {
@@ -20,31 +24,63 @@ ListView {
 		currentIndex = pIndex;
 	}
 	function handleKeyPress(event) {
+		if (keyNavigationChangesCurrentIndex || ApplicationModel.screenReaderRunning) {
+			switch (event.key) {
+			case Qt.Key_Right:
+			case Qt.Key_Down:
+				do {
+					root.incrementCurrentIndex();
+				} while (!currentItem.enabled && root.currentIndex + 1 < root.count)
+				highlightScrollbar();
+				event.accepted = true;
+				return;
+			case Qt.Key_Left:
+			case Qt.Key_Up:
+				do {
+					root.decrementCurrentIndex();
+				} while (!currentItem.enabled && root.currentIndex > 0)
+				highlightScrollbar();
+				event.accepted = true;
+				return;
+			default:
+				break;
+			}
+		}
+
 		if (root.contentHeight <= root.height)
 			return;
 
-		let key = event.key;
-		if (key === Qt.Key_PageDown) {
+		switch (event.key) {
+		case Qt.Key_Down:
+		case Qt.Key_PageDown:
 			if (root.atYEnd)
 				return;
 			root.scrollPageDown();
 			root.setIndexToCurrentlyCenteredItem();
-			event.accepted = true;
-		} else if (key === Qt.Key_PageUp) {
+			highlightScrollbar();
+			break;
+		case Qt.Key_Up:
+		case Qt.Key_PageUp:
 			if (root.atYBeginning)
 				return;
 			root.scrollPageUp();
 			root.setIndexToCurrentlyCenteredItem();
-			event.accepted = true;
-		} else if (key === Qt.Key_End) {
+			highlightScrollbar();
+			break;
+		case Qt.Key_End:
 			root.positionViewAtEnd();
 			root.currentIndex = count - 1;
-			event.accepted = true;
-		} else if (key === Qt.Key_Home) {
+			highlightScrollbar();
+			break;
+		case Qt.Key_Home:
 			root.positionViewAtBeginning();
 			root.currentIndex = 0;
-			event.accepted = true;
+			highlightScrollbar();
+			break;
+		default:
+			return;
 		}
+		event.accepted = true;
 	}
 	function highlightScrollbar() {
 		if (ScrollBar.vertical)
@@ -79,6 +115,7 @@ ListView {
 	flickableDirection: Flickable.VerticalFlick
 	highlightMoveDuration: 0
 	highlightResizeDuration: 0
+	keyNavigationEnabled: false
 	maximumFlickVelocity: Style.scrolling_speed
 
 	ScrollBar.vertical: GScrollBar {
@@ -86,6 +123,7 @@ ListView {
 
 		autohide: root.scrollBarAutohide
 		bottomPadding: root.scrollBarBottomPadding + Style.dimens.scrollbar_padding_vertical
+		focusFrameScope: root.scrollBarFocusFrame ? root : null
 		topPadding: root.scrollBarTopPadding + Style.dimens.scrollbar_padding_vertical
 	}
 
@@ -93,19 +131,17 @@ ListView {
 	Accessible.onIncreaseAction: scrollPageDown()
 	Accessible.onScrollDownAction: scrollPageDown()
 	Accessible.onScrollUpAction: scrollPageUp()
-	Keys.onDownPressed: {
-		do {
-			root.incrementCurrentIndex();
-		} while (!currentItem.enabled && root.currentIndex + 1 < root.count)
-	}
 	Keys.onPressed: event => {
 		handleKeyPress(event);
 	}
-	Keys.onUpPressed: {
-		do {
-			root.decrementCurrentIndex();
-		} while (!currentItem.enabled && root.currentIndex > 0)
-	}
 	onVisibleChanged: if (visible)
 		highlightScrollbar()
+
+	RoundedRectangle {
+		// Fix to prevent background shine through during scroll animation: QTBUG-152056
+		height: root.height
+		visible: root.enableLineShineThroughFix
+		width: root.width - Style.dimens.pane_padding
+		z: -1
+	}
 }

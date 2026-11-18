@@ -145,7 +145,7 @@ QtObject {
 					//: ALL_PLATFORMS
 					paragraphList: [
 						//: ALL_PLATFORMS Introduction why the Transport PIN might not work.
-						qsTr("If your Transport PIN from the PIN letter does work, this might be caused by the following reasons:"),
+						qsTr("If your Transport PIN from the PIN letter does not work, this might be caused by the following reasons:"),
 						//: ALL_PLATFORMS Information why the Transport PIN is void: a 6-digit PIN was already set
 						"  • %1".arg(qsTr("You already set a 6-digit PIN either at the competent authority or using the %1.").arg(Qt.application.name)),
 						//: ALL_PLATFORMS Information why the Transport PIN is void: the PIN Reset Service was used

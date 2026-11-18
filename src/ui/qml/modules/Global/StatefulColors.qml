@@ -13,7 +13,7 @@ Item {
 	property color controlBackground: controlStyle.background.basic_unchecked
 	property color controlBorder: controlStyle.border.basic_unchecked
 	property color controlContent: controlStyle.content.basic_unchecked
-	property color controlPreferredPaneBackground: Style.color.transparent
+	property color controlPreferredPaneBackground: Qt.rgba(paneStyle.background.basic_unchecked.r, paneStyle.background.basic_unchecked.g, paneStyle.background.basic_unchecked.b, 0)
 	property ControlComponents controlStyle: Style.color.control
 	property bool disabledCondition: !statefulControl.enabled
 	property bool groupMember: false
@@ -156,8 +156,14 @@ Item {
 		}
 	]
 	transitions: [
-		EaseInPressedTransition {
-			target: root
+		Transition {
+			to: "pressed_checked,pressed_unchecked"
+
+			ColorAnimation {
+				duration: 150
+				easing.type: Easing.InCubic
+				target: root
+			}
 		}
 	]
 }

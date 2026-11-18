@@ -1,0 +1,207 @@
+From 75cd1c5b66a3210b137ad9d27bcc6c8ba5c36763 Mon Sep 17 00:00:00 2001
+From: Mate Barany <mate.barany@qt.io>
+Date: Fri, 12 Jun 2026 16:47:55 +0200
+Subject: QAuthenticator: harden qExtractServerTime against malformed input
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Replace QDataStream with direct pointer arithmetic and
+qFromLittleEndian for walking AV_PAIR structures. Add bounds checks
+before every pointer advance, validate that MsvAvTimestamp is exactly
+8 bytes per MS-NLMP section 2.2.2.1.
+
+Malformed or truncated timestamps cause the function to return an
+empty QByteArray, which makes the existing caller fall back to the
+current system time — the same path taken when the server omits
+the timestamp entirely. This preserves the current behaviour rather
+than failing the authentication outright.
+
+Add test cases for malformed targetInfo inputs (wrong avLen,
+truncated buffer, too-short header, avLen exceeding buffer, empty
+buffer) to verify no crash and that the fallback path produces a
+valid Phase 3 response.
+
+Task-number: QTBUG-147529
+Pick-to: 6.12 6.11
+Change-Id: I5bdb4e4440460d0770f5d145238c4db39cad06e3
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+(cherry picked from commit eb91758e006472b0f40304219aae09e69564c0fa)
+---
+ src/network/kernel/qauthenticator.cpp         | 31 +++---
+ .../qauthenticator/tst_qauthenticator.cpp     | 99 +++++++++++++++++++
+ 2 files changed, 118 insertions(+), 12 deletions(-)
+
+diff --git x/qtbase/src/network/kernel/qauthenticator.cpp y/qtbase/src/network/kernel/qauthenticator.cpp
+index 7be1d7fe3aac7fe2c5b694b5da73ac25750d972c..5c476f898023224a463df825723840f09bd09d14 100644
+--- x/qtbase/src/network/kernel/qauthenticator.cpp
++++ y/qtbase/src/network/kernel/qauthenticator.cpp
+@@ -1000,6 +1000,8 @@ QByteArray QAuthenticatorPrivate::digestMd5Response(QByteArrayView challenge, QB
+ const int blockSize = 64; //As per RFC2104 Block-size is 512 bits
+ const quint8 respversion = 1;
+ const quint8 hirespversion = 1;
++// FILETIME: two 32-bit values = 8 bytes (MS-DTYP section 2.3.3)
++static constexpr quint16 NtlmFileTimeSize = 8;
+ 
+ /* usage:
+    // fill up ctx with what we know.
+@@ -1326,24 +1328,29 @@ static QByteArray clientChallenge(const QAuthenticatorPrivate *ctx)
+ static QByteArray qExtractServerTime(const QByteArray& targetInfoBuff)
+ {
+     QByteArray timeArray;
+-    QDataStream ds(targetInfoBuff);
+-    ds.setByteOrder(QDataStream::LittleEndian);
+-
++    const char *ptr = targetInfoBuff.constBegin();
++    const char *end = targetInfoBuff.constEnd();
+     quint16 avId;
+     quint16 avLen;
+ 
+-    ds >> avId;
+-    ds >> avLen;
+-    while(avId != 0) {
++    while (end - ptr >= 4) {
++        avId = qFromLittleEndian<quint16>(ptr + 0);
++        avLen = qFromLittleEndian<quint16>(ptr + 2);
++        ptr += 4;
++
+         if (avId == AVTIMESTAMP) {
+-            timeArray.resize(avLen);
+-            //avLen size of QByteArray is allocated
+-            ds.readRawData(timeArray.data(), avLen);
++            if (avLen != NtlmFileTimeSize)
++                break;
++            if (end - ptr < NtlmFileTimeSize)
++                break;
++
++            timeArray.assign(ptr, ptr + NtlmFileTimeSize);
+             break;
+         }
+-        ds.skipRawData(avLen);
+-        ds >> avId;
+-        ds >> avLen;
++
++        if (avLen > end - ptr)
++            break;
++        ptr += avLen;
+     }
+     return timeArray;
+ }
+diff --git x/qtbase/tests/auto/network/kernel/qauthenticator/tst_qauthenticator.cpp y/qtbase/tests/auto/network/kernel/qauthenticator/tst_qauthenticator.cpp
+index e94fd1330d12382554bdbd186edc737bdd54b339..00277fe7706a2afb83c70fd6d5967b396ddd3902 100644
+--- x/qtbase/tests/auto/network/kernel/qauthenticator/tst_qauthenticator.cpp
++++ y/qtbase/tests/auto/network/kernel/qauthenticator/tst_qauthenticator.cpp
+@@ -31,6 +31,9 @@ private Q_SLOTS:
+     void isMethodSupported();
+ 
+     void testClear();
++
++    void ntlmMalformedTargetInfo_data();
++    void ntlmMalformedTargetInfo();
+ };
+ 
+ tst_QAuthenticator::tst_QAuthenticator()
+@@ -211,6 +214,102 @@ void tst_QAuthenticator::testClear()
+     QCOMPARE(qauth.realm(), QString());
+ }
+ 
++void tst_QAuthenticator::ntlmMalformedTargetInfo_data()
++{
++    QTest::addColumn<QByteArray>("targetInfo");
++
++    // Reusable well-formed AV_PAIR components
++    QByteArray avDomain = QByteArray::fromHex(
++        "02000c0044006f006d00610069006e00");   // AvId=2, len=12, "Domain" UCS-2LE
++    QByteArray avServer = QByteArray::fromHex(
++        "01000c00530065007200760065007200");   // AvId=1, len=12, "Server" UCS-2LE
++    QByteArray avEol = QByteArray::fromHex("00000000");
++
++    // AVTIMESTAMP with wrong avLen (4 instead of 8)
++    QTest::newRow("timestamp-wrong-avlen")
++        << avDomain + avServer
++           + QByteArray::fromHex("07000400" "00000000")
++           + avEol;
++
++    // Buffer truncated mid-AV_PAIR: timestamp header present but data cut short
++    {
++        QByteArray full = avDomain + avServer
++            + QByteArray::fromHex("070008000000000000000000") + avEol;
++        QTest::newRow("truncated-mid-avpair")
++            << full.left(full.size() - 6);
++    }
++
++    // Too short for even one AV_PAIR header (only 2 bytes)
++    QTest::newRow("too-short-for-header")
++        << QByteArray::fromHex("0700");
++
++    // avLen exceeds remaining buffer
++    QTest::newRow("avlen-exceeds-buffer")
++        << QByteArray::fromHex("0200FF00")
++           + QByteArray::fromHex("44006f006d00610069006e00")
++           + avEol;
++
++    // Empty targetInfo
++    QTest::newRow("empty-targetinfo")
++        << QByteArray();
++}
++
++void tst_QAuthenticator::ntlmMalformedTargetInfo()
++{
++    QFETCH(QByteArray, targetInfo);
++
++    // Build a Phase 2 challenge blob wrapping the test targetInfo
++    QByteArray targetName = QByteArray::fromHex(
++        "530065007200760065007200");            // "Server" UCS-2LE
++    quint16 targetNameLen = targetName.size();
++    quint16 targetInfoLen = targetInfo.size();
++    quint32 targetNameOffset = 56;              // 48 (min header) + 8 (version)
++    quint32 targetInfoOffset = targetNameOffset + targetNameLen;
++
++    QByteArray phase2;
++    QDataStream ds(&phase2, QIODevice::WriteOnly);
++    ds.setByteOrder(QDataStream::LittleEndian);
++
++    ds.writeRawData("NTLMSSP\0", 8);                              // signature
++    ds << quint32(2);                                              // type
++    ds << targetNameLen << targetNameLen << targetNameOffset;       // targetName descriptor
++    ds << quint32(0xe28a8233);                                     // flags
++    ds.writeRawData("\x01\x23\x45\x67\x89\xab\xcd\xef", 8);      // server challenge
++    ds << quint32(0) << quint32(0);                                // context
++    ds << targetInfoLen << targetInfoLen << targetInfoOffset;       // targetInfo descriptor
++    ds.writeRawData("\x06\x00\x70\x17\x00\x00\x00\x0f", 8);      // version
++    ds.writeRawData(targetName.constData(), targetName.size());
++    if (!targetInfo.isEmpty())
++        ds.writeRawData(targetInfo.constData(), targetInfo.size());
++
++    // Run the full NTLM auth flow
++    QAuthenticator auth;
++    auth.setUser("Domain\\User");
++    auth.setPassword("Password");
++    auth.detach();
++
++    QAuthenticatorPrivate *priv = QAuthenticatorPrivate::getPrivate(auth);
++
++    // Phase 1: negotiate
++    QHttpHeaders headers;
++    headers.append(QByteArrayLiteral("WWW-Authenticate"), QByteArrayLiteral("NTLM"));
++    priv->parseHttpResponse(headers, false, {});
++    priv->calculateResponse("GET", "/", u"");
++
++    // Phase 2: challenge with malformed targetInfo
++    headers.clear();
++    headers.append(QByteArray("WWW-Authenticate"), "NTLM " + phase2.toBase64());
++    priv->parseHttpResponse(headers, false, {});
++
++    // Phase 3: authenticate — must not crash, must produce a response
++    QByteArray response = priv->calculateResponse("GET", "/", u"");
++
++    QVERIFY2(response.startsWith("NTLM "),
++             "Auth flow should complete despite malformed targetInfo");
++    QByteArray phase3 = QByteArray::fromBase64(response.mid(5));
++    QVERIFY(phase3.size() >= 64); // minimum AUTHENTICATE_MESSAGE header size
++}
++
+ QTEST_MAIN(tst_QAuthenticator);
+ 
+ #include "tst_qauthenticator.moc"

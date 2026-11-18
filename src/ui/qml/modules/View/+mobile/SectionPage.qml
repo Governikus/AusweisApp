@@ -4,13 +4,10 @@
 
 import QtQuick
 
-import Governikus.Type
-
 Controller {
 	id: root
 
 	property bool enableTileStyle: true
-	property bool lockAndHideNavigation: false
 	property var navigationAction: null
 	property Component rightTitleBarAction: null
 	property bool showTitleBarContent: true
@@ -18,9 +15,7 @@ Controller {
 
 	Connections {
 		function onActivate() {
-			if (ApplicationModel.screenReaderRunning) {
-				root.updateFocus();
-			}
+			Qt.callLater(root.updateFocus);
 		}
 	}
 }

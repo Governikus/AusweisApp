@@ -163,7 +163,7 @@ class test_SimulatorFileSystem
 		}
 
 
-		void seclectReturnCode()
+		void selectReturnCode()
 		{
 			QFETCH_GLOBAL(SimulatorFileSystem, fileSystem);
 

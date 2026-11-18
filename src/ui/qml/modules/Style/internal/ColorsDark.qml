@@ -73,13 +73,21 @@ Colors {
 		content.basic_unchecked: "#0098eb"
 	}
 	controlSwitch: DefaultControlColors {
+		background.basic_unchecked: root.transparent
+		background.disabled_checked: "#798183"
+		background.disabled_unchecked: root.transparent
+		background.hovered_checked: "#40b2ec"
+		background.hovered_unchecked: root.transparent
 		background.pressed_checked: "#80cdec"
-		background.pressed_unchecked: "#80cdec"
+		border.basic_unchecked: "#bcc0c1"
+		border.hovered_checked: "#40b2ec"
+		border.hovered_unchecked: "#ffffff"
 		border.pressed_checked: "#80cdec"
-		border.pressed_unchecked: "#80cdec"
-		content.basic_unchecked: "#ffffff"
-		content.pressed_checked: "#ffffff"
-		content.pressed_unchecked: "#ffffff"
+		content.basic_checked: "#303030"
+		content.basic_unchecked: "#bcc0c1"
+		content.disabled_checked: "#ffffff"
+		content.hovered_checked: "#303030"
+		content.pressed_checked: "#303030"
 	}
 	linkBasic: DefaultLinkColors {
 	}

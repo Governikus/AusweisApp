@@ -13,23 +13,15 @@ from hglib.util import b
 class CommandLineParser(argparse.ArgumentParser):
     def __init__(self):
         super().__init__()
-        self.add_argument(
-            '--clean', help='Clean up patches', action='store_true'
-        )
-        self.add_argument(
-            '--clean-only', help='Clean up only', action='store_true'
-        )
+        self.add_argument('--clean', help='Clean up patches', action='store_true')
+        self.add_argument('--clean-only', help='Clean up only', action='store_true')
         self.add_argument(
             '--clean-dir-only',
             help='Clean up working directory only',
             action='store_true',
         )
-        self.add_argument(
-            '--split', help='Apply patches split', action='store_true'
-        )
-        self.add_argument(
-            '--repatch', help='Repatch previous series', action='store_true'
-        )
+        self.add_argument('--split', help='Apply patches split', action='store_true')
+        self.add_argument('--repatch', help='Repatch previous series', action='store_true')
         self.add_argument('--patch', help='Patch file', required=True)
         self.args = self.parse_args()
 
@@ -65,9 +57,7 @@ class PatchProcessor:
 
     def split(self):
         def nextFilename():
-            self.patch_series.append(
-                self.prefix + str(len(self.patch_series)) + '.patch'
-            )
+            self.patch_series.append(self.prefix + str(len(self.patch_series)) + '.patch')
             return open(self.patch_series[-1], 'wb')
 
         with open(self.file, 'rb') as f:
@@ -85,9 +75,7 @@ class PatchProcessor:
     def apply(self, client, split):
         if self.patch_series == self.applied_patches or not split:
             print(f'Apply all patches: {len(self.patch_series)}')
-            client.import_(
-                [s.encode('utf-8') for s in self.patch_series], nocommit=True
-            )
+            client.import_([s.encode('utf-8') for s in self.patch_series], nocommit=True)
             return
 
         with open(self.applied, 'w') as f:

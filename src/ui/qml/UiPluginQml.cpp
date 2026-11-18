@@ -182,6 +182,7 @@ void UiPluginQml::init()
 
 	mEngine->addImportPath(QStringLiteral("qrc:///qml/"));
 #ifndef QT_NO_DEBUG
+	adjustHoverEnabled();
 	adjustQmlImportPath(mEngine.data());
 #endif
 	mEngine->loadFromModule(QAnyStringView("Governikus.Init"), QAnyStringView("App"));
@@ -241,6 +242,19 @@ QString UiPluginQml::adjustQmlImportPath(QQmlEngine* pEngine)
 Q_INVOKABLE void UiPluginQml::emitFireShowRequest(UiModule pModule)
 {
 	Q_EMIT fireShowRequest(pModule);
+}
+
+
+void UiPluginQml::adjustHoverEnabled() const
+{
+	const auto& platform = getOverridePlatform();
+	const bool isMobile = platform == QStringLiteral("android") || platform == QStringLiteral("ios");
+	const char* const hoverEnabled = "QT_QUICK_CONTROLS_HOVER_ENABLED";
+	if (isMobile && !qEnvironmentVariableIsSet(hoverEnabled))
+	{
+		qCDebug(qml) << "Disable hover for override platform:" << platform;
+		qputenv(hoverEnabled, "0");
+	}
 }
 
 

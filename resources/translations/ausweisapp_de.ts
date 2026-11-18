@@ -2646,7 +2646,7 @@ ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <translation>Meine Transport-PIN funktioniert nicht</translation>
     </message>
     <message>
-        <source>If your Transport PIN from the PIN letter does work, this might be caused by the following reasons:</source>
+        <source>If your Transport PIN from the PIN letter does not work, this might be caused by the following reasons:</source>
         <extracomment>ALL_PLATFORMS ALL_PLATFORMS Introduction why the Transport PIN might not work.</extracomment>
         <translation>Wenn Ihre Transport-PIN aus dem PIN-Brief nicht funktioniert, kann das folgende Gründe haben:</translation>
     </message>
@@ -3177,8 +3177,8 @@ MOBILE</extracomment>
         <translation>Ausweis wird gesucht</translation>
     </message>
     <message>
-        <source>Connected to %1. Please follow the instructions on your smartphone.</source>
-        <extracomment>MOBILE</extracomment>
+        <source>Connected to %1. Please follow the instructions on the connected smartphone.</source>
+        <extracomment>MOBILE The connection to the smartphone was established. %1 will be replaced with the name of the connected smartphone.</extracomment>
         <translation>Verbunden mit %1. Bitte folgen Sie den Anweisungen auf dem verbundenen Smartphone.</translation>
     </message>
     <message>
@@ -4375,7 +4375,7 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
     </message>
     <message>
         <source>Connected to %1. Please follow the instructions on the connected smartphone.</source>
-        <extracomment>MOBILE The connection to the smartphone was established, the ID card may be inserted.</extracomment>
+        <extracomment>MOBILE The connection to the smartphone was established. %1 will be replaced with the name of the connected smartphone.</extracomment>
         <translation>Verbunden mit %1. Bitte folgen Sie den Anweisungen auf dem verbundenen Smartphone.</translation>
     </message>
     <message>

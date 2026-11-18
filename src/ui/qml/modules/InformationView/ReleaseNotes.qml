@@ -10,7 +10,6 @@ import QtQuick.Layouts
 import Governikus.Global
 import Governikus.Style
 import Governikus.Type
-import Governikus.View
 
 GListView {
 	id: root
@@ -19,7 +18,9 @@ GListView {
 
 	displayMarginBeginning: Style.dimens.pane_padding
 	displayMarginEnd: Style.dimens.pane_padding
+	enableLineShineThroughFix: true
 	footerPositioning: ListView.InlineFooter
+	keyNavigationChangesCurrentIndex: false
 	model: releaseInformationModel.currentRelease
 
 	delegate: ReleaseNotesDelegate {
@@ -49,16 +50,6 @@ GListView {
 			visible: releaseInformationModel.allowRetry
 
 			onClicked: releaseInformationModel.update()
-		}
-	}
-	highlight: Item {
-		z: 2
-
-		FocusFrame {
-			anchors.leftMargin: 0
-			anchors.rightMargin: 0
-			scope: root
-			visible: Style.is_layout_desktop
 		}
 	}
 
