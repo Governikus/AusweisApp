@@ -14,6 +14,7 @@
 #include <QNetworkAddressEntry>
 #include <QNetworkInterface>
 #include <QScopedPointer>
+#include <QSet>
 #include <QUdpSocket>
 
 
@@ -32,6 +33,7 @@ class DatagramHandlerImpl
 		QScopedPointer<MulticastLock> mMulticastLock;
 		QList<QNetworkAddressEntry> mAllEntries;
 		QList<QHostAddress> mFailedAddresses;
+		QSet<int> mFailedMulticastInterfaces;
 		quint16 mUsedPort;
 		PortFile mPortFile;
 		bool mEnableListening;

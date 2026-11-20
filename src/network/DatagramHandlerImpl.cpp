@@ -44,6 +44,7 @@ DatagramHandlerImpl::DatagramHandlerImpl(bool pEnableListening, quint16 pPort)
 	, mMulticastLock()
 	, mAllEntries()
 	, mFailedAddresses()
+	, mFailedMulticastInterfaces()
 	, mUsedPort(pPort)
 	, mPortFile(QStringLiteral("udp"))
 	, mEnableListening(pEnableListening)
@@ -86,7 +87,40 @@ void DatagramHandlerImpl::resetSocket()
 	}
 	else if (mSocket->bind(mUsedPort))
 	{
-		if (!mSocket->joinMulticastGroup(QHostAddress(ipv6MulticastAddress)))
+		bool joinedMulticast = false;
+		const auto& allInterfaces = QNetworkInterface::allInterfaces();
+		for (const auto& iface : allInterfaces)
+		{
+			if (!isValidBroadcastInterface(iface) || !iface.flags().testFlag(QNetworkInterface::CanMulticast))
+			{
+				continue;
+			}
+
+			bool hasIpv6 = false;
+			for (const auto& entry : iface.addressEntries())
+			{
+				if (entry.ip().protocol() == QAbstractSocket::IPv6Protocol)
+				{
+					hasIpv6 = true;
+					break;
+				}
+			}
+			if (!hasIpv6)
+			{
+				continue;
+			}
+
+			if (mSocket->joinMulticastGroup(QHostAddress(ipv6MulticastAddress), iface))
+			{
+				joinedMulticast = true;
+			}
+			else
+			{
+				qCDebug(network) << "Could not join multicast group on interface" << iface.name() << ':' << mSocket->errorString();
+			}
+		}
+
+		if (!joinedMulticast && !mSocket->joinMulticastGroup(QHostAddress(ipv6MulticastAddress)))
 		{
 			qCDebug(network) << "Could not join multicast group:" << mSocket->errorString();
 		}
@@ -153,6 +187,7 @@ void DatagramHandlerImpl::sendToAddressEntries(const QByteArray& pData, const QL
 	{
 		mAllEntries = pEntries;
 		mFailedAddresses.clear();
+		mFailedMulticastInterfaces.clear();
 		qCDebug(network) << "Broadcast Addresses changed...";
 		for (const auto& broadcastEntry : pEntries)
 		{
@@ -166,30 +201,101 @@ void DatagramHandlerImpl::sendToAddressEntries(const QByteArray& pData, const QL
 	}
 
 	QList<QHostAddress> alreadySent;
+	QSet<int> alreadySentMulticastInterfaces;
+	const auto& allInterfaces = QNetworkInterface::allInterfaces();
 	for (const auto& broadcastEntry : pEntries)
 	{
 		const auto& address = getBroadcastAddress(broadcastEntry);
-		if (alreadySent.contains(address))
+		if (address.isNull())
 		{
 			continue;
 		}
 
-		const auto alreadyFailed = mFailedAddresses.contains(address);
+		QNetworkInterface targetInterface;
+		if (address.protocol() == QAbstractSocket::IPv6Protocol && address.isMulticast())
+		{
+			for (const auto& iface : allInterfaces)
+			{
+				if (!isValidBroadcastInterface(iface) || !iface.flags().testFlag(QNetworkInterface::CanMulticast))
+				{
+					continue;
+				}
+
+				for (const auto& entry : iface.addressEntries())
+				{
+					if (entry.ip() == broadcastEntry.ip())
+					{
+						targetInterface = iface;
+						break;
+					}
+				}
+
+				if (targetInterface.isValid())
+				{
+					break;
+				}
+			}
+
+			if (targetInterface.isValid())
+			{
+				if (alreadySentMulticastInterfaces.contains(targetInterface.index()))
+				{
+					continue;
+				}
+				alreadySentMulticastInterfaces << targetInterface.index();
+
+				if (!isBound())
+				{
+					if (!mSocket->bind(QHostAddress::Any, 0))
+					{
+						qCDebug(network) << "Cannot bind socket for multicast:" << mSocket->errorString();
+					}
+				}
+				mSocket->setMulticastInterface(targetInterface);
+			}
+			else if (alreadySent.contains(address))
+			{
+				continue;
+			}
+		}
+		else if (alreadySent.contains(address))
+		{
+			continue;
+		}
+
+		const bool isMulticastOnInterface = targetInterface.isValid();
+		const auto alreadyFailed = isMulticastOnInterface ? mFailedMulticastInterfaces.contains(targetInterface.index())
+			: mFailedAddresses.contains(address);
 		const auto sendSuccess = sendToAddress(pData, address, pPort, !alreadyFailed);
 		if (sendSuccess)
 		{
 			alreadySent << address;
 			if (alreadyFailed)
 			{
-				mFailedAddresses.removeAll(address);
+				if (isMulticastOnInterface)
+				{
+					mFailedMulticastInterfaces.remove(targetInterface.index());
+				}
+				else
+				{
+					mFailedAddresses.removeAll(address);
+				}
 			}
 			continue;
 		}
 
 		if (!alreadyFailed)
 		{
-			qCDebug(network) << "Broadcasting to" << address << "failed";
-			mFailedAddresses << address;
+			if (isMulticastOnInterface)
+			{
+				qCDebug(network) << "Broadcasting to" << address << "on interface" << targetInterface.name() << "failed";
+				mFailedMulticastInterfaces.insert(targetInterface.index());
+			}
+			else
+			{
+				qCDebug(network) << "Broadcasting to" << address << "failed";
+				mFailedAddresses << address;
+			}
 		}
 	}
 }
